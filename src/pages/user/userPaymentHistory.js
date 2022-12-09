@@ -10,36 +10,52 @@ const UserPaymentHistory = () => {
     const colors = tokens(theme.palette.mode);
 
     const columns = [
-        { field: "id", headerName: "ID", flex: 0.5 },
+        {
+            field: "id", headerName: "ID",
+            sortable: false,
+            disableColumnMenu: true, flex: 0.5
+        },
         {
             field: "name",
             headerName: "Name",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
             cellClassName: "name-column--cell"
         },
         {
             field: "type",
             headerName: "Type",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
         {
             field: "amount",
+            sortable: false,
+            disableColumnMenu: true,
             headerName: "Amount",
             flex: 1,
         },
         {
             field: "details",
             headerName: "Details",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
         {
             field: "createdBy",
             headerName: "Created By",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
         {
             field: "date",
             headerName: "Date",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         }
     ];

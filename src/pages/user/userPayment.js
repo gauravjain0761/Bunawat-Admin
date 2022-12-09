@@ -10,21 +10,35 @@ const UserPayment = () => {
     const colors = tokens(theme.palette.mode);
 
     const columns = [
-        { field: "id", headerName: "ID", flex: 0.5 },
-        { field: "userName", headerName: "UserName" },
+        {
+            field: "id", headerName: "ID",
+            sortable: false,
+            disableColumnMenu: true, flex: 0.5
+        },
+        {
+            field: "userName",
+            sortable: false,
+            disableColumnMenu: true, headerName: "UserName"
+        },
         {
             field: "name",
             headerName: "Name",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
             cellClassName: "name-column--cell",
         },
         {
             field: "email",
+            sortable: false,
+            disableColumnMenu: true,
             headerName: "Email",
             flex: 1,
         },
         {
             field: "remainBalance",
+            sortable: false,
+            disableColumnMenu: true,
             headerName: "Remain Balance",
             flex: 1,
         }

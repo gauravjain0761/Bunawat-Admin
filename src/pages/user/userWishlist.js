@@ -10,33 +10,51 @@ const UserWishlist = () => {
     const colors = tokens(theme.palette.mode);
 
     const columns = [
-        { field: "id", headerName: "ID", flex: 0.5 },
-        { field: "title", headerName: "Title" },
+        {
+            field: "id", headerName: "ID",
+            sortable: false,
+            disableColumnMenu: true, flex: 0.5
+        },
+        {
+            field: "title",
+            sortable: false,
+            disableColumnMenu: true, headerName: "Title"
+        },
         {
             field: "author",
             headerName: "Author",
             flex: 1,
             cellClassName: "name-column--cell",
+            sortable: false,
+            disableColumnMenu: true,
         },
         {
             field: "privacy",
             headerName: "Privacy",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
         },
         {
             field: "wishlistNo",
             headerName: "Items In Wishlists",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
         },
         {
             field: "followersNo",
             headerName: "Followers",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
         },
         {
             field: "date",
             headerName: "Date Of Creation",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
         },
     ];
 

@@ -10,21 +10,31 @@ const GuestList = () => {
     const colors = tokens(theme.palette.mode);
 
     const columns = [
-        { field: "id", headerName: "ID", flex: 0.5 },
+        {
+            field: "id", headerName: "ID",
+            sortable: false,
+            disableColumnMenu: true, flex: 0.5
+        },
         {
             field: "name",
             headerName: "Name",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
             cellClassName: "name-column--cell",
         },
         {
             field: "email",
             headerName: "Email",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
         {
             field: "role",
             headerName: "Role",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         }
     ];

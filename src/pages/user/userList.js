@@ -10,32 +10,50 @@ const Userlist = () => {
     const colors = tokens(theme.palette.mode);
 
     const columns = [
-        { field: "id", headerName: "ID", flex: 0.5 },
-        { field: "userName", headerName: "UserName" },
+        {
+            field: "id",
+            sortable: false,
+            disableColumnMenu: true, headerName: "ID", flex: 0.5
+        },
+        {
+            field: "userName",
+            sortable: false,
+            disableColumnMenu: true, headerName: "UserName"
+        },
         {
             field: "name",
             headerName: "Name",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
             cellClassName: "name-column--cell",
         },
         {
             field: "email",
             headerName: "Email",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
         {
             field: "role",
             headerName: "Role",
             flex: 1,
+            sortable: false,
+            disableColumnMenu: true,
         },
         {
             field: "wallentBalance",
             headerName: "Wallent Balance",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
         {
             field: "gender",
             headerName: "Gender",
+            sortable: false,
+            disableColumnMenu: true,
             flex: 1,
         },
     ];
