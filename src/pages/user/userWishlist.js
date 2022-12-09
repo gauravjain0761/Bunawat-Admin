@@ -81,7 +81,7 @@ const UserWishlist = () => {
                 <DataGrid
                     rows={mockDataUserWishList}
                     columns={columns}
-                    components={{ Toolbar: GridToolbar }}
+                // components={{ Toolbar: GridToolbar }}
                 />
             </Box>
         </Box>

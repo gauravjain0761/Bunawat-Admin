@@ -70,7 +70,7 @@ const GuestList = () => {
                 <DataGrid
                     rows={mockDataGuestUserList}
                     columns={columns}
-                    components={{ Toolbar: GridToolbar }}
+                // components={{ Toolbar: GridToolbar }}
                 />
             </Box>
         </Box>

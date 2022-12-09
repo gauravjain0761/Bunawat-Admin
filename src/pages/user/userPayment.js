@@ -71,7 +71,7 @@ const UserPayment = () => {
                 <DataGrid
                     rows={mockDataUserPayment}
                     columns={columns}
-                    components={{ Toolbar: GridToolbar }}
+                // components={{ Toolbar: GridToolbar }}
                 />
             </Box>
         </Box>
