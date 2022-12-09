@@ -32,7 +32,8 @@ function App() {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              {/* <Route path="/" element={<Dashboard />} /> */}
+              <Route path="/" element={<Userlist />} />
               <Route path="/user-list" element={<Userlist />} />
               <Route path="/user-details" element={<UserDetail />} />
               <Route path="/user-payment" element={<UserPayment />} />
@@ -41,13 +42,13 @@ function App() {
               <Route path="/user-wishlist" element={<UserWishlist />} />
               <Route path="/guest-list" element={<GuestList />} />
 
-              <Route path="/category-management" element={<CategoryManagement />} />
+              {/* <Route path="/category-management" element={<CategoryManagement />} />
               <Route path="/sub-category-management" element={<SubCategoryManagement />} />
               <Route path="/category-tree-list" element={<CategoryTreeList />} />
 
               <Route path="/category-wise-list" element={<CategoryWiseList />} />
               <Route path="/add-product" element={<AddProduct />} />
-              <Route path="/products-variations" element={<ProductsVariations />} />
+              <Route path="/products-variations" element={<ProductsVariations />} /> */}
             </Routes>
           </main>
         </div>
