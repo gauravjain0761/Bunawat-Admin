@@ -42,8 +42,9 @@ const SubItem = ({ subMenu, subIcon, title, selected, setSelected }) => {
   return (
     <Menu>
       <SubMenu title={title} icon={subIcon}>
-        {subMenu.map(({ title, to, icon }) => (
+        {subMenu.map(({ title, to, icon }, i) => (
           <MenuItem
+            key={i}
             active={selected === title}
             style={{
               color: colors.grey[100],

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import SidebarComponent from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
@@ -18,22 +18,25 @@ import CategoryManagement from "./pages/category/categoryManagement";
 import ProductsVariations from "./pages/product/productsVariations";
 import CategoryWiseList from "./pages/product/categoryWiseList";
 import AddProduct from "./pages/product/addProduct";
+import Login from "./pages/login/login";
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+
+  let location = useLocation();
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          <SidebarComponent isSidebar={isSidebar} />
+          {location?.pathname !== "/" && <SidebarComponent isSidebar={isSidebar} />}
           <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} />
+            {location?.pathname !== "/" && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
               {/* <Route path="/" element={<Dashboard />} /> */}
-              <Route path="/" element={<Userlist />} />
+              <Route path="/" element={<Login />} />
               <Route path="/user-list" element={<Userlist />} />
               <Route path="/user-details" element={<UserDetail />} />
               <Route path="/user-payment" element={<UserPayment />} />
