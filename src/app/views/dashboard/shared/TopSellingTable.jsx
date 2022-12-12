@@ -47,19 +47,19 @@ const ProductTable = styled(Table)(() => ({
   "& .MuiDataGrid-columnHeaders": {
     backgroundColor: "#232a45",
     borderBottom: "none",
-},
+  },
   "& .MuiDataGrid-columnHeaderTitle": {
     color: "#fff",
-},
+  },
   "& .MuiDataGrid-columnHeaders .MuiCheckbox-root svg": {
     fill: "#fff",
-},
-"& .MuiDataGrid-columnHeaders .MuiDataGrid-iconButtonContainer  svg": {
-  fill: "#fff",
-},
-"& .MuiDataGrid-columnHeaders .MuiDataGrid-menuIcon svg": {
-  fill: "#fff",
-},
+  },
+  "& .MuiDataGrid-columnHeaders .MuiDataGrid-iconButtonContainer  svg": {
+    fill: "#fff",
+  },
+  "& .MuiDataGrid-columnHeaders .MuiDataGrid-menuIcon svg": {
+    fill: "#fff",
+  },
 }));
 
 const Small = styled('small')(({ bgcolor }) => ({
@@ -80,54 +80,62 @@ const TopSellingTable = () => {
   const bgSecondary = palette.secondary.main;
 
   const columns = [
-    { field: 'id', headerName: 'id', sortable:true, minWidth: 70},
-    { field: 'name', headerName: 'Name',
-    flex: 1,
-    renderCell: ({ row: {imgUrl, name } }) => {
-      return (
-        <Box display="flex" alignItems="center">
-        <Avatar src={imgUrl} />
-        <Paragraph sx={{ m: 0, ml: 4 }}>{name}</Paragraph>
-      </Box>
-      );
-  }, },
-    { field: 'price', headerName: 'Revenue', 
-    flex: 1,
-    renderCell: ({ row: {price } }) => {
-      return (
-        <Box>
-        ${price > 999 ? (price / 1000).toFixed(1) + 'k' : price}
-        </Box>
-      );
-  },},
-    { field: 'available', headerName: 'Stock Status', 
-    flex: 1,
-    renderCell: ({ row: {available } }) => {
-      return (
-        <Box>
-        {available ? (
-          available < 20 ? (
-            <Small bgcolor={bgSecondary}>{available} available</Small>
-          ) : (
-            <Small bgcolor={bgPrimary}>in stock</Small>
-          )
-        ) : (
-          <Small bgcolor={bgError}>out of stock</Small>
-        )}
-        </Box>
-      );
-  }, },
-    { field: 'id1', headerName: 'Action',
-    flex: 1,
-    renderCell: ({ row: {available } }) => {
-      return (
-        <Box>
-         <IconButton>
-                    <Icon color="primary">edit</Icon>
-                  </IconButton>
-        </Box>
-      );
-  }, },
+    { field: 'id', headerName: 'id', sortable: true, minWidth: 70 },
+    {
+      field: 'name', headerName: 'Name',
+      flex: 1,
+      renderCell: ({ row: { imgUrl, name } }) => {
+        return (
+          <Box display="flex" alignItems="center">
+            <Avatar src={imgUrl} />
+            <Paragraph sx={{ m: 0, ml: 4 }}>{name}</Paragraph>
+          </Box>
+        );
+      },
+    },
+    {
+      field: 'price', headerName: 'Revenue',
+      flex: 1,
+      renderCell: ({ row: { price } }) => {
+        return (
+          <Box>
+            ${price > 999 ? (price / 1000).toFixed(1) + 'k' : price}
+          </Box>
+        );
+      },
+    },
+    {
+      field: 'available', headerName: 'Stock Status',
+      flex: 1,
+      renderCell: ({ row: { available } }) => {
+        return (
+          <Box>
+            {available ? (
+              available < 20 ? (
+                <Small bgcolor={bgSecondary}>{available} available</Small>
+              ) : (
+                <Small bgcolor={bgPrimary}>in stock</Small>
+              )
+            ) : (
+              <Small bgcolor={bgError}>out of stock</Small>
+            )}
+          </Box>
+        );
+      },
+    },
+    {
+      field: 'id1', headerName: 'Action',
+      flex: 1,
+      renderCell: ({ row: { available } }) => {
+        return (
+          <Box>
+            <IconButton>
+              <Icon color="primary">edit</Icon>
+            </IconButton>
+          </Box>
+        );
+      },
+    },
   ];
 
   return (
@@ -142,13 +150,13 @@ const TopSellingTable = () => {
 
       <Box overflow="auto">
         <ProductTable>
-        <DataGrid
-        rows={productList}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      />
+          <DataGrid
+            rows={productList}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            checkboxSelection
+          />
         </ProductTable>
       </Box>
     </Card>

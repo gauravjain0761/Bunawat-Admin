@@ -1,9 +1,38 @@
-import React from 'react'
+import { Stack } from "@mui/material";
+import { Box, styled } from "@mui/system";
+import { SimpleCard } from "app/components";
+import UserForm from "app/views/users/userForm";
+import { mockDataUserList } from "fake-db/data/user/userList";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+const Container = styled("div")(({ theme }) => ({
+    margin: "30px",
+    [theme.breakpoints.down("sm")]: { margin: "16px" },
+    "& .breadcrumb": {
+        marginBottom: "30px",
+        [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+    },
+}));
 
 const UserDetail = () => {
-    return (
-        <div>UserDetail</div>
-    )
-}
+    const { id } = useParams();
+    const [data, setData] = useState();
 
-export default UserDetail
+    useEffect(() => {
+        if (id) {
+            setData(mockDataUserList.find(item => item.id == id))
+        }
+    }, [id])
+
+    console.log(data)
+    return (
+        <Container>
+            <Stack spacing={3}>
+                <UserForm data={data} />
+            </Stack>
+        </Container>
+    );
+};
+
+export default UserDetail;

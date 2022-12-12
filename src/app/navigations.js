@@ -1,18 +1,22 @@
 export const navigations = [
   // { name: 'Dashboard', path: '/dashboard/default', icon: 'dashboard' },
   {
-    name: 'User',
+    name: 'User Management',
     icon: 'dashboard',
     children: [
-      { name: 'User List', iconText: 'SI', path: '/user/list' },
-      { name: 'User details', iconText: 'SU', path: '/user/details' },
-      { name: 'User payment', iconText: 'FP', path: '/user/payment' },
-      { name: 'User payment history', iconText: '404', path: '/user/payment/history' },
-      { name: 'User Cart Details', iconText: '404', path: '/user/cart/details' },
-      { name: 'User wishlist', iconText: '404', path: '/user/wishlist' },
-      { name: 'Guest Login', iconText: '404', path: '/guest/list' },
+      { name: 'Customers', iconText: 'SI', path: '/customer' },
+      { name: 'Resellers', iconText: 'SI', path: '/reseller' },
+      { name: 'Influncers', iconText: 'SI', path: '/influncer' },
     ],
   },
+
+  // { name: 'User List', iconText: 'SI', path: '/user/list' },
+  // { name: 'User details', iconText: 'SU', path: '/user/details' },
+  // { name: 'User payment', iconText: 'FP', path: '/user/payment' },
+  // { name: 'User payment history', iconText: '404', path: '/user/payment/history' },
+  // { name: 'User Cart Details', iconText: '404', path: '/user/cart/details' },
+  // { name: 'User wishlist', iconText: '404', path: '/user/wishlist' },
+  // { name: 'Guest Login', iconText: '404', path: '/guest/list' },
   // { label: 'PAGES', type: 'label' },
   // {
   //   name: 'Session/Auth',

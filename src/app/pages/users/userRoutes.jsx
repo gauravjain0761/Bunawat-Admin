@@ -10,13 +10,16 @@ const UserWishlist = Loadable(lazy(() => import('./userWishlist')));
 const GuestList = Loadable(lazy(() => import('./guestList')));
 
 const userRoute = [
-    { path: '/user/list', element: <UserList />},
-    { path: '/user/details', element: <UserDetail />},
-    { path: '/user/payment', element: <UserPayment />},
-    { path: '/user/payment/history', element: <UserPaymentHistory />},
-    { path: '/user/cart/details', element: <UserCartDetail />},
-    { path: '/user/wishlist', element: <UserWishlist />},
-    { path: '/guest/list', element: <GuestList />},
+    { path: '/customer', element: <UserList /> },
+    { path: '/reseller', element: <UserList /> },
+    { path: '/influncer', element: <UserList /> },
+    { path: '/user/list', element: <UserList /> },
+    { path: '/user/details/:id', element: <UserDetail /> },
+    { path: '/user/payment', element: <UserPayment /> },
+    { path: '/user/payment/history', element: <UserPaymentHistory /> },
+    { path: '/user/cart/details', element: <UserCartDetail /> },
+    { path: '/user/wishlist', element: <UserWishlist /> },
+    { path: '/guest/list', element: <GuestList /> },
 ];
 
 export default userRoute;

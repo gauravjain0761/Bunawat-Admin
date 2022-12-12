@@ -139,12 +139,12 @@ const JwtLogin = () => {
                       color="primary"
                       loading={loading}
                       variant="contained"
-                      sx={{ my: 2 }}
+                      sx={{ margin: "0 auto", my: 2, display: "flex", width: "50%" }}
                     >
                       Login
                     </LoadingButton>
 
-                    <Paragraph>
+                    {/* <Paragraph>
                       Don't have an account?
                       <NavLink
                         to="/session/signup"
@@ -152,7 +152,7 @@ const JwtLogin = () => {
                       >
                         Register
                       </NavLink>
-                    </Paragraph>
+                    </Paragraph> */}
                   </form>
                 )}
               </Formik>
