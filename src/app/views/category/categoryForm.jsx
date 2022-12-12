@@ -83,8 +83,8 @@ const CategoryForm = ({ data = {} }) => {
                                 label="slug"
                                 value={slug || ""}
                                 onChange={handleChange}
-                                validators={["required", "isEmail"]}
-                                errorMessages={["this field is required", "email is not valid"]}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
                             />
                             <TextField
                                 type="text"

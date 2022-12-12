@@ -28,7 +28,7 @@ const ForgotPasswordRoot = styled(JustifyBox)(() => ({
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@example.com');
+  const [email, setEmail] = useState('bunawat@admin.com');
 
   const handleFormSubmit = () => {
     console.log(email);
