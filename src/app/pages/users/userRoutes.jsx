@@ -14,6 +14,7 @@ const userRoute = [
     { path: '/reseller', element: <UserList /> },
     { path: '/influncer', element: <UserList /> },
     { path: '/user/list', element: <UserList /> },
+    { path: '/user/details', element: <UserDetail /> },
     { path: '/user/details/:id', element: <UserDetail /> },
     { path: '/user/payment', element: <UserPayment /> },
     { path: '/user/payment/history', element: <UserPaymentHistory /> },

@@ -3,6 +3,7 @@ import { Card, Checkbox, Grid, TextField } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
 import { Paragraph } from 'app/components/Typography';
 import useAuth from 'app/hooks/useAuth';
+import { UIColor } from 'app/utils/constant';
 import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -128,7 +129,7 @@ const JwtLogin = () => {
 
                       <NavLink
                         to="/session/forgot-password"
-                        style={{ color: theme.palette.primary.main }}
+                        style={{ color: UIColor }}
                       >
                         Forgot password?
                       </NavLink>
@@ -139,7 +140,7 @@ const JwtLogin = () => {
                       color="primary"
                       loading={loading}
                       variant="contained"
-                      sx={{ margin: "0 auto", my: 2, display: "flex", width: "50%" }}
+                      sx={{ margin: "0 auto", my: 2, display: "flex", width: "50%", backgroundColor: UIColor }}
                     >
                       Login
                     </LoadingButton>

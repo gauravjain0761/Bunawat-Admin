@@ -9,6 +9,13 @@ export const navigations = [
       { name: 'Influncers', iconText: 'SI', path: '/influncer' },
     ],
   },
+  {
+    name: 'Category Management',
+    icon: 'dashboard',
+    children: [
+      { name: 'Category List', iconText: 'SI', path: '/category/list' },
+    ],
+  },
 
   // { name: 'User List', iconText: 'SI', path: '/user/list' },
   // { name: 'User details', iconText: 'SU', path: '/user/details' },

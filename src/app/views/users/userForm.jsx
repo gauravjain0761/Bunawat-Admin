@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
+import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
@@ -36,7 +37,20 @@ const UserForm = ({ data = {} }) => {
 
     const handleChange = (event) => {
         event.persist();
-        setFormData({ ...formData, [event.target.name]: event.target.value });
+        if (event.target.name == "mobile") {
+            const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+            if (onlyNums.length < 10) {
+                setFormData({ ...formData, [event.target.name]: onlyNums });
+            } else if (onlyNums.length === 10) {
+                const number = onlyNums.replace(
+                    /(\d{3})(\d{3})(\d{4})/,
+                    '($1) $2-$3'
+                );
+                setFormData({ ...formData, [event.target.name]: onlyNums });
+            }
+        } else {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+        }
     };
 
     const {
@@ -58,15 +72,15 @@ const UserForm = ({ data = {} }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="User Details">
+                <SimpleCard title="User Details" backArrow={true}>
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                            <Box sx={{ mb: 3.5 }} display="flex" alignItems="center">
+                            {/* <Box sx={{ mb: 3.5 }} display="flex" alignItems="center">
                                 <Avatar name={firstName} round={true} size="50" />
                                 <Button>
                                     Change
                                 </Button>
-                            </Box>
+                            </Box> */}
 
                             <TextField
                                 type="text"
@@ -99,7 +113,7 @@ const UserForm = ({ data = {} }) => {
                             />
 
                             <TextField
-                                type="number"
+                                type="text"
                                 name="mobile"
                                 label="Mobile Nubmer"
                                 onChange={handleChange}
@@ -187,9 +201,7 @@ const UserForm = ({ data = {} }) => {
                                 id="standard-basic"
                                 value={userName || ""}
                                 onChange={handleChange}
-                                errorMessages={["this field is required"]}
-                                label="Username (Min length 4, Max length 9)"
-                                validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+                                label="Username (Min length 4, Max length 10)"
                             />
 
                             <TextField
@@ -223,7 +235,7 @@ const UserForm = ({ data = {} }) => {
                             />
 
                             <TextField
-                                type="number"
+                                type="text"
                                 name="mobile"
                                 label="Mobile Nubmer"
                                 onChange={handleChange}
@@ -303,9 +315,7 @@ const UserForm = ({ data = {} }) => {
                                 id="standard-basic"
                                 value={userName || ""}
                                 onChange={handleChange}
-                                errorMessages={["this field is required"]}
-                                label="Username (Min length 4, Max length 9)"
-                                validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+                                label="Username (Min length 4, Max length 10)"
                             />
 
                             <TextField
@@ -339,7 +349,7 @@ const UserForm = ({ data = {} }) => {
                             />
 
                             <TextField
-                                type="number"
+                                type="text"
                                 name="mobile"
                                 label="Mobile Nubmer"
                                 onChange={handleChange}
@@ -408,27 +418,35 @@ const UserForm = ({ data = {} }) => {
                             />
                         </Grid>
                     </Grid>
-                    <Box display="flex" alignItems="center">
-                        <Button color="primary" variant="contained" type="submit">
-                            <Icon>send</Icon>
-                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                        </Button>
-                        <Button color="error" variant="contained" sx={{ ml: 2 }}>
-                            <Icon>delete</Icon>
-                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
-                        </Button>
-                        <Button color="primary" variant="contained" sx={{ ml: 2 }} onClick={() => navigate("/user/wishlist")}>
-                            <Icon>star_rate</Icon>
-                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
-                        </Button>
-                        <Button color="primary" variant="contained" sx={{ ml: 2 }} onClick={() => navigate("/user/cart/details")}>
-                            <Icon>star_rate</Icon>
-                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
-                        </Button>
-                        <Button color="primary" variant="contained" sx={{ ml: 2 }} onClick={() => navigate("/user/payment/history")}>
-                            <Icon>star_rate</Icon>
-                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
-                        </Button>
+                    <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                <Icon>arrow_back</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
+                                <Icon>send</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                            </Button>
+                            <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                                <Icon>delete</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
+                            </Button>
+                        </Box>
+                        {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
+                                <Icon>star_rate</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/cart/details")}>
+                                <Icon>star_rate</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/payment/history")}>
+                                <Icon>star_rate</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
+                            </Button>
+                        </Box> */}
                     </Box>
                 </SimpleCard>
 

@@ -22,6 +22,8 @@ import { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
+import { isMobile } from 'app/utils/utils';
+import { UIColor } from 'app/utils/constant';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -102,18 +104,19 @@ const UserList = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    {
-      field: "image", headerName: "User", flex: 0.5,
-      renderCell: ({ row: { firstName } }) => {
-        return (
-          <Box display="flex" alignItems="center" sx={{ borderRadius: "50%" }}>
-            <Avatar name={firstName} round={true} size="50" />
-          </Box>
-        );
-      }
-    },
+    { field: "id", headerName: "ID", width: 75 },
+    // {
+    //   field: "image", headerName: "User", flex: 0.5,
+    //   renderCell: ({ row: { firstName } }) => {
+    //     return (
+    //       <Box display="flex" alignItems="center" >
+    //         <Avatar name={firstName} round={true} size={isMobile() ? "25" : "50"} />
+    //       </Box>
+    //     );
+    //   }
+    // },
     {
       field: "name",
       headerName: "Name",
@@ -140,7 +143,7 @@ const UserList = () => {
     {
       field: "action",
       headerName: "Action",
-      flex: 0.4,
+      width: 150,
       renderCell: ({ row: { id } }) => {
         return (
           <Box display="flex" alignItems="center">
@@ -169,8 +172,14 @@ const UserList = () => {
 
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-      <CardHeader>
+      <CardHeader >
         <Title>User List</Title>
+        <Button onClick={() => navigate(`/user/details`)} sx={{
+          backgroundColor: UIColor, color: "#fff",
+          "&:hover": {
+            backgroundColor: UIColor, color: "#fff"
+          }
+        }}>Add User</Button>
         {/* <Select size="small" defaultValue="this_month">
             <MenuItem value="this_month">This Month</MenuItem>
             <MenuItem value="last_month">Last Month</MenuItem>

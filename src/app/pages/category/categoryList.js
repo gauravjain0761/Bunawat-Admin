@@ -1,9 +1,10 @@
 import {
-  Avatar,
   Box,
+  Button,
   Card,
   Icon,
   IconButton,
+  Menu,
   MenuItem,
   Select,
   styled,
@@ -16,8 +17,13 @@ import {
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Paragraph } from 'app/components/Typography';
+import { mockDataUserList } from 'fake-db/data/user/userList';
+import { useState } from 'react';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useNavigate } from 'react-router-dom';
+import Avatar from 'react-avatar';
+import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import { UIColor } from 'app/utils/constant';
-import { mockDataUserPayment } from 'fake-db/data/user/userPaymentHistory';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -48,7 +54,7 @@ const ProductTable = styled(Table)(() => ({
   '& td': { borderBottom: 'none' },
   '& td:first-of-type': { paddingLeft: '16px !important' },
   "& .MuiDataGrid-columnHeaders": {
-    backgroundColor: UIColor,
+    backgroundColor: "#232a45",
     borderBottom: "none",
   },
   "& .MuiDataGrid-columnHeaderTitle": {
@@ -79,14 +85,27 @@ const Small = styled('small')(({ bgcolor }) => ({
   boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
 }));
 
-const UserPayment = () => {
+const CategoryList = () => {
   const { palette } = useTheme();
   const bgError = palette.error.main;
   const bgPrimary = palette.primary.main;
   const bgSecondary = palette.secondary.main;
+
+  const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "userName", headerName: "UserName" },
     {
       field: "name",
       headerName: "Name",
@@ -94,21 +113,60 @@ const UserPayment = () => {
       cellClassName: "name-column--cell",
     },
     {
-      field: "email",
-      headerName: "Email",
+      field: "description",
+      headerName: "Description",
       flex: 1,
     },
     {
-      field: "remainBalance",
-      headerName: "Remain Balance",
+      field: "slug",
+      headerName: "Slug",
       flex: 1,
+    },
+    {
+      field: "count",
+      headerName: "Count",
+      flex: 1,
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      width: 150,
+      renderCell: ({ row: { id } }) => {
+        return (
+          <Box display="flex" alignItems="center">
+            <IconButton
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/category/details/${id}`)
+                handleClose();
+              }}>
+              <Icon color="primary">edit</Icon>
+            </IconButton>
+            <IconButton
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleClose();
+              }}>
+              <Icon color="error">delete</Icon>
+            </IconButton>
+          </Box >
+        );
+      }
     }
   ];
 
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
-        <Title>User Payment</Title>
+        <Title>Category List</Title>
+        <Button onClick={() => navigate(`/category/details`)} sx={{
+          backgroundColor: UIColor, color: "#fff",
+          "&:hover": {
+            backgroundColor: UIColor, color: "#fff"
+          }
+        }}>Add Category</Button>
         {/* <Select size="small" defaultValue="this_month">
             <MenuItem value="this_month">This Month</MenuItem>
             <MenuItem value="last_month">Last Month</MenuItem>
@@ -118,7 +176,7 @@ const UserPayment = () => {
       <Box overflow="auto">
         <ProductTable>
           <DataGrid
-            rows={mockDataUserPayment}
+            rows={mockDataCategoryManagement}
             columns={columns}
             checkboxSelection
             disableColumnMenu
@@ -129,4 +187,4 @@ const UserPayment = () => {
   );
 };
 
-export default UserPayment;
+export default CategoryList;
