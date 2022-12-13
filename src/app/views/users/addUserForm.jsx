@@ -122,18 +122,20 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <FormControl fullWidth disabled={disableRole}>
+                            <FormControl fullWidth >
                                 <InputLabel id="demo-simple-select-label">User Role</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     value={role}
                                     name="role"
+
+                                    inputProps={{ readOnly: disableRole }}
                                     label="User Role"
                                     onChange={handleChange}>
-                                    <MenuItem value="Customers">Customers</MenuItem>
-                                    <MenuItem value="Resellers">Resellers</MenuItem>
-                                    <MenuItem value="Influncers">Influncers</MenuItem>
+                                    <MenuItem value="Customer">Customer</MenuItem>
+                                    <MenuItem value="Reseller">Reseller</MenuItem>
+                                    <MenuItem value="Influncer">Influncer</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>

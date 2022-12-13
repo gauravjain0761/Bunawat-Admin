@@ -81,12 +81,11 @@ const CategoryForm = ({ data = {} }) => {
                                     onChange={handleChange}>
                                     <MenuItem value="None">None</MenuItem>
                                     <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                    <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
-                                    <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
                                     <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
                                     <MenuItem value="Lehengas">Lehengas</MenuItem>
                                     <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Uncategorized">Uncategorized</MenuItem>
+                                    <MenuItem value="Shararas">Shararas</MenuItem>
+                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -115,15 +114,6 @@ const CategoryForm = ({ data = {} }) => {
                                 label="Description"
                                 onChange={handleChange}
                                 value={description || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-                            <TextField
-                                type="text"
-                                name="count"
-                                label="Count"
-                                onChange={handleChange}
-                                value={count || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
