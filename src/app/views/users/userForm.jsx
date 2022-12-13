@@ -1,21 +1,29 @@
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Box,
     Button,
     Checkbox,
+    FormControl,
     FormControlLabel,
+    FormLabel,
     Grid,
     Icon,
     Radio,
     RadioGroup,
     styled,
+    Typography,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
+import { UIColor } from "app/utils/constant";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -24,6 +32,14 @@ const TextField = styled(TextValidator)(() => ({
 
 const UserForm = ({ data = {} }) => {
     const [formData, setFormData] = useState(data);
+
+    const [expanded, setExpanded] = useState(false);
+
+    const handleChangeExpand = (panel) => (event, isExpanded) => {
+        console.log(event.target, isExpanded)
+        setExpanded(isExpanded ? panel : false);
+    };
+
     const navigate = useNavigate();
     useEffect(() => {
         setFormData(data)
@@ -35,7 +51,6 @@ const UserForm = ({ data = {} }) => {
     };
 
     const handleChange = (event) => {
-        event.persist();
         if (event.target.name == "mobile") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
@@ -72,6 +87,8 @@ const UserForm = ({ data = {} }) => {
         bankAccountNumber,
         bankIFSC,
         upiID,
+        customerType,
+        agencyName
     } = formData;
 
     return (
@@ -148,6 +165,34 @@ const UserForm = ({ data = {} }) => {
                                     errorMessages={["this field is required"]}
                                 />
                             }
+
+                            {type == "customer" &&
+                                <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Customer Type</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        value={customerType ?? "Active"}
+                                        onChange={handleChange}
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="customerType">
+                                        <FormControlLabel value="Active" control={<Radio />} label="Active" />
+                                        <FormControlLabel value="Passive" control={<Radio />} label="Passive" />
+                                    </RadioGroup>
+                                </FormControl>
+                            }
+
+                            {(type == "influncer") &&
+                                <TextField
+                                    type="text"
+                                    name="agencyName"
+                                    label="Agency Name"
+                                    onChange={handleChange}
+                                    value={agencyName || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+                            }
+
                         </Grid>
 
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -209,7 +254,7 @@ const UserForm = ({ data = {} }) => {
                     </Grid>
                 </SimpleCard>
 
-                <SimpleCard title="User Billing Address">
+                {(type == "reseller") && <SimpleCard title="User Billing Address">
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField
@@ -322,8 +367,9 @@ const UserForm = ({ data = {} }) => {
                         </Grid>
                     </Grid>
                 </SimpleCard>
+                }
 
-                <SimpleCard title="User Shipping Address">
+                {(type == "influncer") && <SimpleCard title="User Shipping Address">
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField
@@ -467,6 +513,21 @@ const UserForm = ({ data = {} }) => {
                     </Box>
                     }
                 </SimpleCard>
+                }
+
+                {/* <Accordion sx={{ backgroundColor: UIColor, color: "#fff", p: 2, mt: 2 }} expanded={expanded === 'panel1'} onChange={handleChangeExpand('panel1')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header">
+                        <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                            User Account Details
+                        </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                       
+                    </AccordionDetails>
+                </Accordion> */}
 
                 {(type == "reseller" || type == "influncer") && <SimpleCard title="User Account Details">
                     <Grid container spacing={12}>
@@ -512,22 +573,25 @@ const UserForm = ({ data = {} }) => {
 
                         </Grid>
                     </Grid>
-                    <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
-                            <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>delete</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
-                            </Button>
-                        </Box>
-                        {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                </SimpleCard>
+                }
+
+                <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                    <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                        <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                            <Icon>arrow_back</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                        </Button>
+                        <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
+                            <Icon>send</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                        </Button>
+                        <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                            <Icon>delete</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
+                        </Button>
+                    </Box>
+                    {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
                             <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
                                 <Icon>star_rate</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
@@ -541,9 +605,7 @@ const UserForm = ({ data = {} }) => {
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
                             </Button>
                         </Box> */}
-                    </Box>
-                </SimpleCard>
-                }
+                </Box>
             </ValidatorForm>
         </div >
     );

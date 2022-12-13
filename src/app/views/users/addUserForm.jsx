@@ -4,6 +4,7 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
+    FormLabel,
     Grid,
     Icon,
     InputLabel,
@@ -63,7 +64,8 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
         mobile,
         email,
         password,
-        role
+        role,
+        customerType
     } = formData;
 
     return (
@@ -138,6 +140,21 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                     <MenuItem value="Influncer">Influncer</MenuItem>
                                 </Select>
                             </FormControl>
+
+                            {role == "Customer" &&
+                                <FormControl sx={{ mt: 2 }}>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Customer Type</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        value={customerType}
+                                        onChange={handleChange}
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="customerType">
+                                        <FormControlLabel value="Active" control={<Radio />} label="Active" />
+                                        <FormControlLabel value="Passive" control={<Radio />} label="Passive" />
+                                    </RadioGroup>
+                                </FormControl>
+                            }
                         </Grid>
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
@@ -150,25 +167,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 <Icon>send</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
                             </Button>
-                            {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>delete</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
-                            </Button> */}
                         </Box>
-                        {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/cart/details")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/payment/history")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
-                            </Button>
-                        </Box> */}
                     </Box>
                 </SimpleCard>
 

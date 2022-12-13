@@ -16,15 +16,16 @@ export const navigations = [
     children: [
       { name: 'Category List', iconText: 'SI', path: '/category/list' },
       { name: 'Add Category', iconText: 'SI', path: '/category/details' },
+      { name: 'Collection List', iconText: 'SI', path: '/collection/list' },
+      { name: 'Add Collection', iconText: 'SI', path: '/collection/details' },
     ],
   },
   {
     name: 'Product Management',
     icon: 'dashboard',
     children: [
-      { name: 'Color', iconText: 'SI', path: '/product/color' },
-      { name: 'Size', iconText: 'SI', path: '/product/size' },
-      { name: 'Tag', iconText: 'SI', path: '/product/tag' },
+      { name: 'Attributes', iconText: 'SI', path: '/product/attributes' },
+      { name: 'Add Product', iconText: 'SI', path: '/product/add' },
     ],
   },
 

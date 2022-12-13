@@ -17,7 +17,7 @@ const AddUser = () => {
     return (
         <Container>
             <Stack spacing={3}>
-                <AddUserForm data={{ role: type ?? "" }} disableRole={type ? true : false} />
+                <AddUserForm data={{ role: type ?? "", customerType: "Active" }} disableRole={type ? true : false} />
             </Stack>
         </Container>
     );

@@ -22,7 +22,7 @@ import { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
-import { isMobile } from 'app/utils/utils';
+import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import { UIColor } from 'app/utils/constant';
 
 const CardHeader = styled(Box)(() => ({
@@ -85,7 +85,7 @@ const Small = styled('small')(({ bgcolor }) => ({
   boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
 }));
 
-const UserList = ({ data = [], type }) => {
+const CollectionList = () => {
   const { palette } = useTheme();
   const bgError = palette.error.main;
   const bgPrimary = palette.primary.main;
@@ -104,40 +104,27 @@ const UserList = ({ data = [], type }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const columns = [
-    { field: "id", headerName: "ID", width: 75 },
-    // {
-    //   field: "image", headerName: "User", flex: 0.5,
-    //   renderCell: ({ row: { firstName } }) => {
-    //     return (
-    //       <Box display="flex" alignItems="center" >
-    //         <Avatar name={firstName} round={true} size={isMobile() ? "25" : "50"} />
-    //       </Box>
-    //     );
-    //   }
-    // },
+    { field: "id", headerName: "ID", flex: 0.5 },
     {
       field: "name",
       headerName: "Name",
       flex: 1,
       cellClassName: "name-column--cell",
-      renderCell: ({ row: { firstName, lastName } }) => {
-        return (
-          <Box display="flex" alignItems="center">
-            {`${firstName} ${lastName}`}
-          </Box>
-        );
-      }
     },
     {
-      field: "mobile",
-      headerName: "Mobile",
+      field: "description",
+      headerName: "Description",
       flex: 1,
     },
     {
-      field: "email",
-      headerName: "Email",
+      field: "slug",
+      headerName: "Slug",
+      flex: 1,
+    },
+    {
+      field: "count",
+      headerName: "Count",
       flex: 1,
     },
     {
@@ -151,7 +138,7 @@ const UserList = ({ data = [], type }) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate(`/user/details/${type}/${id}`)
+                navigate(`/collection/details/${id}`)
                 handleClose();
               }}>
               <Icon color="primary">edit</Icon>
@@ -172,24 +159,20 @@ const UserList = ({ data = [], type }) => {
 
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-      <CardHeader >
-        <Title>{type} List</Title>
-        <Button onClick={() => navigate(`/user/add/${type}`)} sx={{
+      <CardHeader>
+        <Title>Collection List</Title>
+        <Button onClick={() => navigate(`/collection/details`)} sx={{
           backgroundColor: UIColor, color: "#fff",
           "&:hover": {
             backgroundColor: UIColor, color: "#fff"
           }
-        }}>Add {type}</Button>
-        {/* <Select size="small" defaultValue="this_month">
-            <MenuItem value="this_month">This Month</MenuItem>
-            <MenuItem value="last_month">Last Month</MenuItem>
-          </Select> */}
+        }}>Add Collection</Button>
       </CardHeader>
 
       <Box overflow="auto">
         <ProductTable>
           <DataGrid
-            rows={data}
+            rows={mockDataCategoryManagement}
             columns={columns}
             checkboxSelection
             disableColumnMenu
@@ -200,4 +183,4 @@ const UserList = ({ data = [], type }) => {
   );
 };
 
-export default UserList;
+export default CollectionList;

@@ -30,7 +30,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const CategoryForm = ({ data = {} }) => {
+const CollectionForm = ({ data = {} }) => {
     const [formData, setFormData] = useState({ ...data, pCategory: "None" });
     const navigate = useNavigate();
     useEffect(() => {
@@ -66,28 +66,9 @@ const CategoryForm = ({ data = {} }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="Category" backArrow={true}>
+                <SimpleCard title="Collection" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Parent Category</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={pCategory}
-                                    name="pCategory"
-                                    label="Parent Category"
-                                    onChange={handleChange}>
-                                    <MenuItem value="None">None</MenuItem>
-                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
-                                </Select>
-                            </FormControl>
 
                             <TextField
                                 type="text"
@@ -155,20 +136,6 @@ const CategoryForm = ({ data = {} }) => {
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                             </Button>
                         </Box>
-                        {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/cart/details")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/payment/history")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
-                            </Button>
-                        </Box> */}
                     </Box>
                 </SimpleCard>
 
@@ -177,4 +144,4 @@ const CategoryForm = ({ data = {} }) => {
     );
 };
 
-export default CategoryForm;
+export default CollectionForm;

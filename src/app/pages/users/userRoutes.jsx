@@ -1,6 +1,5 @@
 import Loadable from 'app/components/Loadable';
 import { lazy } from 'react';
-import AddUser from './addUser';
 import Customer from './role/customer';
 import Influncer from './role/influncer';
 import Reseller from './role/reseller';
@@ -12,6 +11,7 @@ const UserPaymentHistory = Loadable(lazy(() => import('./userPaymentHistory')));
 const UserCartDetail = Loadable(lazy(() => import('./userCartDetail')));
 const UserWishlist = Loadable(lazy(() => import('./userWishlist')));
 const GuestList = Loadable(lazy(() => import('./guestList')));
+const AddUser = Loadable(lazy(() => import('./addUser')));
 
 const userRoute = [
     { path: '/customer', element: <Customer /> },
