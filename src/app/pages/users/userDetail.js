@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import { SimpleCard } from "app/components";
 import UserForm from "app/views/users/userForm";
-import { mockDataUserList } from "fake-db/data/user/userList";
+import { mockDataCustomerUserList, mockDataInfluncerUserList, mockDataResellerUserList } from "fake-db/data/user/userList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -16,16 +16,16 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const UserDetail = () => {
-    const { id } = useParams();
+    const { id, type } = useParams();
     const [data, setData] = useState();
 
     useEffect(() => {
-        if (id) {
-            setData(mockDataUserList.find(item => item.id == id))
+        if (id && type) {
+            const finalData = type == "Customers" ? mockDataCustomerUserList : type == "Resellers" ? mockDataResellerUserList : mockDataInfluncerUserList
+            setData(finalData.find(item => item.id == id))
         }
-    }, [id])
+    }, [id, type])
 
-    console.log(data)
     return (
         <Container>
             <Stack spacing={3}>

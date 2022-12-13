@@ -1,12 +1,19 @@
+import { CheckBox } from "@mui/icons-material";
 import {
     Box,
     Button,
     Checkbox,
+    FormControl,
     FormControlLabel,
+    FormGroup,
+    FormLabel,
     Grid,
     Icon,
+    InputLabel,
+    MenuItem,
     Radio,
     RadioGroup,
+    Select,
     styled,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
@@ -23,10 +30,10 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const CategoryForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState(data);
+    const [formData, setFormData] = useState({ ...data, pCategory: "None" });
     const navigate = useNavigate();
     useEffect(() => {
-        setFormData(data)
+        setFormData({ ...data, pCategory: "None" })
     }, [data])
 
 
@@ -36,18 +43,11 @@ const CategoryForm = ({ data = {} }) => {
     };
 
     const handleChange = (event) => {
-        event.persist();
-        if (event.target.name == "mobile") {
-            const onlyNums = event.target.value.replace(/[^0-9]/g, '');
-            if (onlyNums.length < 10) {
-                setFormData({ ...formData, [event.target.name]: onlyNums });
-            } else if (onlyNums.length === 10) {
-                const number = onlyNums.replace(
-                    /(\d{3})(\d{3})(\d{4})/,
-                    '($1) $2-$3'
-                );
-                setFormData({ ...formData, [event.target.name]: onlyNums });
-            }
+        console.log("handleChange", formData)
+        if (event.target.name == "home" || event.target.name == "men" || event.target.name == "women" || event.target.name == "wedding_store") {
+            let visibility = formData?.visibility ?? {}
+            visibility = { ...visibility, [event.target.name]: event.target.checked }
+            setFormData({ ...formData, visibility });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -57,7 +57,10 @@ const CategoryForm = ({ data = {} }) => {
         name,
         slug,
         description,
-        count
+        count,
+        pCategory,
+        visibility,
+        product_id
     } = formData;
 
     return (
@@ -66,6 +69,26 @@ const CategoryForm = ({ data = {} }) => {
                 <SimpleCard title="Category" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+
+                            <FormControl fullWidth sx={{ mb: 2 }}>
+                                <InputLabel id="demo-simple-select-label">Parent Category</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={pCategory}
+                                    name="pCategory"
+                                    label="Parent Category"
+                                    onChange={handleChange}>
+                                    <MenuItem value="None">None</MenuItem>
+                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                    <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
+                                    <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
+                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
+                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
+                                    <MenuItem value="Shararas">Shararas</MenuItem>
+                                    <MenuItem value="Uncategorized">Uncategorized</MenuItem>
+                                </Select>
+                            </FormControl>
 
                             <TextField
                                 type="text"
@@ -105,6 +128,46 @@ const CategoryForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
+                            <FormControl sx={{}} component="fieldset" variant="standard">
+                                <FormLabel component="legend">Visibility</FormLabel>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
+                                        }
+                                        label="Home"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox checked={visibility?.men} onChange={handleChange} name="men" />
+                                        }
+                                        label="Men"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox checked={visibility?.women} onChange={handleChange} name="women" />
+                                        }
+                                        label="Women"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox checked={visibility?.wedding_store} onChange={handleChange} name="wedding_store" />
+                                        }
+                                        label="Wedding store"
+                                    />
+                                </FormGroup>
+                            </FormControl>
+
+                            <TextField
+                                type="text"
+                                sx={{ mt: 2 }}
+                                name="product_id"
+                                label="Product IDs for Collection page"
+                                onChange={handleChange}
+                                value={product_id || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
                         </Grid>
 
                     </Grid>

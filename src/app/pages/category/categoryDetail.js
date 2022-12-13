@@ -19,7 +19,7 @@ const Container = styled("div")(({ theme }) => ({
 
 const CategoryDetail = () => {
     const { id } = useParams();
-    const [data, setData] = useState();
+    const [data, setData] = useState({});
 
     useEffect(() => {
         if (id) {

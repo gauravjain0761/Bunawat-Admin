@@ -85,7 +85,7 @@ const Small = styled('small')(({ bgcolor }) => ({
   boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
 }));
 
-const UserList = () => {
+const UserList = ({ data = [], type }) => {
   const { palette } = useTheme();
   const bgError = palette.error.main;
   const bgPrimary = palette.primary.main;
@@ -151,7 +151,7 @@ const UserList = () => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate(`/user/details/${id}`)
+                navigate(`/user/details/${type}/${id}`)
                 handleClose();
               }}>
               <Icon color="primary">edit</Icon>
@@ -174,7 +174,7 @@ const UserList = () => {
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader >
         <Title>User List</Title>
-        <Button onClick={() => navigate(`/user/details`)} sx={{
+        <Button onClick={() => navigate(`/user/add/${type}`)} sx={{
           backgroundColor: UIColor, color: "#fff",
           "&:hover": {
             backgroundColor: UIColor, color: "#fff"
@@ -189,7 +189,7 @@ const UserList = () => {
       <Box overflow="auto">
         <ProductTable>
           <DataGrid
-            rows={mockDataUserList}
+            rows={data}
             columns={columns}
             checkboxSelection
             disableColumnMenu

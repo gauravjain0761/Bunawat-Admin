@@ -7,6 +7,7 @@ export const navigations = [
       { name: 'Customers', iconText: 'SI', path: '/customer' },
       { name: 'Resellers', iconText: 'SI', path: '/reseller' },
       { name: 'Influncers', iconText: 'SI', path: '/influncer' },
+      { name: 'Add User', iconText: 'SI', path: '/user/add' },
     ],
   },
   {
@@ -14,6 +15,7 @@ export const navigations = [
     icon: 'dashboard',
     children: [
       { name: 'Category List', iconText: 'SI', path: '/category/list' },
+      { name: 'Add Category', iconText: 'SI', path: '/category/details' },
     ],
   },
 

@@ -1,5 +1,9 @@
 import Loadable from 'app/components/Loadable';
 import { lazy } from 'react';
+import AddUser from './addUser';
+import Customer from './role/customer';
+import Influncer from './role/influncer';
+import Reseller from './role/reseller';
 
 const UserList = Loadable(lazy(() => import('./userList')));
 const UserDetail = Loadable(lazy(() => import('./userDetail')));
@@ -10,12 +14,14 @@ const UserWishlist = Loadable(lazy(() => import('./userWishlist')));
 const GuestList = Loadable(lazy(() => import('./guestList')));
 
 const userRoute = [
-    { path: '/customer', element: <UserList /> },
-    { path: '/reseller', element: <UserList /> },
-    { path: '/influncer', element: <UserList /> },
-    { path: '/user/list', element: <UserList /> },
+    { path: '/customer', element: <Customer /> },
+    { path: '/reseller', element: <Reseller /> },
+    { path: '/influncer', element: <Influncer /> },
+    { path: '/user/add', element: <AddUser /> },
+    { path: '/user/add/:type', element: <AddUser /> },
+    // { path: '/user/list', element: <UserList /> },
     { path: '/user/details', element: <UserDetail /> },
-    { path: '/user/details/:id', element: <UserDetail /> },
+    { path: '/user/details/:type/:id', element: <UserDetail /> },
     { path: '/user/payment', element: <UserPayment /> },
     { path: '/user/payment/history', element: <UserPaymentHistory /> },
     { path: '/user/cart/details', element: <UserCartDetail /> },

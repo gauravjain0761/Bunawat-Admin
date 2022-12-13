@@ -29,7 +29,6 @@ const UserForm = ({ data = {} }) => {
         setFormData(data)
     }, [data])
 
-
     const handleSubmit = (event) => {
         console.log("submitted");
         console.log(event);
@@ -66,7 +65,13 @@ const UserForm = ({ data = {} }) => {
         city,
         address_one,
         address_two,
-        post_code
+        post_code,
+        pan_number,
+        type,
+        bankName,
+        bankAccountNumber,
+        bankIFSC,
+        upiID,
     } = formData;
 
     return (
@@ -131,6 +136,18 @@ const UserForm = ({ data = {} }) => {
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
+
+                            {(type == "reseller" || type == "influncer") &&
+                                <TextField
+                                    name="text"
+                                    type="pan_number"
+                                    label="Pan Number"
+                                    value={pan_number || ""}
+                                    onChange={handleChange}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+                            }
                         </Grid>
 
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -418,6 +435,83 @@ const UserForm = ({ data = {} }) => {
                             />
                         </Grid>
                     </Grid>
+                    {!(type == "reseller" || type == "influncer") && <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                <Icon>arrow_back</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
+                                <Icon>send</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                            </Button>
+                            <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                                <Icon>delete</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
+                            </Button>
+                        </Box>
+                        {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
+                                <Icon>star_rate</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/cart/details")}>
+                                <Icon>star_rate</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/payment/history")}>
+                                <Icon>star_rate</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
+                            </Button>
+                        </Box> */}
+                    </Box>
+                    }
+                </SimpleCard>
+
+                {(type == "reseller" || type == "influncer") && <SimpleCard title="User Account Details">
+                    <Grid container spacing={12}>
+                        <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+                            <TextField
+                                type="text"
+                                name="userName"
+                                id="standard-basic"
+                                value={bankName || ""}
+                                onChange={handleChange}
+                                label="Bank Name"
+                            />
+
+                            <TextField
+                                type="text"
+                                name="firstName"
+                                label="Bank Account Number"
+                                onChange={handleChange}
+                                value={bankAccountNumber || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <TextField
+                                type="text"
+                                name="lastName"
+                                label="Bank IFSC Code"
+                                onChange={handleChange}
+                                value={bankIFSC || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <TextField
+                                type="text"
+                                name="email"
+                                label="UPI ID"
+                                value={upiID || ""}
+                                onChange={handleChange}
+                                validators={["required", "isEmail"]}
+                                errorMessages={["this field is required", "email is not valid"]}
+                            />
+
+                        </Grid>
+                    </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
                             <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
@@ -449,7 +543,7 @@ const UserForm = ({ data = {} }) => {
                         </Box> */}
                     </Box>
                 </SimpleCard>
-
+                }
             </ValidatorForm>
         </div >
     );
