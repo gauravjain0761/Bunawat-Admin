@@ -33,6 +33,7 @@ import { mockDataProductAttribute } from 'fake-db/data/product/attribute/attribu
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { SimpleCard } from 'app/components';
 import { isMdScreen, isMobile } from 'app/utils/utils';
+import DeleteModel from 'app/views/models/deleteModel';
 
 const CardHeader = styled(Box)(() => ({
     display: 'flex',
@@ -132,7 +133,8 @@ const AttributeList = () => {
     } = formData;
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
+    const [open, setOpen] = useState(false);
+    const openAnchor = Boolean(anchorEl);
     const handleClick = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -168,11 +170,6 @@ const AttributeList = () => {
             flex: 1,
         },
         {
-            field: "orderBy",
-            headerName: "Order By",
-            flex: 1,
-        },
-        {
             field: "action",
             headerName: "Action",
             width: 150,
@@ -191,6 +188,7 @@ const AttributeList = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                setOpen(true);
                                 handleClose();
                             }}>
                             <Icon color="error">delete</Icon>
@@ -202,64 +200,50 @@ const AttributeList = () => {
     ];
 
     return (
-        <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <Stack spacing={3}>
-                <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                    <SimpleCard title="Add Attribute">
-                        <Grid container spacing={12}>
-                            <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+        <Card elevation={3} sx={{ mb: 3 }}>
+            <Container>
+                <Stack spacing={3}>
+                    <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+                        <SimpleCard title="Add Attribute">
+                            <Grid container spacing={12}>
+                                <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
 
-                                <TextField
-                                    type="text"
-                                    name="name"
-                                    label="Name"
-                                    onChange={handleChange}
-                                    value={name || ""}
-                                    validators={["required"]}
-                                    errorMessages={["this field is required"]}
-                                />
+                                    <TextField
+                                        type="text"
+                                        name="name"
+                                        label="Name"
+                                        onChange={handleChange}
+                                        value={name || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
 
-                                <TextField
-                                    type="text"
-                                    name="slug"
-                                    label="slug"
-                                    value={slug || ""}
-                                    onChange={handleChange}
-                                    validators={["required"]}
-                                    errorMessages={["this field is required"]}
-                                />
+                                    <TextField
+                                        type="text"
+                                        name="slug"
+                                        label="slug"
+                                        value={slug || ""}
+                                        onChange={handleChange}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
 
-                                <FormControl fullWidth sx={{ mb: 2 }}>
-                                    <InputLabel id="demo-simple-select-label">Order By</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={orderBy}
-                                        name="orderBy"
-                                        label="Order By"
-                                        onChange={handleChange}>
-                                        <MenuItem value="Custom ordering">Custom ordering</MenuItem>
-                                        <MenuItem value="Name">Name</MenuItem>
-                                        <MenuItem value="Name (numeric)">Name (numeric)</MenuItem>
-                                        <MenuItem value="Term ID">Term ID</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                </Grid>
 
                             </Grid>
-
-                        </Grid>
-                        <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                            <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                                <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                    <Icon>send</Icon>
-                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                                </Button>
+                            <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                                <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
+                                        <Icon>send</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                                    </Button>
+                                </Box>
                             </Box>
-                        </Box>
-                    </SimpleCard>
+                        </SimpleCard>
 
-                </ValidatorForm>
-            </Stack>
+                    </ValidatorForm>
+                </Stack>
+            </Container>
             <CardHeader sx={{ mt: 2 }}>
                 <Title>Attribute List</Title>
             </CardHeader>
@@ -274,6 +258,8 @@ const AttributeList = () => {
                     />
                 </ProductTable>
             </Box>
+
+            <DeleteModel open={open} handleClose={() => setOpen(false)} />
         </Card>
     );
 };

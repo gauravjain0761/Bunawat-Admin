@@ -137,10 +137,10 @@ const ProductForm = ({ data = {} }) => {
                                 <Icon>send</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
                             </Button>
-                            <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                            {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
                                 <Icon>delete</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
-                            </Button>
+                            </Button> */}
                         </Box>
                     </Box>
                 </SimpleCard>

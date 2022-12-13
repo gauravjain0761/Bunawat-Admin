@@ -1,11 +1,7 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
-import { SimpleCard } from "app/components";
-import CategoryForm from "app/views/category/categoryForm";
 import CollectionForm from "app/views/category/collectionForm";
-import UserForm from "app/views/users/userForm";
 import { mockDataCategoryManagement } from "fake-db/data/category/categoryManagement";
-import { mockDataUserList } from "fake-db/data/user/userList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 

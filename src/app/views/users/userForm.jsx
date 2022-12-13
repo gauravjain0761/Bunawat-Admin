@@ -24,14 +24,17 @@ import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { UIColor } from "app/utils/constant";
+import DeleteModel from "../models/deleteModel";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
     marginBottom: "16px",
 }));
 
-const UserForm = ({ data = {} }) => {
+const UserForm = ({ data = {}, userType }) => {
     const [formData, setFormData] = useState(data);
+    const [open, setOpen] = useState(false);
+
 
     const [expanded, setExpanded] = useState(false);
 
@@ -94,7 +97,7 @@ const UserForm = ({ data = {} }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="User Details" backArrow={true}>
+                <SimpleCard title={`${userType} Details`} backArrow={true}>
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             {/* <Box sx={{ mb: 3.5 }} display="flex" alignItems="center">
@@ -586,7 +589,7 @@ const UserForm = ({ data = {} }) => {
                             <Icon>send</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
                         </Button>
-                        <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                        <Button color="error" variant="contained" onClick={() => setOpen(true)} sx={{ mr: 2, mt: 2 }}>
                             <Icon>delete</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                         </Button>
@@ -607,6 +610,7 @@ const UserForm = ({ data = {} }) => {
                         </Box> */}
                 </Box>
             </ValidatorForm>
+            <DeleteModel open={open} handleClose={() => setOpen(false)} />
         </div >
     );
 };

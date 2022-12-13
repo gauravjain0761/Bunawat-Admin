@@ -24,6 +24,7 @@ import Avatar from 'react-avatar';
 import { UIColor } from 'app/utils/constant';
 import { mockDataProductSize } from 'fake-db/data/product/size/sizeList';
 import { mockDataProductColor } from 'fake-db/data/product/color/colorList';
+import DeleteModel from 'app/views/models/deleteModel';
 
 const CardHeader = styled(Box)(() => ({
     display: 'flex',
@@ -94,7 +95,8 @@ const ColorList = () => {
     const navigate = useNavigate();
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
+    const [open, setOpen] = useState(false);
+    const openAnchor = Boolean(anchorEl);
     const handleClick = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -147,6 +149,7 @@ const ColorList = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                setOpen(true);
                                 handleClose();
                             }}>
                             <Icon color="error">delete</Icon>
@@ -179,6 +182,8 @@ const ColorList = () => {
                     />
                 </ProductTable>
             </Box>
+
+            <DeleteModel open={open} handleClose={() => setOpen(false)} />
         </Card>
     );
 };

@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
 import { UIColor } from 'app/utils/constant';
 import { mockDataProductSize } from 'fake-db/data/product/size/sizeList';
+import DeleteModel from 'app/views/models/deleteModel';
 
 const CardHeader = styled(Box)(() => ({
     display: 'flex',
@@ -93,7 +94,8 @@ const SizeList = () => {
     const navigate = useNavigate();
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
+    const [open, setOpen] = useState(false);
+    const openAnchor = Boolean(anchorEl);
     const handleClick = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -146,6 +148,7 @@ const SizeList = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                setOpen(true);
                                 handleClose();
                             }}>
                             <Icon color="error">delete</Icon>
@@ -178,6 +181,8 @@ const SizeList = () => {
                     />
                 </ProductTable>
             </Box>
+
+            <DeleteModel open={open} handleClose={() => setOpen(false)} />
         </Card>
     );
 };

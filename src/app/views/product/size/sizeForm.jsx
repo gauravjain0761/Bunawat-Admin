@@ -19,6 +19,7 @@ import {
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
+import DeleteModel from "app/views/models/deleteModel";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
@@ -31,6 +32,7 @@ const TextField = styled(TextValidator)(() => ({
 
 const SizeForm = ({ data = {} }) => {
     const [formData, setFormData] = useState({ ...data, pCategory: "None" });
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
         setFormData({ ...data, pCategory: "None" })
@@ -118,7 +120,7 @@ const SizeForm = ({ data = {} }) => {
                                 <Icon>send</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
                             </Button>
-                            <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                            <Button onClick={() => setOpen(true)} color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
                                 <Icon>delete</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                             </Button>
@@ -141,6 +143,7 @@ const SizeForm = ({ data = {} }) => {
                 </SimpleCard>
 
             </ValidatorForm>
+            <DeleteModel open={open} handleClose={() => setOpen(false)} />
         </div >
     );
 };

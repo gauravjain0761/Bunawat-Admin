@@ -71,7 +71,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="ADD USER">
+                <SimpleCard title={`Add ${role ? role : "User"}`}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField

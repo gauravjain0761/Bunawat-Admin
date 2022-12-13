@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
 import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import { UIColor } from 'app/utils/constant';
+import DeleteModel from 'app/views/models/deleteModel';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -94,7 +95,8 @@ const CategoryList = () => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
+  const openAnchor = Boolean(anchorEl);
   const handleClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -147,6 +149,7 @@ const CategoryList = () => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                setOpen(true);
                 handleClose();
               }}>
               <Icon color="error">delete</Icon>
@@ -183,6 +186,7 @@ const CategoryList = () => {
           />
         </ProductTable>
       </Box>
+      <DeleteModel open={open} handleClose={() => setOpen(false)} />
     </Card>
   );
 };

@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
 import { isMobile } from 'app/utils/utils';
 import { UIColor } from 'app/utils/constant';
+import DeleteModel from 'app/views/models/deleteModel';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -87,6 +88,7 @@ const Small = styled('small')(({ bgcolor }) => ({
 
 const UserList = ({ data = [], type }) => {
   const { palette } = useTheme();
+  const [open, setOpen] = useState(false);
   const bgError = palette.error.main;
   const bgPrimary = palette.primary.main;
   const bgSecondary = palette.secondary.main;
@@ -94,7 +96,7 @@ const UserList = ({ data = [], type }) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const openAnchor = Boolean(anchorEl);
   const handleClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -160,6 +162,7 @@ const UserList = ({ data = [], type }) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                setOpen(true)
                 handleClose();
               }}>
               <Icon color="error">delete</Icon>
@@ -196,6 +199,8 @@ const UserList = ({ data = [], type }) => {
           />
         </ProductTable>
       </Box>
+
+      <DeleteModel open={open} handleClose={() => setOpen(false)} />
     </Card>
   );
 };
