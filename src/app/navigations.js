@@ -18,6 +18,15 @@ export const navigations = [
       { name: 'Add Category', iconText: 'SI', path: '/category/details' },
     ],
   },
+  {
+    name: 'Product Management',
+    icon: 'dashboard',
+    children: [
+      { name: 'Color', iconText: 'SI', path: '/product/color' },
+      { name: 'Size', iconText: 'SI', path: '/product/size' },
+      { name: 'Tag', iconText: 'SI', path: '/product/tag' },
+    ],
+  },
 
   // { name: 'User List', iconText: 'SI', path: '/user/list' },
   // { name: 'User details', iconText: 'SU', path: '/user/details' },
