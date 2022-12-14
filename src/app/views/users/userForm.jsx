@@ -257,7 +257,7 @@ const UserForm = ({ data = {}, userType }) => {
                     </Grid>
                 </SimpleCard>
 
-                {(type == "reseller") && <SimpleCard title="User Billing Address">
+                {(type == "reseller") && <SimpleCard title="Billing Address">
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField
@@ -372,7 +372,7 @@ const UserForm = ({ data = {}, userType }) => {
                 </SimpleCard>
                 }
 
-                {(type == "influncer") && <SimpleCard title="User Shipping Address">
+                {(type == "influncer") && <SimpleCard title="Shipping Address">
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField
@@ -532,7 +532,7 @@ const UserForm = ({ data = {}, userType }) => {
                     </AccordionDetails>
                 </Accordion> */}
 
-                {(type == "reseller" || type == "influncer") && <SimpleCard title="User Account Details">
+                {(type == "reseller" || type == "influncer") && <SimpleCard title="Account Details">
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField
