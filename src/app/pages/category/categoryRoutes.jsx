@@ -5,8 +5,10 @@ const CategoryList = Loadable(lazy(() => import('./categoryList')));
 const CategoryDetail = Loadable(lazy(() => import('./categoryDetail')));
 const CollectionList = Loadable(lazy(() => import('./collectionList')));
 const CollectionDetail = Loadable(lazy(() => import('./collectionDetail')));
+const CategoryAdd = Loadable(lazy(() => import('./categoryAdd')));
 
 const CategoryRoutes = [
+    { path: '/category/add', element: <CategoryAdd /> },
     { path: '/category/list', element: <CategoryList /> },
     { path: '/category/details', element: <CategoryDetail /> },
     { path: '/category/details/:id', element: <CategoryDetail /> },

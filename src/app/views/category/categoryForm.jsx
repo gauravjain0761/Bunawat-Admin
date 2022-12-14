@@ -69,7 +69,6 @@ const CategoryForm = ({ data = {} }) => {
                 <SimpleCard title="Category" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-
                             <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel id="demo-simple-select-label">Parent Category</InputLabel>
                                 <Select
@@ -81,7 +80,12 @@ const CategoryForm = ({ data = {} }) => {
                                     onChange={handleChange}>
                                     <MenuItem value="None">None</MenuItem>
                                     <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                    <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
+                                    <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
+                                    <MenuItem value="Skirt Sets">&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem>
                                     <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
+                                    <MenuItem value="Floor Length Anarkalis">&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
+                                    <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
                                     <MenuItem value="Lehengas">Lehengas</MenuItem>
                                     <MenuItem value="Shararas">Shararas</MenuItem>
                                     <MenuItem value="Shararas">Shararas</MenuItem>
