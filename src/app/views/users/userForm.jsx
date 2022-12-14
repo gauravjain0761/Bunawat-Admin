@@ -264,7 +264,7 @@ const UserForm = ({ data = {}, userType }) => {
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
                         aria-controls="panel1bh-content"
                         id="panel1bh-header">
-                        <Typography sx={{ width: '33%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
+                        <Typography sx={{ width: '50%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
                             Billing Address
                         </Typography>
                     </AccordionSummary>
@@ -390,7 +390,7 @@ const UserForm = ({ data = {}, userType }) => {
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
                         aria-controls="panel1bh-content"
                         id="panel1bh-header">
-                        <Typography sx={{ width: '33%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
+                        <Typography sx={{ width: '50%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
                             Shipping Address
                         </Typography>
                     </AccordionSummary>
@@ -516,7 +516,7 @@ const UserForm = ({ data = {}, userType }) => {
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
                         aria-controls="panel1bh-content"
                         id="panel1bh-header">
-                        <Typography sx={{ width: '33%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
+                        <Typography sx={{ width: '50%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
                             Account Details
                         </Typography>
                     </AccordionSummary>
