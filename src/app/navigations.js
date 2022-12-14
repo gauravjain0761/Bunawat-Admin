@@ -17,6 +17,7 @@ export const navigations = [
       { name: 'Category List', iconText: 'SI', path: '/category/list' },
       { name: 'Add Category', iconText: 'SI', path: '/category/details' },
       { name: 'Parent Category', iconText: 'SI', path: '/category/add' },
+      { name: 'Sub Category', iconText: 'SI', path: '/category/sub/add' },
       { name: 'Collection List', iconText: 'SI', path: '/collection/list' },
       { name: 'Add Collection', iconText: 'SI', path: '/collection/details' },
     ],

@@ -88,7 +88,6 @@ const CategoryForm = ({ data = {} }) => {
                                     <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
                                     <MenuItem value="Lehengas">Lehengas</MenuItem>
                                     <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
                                     <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
                                 </Select>
                             </FormControl>

@@ -35,7 +35,7 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { SimpleCard } from 'app/components';
 import { isMdScreen, isMobile } from 'app/utils/utils';
 import DeleteModel from 'app/views/models/deleteModel';
-import { mockDataCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
+import { mockDataCategoryTreeManagement, mockDataSubCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
 
 const CardHeader = styled(Box)(() => ({
     display: 'flex',
@@ -102,7 +102,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const CategoryAdd = () => {
+const SubCategoryAdd = () => {
     const { palette } = useTheme();
     const bgError = palette.error.main;
     const bgPrimary = palette.primary.main;
@@ -155,6 +155,11 @@ const CategoryAdd = () => {
             cellClassName: "name-column--cell",
         },
         {
+            field: "subCategory",
+            headerName: "Sub Category",
+            flex: 1,
+        },
+        {
             field: "active",
             headerName: "Active",
             flex: 1,
@@ -203,16 +208,34 @@ const CategoryAdd = () => {
             <Container>
                 <Stack spacing={3} sx={{ mx: 2 }}>
                     <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                        <SimpleCard title="Add Parent Category">
+                        <SimpleCard title="Add Parent Sub Category">
                             <Grid container spacing={12}>
                                 <Grid item lg={12} md={12} sm={12} xs={12}>
 
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel id="demo-simple-select-label">Select your category</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={pCategory}
+                                            name="pCategory"
+                                            label="Select your category"
+                                            onChange={handleChange}>
+                                            <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                            <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
+                                            <MenuItem value="Lehengas">Lehengas</MenuItem>
+                                            <MenuItem value="Shararas">Shararas</MenuItem>
+                                            <MenuItem value="Shararas">Shararas</MenuItem>
+                                            <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
                                     <TextField
                                         type="text"
-                                        name="name"
-                                        label="Enter category name"
+                                        name="subName"
+                                        label="Enter subcategory name"
                                         onChange={handleChange}
-                                        value={name || ""}
+                                        value={subName || ""}
                                         validators={["required"]}
                                         errorMessages={["this field is required"]}
                                     />
@@ -234,12 +257,12 @@ const CategoryAdd = () => {
                 </Stack>
             </Container>
             <CardHeader sx={{ mt: 2 }}>
-                <Title>Category List</Title>
+                <Title>Sub Category List</Title>
             </CardHeader>
             <Box overflow="auto" sx={{ mt: 2 }}>
                 <ProductTable>
                     <DataGrid
-                        rows={mockDataCategoryTreeManagement}
+                        rows={mockDataSubCategoryTreeManagement}
                         columns={columns}
                         checkboxSelection
                         disableSelectionOnClick
@@ -253,4 +276,4 @@ const CategoryAdd = () => {
     );
 };
 
-export default CategoryAdd;
+export default SubCategoryAdd;
