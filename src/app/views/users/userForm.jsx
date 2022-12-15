@@ -58,7 +58,7 @@ const UserForm = ({ data = {}, userType }) => {
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "mobile") {
+        if (event.target.name == "mobile" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalcommissionType") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -531,7 +531,6 @@ const UserForm = ({ data = {}, userType }) => {
                 </Accordion>
                 }
 
-
                 {(type == "influncer") && <Accordion expanded={expanded === 'Commission'} onChange={handleChangeExpand('Commission')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
@@ -581,7 +580,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 </Box>
 
                                 <FormControl>
-                                    <FormLabel id="demo-row-radio-buttons-group-label">Commission Type</FormLabel>
+                                    <FormLabel id="demo-row-radio-buttons-group-label"> Base Commission Type</FormLabel>
                                     <RadioGroup
                                         row
                                         value={commissionType ?? "Fixed"}
@@ -615,7 +614,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 />
 
                                 <FormControl>
-                                    <FormLabel id="demo-row-radio-buttons-group-label">Commission Type</FormLabel>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Additional Commission Type</FormLabel>
                                     <RadioGroup
                                         row
                                         value={additionalcommissionType ?? "Percentage"}
@@ -716,7 +715,7 @@ const UserForm = ({ data = {}, userType }) => {
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                         </Button>
                     </Box>
-                    <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                    {(type == "customer") && <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
                         <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
                         // onClick={() => navigate("/user/wishlist")}
                         >
@@ -736,6 +735,7 @@ const UserForm = ({ data = {}, userType }) => {
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
                         </Button>
                     </Box>
+                    }
                 </Box>
             </ValidatorForm>
             <DeleteModel open={open} handleClose={() => setOpen(false)} />

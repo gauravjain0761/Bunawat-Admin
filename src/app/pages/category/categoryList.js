@@ -126,11 +126,6 @@ const CategoryList = () => {
       cellClassName: "name-column--cell",
     },
     {
-      field: "description",
-      headerName: "Description",
-      flex: 1,
-    },
-    {
       field: "slug",
       headerName: "Code",
       flex: 1,
