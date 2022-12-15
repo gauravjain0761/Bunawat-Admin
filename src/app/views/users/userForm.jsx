@@ -19,12 +19,14 @@ import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isMdScreen, isMobile } from "app/utils/utils";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { UIColor } from "app/utils/constant";
 import DeleteModel from "../models/deleteModel";
+import ReactDatePicker from "react-datepicker";
+import { format } from "date-fns";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -34,7 +36,9 @@ const TextField = styled(TextValidator)(() => ({
 const UserForm = ({ data = {}, userType }) => {
     const [formData, setFormData] = useState(data);
     const [open, setOpen] = useState(false);
-
+    const [isOpenStart, setIsOpenStart] = useState(false);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
 
     const [expanded, setExpanded] = useState(false);
 
@@ -91,8 +95,25 @@ const UserForm = ({ data = {}, userType }) => {
         bankIFSC,
         upiID,
         customerType,
-        agencyName
+        agencyName,
+        commissionType,
+        baseCommission,
+        thresholdCommission,
+        additionalcommissionType,
+        additionalCommission
     } = formData;
+
+    const DateCustomInput = ({ value, label, onClick, className }) => (
+        <TextField
+            type="text"
+            name={label}
+            className={className}
+            id="standard-basic"
+            value={value || ""}
+            onClick={onClick}
+            label={label}
+        />
+    );
 
     return (
         <div>
@@ -170,7 +191,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 />
                             }
 
-                            {type == "customer" &&
+                            {/* {type == "customer" &&
                                 <FormControl>
                                     <FormLabel id="demo-row-radio-buttons-group-label">Customer Type</FormLabel>
                                     <RadioGroup
@@ -183,7 +204,7 @@ const UserForm = ({ data = {}, userType }) => {
                                         <FormControlLabel value="Passive" control={<Radio />} label="Passive" />
                                     </RadioGroup>
                                 </FormControl>
-                            }
+                            } */}
 
                             {(type == "influncer") &&
                                 <TextField
@@ -510,6 +531,118 @@ const UserForm = ({ data = {}, userType }) => {
                 </Accordion>
                 }
 
+
+                {(type == "influncer") && <Accordion expanded={expanded === 'Commission'} onChange={handleChangeExpand('Commission')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
+                    <AccordionSummary
+                        sx={{ backgroundColor: UIColor, color: "#fff" }}
+                        expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header">
+                        <Typography sx={{ width: '50%', flexShrink: 0, fontSize: "1rem", fontWeight: 500, textTransform: "capitalize" }}>
+                            Commission Details
+                        </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ border: `2px solid ${UIColor}`, borderRadius: "0 0 8px 8px" }}>
+                        <Grid container spacing={12}>
+                            <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+
+                                <Box display="flex" alignItems="center" sx={{
+                                    width: "50%",
+
+                                    "& .react-datepicker-popper": {
+                                        zIndex: "999"
+                                    },
+                                    "& .startDate": {
+                                        mr: "10px"
+                                    },
+                                    "& .endDate": {
+                                        ml: "10px"
+                                    }
+                                }}>
+                                    <ReactDatePicker
+                                        selected={startDate}
+                                        onChange={(date) => setStartDate(date)}
+                                        selectsStart
+                                        className="startDate"
+                                        customInput={<DateCustomInput label="Start Date" className="startDate" />}
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                    />
+                                    <ReactDatePicker
+                                        selected={endDate}
+                                        onChange={(date) => setEndDate(date)}
+                                        selectsEnd
+                                        customInput={<DateCustomInput label="End Date" className="endDate" />}
+                                        className="endDate"
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        minDate={startDate}
+                                    />
+                                </Box>
+
+                                <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Commission Type</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        value={commissionType ?? "Fixed"}
+                                        onChange={handleChange}
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="commissionType">
+                                        <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
+                                        <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
+                                    </RadioGroup>
+                                </FormControl>
+
+                                <TextField
+                                    type="text"
+                                    name="baseCommission"
+                                    id="standard-basic"
+                                    value={baseCommission || ""}
+                                    onChange={handleChange}
+                                    label="Base Commission"
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="text"
+                                    name="thresholdCommission"
+                                    label="Threshold Commission"
+                                    onChange={handleChange}
+                                    value={thresholdCommission || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Commission Type</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        value={additionalcommissionType ?? "Percentage"}
+                                        onChange={handleChange}
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="additionalcommissionType">
+                                        <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
+                                        <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
+                                    </RadioGroup>
+                                </FormControl>
+
+                                <TextField
+                                    type="text"
+                                    name="additionalCommission"
+                                    label="Additional Commission"
+                                    onChange={handleChange}
+                                    value={additionalCommission || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                            </Grid>
+                        </Grid>
+                    </AccordionDetails>
+                </Accordion>
+                }
+
                 {(type == "reseller" || type == "influncer") && <Accordion expanded={expanded === 'Account'} onChange={handleChangeExpand('Account')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
@@ -583,20 +716,26 @@ const UserForm = ({ data = {}, userType }) => {
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                         </Button>
                     </Box>
-                    {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/cart/details")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/payment/history")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
-                            </Button>
-                        </Box> */}
+                    <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                        <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
+                        // onClick={() => navigate("/user/wishlist")}
+                        >
+                            <Icon>star_rate</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
+                        </Button>
+                        <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
+                        // onClick={() => navigate("/user/cart/details")}
+                        >
+                            <Icon>star_rate</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
+                        </Button>
+                        <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
+                        // onClick={() => navigate("/user/payment/history")}
+                        >
+                            <Icon>star_rate</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
+                        </Button>
+                    </Box>
                 </Box>
             </ValidatorForm>
             <DeleteModel open={open} handleClose={() => setOpen(false)} />

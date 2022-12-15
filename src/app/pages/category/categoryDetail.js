@@ -17,7 +17,7 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const CategoryDetail = () => {
-    const { id } = useParams();
+    const { id, type } = useParams();
     const [data, setData] = useState({});
 
     useEffect(() => {
@@ -26,11 +26,10 @@ const CategoryDetail = () => {
         }
     }, [id])
 
-    console.log(data)
     return (
         <Container>
             <Stack spacing={3}>
-                <CategoryForm data={data} />
+                <CategoryForm data={data} type={type} />
             </Stack>
         </Container>
     );

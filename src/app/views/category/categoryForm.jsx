@@ -16,6 +16,7 @@ import {
     RadioGroup,
     Select,
     styled,
+    Typography,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
@@ -23,24 +24,31 @@ import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
     marginBottom: "16px",
 }));
 
-const CategoryForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState({ ...data, pCategory: "None" });
+const CategoryForm = ({ data = {}, type }) => {
+    const [formData, setFormData] = useState({ ...data, pCategory: "None", sCategory: "None" });
     const navigate = useNavigate();
+    let [searchParams, setSearchParams] = useSearchParams();
+
     useEffect(() => {
-        setFormData({ ...data, pCategory: "None" })
+        setFormData({ ...data, pCategory: "None", sCategory: "None" })
     }, [data])
 
 
     const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
+        if (!searchParams.get("redirect")) {
+            alert("Success")
+            console.log("submitted");
+            console.log(event);
+        } else {
+            navigate(`/category/details/${searchParams.get("redirect")}`)
+        }
     };
 
     const handleChange = (event) => {
@@ -57,40 +65,81 @@ const CategoryForm = ({ data = {} }) => {
         name,
         slug,
         description,
-        count,
+        sCategory,
         pCategory,
         visibility,
-        product_id
+        categoryCode
     } = formData;
+
+    const getTitle = () => {
+        if (type == "parent") {
+            return "Parent Category"
+        } else if (type == "sub") {
+            return "Parent Sub Category"
+        } else if (type == "list") {
+            return "Category"
+        } else {
+            return "Category"
+        }
+    };
 
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="Category" backArrow={true}>
+                <SimpleCard title={getTitle()} backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Parent Category</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={pCategory}
-                                    name="pCategory"
-                                    label="Parent Category"
-                                    onChange={handleChange}>
-                                    <MenuItem value="None">None</MenuItem>
-                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                    <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
-                                    <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
-                                    <MenuItem value="Skirt Sets">&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem>
-                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                    <MenuItem value="Floor Length Anarkalis">&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
-                                    <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
-                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
-                                </Select>
-                            </FormControl>
+
+                            {(type == "sub" || type == "list") &&
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Parent Category</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={pCategory}
+                                        name="pCategory"
+                                        label="Parent Category"
+                                        onChange={handleChange}>
+                                        <MenuItem value="None">None</MenuItem>
+                                        <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                        {/* <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
+                                        <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
+                                        <MenuItem value="Skirt Sets">&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem> */}
+                                        <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
+                                        {/* <MenuItem value="Floor Length Anarkalis">&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
+                                        <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem> */}
+                                        <MenuItem value="Lehengas">Lehengas</MenuItem>
+                                        <MenuItem value="Shararas">Shararas</MenuItem>
+                                        <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                    </Select>
+                                    <Typography onClick={() => navigate(`/category/details/parent?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
+                                        Add Parent Category
+                                    </Typography>
+                                </FormControl>
+                            }
+
+                            {(type == "list") &&
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Parent Sub Category</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={sCategory}
+                                        name="sCategory"
+                                        label="Parent Sub Category"
+                                        onChange={handleChange}>
+                                        <MenuItem value="None">None</MenuItem>
+                                        <MenuItem value="Palazzo Sets">Palazzo Sets</MenuItem>
+                                        <MenuItem value="Pant Sets">Pant Sets</MenuItem>
+                                        <MenuItem value="Skirt Sets">Skirt Sets</MenuItem>
+                                        <MenuItem value="Floor Length Anarkalis">Floor Length Anarkalis</MenuItem>
+                                        <MenuItem value="Gowns">Gowns</MenuItem>
+                                    </Select>
+                                    <Typography onClick={() => navigate(`/category/details/sub?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
+                                        Add Parent Sub Category
+                                    </Typography>
+                                </FormControl>
+                            }
 
                             <TextField
                                 type="text"
@@ -98,18 +147,14 @@ const CategoryForm = ({ data = {} }) => {
                                 label="Name"
                                 onChange={handleChange}
                                 value={name || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
                             />
 
                             <TextField
                                 type="text"
                                 name="slug"
-                                label="slug"
+                                label="Slug"
                                 value={slug || ""}
                                 onChange={handleChange}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
                             />
                             <TextField
                                 type="text"
@@ -117,8 +162,13 @@ const CategoryForm = ({ data = {} }) => {
                                 label="Description"
                                 onChange={handleChange}
                                 value={description || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
+                            />
+                            <TextField
+                                type="text"
+                                name="categoryCode"
+                                label="Category Code"
+                                onChange={handleChange}
+                                value={categoryCode || ""}
                             />
 
                             <FormControl sx={{}} component="fieldset" variant="standard">
@@ -145,7 +195,7 @@ const CategoryForm = ({ data = {} }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                            <Button color="primary" variant="contained" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>

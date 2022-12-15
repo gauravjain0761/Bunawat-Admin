@@ -19,6 +19,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
+    Typography,
     useTheme,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -54,7 +55,7 @@ const Title = styled('span')(() => ({
 
 const ProductTable = styled(Table)(() => ({
     minWidth: 400,
-    height: '50vh',
+    height: '75vh',
     padding: "20px",
     whiteSpace: 'pre',
     '& small': {
@@ -150,26 +151,47 @@ const SubCategoryAdd = () => {
         { field: "id", headerName: "ID", flex: 0.5 },
         {
             field: "category",
-            headerName: "Category",
+            headerName: "Parent Category",
+            flex: 1,
+        },
+        {
+            field: "name",
+            headerName: "Name",
             flex: 1,
             cellClassName: "name-column--cell",
         },
         {
-            field: "subCategory",
-            headerName: "Sub Category",
+            field: "description",
+            headerName: "Description",
+            flex: 1,
+        },
+        {
+            field: "slug",
+            headerName: "Code",
+            flex: 1,
+        },
+        {
+            field: "count",
+            headerName: "Count",
             flex: 1,
         },
         {
             field: "active",
-            headerName: "Active",
+            headerName: "Status",
             flex: 1,
             renderCell: ({ row: { active } }) => {
                 return (
-                    <Box display="flex" alignItems="center">
-                        <Checkbox
-                            defaultChecked={active}
-                        />
-                    </Box >
+                    <>
+                        {active ?
+                            <Typography sx={{ width: 'fit-content', flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                Active
+                            </Typography>
+                            :
+                            <Typography sx={{ width: 'fit-content', flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                InActive
+                            </Typography>
+                        }
+                    </>
                 );
             }
         },
@@ -205,59 +227,14 @@ const SubCategoryAdd = () => {
 
     return (
         <Card elevation={3} sx={{ mb: 3 }}>
-            <Container>
-                <Stack spacing={3} sx={{ mx: 2 }}>
-                    <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                        <SimpleCard title="Add Parent Sub Category">
-                            <Grid container spacing={12}>
-                                <Grid item lg={12} md={12} sm={12} xs={12}>
-
-                                    <FormControl fullWidth sx={{ mb: 2 }}>
-                                        <InputLabel id="demo-simple-select-label">Select your category</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={pCategory}
-                                            name="pCategory"
-                                            label="Select your category"
-                                            onChange={handleChange}>
-                                            <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                            <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                            <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                            <MenuItem value="Shararas">Shararas</MenuItem>
-                                            <MenuItem value="Shararas">Shararas</MenuItem>
-                                            <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
-                                        </Select>
-                                    </FormControl>
-
-                                    <TextField
-                                        type="text"
-                                        name="subName"
-                                        label="Enter subcategory name"
-                                        onChange={handleChange}
-                                        value={subName || ""}
-                                        validators={["required"]}
-                                        errorMessages={["this field is required"]}
-                                    />
-
-                                </Grid>
-
-                            </Grid>
-                            <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                                <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                        <Icon>send</Icon>
-                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </SimpleCard>
-
-                    </ValidatorForm>
-                </Stack>
-            </Container>
             <CardHeader sx={{ mt: 2 }}>
-                <Title>Sub Category List</Title>
+                <Title>Parent Sub Category List</Title>
+                <Button onClick={() => navigate(`/category/details/sub`)} sx={{
+                    backgroundColor: UIColor, color: "#fff",
+                    "&:hover": {
+                        backgroundColor: UIColor, color: "#fff"
+                    }
+                }}>Add Parent Sub Category</Button>
             </CardHeader>
             <Box overflow="auto" sx={{ mt: 2 }}>
                 <ProductTable>

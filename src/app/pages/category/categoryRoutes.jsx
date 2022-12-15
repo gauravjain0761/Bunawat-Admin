@@ -5,15 +5,16 @@ const CategoryList = Loadable(lazy(() => import('./categoryList')));
 const CategoryDetail = Loadable(lazy(() => import('./categoryDetail')));
 const CollectionList = Loadable(lazy(() => import('./collectionList')));
 const CollectionDetail = Loadable(lazy(() => import('./collectionDetail')));
-const CategoryAdd = Loadable(lazy(() => import('./categoryAdd')));
-const SubCategoryAdd = Loadable(lazy(() => import('./subCategoryAdd')));
+const ParentCategory = Loadable(lazy(() => import('./parentCategory')));
+const SubCategory = Loadable(lazy(() => import('./subCategory')));
 
 const CategoryRoutes = [
-    { path: '/category/add', element: <CategoryAdd /> },
-    { path: '/category/sub/add', element: <SubCategoryAdd /> },
+    { path: '/category/parent', element: <ParentCategory /> },
+    { path: '/category/sub', element: <SubCategory /> },
     { path: '/category/list', element: <CategoryList /> },
     { path: '/category/details', element: <CategoryDetail /> },
-    { path: '/category/details/:id', element: <CategoryDetail /> },
+    { path: '/category/details/:type', element: <CategoryDetail /> },
+    { path: '/category/details/:type/:id', element: <CategoryDetail /> },
     { path: '/collection/list', element: <CollectionList /> },
     { path: '/collection/details', element: <CollectionDetail /> },
     { path: '/collection/details/:id', element: <CollectionDetail /> },

@@ -13,6 +13,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
   useTheme,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -109,6 +110,16 @@ const CategoryList = () => {
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
     {
+      field: "category",
+      headerName: "Parent Category",
+      flex: 1,
+    },
+    {
+      field: "subCategory",
+      headerName: "Parent Sub Category",
+      flex: 1,
+    },
+    {
       field: "name",
       headerName: "Name",
       flex: 1,
@@ -121,13 +132,33 @@ const CategoryList = () => {
     },
     {
       field: "slug",
-      headerName: "Slug",
+      headerName: "Code",
       flex: 1,
     },
     {
       field: "count",
       headerName: "Count",
       flex: 1,
+    },
+    {
+      field: "active",
+      headerName: "Status",
+      flex: 1,
+      renderCell: ({ row: { active } }) => {
+        return (
+          <>
+            {active ?
+              <Typography sx={{ width: 'fit-content', flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                Active
+              </Typography>
+              :
+              <Typography sx={{ width: 'fit-content', flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                InActive
+              </Typography>
+            }
+          </>
+        );
+      }
     },
     {
       field: "action",
@@ -164,7 +195,7 @@ const CategoryList = () => {
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
         <Title>Category List</Title>
-        <Button onClick={() => navigate(`/category/details`)} sx={{
+        <Button onClick={() => navigate(`/category/details/list`)} sx={{
           backgroundColor: UIColor, color: "#fff",
           "&:hover": {
             backgroundColor: UIColor, color: "#fff"
