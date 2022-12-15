@@ -141,7 +141,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 </Select>
                             </FormControl>
 
-                            {role == "Customer" &&
+                            {/* {role == "Customer" &&
                                 <FormControl sx={{ mt: 2 }}>
                                     <FormLabel id="demo-row-radio-buttons-group-label">Customer Type</FormLabel>
                                     <RadioGroup
@@ -154,7 +154,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                         <FormControlLabel value="Passive" control={<Radio />} label="Passive" />
                                     </RadioGroup>
                                 </FormControl>
-                            }
+                            } */}
                         </Grid>
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
