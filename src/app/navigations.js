@@ -15,7 +15,7 @@ export const navigations = [
     icon: 'dashboard',
     children: [
       { name: 'Parent Category', iconText: 'SI', path: '/category/parent' },
-      { name: 'Sub Parent Category', iconText: 'SI', path: '/category/sub' },
+      { name: 'Parent Sub Category', iconText: 'SI', path: '/category/sub' },
       { name: 'Category', iconText: 'SI', path: '/category/list' },
       // { name: 'Add Category', iconText: 'SI', path: '/category/details' },
       { name: 'Collection List', iconText: 'SI', path: '/collection/list' },

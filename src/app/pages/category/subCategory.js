@@ -151,12 +151,12 @@ const SubCategoryAdd = () => {
         { field: "id", headerName: "ID", flex: 0.5 },
         {
             field: "category",
-            headerName: "Parent Category",
+            headerName: "Parent Category Name",
             flex: 1,
         },
         {
             field: "name",
-            headerName: "Name",
+            headerName: "Parent Sub Category Name",
             flex: 1,
             cellClassName: "name-column--cell",
         },

@@ -32,12 +32,12 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const CategoryForm = ({ data = {}, type }) => {
-    const [formData, setFormData] = useState({ ...data, pCategory: "None", sCategory: "None" });
+    const [formData, setFormData] = useState(data);
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
-        setFormData({ ...data, pCategory: "None", sCategory: "None" })
+        setFormData(data)
     }, [data])
 
 
@@ -100,7 +100,6 @@ const CategoryForm = ({ data = {}, type }) => {
                                         name="pCategory"
                                         label="Parent Category"
                                         onChange={handleChange}>
-                                        <MenuItem value="None">None</MenuItem>
                                         <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
                                         {/* <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
                                         <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
@@ -128,7 +127,6 @@ const CategoryForm = ({ data = {}, type }) => {
                                         name="sCategory"
                                         label="Parent Sub Category"
                                         onChange={handleChange}>
-                                        <MenuItem value="None">None</MenuItem>
                                         <MenuItem value="Palazzo Sets">Palazzo Sets</MenuItem>
                                         <MenuItem value="Pant Sets">Pant Sets</MenuItem>
                                         <MenuItem value="Skirt Sets">Skirt Sets</MenuItem>
@@ -166,7 +164,7 @@ const CategoryForm = ({ data = {}, type }) => {
                             <TextField
                                 type="text"
                                 name="categoryCode"
-                                label="Category Code"
+                                label="Code"
                                 onChange={handleChange}
                                 value={categoryCode || ""}
                             />

@@ -111,17 +111,17 @@ const CategoryList = () => {
     { field: "id", headerName: "ID", flex: 0.5 },
     {
       field: "category",
-      headerName: "Parent Category",
+      headerName: "Parent Category Name",
       flex: 1,
     },
     {
       field: "subCategory",
-      headerName: "Parent Sub Category",
+      headerName: "Parent Sub Category Name",
       flex: 1,
     },
     {
       field: "name",
-      headerName: "Name",
+      headerName: "Category Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },

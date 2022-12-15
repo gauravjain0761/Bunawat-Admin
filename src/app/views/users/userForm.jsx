@@ -58,7 +58,7 @@ const UserForm = ({ data = {}, userType }) => {
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "mobile" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalcommissionType") {
+        if (event.target.name == "mobile" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
