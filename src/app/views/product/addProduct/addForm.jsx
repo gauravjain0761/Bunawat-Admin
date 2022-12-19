@@ -56,7 +56,7 @@ const ProductForm = ({ data = {} }) => {
         } else if (event.target.name == "videos") {
             const videos = formData[event.target.name] ?? []
             setFormData({ ...formData, [event.target.name]: [...videos, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
-        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "reSellerPrice") {
+        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "reSellerPrice" || event.target.name == "partyCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -105,6 +105,7 @@ const ProductForm = ({ data = {} }) => {
 
     const {
         category,
+        collection,
         designNo,
         name,
         description,
@@ -113,7 +114,9 @@ const ProductForm = ({ data = {} }) => {
         mrp,
         salePrice,
         reSellerPrice,
-        partyCommissionType
+        partyCommissionType,
+        partyCommission,
+        taxType
     } = formData;
 
     return (
@@ -124,22 +127,53 @@ const ProductForm = ({ data = {} }) => {
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                             <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
-                                <Select native id="grouped-native-select" label="Category"
+                                <Select id="grouped-native-select" label="Category"
                                     value={category}
                                     name="category"
                                     onChange={handleChange}>
-                                    <optgroup label="Ethnic Sets">
-                                        <option value="Palazzo Sets">Palazzo Sets</option>
-                                        <option value="Pant Sets">Pant Sets</option>
-                                        <option value="Skirt Sets">Skirt Sets</option>
-                                    </optgroup>
-                                    <optgroup label="Floor Length Designs">
-                                        <option value="Floor Length Anarkalis">Floor Length Anarkalis</option>
-                                        <option value="Gowns">Gowns</option>
-                                    </optgroup>
-                                    <option value="Lehengas">Lehengas</option>
-                                    <option value="Shararas">Shararas</option>
-                                    <option value="Stylised Drapes">Stylised Drapes</option>
+                                    <MenuItem value="Ethnic Sets" disabled sx={{
+                                        fontWeight: 600,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>Ethnic Sets</MenuItem>
+                                    <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
+                                    <MenuItem value="Pant Sets" disabled sx={{
+                                        fontWeight: 600,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
+                                    <MenuItem value="Shararas">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shararas</MenuItem>
+                                    <MenuItem value="Lehengas">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lehengas</MenuItem>
+                                    <MenuItem value="Skirt Sets">&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem>
+                                    <MenuItem value="Floor Length Designs" disabled sx={{
+                                        fontWeight: 600,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>Floor Length Designs</MenuItem>
+                                    <MenuItem value="Floor Length Anarkalis">&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
+                                    <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
+                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
+                                    <MenuItem value="Shararas">Shararas</MenuItem>
+                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+
+                                </Select>
+                            </FormControl>
+
+                            <FormControl fullWidth sx={{ mb: 2 }}>
+                                <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={collection}
+                                    name="collection"
+                                    label="Collection"
+                                    onChange={handleChange}>
+                                    <MenuItem disabled value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
+                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
+                                    <MenuItem value="Shararas">Shararas</MenuItem>
+                                    <MenuItem value="Shararas">Shararas</MenuItem>
+                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -183,30 +217,26 @@ const ProductForm = ({ data = {} }) => {
                                         <Box key={i}
                                             sx={{
                                                 width: "160px",
-                                                height: "160px",
+                                                height: "200px",
                                                 margin: "10px 10px 0 0",
                                                 position: "relative"
                                             }}>
-                                            <Switch
-                                                sx={{
-                                                    position: "absolute",
-                                                    left: "5px",
-                                                    top: "5px",
+                                            <img src={img.url} width="100%" height="160px" />
+                                            <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
+                                                <Switch
+                                                    sx={{
+                                                        color: "red",
+                                                        cursor: "pointer"
+                                                    }}
+                                                    checked={img.checked}
+                                                    onChange={() => handleSwitchImage(i)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{img.checked ? "Active" : "InActive"}</Span>
+                                                <Icon onClick={() => handleDeleteImage(i)} sx={{
                                                     color: "red",
-                                                    cursor: "pointer"
-                                                }}
-                                                checked={img.checked}
-                                                onChange={() => handleSwitchImage(i)}
-                                                inputProps={{ 'aria-label': 'controlled' }}
-                                            />
-                                            <Icon onClick={() => handleDeleteImage(i)} sx={{
-                                                position: "absolute",
-                                                right: "5px",
-                                                top: "5px",
-                                                color: "red",
-                                                cursor: "pointer"
-                                            }}>delete</Icon>
-                                            <img src={img.url} width="100%" height="100%" />
+                                                    cursor: "pointer",
+                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                            </Box>
                                         </Box>
                                     ))}
                                     <Button
@@ -244,35 +274,31 @@ const ProductForm = ({ data = {} }) => {
                                         <Box key={i}
                                             sx={{
                                                 width: "160px",
-                                                height: "160px",
-                                                margin: "10px 10px 0 0",
+                                                height: "200px",
+                                                margin: "20px 10px 0 0",
                                                 position: "relative"
                                             }}>
-                                            <Switch
-                                                sx={{
-                                                    position: "absolute",
-                                                    left: "5px",
-                                                    top: "5px",
-                                                    color: "red",
-                                                    cursor: "pointer",
-                                                    zIndex: "999"
-                                                }}
-                                                checked={video.checked}
-                                                onChange={() => handleSwitchVideo(i, 4)}
-                                                inputProps={{ 'aria-label': 'controlled' }}
-                                            />
-                                            <Icon onClick={() => handleDeleteVideo(i)} sx={{
-                                                position: "absolute",
-                                                right: "5px",
-                                                top: "5px",
-                                                color: "red",
-                                                cursor: "pointer",
-                                                zIndex: "999"
-                                            }}>delete</Icon>
-                                            <video width="100%" height="100%" autoPlay={true} muted={true} loop={true} playsInline={true}
+                                            <video width="100%" height="160px" autoPlay={true} muted={true} loop={true} playsInline={true}
                                                 style={{ objectFit: "fill", borderRadius: "10px" }}>
                                                 <source src={video.url} type="video/mp4" />
                                             </video>
+                                            <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
+                                                <Switch
+                                                    sx={{
+                                                        color: "red",
+                                                        cursor: "pointer",
+                                                        zIndex: "999"
+                                                    }}
+                                                    checked={video.checked}
+                                                    onChange={() => handleSwitchVideo(i, 4)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{video.checked ? "Active" : "InActive"}</Span>
+                                                <Icon onClick={() => handleDeleteVideo(i)} sx={{
+                                                    color: "red",
+                                                    cursor: "pointer",
+                                                    zIndex: "999"
+                                                }}>delete</Icon> <Span onClick={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                            </Box>
                                         </Box>
                                     ))}
                                     <Button
@@ -284,7 +310,7 @@ const ProductForm = ({ data = {} }) => {
                                             background: "transparent",
                                             color: "#000",
                                             border: "2px dashed",
-                                            margin: "10px 10px 0 0",
+                                            margin: "20px 10px 0 0",
 
                                             "&:hover": {
                                                 background: "transparent",
@@ -306,6 +332,7 @@ const ProductForm = ({ data = {} }) => {
                             <TextField
                                 type="text"
                                 name="mrp"
+                                sx={{ mt: 1 }}
                                 label="MRP"
                                 onChange={handleChange}
                                 value={mrp || ""}
@@ -345,43 +372,30 @@ const ProductForm = ({ data = {} }) => {
                                     <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
                                 </RadioGroup>
                             </FormControl>
-                            {/* <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={category}
-                                    name="category"
-                                    label="Category"
-                                    onChange={handleChange}>
-                                    <MenuItem value="None">None</MenuItem>
-                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
-                                </Select>
-                            </FormControl>
+
+                            <TextField
+                                type="text"
+                                name="partyCommission"
+                                label="Party Commission"
+                                onChange={handleChange}
+                                value={partyCommission || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
 
                             <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Tex Type</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={collection}
-                                    name="collection"
-                                    label="Collection"
+                                    value={taxType}
+                                    name="taxType"
+                                    label="Tex Type"
                                     onChange={handleChange}>
-                                    <MenuItem value="None">None</MenuItem>
-                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                    <MenuItem value="Standard">Standard</MenuItem>
+                                    <MenuItem value="6%">6% CGST/IGST</MenuItem>
                                 </Select>
-                            </FormControl> */}
+                            </FormControl>
                         </Grid>
 
                     </Grid>
