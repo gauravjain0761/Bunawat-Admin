@@ -1,191 +1,170 @@
-import {
-  Box,
-  Button,
-  Card,
-  Icon,
-  IconButton,
-  Menu,
-  MenuItem,
-  Select,
-  styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { Paragraph } from 'app/components/Typography';
-import { mockDataUserList } from 'fake-db/data/user/userList';
-import { useState } from 'react';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
+import TableComponent from 'app/components/table';
+import { Button, Card, Fade, IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
-import Avatar from 'react-avatar';
-import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import { UIColor } from 'app/utils/constant';
+import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
-
-const CardHeader = styled(Box)(() => ({
-  display: 'flex',
-  paddingLeft: '24px',
-  paddingRight: '24px',
-  marginBottom: '12px',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-}));
-
-const Title = styled('span')(() => ({
-  fontSize: '1rem',
-  fontWeight: '500',
-  textTransform: 'capitalize',
-}));
-
-const ProductTable = styled(Table)(() => ({
-  minWidth: 400,
-  height: '75vh',
-  padding: "20px",
-  whiteSpace: 'pre',
-  '& small': {
-    width: 50,
-    height: 15,
-    borderRadius: 500,
-    boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
-  },
-  '& td': { borderBottom: 'none' },
-  '& td:first-of-type': { paddingLeft: '16px !important' },
-  "& .MuiDataGrid-columnHeaders": {
-    backgroundColor: "#232a45",
-    borderBottom: "none",
-  },
-  "& .MuiDataGrid-columnHeaderTitle": {
-    color: "#fff",
-  },
-  "& .MuiDataGrid-columnHeaders .MuiCheckbox-root svg": {
-    fill: "#fff",
-  },
-  "& .MuiDataGrid-columnHeaders .MuiDataGrid-iconButtonContainer  svg": {
-    fill: "#fff",
-  },
-  "& .MuiDataGrid-columnHeaders .MuiDataGrid-menuIcon svg": {
-    fill: "#fff",
-  },
-  "& .MuiDataGrid-columnHeaders .MuiDataGrid-columnSeparator ": {
-    visibility: "hidden"
-  },
-}));
-
-const Small = styled('small')(({ bgcolor }) => ({
-  width: 50,
-  height: 15,
-  color: '#fff',
-  padding: '2px 8px',
-  borderRadius: '4px',
-  overflow: 'hidden',
-  background: bgcolor,
-  boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24)',
-}));
+import styled from '@emotion/styled';
 
 const CategoryList = () => {
-  const { palette } = useTheme();
-  const bgError = palette.error.main;
-  const bgPrimary = palette.primary.main;
-  const bgSecondary = palette.secondary.main;
-
   const navigate = useNavigate();
-
-  const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
-  const openAnchor = Boolean(anchorEl);
-  const handleClick = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
+  const [rows, setRows] = useState(mockDataCategoryManagement);
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
+  const [actionAllOpen, setActionAllOpen] = useState(null);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
     {
-      field: "category",
-      headerName: "Parent Category Name",
-      flex: 1,
+      id: "category",
+      label: "Parent Category Name",
+      width: 200
     },
     {
-      field: "subCategory",
-      headerName: "Parent Sub Category Name",
-      flex: 1,
+      id: "subCategory",
+      label: "Parent Sub Category Name",
+      width: 250
     },
     {
-      field: "name",
-      headerName: "Category Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
+      id: "name",
+      label: "Category Name",
+      width: 200
     },
     {
-      field: "slug",
-      headerName: "Code",
-      flex: 1,
+      id: "slug",
+      label: "Code",
+      width: 80
     },
     {
-      field: "count",
-      headerName: "Count",
-      flex: 1,
+      id: "count",
+      label: "Count",
+      width: 80
     },
     {
-      field: "active",
-      headerName: "Status",
-      flex: 1,
-      renderCell: ({ row: { active } }) => {
-        return (
-          <>
-            {active ?
-              <Typography sx={{ width: 'fit-content', flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
-                Active
-              </Typography>
-              :
-              <Typography sx={{ width: 'fit-content', flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
-                InActive
-              </Typography>
-            }
-          </>
-        );
-      }
+      id: "status",
+      label: "Status",
+      width: 80
     },
     {
-      field: "action",
-      headerName: "Action",
-      width: 150,
-      renderCell: ({ row: { id } }) => {
-        return (
-          <Box display="flex" alignItems="center">
-            <IconButton
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate(`/category/details/${id}`)
-                handleClose();
-              }}>
-              <Icon color="primary">edit</Icon>
-            </IconButton>
-            <IconButton
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setOpen(true);
-                handleClose();
-              }}>
-              <Icon color="error">delete</Icon>
-            </IconButton>
-          </Box >
-        );
-      }
+      id: "action",
+      label: "Action",
+      action: true,
+      width: 80,
+      sortDisable: true,
+      renderCell: (
+        <>
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            sx={{ color: "#fff" }}
+            aria-controls={Boolean(actionAllOpen) ? 'long-menu' : undefined}
+            aria-expanded={Boolean(actionAllOpen) ? 'true' : undefined}
+            aria-haspopup="true"
+            onClick={(e) => setActionAllOpen(e.currentTarget)}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="fade-menu"
+            MenuListProps={{
+              'aria-labelledby': 'fade-button',
+            }}
+            anchorEl={actionAllOpen}
+            open={Boolean(actionAllOpen)}
+            onClose={() => setActionAllOpen(null)}
+            TransitionComponent={Fade}
+          >
+            <MenuItem onClick={() => {
+              setOpen(true);
+              setActionAllOpen(null)
+            }}>Delete</MenuItem>
+          </Menu>
+        </>
+      )
     }
   ];
 
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelected = rows.map((n) => n.name);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  const handleActionClick = (event, index) => {
+    event.preventDefault();
+    event.stopPropagation();
+    let temp = [...actionOpen];
+    if (!temp[index]) {
+      temp = temp.map(() => { return null })
+    }
+    temp[index] = event.currentTarget
+    setActionOpen(temp)
+  };
+
+  const handleActionClose = () => {
+    let temp = [...actionOpen];
+    temp = temp.map(() => { return null })
+    setActionOpen(temp)
+  };
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+
+  const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  const CardHeader = styled(Box)(() => ({
+    display: 'flex',
+    paddingLeft: '24px',
+    paddingRight: '24px',
+    marginBottom: '12px',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  }));
+
+  const Title = styled('span')(() => ({
+    fontSize: '1rem',
+    fontWeight: '500',
+    textTransform: 'capitalize',
+  }));
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
@@ -196,25 +175,79 @@ const CategoryList = () => {
             backgroundColor: UIColor, color: "#fff"
           }
         }}>Add Category</Button>
-        {/* <Select size="small" defaultValue="this_month">
-            <MenuItem value="this_month">This Month</MenuItem>
-            <MenuItem value="last_month">Last Month</MenuItem>
-          </Select> */}
       </CardHeader>
+      <TableComponent
+        rows={rows}
+        columns={columns}
+        selected={selected}
+        renderRow={(row, index) => {
+          const isItemSelected = isSelected(row.name);
+          const labelId = `enhanced-table-checkbox-${index}`;
+          return (
+            <TableRow
+              hover
+              role="checkbox"
+              aria-checked={isItemSelected}
+              tabIndex={-1}
+              key={row.name}
+              selected={isItemSelected}
+            >
+              <TableCell padding="checkbox">
+                <Checkbox
+                  color="primary"
+                  onClick={(event) => handleClick(event, row.name)}
+                  checked={isItemSelected}
+                  inputProps={{
+                    'aria-labelledby': labelId,
+                  }}
+                />
+              </TableCell>
+              <TableCell align="center">{row.category}</TableCell>
+              <TableCell align="center">{row.subCategory}</TableCell>
+              <TableCell align="center" > {row.name} </TableCell>
+              <TableCell align="center">{row.slug}</TableCell>
+              <TableCell align="center">{row.count}</TableCell>
+              <TableCell align="center">{row.count}</TableCell>
+              <TableCell align="center" >
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
+                  aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
+                  aria-haspopup="true"
+                  onClick={(e) => handleActionClick(e, index)}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="fade-menu"
+                  MenuListProps={{
+                    'aria-labelledby': 'fade-button',
+                  }}
+                  anchorEl={actionOpen[index]}
+                  open={Boolean(actionOpen[index])}
+                  onClose={handleActionClose}
+                  TransitionComponent={Fade}
+                >
+                  <MenuItem onClick={() => navigate(`/category/details/list/${row.id}`)}>Edit</MenuItem>
+                  <MenuItem onClick={() => {
+                    setOpen(true);
+                    handleActionClose();
+                  }}>Delete</MenuItem>
+                </Menu>
+              </TableCell>
+            </TableRow>
+          );
+        }}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleChangePage={handleChangePage}
+        handleSelectAllClick={handleSelectAllClick}
+      />
 
-      <Box overflow="auto">
-        <ProductTable>
-          <DataGrid
-            rows={mockDataCategoryManagement}
-            columns={columns}
-            checkboxSelection
-            disableColumnMenu
-          />
-        </ProductTable>
-      </Box>
       <DeleteModel open={open} handleClose={() => setOpen(false)} />
     </Card>
   );
-};
+}
 
 export default CategoryList;

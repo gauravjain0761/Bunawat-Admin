@@ -56,9 +56,18 @@ const CategoryForm = ({ data = {}, type }) => {
             let visibility = formData?.visibility ?? {}
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
+        } else if (event.target.name == "image") {
+            const images = formData[event.target.name] ?? []
+            setFormData({ ...formData, [event.target.name]: [...images, URL.createObjectURL(event.target.files[0])] });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
+    };
+
+    const handleDeleteImage = (index) => {
+        let images = formData?.image ?? []
+        images = images?.filter((img, i) => i != index)
+        setFormData({ ...formData, image: images });
     };
 
     const {
@@ -66,9 +75,12 @@ const CategoryForm = ({ data = {}, type }) => {
         slug,
         description,
         sCategory,
+        title,
         pCategory,
         visibility,
-        categoryCode
+        categoryCode,
+        productId,
+        image
     } = formData;
 
     const getTitle = () => {
@@ -149,6 +161,14 @@ const CategoryForm = ({ data = {}, type }) => {
 
                             <TextField
                                 type="text"
+                                name="title"
+                                label="Title"
+                                onChange={handleChange}
+                                value={title || ""}
+                            />
+
+                            <TextField
+                                type="text"
                                 name="slug"
                                 label="Slug"
                                 value={slug || ""}
@@ -169,7 +189,15 @@ const CategoryForm = ({ data = {}, type }) => {
                                 value={categoryCode || ""}
                             />
 
-                            <FormControl sx={{}} component="fieldset" variant="standard">
+                            <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                options={["Saree", "Dress", "Full Dress"]}
+                                sx={{ mt: 2 }}
+                                renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
+                            />
+
+                            <FormControl sx={{ mb: 1 }} component="fieldset" variant="standard">
                                 <FormLabel component="legend">Visibility</FormLabel>
                                 <FormGroup>
                                     <FormControlLabel
@@ -181,13 +209,71 @@ const CategoryForm = ({ data = {}, type }) => {
                                 </FormGroup>
                             </FormControl>
 
-                            <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={["Saree", "Dress", "Full Dress"]}
-                                sx={{ mt: 2 }}
-                                renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
-                            />
+                            {visibility?.home &&
+                                <>
+                                    <Box display="flex" flexDirection="column">
+                                        <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                        <Box sx={{
+                                            display: "flex",
+                                            flexWrap: "wrap",
+                                        }}>
+                                            {image?.length > 0 && image?.map((img, i) => (
+                                                <Box key={i}
+                                                    sx={{
+                                                        width: "150px",
+                                                        height: "150px",
+                                                        margin: "10px 10px 0 0",
+                                                        position: "relative"
+                                                    }}>
+                                                    <Icon onClick={() => handleDeleteImage(i)} sx={{
+                                                        position: "absolute",
+                                                        right: "5px",
+                                                        top: "5px",
+                                                        color: "red",
+                                                        cursor: "pointer"
+                                                    }}>delete</Icon>
+                                                    <img src={img} width="100%" height="100%" />
+                                                </Box>
+                                            ))}
+                                            <Button
+                                                variant="contained"
+                                                component="label"
+                                                sx={{
+                                                    width: "150px",
+                                                    height: "150px",
+                                                    background: "transparent",
+                                                    color: "#000",
+                                                    border: "2px dashed",
+                                                    margin: "10px 10px 0 0",
+
+                                                    "&:hover": {
+                                                        background: "transparent",
+                                                    }
+                                                }} >
+                                                <Icon>add</Icon>
+                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                <input
+                                                    type="file"
+                                                    name="image"
+                                                    accept="image/png, image/gif, image/jpeg"
+                                                    hidden
+                                                    onClick={(event) => { event.target.value = '' }}
+                                                    onChange={handleChange} />
+                                            </Button>
+                                        </Box>
+                                    </Box>
+
+                                    <TextField
+                                        sx={{ mt: 2 }}
+                                        type="text"
+                                        name="productId"
+                                        label="Link with productId"
+                                        onChange={handleChange}
+                                        value={productId || ""}
+                                    />
+
+                                </>
+                            }
                         </Grid>
 
                     </Grid>

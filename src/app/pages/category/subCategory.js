@@ -201,6 +201,7 @@ const SubCategoryAdd = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                navigate(`/category/details/sub/${id}`)
                                 handleClose();
                             }}>
                             <Icon color="primary">edit</Icon>

@@ -16,6 +16,7 @@ import {
     RadioGroup,
     Select,
     styled,
+    Switch,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
@@ -44,20 +45,75 @@ const ProductForm = ({ data = {} }) => {
     };
 
     const handleChange = (event) => {
+        console.log(event.target.name)
         if (event.target.name == "home") {
             let visibility = formData?.visibility ?? {}
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
+        } else if (event.target.name == "image") {
+            const images = formData[event.target.name] ?? []
+            setFormData({ ...formData, [event.target.name]: [...images, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
+        } else if (event.target.name == "videos") {
+            const videos = formData[event.target.name] ?? []
+            setFormData({ ...formData, [event.target.name]: [...videos, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
+        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "reSellerPrice") {
+            const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+            if (onlyNums.length < 10) {
+                setFormData({ ...formData, [event.target.name]: onlyNums });
+            } else if (onlyNums.length === 10) {
+                const number = onlyNums.replace(
+                    /(\d{3})(\d{3})(\d{4})/,
+                    '($1) $2-$3'
+                );
+                setFormData({ ...formData, [event.target.name]: onlyNums });
+            }
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
     };
 
+
+    const handleDeleteImage = (index) => {
+        let images = formData?.image ?? []
+        images = images?.filter((img, i) => i != index)
+        setFormData({ ...formData, image: images });
+    };
+
+    const handleSwitchImage = (index, max = 5) => {
+        let images = formData?.image ?? []
+        if (images?.filter((img) => img.checked).length < max) {
+            images[index] = { ...images[index], checked: !images[index].checked }
+            setFormData({ ...formData, image: images });
+        }
+    };
+
+    const handleDeleteVideo = (index) => {
+        console.log(index)
+        let videos = formData?.videos ?? []
+        videos = videos?.filter((img, i) => i != index)
+        setFormData({ ...formData, videos: videos });
+    };
+
+    const handleSwitchVideo = (index, max = 4) => {
+        console.log(max)
+        let videos = formData?.videos ?? []
+        if (videos?.filter((video) => video.checked).length < max) {
+            videos[index] = { ...videos[index], checked: !videos[index].checked }
+            setFormData({ ...formData, videos: videos });
+        }
+    };
+
     const {
+        category,
+        designNo,
         name,
         description,
-        category,
-        collection,
+        image,
+        videos,
+        mrp,
+        salePrice,
+        reSellerPrice,
+        partyCommissionType
     } = formData;
 
     return (
@@ -66,6 +122,36 @@ const ProductForm = ({ data = {} }) => {
                 <SimpleCard title="Product" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+                            <FormControl fullWidth sx={{ mb: 2 }}>
+                                <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
+                                <Select native id="grouped-native-select" label="Category"
+                                    value={category}
+                                    name="category"
+                                    onChange={handleChange}>
+                                    <optgroup label="Ethnic Sets">
+                                        <option value="Palazzo Sets">Palazzo Sets</option>
+                                        <option value="Pant Sets">Pant Sets</option>
+                                        <option value="Skirt Sets">Skirt Sets</option>
+                                    </optgroup>
+                                    <optgroup label="Floor Length Designs">
+                                        <option value="Floor Length Anarkalis">Floor Length Anarkalis</option>
+                                        <option value="Gowns">Gowns</option>
+                                    </optgroup>
+                                    <option value="Lehengas">Lehengas</option>
+                                    <option value="Shararas">Shararas</option>
+                                    <option value="Stylised Drapes">Stylised Drapes</option>
+                                </Select>
+                            </FormControl>
+
+                            <TextField
+                                type="text"
+                                name="designNo"
+                                label="Design No"
+                                onChange={handleChange}
+                                value={designNo || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
 
                             <TextField
                                 type="text"
@@ -87,7 +173,179 @@ const ProductForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <FormControl fullWidth sx={{ mb: 2 }}>
+                            <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
+                                <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                <Box sx={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                }}>
+                                    {image?.length > 0 && image?.map((img, i) => (
+                                        <Box key={i}
+                                            sx={{
+                                                width: "160px",
+                                                height: "160px",
+                                                margin: "10px 10px 0 0",
+                                                position: "relative"
+                                            }}>
+                                            <Switch
+                                                sx={{
+                                                    position: "absolute",
+                                                    left: "5px",
+                                                    top: "5px",
+                                                    color: "red",
+                                                    cursor: "pointer"
+                                                }}
+                                                checked={img.checked}
+                                                onChange={() => handleSwitchImage(i)}
+                                                inputProps={{ 'aria-label': 'controlled' }}
+                                            />
+                                            <Icon onClick={() => handleDeleteImage(i)} sx={{
+                                                position: "absolute",
+                                                right: "5px",
+                                                top: "5px",
+                                                color: "red",
+                                                cursor: "pointer"
+                                            }}>delete</Icon>
+                                            <img src={img.url} width="100%" height="100%" />
+                                        </Box>
+                                    ))}
+                                    <Button
+                                        variant="contained"
+                                        component="label"
+                                        sx={{
+                                            width: "160px",
+                                            height: "160px",
+                                            background: "transparent",
+                                            color: "#000",
+                                            border: "2px dashed",
+                                            margin: "10px 10px 0 0",
+
+                                            "&:hover": {
+                                                background: "transparent",
+                                            }
+                                        }} >
+                                        <Icon>add</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Image</Span>
+                                        <input
+                                            type="file"
+                                            name="image"
+                                            accept="image/png, image/gif, image/jpeg"
+                                            hidden
+                                            onClick={(event) => { event.target.value = '' }}
+                                            onChange={handleChange} />
+                                    </Button>
+                                </Box>
+
+                                <Box sx={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                }}>
+                                    {videos?.length > 0 && videos?.map((video, i) => (
+                                        <Box key={i}
+                                            sx={{
+                                                width: "160px",
+                                                height: "160px",
+                                                margin: "10px 10px 0 0",
+                                                position: "relative"
+                                            }}>
+                                            <Switch
+                                                sx={{
+                                                    position: "absolute",
+                                                    left: "5px",
+                                                    top: "5px",
+                                                    color: "red",
+                                                    cursor: "pointer",
+                                                    zIndex: "999"
+                                                }}
+                                                checked={video.checked}
+                                                onChange={() => handleSwitchVideo(i, 4)}
+                                                inputProps={{ 'aria-label': 'controlled' }}
+                                            />
+                                            <Icon onClick={() => handleDeleteVideo(i)} sx={{
+                                                position: "absolute",
+                                                right: "5px",
+                                                top: "5px",
+                                                color: "red",
+                                                cursor: "pointer",
+                                                zIndex: "999"
+                                            }}>delete</Icon>
+                                            <video width="100%" height="100%" autoPlay={true} muted={true} loop={true} playsInline={true}
+                                                style={{ objectFit: "fill", borderRadius: "10px" }}>
+                                                <source src={video.url} type="video/mp4" />
+                                            </video>
+                                        </Box>
+                                    ))}
+                                    <Button
+                                        variant="contained"
+                                        component="label"
+                                        sx={{
+                                            width: "160px",
+                                            height: "160px",
+                                            background: "transparent",
+                                            color: "#000",
+                                            border: "2px dashed",
+                                            margin: "10px 10px 0 0",
+
+                                            "&:hover": {
+                                                background: "transparent",
+                                            }
+                                        }} >
+                                        <Icon>add</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Video</Span>
+                                        <input
+                                            type="file"
+                                            name="videos"
+                                            accept="video/mp4,video/x-m4v,video/*"
+                                            hidden
+                                            onClick={(event) => { event.target.value = '' }}
+                                            onChange={handleChange} />
+                                    </Button>
+                                </Box>
+                            </Box>
+
+                            <TextField
+                                type="text"
+                                name="mrp"
+                                label="MRP"
+                                onChange={handleChange}
+                                value={mrp || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <TextField
+                                type="text"
+                                name="salePrice"
+                                label="Sale Price"
+                                onChange={handleChange}
+                                value={salePrice || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <TextField
+                                type="text"
+                                name="reSellerPrice"
+                                label="ReSeller Price"
+                                onChange={handleChange}
+                                value={reSellerPrice || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label"> Party Commission Type</FormLabel>
+                                <RadioGroup
+                                    row
+                                    value={partyCommissionType ?? "Fixed"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="partyCommissionType">
+                                    <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
+                                    <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
+                                </RadioGroup>
+                            </FormControl>
+                            {/* <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel id="demo-simple-select-label">Category</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -123,7 +381,7 @@ const ProductForm = ({ data = {} }) => {
                                     <MenuItem value="Shararas">Shararas</MenuItem>
                                     <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
                                 </Select>
-                            </FormControl>
+                            </FormControl> */}
                         </Grid>
 
                     </Grid>

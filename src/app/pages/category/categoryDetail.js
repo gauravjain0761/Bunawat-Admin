@@ -3,6 +3,7 @@ import { Box, styled } from "@mui/system";
 import { SimpleCard } from "app/components";
 import CategoryForm from "app/views/category/categoryForm";
 import { mockDataCategoryManagement } from "fake-db/data/category/categoryManagement";
+import { mockDataCategoryTreeManagement, mockDataSubCategoryTreeManagement } from "fake-db/data/category/categoryTreeList";
 import { mockDataUserList } from "fake-db/data/user/userList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -22,7 +23,8 @@ const CategoryDetail = () => {
 
     useEffect(() => {
         if (id) {
-            setData(mockDataCategoryManagement.find(item => item.id == id))
+            const finalData = type == "parent" ? mockDataCategoryTreeManagement : type == "sub" ? mockDataSubCategoryTreeManagement : mockDataCategoryManagement
+            setData(finalData.find(item => item.id == id))
         }
     }, [id])
 

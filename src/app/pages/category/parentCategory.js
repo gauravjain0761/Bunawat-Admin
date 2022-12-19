@@ -196,6 +196,7 @@ const ParentCategory = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                navigate(`/category/details/parent/${id}`)
                                 handleClose();
                             }}>
                             <Icon color="primary">edit</Icon>

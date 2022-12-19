@@ -15,6 +15,7 @@ import {
   TableRow,
   useTheme,
 } from '@mui/material';
+import Fade from '@mui/material/Fade';
 import { DataGrid } from '@mui/x-data-grid';
 import { Paragraph } from 'app/components/Typography';
 import { mockDataUserList } from 'fake-db/data/user/userList';
@@ -23,8 +24,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import Avatar from 'react-avatar';
 import { isMobile } from 'app/utils/utils';
-import { UIColor } from 'app/utils/constant';
+import { DEFAULT_STATE, UIColor } from 'app/utils/constant';
 import DeleteModel from 'app/views/models/deleteModel';
+import TableComponent from 'app/components/table';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -89,22 +91,30 @@ const Small = styled('small')(({ bgcolor }) => ({
 const UserList = ({ data = [], type }) => {
   const { palette } = useTheme();
   const [open, setOpen] = useState(false);
+  const [state, setState] = useState(DEFAULT_STATE);
   const bgError = palette.error.main;
   const bgPrimary = palette.primary.main;
   const bgSecondary = palette.secondary.main;
 
   const navigate = useNavigate();
+  const [actionOpen, setActionOpen] = useState(data.map(() => { return null }));
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const openAnchor = Boolean(anchorEl);
-  const handleClick = (event) => {
+
+  const handleClick = (event, index) => {
     event.preventDefault();
     event.stopPropagation();
-    setAnchorEl(event.currentTarget);
+    let temp = [...actionOpen];
+    if (!temp[index]) {
+      temp = temp.map(() => { return null })
+    }
+    temp[index] = event.currentTarget
+    setActionOpen(temp)
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    let temp = [...actionOpen];
+    temp = temp.map(() => { return null })
+    setActionOpen(temp)
   };
 
   const columns = [
@@ -173,6 +183,30 @@ const UserList = ({ data = [], type }) => {
     }
   ];
 
+
+  // const columns = [
+  //   { id: 'name', label: 'Name', width: 150 },
+  //   { id: 'mobile', label: 'Mobile', width: 200 },
+  //   { id: 'email', label: 'Email', width: 300 },
+  //   { id: 'Action', label: 'Action', width: 300 },
+  // ]
+
+
+  const handlePageData = (limit, page = 1) => {
+    setState({
+      ...state,
+      limit,
+      page
+    })
+  }
+
+  const handlePage = (page) => {
+    setState({
+      ...state,
+      page
+    })
+  }
+
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader >
@@ -190,6 +224,64 @@ const UserList = ({ data = [], type }) => {
       </CardHeader>
 
       <Box overflow="auto">
+        {/* <TableComponent
+          rows={data}
+          columns={columns}
+          handlePageData={handlePageData}
+          handlePage={handlePage}
+          state={state}
+          renderColumn={(column, index) => {
+            return (
+              <TableCell align="center" sx={{ backgroundColor: UIColor, color: "#fff" }} key={column.id} width={column?.width ?? undefined}>
+                {column.label}
+              </TableCell>
+            )
+          }}
+          renderRow={(row, index) => {
+            return (
+              <TableRow key={index} hover role="checkbox" style={{
+                background: 'white',
+              }} tabIndex={-1} >
+                <TableCell width="150px" className="min-w-[200px]" align="center" component="th" scope="row">
+                  {`${row.firstName} ${row.lastName}`}
+                </TableCell>
+                <TableCell className="min-w-[200px]" align="center" component="th" scope="row">
+                  <span className='flex gap-2 items-center justify-center'>
+                    {row?.mobile}
+                  </span>
+                </TableCell>
+                <TableCell className="min-w-[200px]" align="center" component="th" scope="row">
+                  {row.email}
+                </TableCell>
+                <TableCell className="min-w-[200px]" align="center" component="th" scope="row">
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
+                    aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
+                    aria-haspopup="true"
+                    onClick={(e) => handleClick(e, index)}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    id="fade-menu"
+                    MenuListProps={{
+                      'aria-labelledby': 'fade-button',
+                    }}
+                    anchorEl={actionOpen[index]}
+                    open={Boolean(actionOpen[index])}
+                    onClose={handleClose}
+                    TransitionComponent={Fade}
+                  >
+                    <MenuItem onClick={() => console.log(row)}>Profile</MenuItem>
+                    <MenuItem onClick={handleClose}>My account</MenuItem>
+                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                  </Menu>
+                </TableCell>
+              </TableRow>
+            )
+          }}
+        /> */}
         <ProductTable>
           <DataGrid
             rows={data}
