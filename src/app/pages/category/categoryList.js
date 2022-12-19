@@ -5,7 +5,7 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import TableComponent from 'app/components/table';
-import { Button, Card, Fade, IconButton, Menu, MenuItem } from '@mui/material';
+import { Button, Card, Fade, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -207,7 +207,17 @@ const CategoryList = () => {
               <TableCell align="center" > {row.name} </TableCell>
               <TableCell align="center">{row.slug}</TableCell>
               <TableCell align="center">{row.count}</TableCell>
-              <TableCell align="center">{row.count}</TableCell>
+              <TableCell align="center">
+                {row.active ?
+                  <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                    Active
+                  </Typography>
+                  :
+                  <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                    InActive
+                  </Typography>
+                }
+              </TableCell>
               <TableCell align="center" >
                 <IconButton
                   aria-label="more"
@@ -228,6 +238,7 @@ const CategoryList = () => {
                   onClose={handleActionClose}
                   TransitionComponent={Fade}
                 >
+                  <MenuItem>{!row.active ? "Active" : "InActive"}  </MenuItem>
                   <MenuItem onClick={() => navigate(`/category/details/list/${row.id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
                     setOpen(true);
