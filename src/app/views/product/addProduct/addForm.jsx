@@ -385,13 +385,13 @@ const ProductForm = ({ data = {} }) => {
                             />
 
                             <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Tex Type</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Tax Type</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     value={taxType}
                                     name="taxType"
-                                    label="Tex Type"
+                                    label="Tax Type"
                                     onChange={handleChange}>
                                     <MenuItem value="Standard">Standard</MenuItem>
                                     <MenuItem value="6%">6% CGST/IGST</MenuItem>
