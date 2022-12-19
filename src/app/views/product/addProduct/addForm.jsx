@@ -116,7 +116,8 @@ const ProductForm = ({ data = {} }) => {
         reSellerPrice,
         partyCommissionType,
         partyCommission,
-        taxType
+        taxType,
+        isActive
     } = formData;
 
     return (
@@ -395,6 +396,19 @@ const ProductForm = ({ data = {} }) => {
                                     <MenuItem value="Standard">Standard</MenuItem>
                                     <MenuItem value="6%">6% CGST/IGST</MenuItem>
                                 </Select>
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Is Active</FormLabel>
+                                <RadioGroup
+                                    row
+                                    value={isActive ?? "active"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="isActive">
+                                    <FormControlLabel value="active" control={<Radio />} label="Active" />
+                                    <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
+                                </RadioGroup>
                             </FormControl>
                         </Grid>
 
