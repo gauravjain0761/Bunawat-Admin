@@ -34,8 +34,8 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: (numSelected > 0 && headCell?.action) ? "8px" : 0 }}
             key={headCell.id}
-            width={headCell?.width ?? undefined}
-            align='center'
+            width={headCell?.width ?? "100%"}
+            align={headCell?.align ? headCell?.align : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {!headCell?.sortDisable ?

@@ -73,6 +73,7 @@ const AttributeList = () => {
             label: "Action",
             action: true,
             width: 80,
+            align: "center",
             sortDisable: true,
             renderCell: (
                 <>
@@ -94,8 +95,7 @@ const AttributeList = () => {
                         anchorEl={actionAllOpen}
                         open={Boolean(actionAllOpen)}
                         onClose={() => setActionAllOpen(null)}
-                        TransitionComponent={Fade}
-                    >
+                        TransitionComponent={Fade}>
                         <MenuItem onClick={() => {
                             setOpen(true);
                             setActionAllOpen(null)
@@ -259,14 +259,9 @@ const AttributeList = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell align="center" sx={{
-                                cursor: "pointer",
-                                "&:hover": {
-                                    color: "blue",
-                                },
-                            }} onClick={() => navigate(`/product/${row.slug}`)}> {row.name} </TableCell>
-                            <TableCell align="center" >{row.slug}</TableCell>
-                            <TableCell align="center">
+                            <TableCell>{row.name} </TableCell>
+                            <TableCell>{row.slug}</TableCell>
+                            <TableCell>
                                 {row.slug == "color" && mockDataProductColor.map(color => color.name).join()}
                                 {row.slug == "size" && mockDataProductSize.map(color => color.name).join()}
                             </TableCell>
@@ -288,9 +283,10 @@ const AttributeList = () => {
                                     anchorEl={actionOpen[index]}
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
-                                    TransitionComponent={Fade}
-                                >
-                                    <MenuItem onClick={() => navigate(`/category/details/list/${row.id}`)}>Edit</MenuItem>
+                                    TransitionComponent={Fade}>
+                                    <MenuItem onClick={() => {
+                                        navigate(`/product/${row.slug}`)
+                                    }}>Add</MenuItem>
                                     <MenuItem onClick={() => {
                                         setOpen(true);
                                         handleActionClose();

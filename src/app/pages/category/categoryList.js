@@ -47,12 +47,14 @@ const CategoryList = () => {
     {
       id: "count",
       label: "Count",
-      width: 80
+      width: 80,
+      align: "center"
     },
     {
       id: "status",
       label: "Status",
-      width: 80
+      width: 80,
+      align: "center"
     },
     {
       id: "action",
@@ -202,10 +204,10 @@ const CategoryList = () => {
                   }}
                 />
               </TableCell>
-              <TableCell align="center">{row.category}</TableCell>
-              <TableCell align="center">{row.subCategory}</TableCell>
-              <TableCell align="center" > {row.name} </TableCell>
-              <TableCell align="center">{row.slug}</TableCell>
+              <TableCell>{row.category}</TableCell>
+              <TableCell>{row.subCategory}</TableCell>
+              <TableCell > {row.name} </TableCell>
+              <TableCell>{row.slug}</TableCell>
               <TableCell align="center">{row.count}</TableCell>
               <TableCell align="center">
                 {row.active ?
@@ -218,7 +220,7 @@ const CategoryList = () => {
                   </Typography>
                 }
               </TableCell>
-              <TableCell align="center" >
+              <TableCell >
                 <IconButton
                   aria-label="more"
                   id="long-button"

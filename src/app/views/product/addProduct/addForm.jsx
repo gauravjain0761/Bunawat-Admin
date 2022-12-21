@@ -56,7 +56,7 @@ const ProductForm = ({ data = {} }) => {
         } else if (event.target.name == "videos") {
             const videos = formData[event.target.name] ?? []
             setFormData({ ...formData, [event.target.name]: [...videos, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
-        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "reSellerPrice" || event.target.name == "partyCommission") {
+        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "reSellerPrice" || event.target.name == "influncerCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -114,8 +114,8 @@ const ProductForm = ({ data = {} }) => {
         mrp,
         salePrice,
         reSellerPrice,
-        partyCommissionType,
-        partyCommission,
+        influncerCommissionType,
+        influncerCommission,
         taxType,
         isActive
     } = formData;
@@ -362,13 +362,13 @@ const ProductForm = ({ data = {} }) => {
                             />
 
                             <FormControl>
-                                <FormLabel id="demo-row-radio-buttons-group-label"> Party Commission Type</FormLabel>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Influncer Commission Type</FormLabel>
                                 <RadioGroup
                                     row
-                                    value={partyCommissionType ?? "Fixed"}
+                                    value={influncerCommissionType ?? "Fixed"}
                                     onChange={handleChange}
                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="partyCommissionType">
+                                    name="influncerCommissionType">
                                     <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
                                     <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
                                 </RadioGroup>
@@ -376,10 +376,10 @@ const ProductForm = ({ data = {} }) => {
 
                             <TextField
                                 type="text"
-                                name="partyCommission"
-                                label="Party Commission"
+                                name="influncerCommission"
+                                label="Influncer Commission"
                                 onChange={handleChange}
-                                value={partyCommission || ""}
+                                value={influncerCommission || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
