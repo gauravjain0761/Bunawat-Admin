@@ -190,13 +190,12 @@ const CategoryForm = ({ data = {}, type }) => {
                                 disablePortal
                                 id="combo-box-demo"
                                 options={["Saree", "Dress", "Full Dress"]}
-                                sx={{ mt: 2 }}
                                 renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
                             />
 
-                            <FormControl sx={{ mb: 1 }} component="fieldset" variant="standard">
+                            <FormControl sx={{ mb: 1, flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
                                 <FormLabel component="legend">Visibility</FormLabel>
-                                <FormGroup>
+                                <FormGroup sx={{ pl: 2 }}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />

@@ -99,9 +99,16 @@ const CollectionForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <FormControl sx={{}} component="fieldset" variant="standard">
+                            <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                options={["Saree", "Dress", "Full Dress"]}
+                                renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
+                            />
+
+                            <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard" >
                                 <FormLabel component="legend">Visibility</FormLabel>
-                                <FormGroup>
+                                <FormGroup sx={{ pl: 2 }}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
@@ -110,14 +117,6 @@ const CollectionForm = ({ data = {} }) => {
                                     />
                                 </FormGroup>
                             </FormControl>
-
-                            <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={["Saree", "Dress", "Full Dress"]}
-                                sx={{ mt: 2 }}
-                                renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
-                            />
                         </Grid>
 
                     </Grid>

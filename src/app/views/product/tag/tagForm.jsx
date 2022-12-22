@@ -96,9 +96,9 @@ const TagForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <FormControl sx={{}} component="fieldset" variant="standard">
+                            <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
                                 <FormLabel component="legend">Visibility</FormLabel>
-                                <FormGroup>
+                                <FormGroup sx={{ pl: 2 }}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />

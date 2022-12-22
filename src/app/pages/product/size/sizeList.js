@@ -59,19 +59,9 @@ const SizeList = () => {
             width: 150
         },
         {
-            id: "description",
-            label: "Description",
-            width: 300
-        },
-        {
             id: "slug",
             label: "Slug",
             width: 80
-        },
-        {
-            id: "count",
-            label: "Count",
-            width: 250
         },
         {
             id: "action",
@@ -194,7 +184,7 @@ const SizeList = () => {
             <Container>
                 <Stack spacing={3}>
                     <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                        <SimpleCard title="Size" >
+                        <SimpleCard title="Varient" >
                             <Grid container spacing={12}>
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
 
@@ -241,10 +231,10 @@ const SizeList = () => {
                             </Grid>
                             <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                                 <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                                    {/* <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button> */}
+                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Icon>arrow_back</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                    </Button>
                                     <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
                                         <Icon>send</Icon>
                                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
@@ -275,7 +265,7 @@ const SizeList = () => {
                 </Stack>
             </Container>
             <CardHeader sx={{ mt: 2 }}>
-                <Title>Size List</Title>
+                <Title>Varient List</Title>
             </CardHeader>
             <TableComponent
                 rows={rows}
@@ -304,9 +294,7 @@ const SizeList = () => {
                                 />
                             </TableCell>
                             <TableCell>{row.name} </TableCell>
-                            <TableCell>{row.description} </TableCell>
                             <TableCell>{row.slug}</TableCell>
-                            <TableCell>{row.count}</TableCell>
                             <TableCell  >
                                 <IconButton
                                     aria-label="more"

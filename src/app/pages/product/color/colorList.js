@@ -59,19 +59,9 @@ const ColorList = () => {
             width: 150
         },
         {
-            id: "description",
-            label: "Description",
-            width: 300
-        },
-        {
             id: "slug",
             label: "Slug",
             width: 80
-        },
-        {
-            id: "count",
-            label: "Count",
-            width: 250
         },
         {
             id: "action",
@@ -194,7 +184,7 @@ const ColorList = () => {
             <Container>
                 <Stack spacing={3}>
                     <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                        <SimpleCard title="Color" >
+                        <SimpleCard title="Varient" >
                             <Grid container spacing={12}>
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
 
@@ -217,7 +207,7 @@ const ColorList = () => {
                                         validators={["required"]}
                                         errorMessages={["this field is required"]}
                                     />
-                                    <TextField
+                                    {/* <TextField
                                         type="text"
                                         name="description"
                                         label="Description"
@@ -235,16 +225,16 @@ const ColorList = () => {
                                         value={product_id || ""}
                                         validators={["required"]}
                                         errorMessages={["this field is required"]}
-                                    />
+                                    /> */}
                                 </Grid>
 
                             </Grid>
                             <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                                 <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                                    {/* <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                                         <Icon>arrow_back</Icon>
                                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                                    </Button> */}
+                                    </Button>
                                     <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
                                         <Icon>send</Icon>
                                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
@@ -275,7 +265,7 @@ const ColorList = () => {
                 </Stack>
             </Container>
             <CardHeader sx={{ mt: 2 }}>
-                <Title>Color List</Title>
+                <Title>Varient List</Title>
             </CardHeader>
             <TableComponent
                 rows={rows}
@@ -304,9 +294,7 @@ const ColorList = () => {
                                 />
                             </TableCell>
                             <TableCell>{row.name} </TableCell>
-                            <TableCell>{row.description} </TableCell>
                             <TableCell>{row.slug}</TableCell>
-                            <TableCell>{row.count}</TableCell>
                             <TableCell  >
                                 <IconButton
                                     aria-label="more"
