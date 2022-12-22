@@ -19,6 +19,7 @@ import {
     Typography,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
+import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
@@ -171,13 +172,18 @@ const CategoryForm = ({ data = {}, type }) => {
                                 value={slug || ""}
                                 onChange={handleChange}
                             />
-                            <TextField
+                            {/* <TextField
                                 type="text"
                                 name="description"
                                 label="Description"
                                 onChange={handleChange}
                                 value={description || ""}
-                            />
+                            /> */}
+
+                            <Box sx={{ mb: 2 }}>
+                                <TextEditor />
+                            </Box>
+
                             <TextField
                                 type="text"
                                 name="categoryCode"
@@ -194,13 +200,13 @@ const CategoryForm = ({ data = {}, type }) => {
                             />
 
                             <FormControl sx={{ mb: 1, flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
-                                <FormLabel component="legend">Visibility</FormLabel>
-                                <FormGroup sx={{ pl: 2 }}>
+                                {/* <FormLabel component="legend">Visibility</FormLabel> */}
+                                <FormGroup>
                                     <FormControlLabel
                                         control={
                                             <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
                                         }
-                                        label="Home"
+                                        label="Home Visibility"
                                     />
                                 </FormGroup>
                             </FormControl>

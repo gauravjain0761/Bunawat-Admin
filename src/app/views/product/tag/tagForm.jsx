@@ -97,13 +97,13 @@ const TagForm = ({ data = {} }) => {
                             />
 
                             <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
-                                <FormLabel component="legend">Visibility</FormLabel>
-                                <FormGroup sx={{ pl: 2 }}>
+                                {/* <FormLabel component="legend">Visibility</FormLabel> */}
+                                <FormGroup>
                                     <FormControlLabel
                                         control={
                                             <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
                                         }
-                                        label="Home"
+                                        label="Home Visibility"
                                     />
                                 </FormGroup>
                             </FormControl>

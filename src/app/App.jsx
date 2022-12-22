@@ -7,6 +7,7 @@ import { SettingsProvider } from './contexts/SettingsContext';
 import { Store } from './redux/Store';
 import routes from './routes';
 import "react-datepicker/dist/react-datepicker.css";
+import './App.css';
 
 const App = () => {
   const content = useRoutes(routes);

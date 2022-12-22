@@ -26,8 +26,8 @@ const ColorList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
-
     const [formData, setFormData] = useState({});
+    const [searchText, setSearchText] = useState('');
 
     const handleSubmit = (event) => {
         console.log("submitted");
@@ -264,8 +264,32 @@ const ColorList = () => {
                     </ValidatorForm>
                 </Stack>
             </Container>
-            <CardHeader sx={{ mt: 2 }}>
+            <CardHeader sx={{ mt: 2 }} className="searchBoxSeaprate">
                 <Title>Varient List</Title>
+                <Box display="flex" className="searchBoxSeaprate">
+                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                        border: "1px solid #000",
+                        borderRadius: "6px",
+                        mr: "20px",
+                    }}>
+                        <Box component="input" sx={{
+                            width: '100%',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1rem',
+                            p: 0,
+                            paddingLeft: '20px',
+                            height: '36px',
+                            background: "transparent",
+                            color: "#000",
+                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                            setSearchText(e.target.value)
+                        }} placeholder="Search here..." />
+                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                            <Icon sx={{ color: "#000" }}>close</Icon>
+                        </IconButton>
+                    </Box>
+                </Box>
             </CardHeader>
             <TableComponent
                 rows={rows}

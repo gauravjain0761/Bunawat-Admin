@@ -18,6 +18,7 @@ import {
     styled,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
+import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
@@ -89,7 +90,7 @@ const CollectionForm = ({ data = {} }) => {
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
-                            <TextField
+                            {/* <TextField
                                 type="text"
                                 name="description"
                                 label="Description"
@@ -97,7 +98,11 @@ const CollectionForm = ({ data = {} }) => {
                                 value={description || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
-                            />
+                            /> */}
+
+                            <Box sx={{ mb: 2 }}>
+                                <TextEditor />
+                            </Box>
 
                             <Autocomplete
                                 disablePortal
@@ -107,13 +112,13 @@ const CollectionForm = ({ data = {} }) => {
                             />
 
                             <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard" >
-                                <FormLabel component="legend">Visibility</FormLabel>
-                                <FormGroup sx={{ pl: 2 }}>
+                                {/* <FormLabel component="legend">Visibility</FormLabel> */}
+                                <FormGroup>
                                     <FormControlLabel
                                         control={
                                             <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
                                         }
-                                        label="Home"
+                                        label="Home Visibility"
                                     />
                                 </FormGroup>
                             </FormControl>

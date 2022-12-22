@@ -5,7 +5,7 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import TableComponent from 'app/components/table';
-import { Button, Card, Fade, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, TextField, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -13,6 +13,7 @@ import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
+import { Span } from 'app/components/Typography';
 
 const UserList = ({ data = [], type }) => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const UserList = ({ data = [], type }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
   const [actionAllOpen, setActionAllOpen] = useState(null);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     if (rows?.length > 0) {
@@ -158,16 +160,46 @@ const UserList = ({ data = [], type }) => {
     fontWeight: '500',
     textTransform: 'capitalize',
   }));
+
+
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-      <CardHeader>
+      <CardHeader className="searchBoxSeaprate">
         <Title>{type} List</Title>
-        <Button onClick={() => navigate(`/user/add/${type}`)} sx={{
-          backgroundColor: UIColor, color: "#fff",
-          "&:hover": {
-            backgroundColor: UIColor, color: "#fff"
-          }
-        }}>Add {type}</Button>
+        <Box display="flex" className="searchBoxSeaprate">
+          <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+            border: "1px solid #000",
+            borderRadius: "6px",
+            mr: "20px",
+          }}>
+            <Box component="input" sx={{
+              width: '100%',
+              border: 'none',
+              outline: 'none',
+              fontSize: '1rem',
+              p: 0,
+              paddingLeft: '20px',
+              height: '36px',
+              background: "transparent",
+              color: "#000",
+            }} type="text" autoFocus value={searchText} onChange={(e) => {
+              setSearchText(e.target.value)
+            }} placeholder="Search here..." />
+            <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+              <Icon sx={{ color: "#000" }}>close</Icon>
+            </IconButton>
+          </Box>
+
+          <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/user/add/${type}`)} sx={{
+            backgroundColor: UIColor, color: "#fff",
+            "&:hover": {
+              backgroundColor: UIColor, color: "#fff"
+            }
+          }}>
+            <Icon s>add</Icon>
+            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add {type}</Span>
+          </Button>
+        </Box>
       </CardHeader>
       <TableComponent
         rows={rows}

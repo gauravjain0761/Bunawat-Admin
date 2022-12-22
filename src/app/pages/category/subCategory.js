@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Fade, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -12,6 +12,7 @@ import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { mockDataSubCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
+import { Span } from 'app/components/Typography';
 
 const SubCategoryAdd = () => {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ const SubCategoryAdd = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
+    const [searchText, setSearchText] = useState('');
 
     const columns = [
         {
@@ -164,14 +166,42 @@ const SubCategoryAdd = () => {
     }));
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader>
+            <CardHeader className="searchBoxSeaprate">
                 <Title>Parent Sub Category List</Title>
-                <Button onClick={() => navigate(`/category/details/sub`)} sx={{
-                    backgroundColor: UIColor, color: "#fff",
-                    "&:hover": {
-                        backgroundColor: UIColor, color: "#fff"
-                    }
-                }}>Add Parent Sub Category</Button>
+                <Box display="flex" className="searchBoxSeaprate">
+                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                        border: "1px solid #000",
+                        borderRadius: "6px",
+                        mr: "20px",
+                    }}>
+                        <Box component="input" sx={{
+                            width: '100%',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1rem',
+                            p: 0,
+                            paddingLeft: '20px',
+                            height: '36px',
+                            background: "transparent",
+                            color: "#000",
+                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                            setSearchText(e.target.value)
+                        }} placeholder="Search here..." />
+                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                            <Icon sx={{ color: "#000" }}>close</Icon>
+                        </IconButton>
+                    </Box>
+
+                    <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/sub`)} sx={{
+                        backgroundColor: UIColor, color: "#fff",
+                        "&:hover": {
+                            backgroundColor: UIColor, color: "#fff"
+                        }
+                    }}>
+                        <Icon>add</Icon>
+                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Parent Sub Category</Span>
+                    </Button>
+                </Box>
             </CardHeader>
             <TableComponent
                 rows={rows}
