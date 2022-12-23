@@ -58,7 +58,7 @@ const SubCategoryAdd = () => {
             label: "Action",
             action: true,
             align: 'right',
-            width: 40,
+            width: 80,
             sortDisable: true,
             renderCell: (
                 <>
