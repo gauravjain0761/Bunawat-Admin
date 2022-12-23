@@ -21,6 +21,8 @@ import {
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
+import { mockDataProductColor } from "fake-db/data/product/color/colorList";
+import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
@@ -32,10 +34,30 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const ProductForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState({ ...data, pCategory: "None" });
+    const [formData, setFormData] = useState({
+        ...data, pCategory: "None", attributeData: [{
+            type: 'single',
+            name: 'size',
+            value: null
+        }, {
+            type: 'multi',
+            name: 'color',
+            value: []
+        }]
+    });
     const navigate = useNavigate();
     useEffect(() => {
-        setFormData({ ...data, pCategory: "None" })
+        setFormData({
+            ...data, pCategory: "None", attributeData: [{
+                type: 'single',
+                name: 'size',
+                value: null
+            }, {
+                type: 'multi',
+                name: 'color',
+                value: []
+            }]
+        })
     }, [data])
 
 
@@ -72,6 +94,40 @@ const ProductForm = ({ data = {} }) => {
         }
     };
 
+    const handleAddAttribute = () => {
+        let attributesList = formData?.attributeList ?? []
+        let attributesData = formData?.attributeData ?? []
+        attributesList = [...attributesList, attributesData]
+        attributesData = [{
+            type: 'single',
+            name: 'size',
+            value: null
+        }, {
+            type: 'multi',
+            name: 'color',
+            value: []
+        }]
+        setFormData({ ...formData, attributeData: attributesData, attributeList: attributesList });
+    }
+
+    const handleAddValueAttribute = (type, name, value) => {
+        let attributes = formData?.attributeData ?? []
+        let index = attributes.findIndex(i => i.name == name)
+        if (index == -1) {
+            attributes = [...attributes, {
+                type,
+                name,
+                value
+            }]
+        } else if (index >= 0) {
+            attributes[index] = {
+                type,
+                name,
+                value
+            }
+        }
+        setFormData({ ...formData, attributeData: attributes });
+    }
 
     const handleDeleteImage = (index) => {
         let images = formData?.image ?? []
@@ -88,14 +144,12 @@ const ProductForm = ({ data = {} }) => {
     };
 
     const handleDeleteVideo = (index) => {
-        console.log(index)
         let videos = formData?.videos ?? []
         videos = videos?.filter((img, i) => i != index)
         setFormData({ ...formData, videos: videos });
     };
 
     const handleSwitchVideo = (index, max = 4) => {
-        console.log(max)
         let videos = formData?.videos ?? []
         if (videos?.filter((video) => video.checked).length < max) {
             videos[index] = { ...videos[index], checked: !videos[index].checked }
@@ -117,6 +171,9 @@ const ProductForm = ({ data = {} }) => {
         influncerCommissionType,
         influncerCommission,
         taxType,
+        attributeType,
+        attributeData,
+        attributeList,
         isActive
     } = formData;
 
@@ -169,7 +226,7 @@ const ProductForm = ({ data = {} }) => {
                                     name="collection"
                                     label="Collection"
                                     onChange={handleChange}>
-                                    <MenuItem disabled value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
                                     <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
                                     <MenuItem value="Lehengas">Lehengas</MenuItem>
                                     <MenuItem value="Shararas">Shararas</MenuItem>
@@ -397,6 +454,68 @@ const ProductForm = ({ data = {} }) => {
                                     <MenuItem value="6%">6% CGST/IGST</MenuItem>
                                 </Select>
                             </FormControl>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mb: 2 }}>
+                                {attributeData?.length > 0 && attributeData?.map((data, index) => {
+                                    return (
+                                        <Autocomplete
+                                            key={index}
+                                            sx={{ width: "400px" }}
+                                            multiple={data?.type == 'single' ? false : true}
+                                            id="tags-outlined"
+                                            value={data?.value}
+                                            onChange={(event, newValue) => handleAddValueAttribute(data?.type, data?.name, newValue)}
+                                            options={data?.name == "color" ? mockDataProductColor.map(color => color.name) :
+                                                mockDataProductSize.map(size => size.name)}
+                                            getOptionLabel={(option) => option}
+                                            filterSelectedOptions
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
+                                                />
+                                            )}
+                                        />
+                                    )
+                                })}
+
+
+                                <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
+                                    <Icon>add</Icon>
+                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
+                                </Button>
+                            </Box>
+
+                            {attributeList?.length > 0 && <> <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes List</Span>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "20px", mb: 2 }}>
+                                    {attributeList?.map((data, index) => {
+                                        return (
+                                            <Box sx={{
+                                                display: 'flex', flexDirection: 'column', border: '1px solid',
+                                                padding: '20px',
+                                                borderRadius: '10px'
+                                            }}>
+                                                {data?.map(item => {
+                                                    return (
+                                                        <Box sx={{ display: 'flex' }}>
+                                                            <Box component='span'>
+                                                                {item?.name.charAt(0).toUpperCase() + item?.name.slice(1)}
+                                                            </Box>
+                                                            <Box component='span'>
+                                                                &nbsp;&nbsp;:&nbsp;&nbsp;
+                                                            </Box>
+                                                            <Box component='span'>
+                                                                {typeof item?.value == 'string' ? item?.value : item?.value?.join(",")}
+                                                            </Box>
+                                                        </Box>
+                                                    )
+                                                })}
+                                            </Box>
+                                        )
+                                    })}
+                                </Box>
+                            </>}
 
                             <FormControl>
                                 <FormLabel id="demo-row-radio-buttons-group-label">Is Active</FormLabel>

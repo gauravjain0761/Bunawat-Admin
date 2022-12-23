@@ -3,6 +3,7 @@ import { lazy } from 'react';
 
 const AttributeList = Loadable(lazy(() => import('./attribute/attributeList')));
 const AddProduct = Loadable(lazy(() => import('./addProduct/addProduct')));
+const ProductList = Loadable(lazy(() => import('./productList')));
 const ColorList = Loadable(lazy(() => import('./color/colorList')));
 const SizeList = Loadable(lazy(() => import('./size/sizeList')));
 const TagList = Loadable(lazy(() => import('./tag/tagList')));
@@ -12,7 +13,9 @@ const TagDetail = Loadable(lazy(() => import('./tag/tagDetails')));
 
 const ProductRoutes = [
     { path: '/product/attributes', element: <AttributeList /> },
+    { path: '/product/list', element: <ProductList /> },
     { path: '/product/add', element: <AddProduct /> },
+    { path: '/product/add/:id', element: <AddProduct /> },
     { path: '/product/color', element: <ColorList /> },
     { path: '/product/color/detail', element: <ColorDetail /> },
     { path: '/product/color/detail/:id', element: <ColorDetail /> },

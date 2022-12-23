@@ -27,7 +27,7 @@ export const navigations = [
     icon: 'dashboard',
     children: [
       { name: 'Attributes', iconText: 'SI', path: '/product/attributes' },
-      { name: 'Add Product', iconText: 'SI', path: '/product/add' },
+      { name: 'Product', iconText: 'SI', path: '/product/list' },
     ],
   },
 
