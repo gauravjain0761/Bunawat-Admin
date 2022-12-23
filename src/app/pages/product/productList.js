@@ -46,7 +46,8 @@ const ProductList = () => {
             id: "action",
             label: "Action",
             action: true,
-            width: 80,
+            align: 'right',
+            width: 40,
             sortDisable: true,
             renderCell: (
                 <>
@@ -177,7 +178,7 @@ const ProductList = () => {
                             setSearchText(e.target.value)
                         }} placeholder="Search here..." />
                         <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-                            <Icon sx={{ color: "#000" }}>close</Icon>
+                            <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
                         </IconButton>
                     </Box>
 
@@ -221,7 +222,7 @@ const ProductList = () => {
                             <TableCell>{row.category}</TableCell>
                             <TableCell>{row.slug}</TableCell>
                             <TableCell align="center">{row.count}</TableCell>
-                            <TableCell >
+                            <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
                                     id="long-button"

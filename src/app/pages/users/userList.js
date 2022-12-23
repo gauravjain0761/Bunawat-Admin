@@ -53,7 +53,8 @@ const UserList = ({ data = [], type }) => {
       id: "action",
       label: "Action",
       action: true,
-      width: 80,
+      align: 'right',
+      width: 40,
       sortDisable: true,
       renderCell: (
         <>
@@ -186,7 +187,7 @@ const UserList = ({ data = [], type }) => {
               setSearchText(e.target.value)
             }} placeholder="Search here..." />
             <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-              <Icon sx={{ color: "#000" }}>close</Icon>
+              <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
             </IconButton>
           </Box>
 
@@ -230,7 +231,7 @@ const UserList = ({ data = [], type }) => {
               <TableCell >{`${row.firstName} ${row.lastName}`}</TableCell>
               <TableCell >{row.mobile}</TableCell>
               <TableCell  > {row.email} </TableCell>
-              <TableCell >
+              <TableCell align='right' sx={{ pr: "18px" }}>
                 <IconButton
                   aria-label="more"
                   id="long-button"

@@ -32,7 +32,7 @@ function EnhancedTableHead(props) {
           />
         </TableCell>
         {headCells.map((headCell) => (
-          <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: (numSelected > 0 && headCell?.action) ? "8px" : 0 }}
+          <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: (headCell?.action) ? "18px" : 0 }}
             key={headCell.id}
             width={headCell?.width ?? "100%"}
             align={headCell?.align ? headCell?.align : 'left'}

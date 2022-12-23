@@ -37,11 +37,11 @@ const ProductForm = ({ data = {} }) => {
     const [formData, setFormData] = useState({
         ...data, pCategory: "None", attributeData: [{
             type: 'single',
-            name: 'size',
+            name: 'color',
             value: null
         }, {
             type: 'multi',
-            name: 'color',
+            name: 'size',
             value: []
         }]
     });
@@ -50,11 +50,11 @@ const ProductForm = ({ data = {} }) => {
         setFormData({
             ...data, pCategory: "None", attributeData: [{
                 type: 'single',
-                name: 'size',
+                name: 'color',
                 value: null
             }, {
                 type: 'multi',
-                name: 'color',
+                name: 'size',
                 value: []
             }]
         })
@@ -100,14 +100,20 @@ const ProductForm = ({ data = {} }) => {
         attributesList = [...attributesList, attributesData]
         attributesData = [{
             type: 'single',
-            name: 'size',
+            name: 'color',
             value: null
         }, {
             type: 'multi',
-            name: 'color',
+            name: 'size',
             value: []
         }]
         setFormData({ ...formData, attributeData: attributesData, attributeList: attributesList });
+    }
+
+    const handleDeleteAttribute = (index) => {
+        let attributesList = formData?.attributeList ?? []
+        attributesList = attributesList.filter((item, i) => i != index)
+        setFormData({ ...formData, attributeList: attributesList });
     }
 
     const handleAddValueAttribute = (type, name, value) => {
@@ -456,7 +462,7 @@ const ProductForm = ({ data = {} }) => {
                             </FormControl>
 
                             <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes</Span>
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mb: 2 }}>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
                                 {attributeData?.length > 0 && attributeData?.map((data, index) => {
                                     return (
                                         <Autocomplete
@@ -493,12 +499,22 @@ const ProductForm = ({ data = {} }) => {
                                         return (
                                             <Box sx={{
                                                 display: 'flex', flexDirection: 'column', border: '1px solid',
-                                                padding: '20px',
-                                                borderRadius: '10px'
+                                                padding: '10px 20px',
+                                                borderRadius: '10px',
+                                                position: 'relative',
                                             }}>
+                                                <Icon onClick={() => handleDeleteAttribute(index)} sx={{
+                                                    position: 'absolute',
+                                                    right: '-10px',
+                                                    top: '-10px',
+                                                    color: "black",
+                                                    cursor: "pointer",
+                                                    zIndex: "999"
+                                                }}>delete</Icon>
                                                 {data?.map(item => {
                                                     return (
                                                         <Box sx={{ display: 'flex' }}>
+
                                                             <Box component='span'>
                                                                 {item?.name.charAt(0).toUpperCase() + item?.name.slice(1)}
                                                             </Box>

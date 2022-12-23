@@ -73,8 +73,8 @@ const AttributeList = () => {
             id: "action",
             label: "Action",
             action: true,
-            width: 80,
-            align: "center",
+            align: 'right',
+            width: 40,
             sortDisable: true,
             renderCell: (
                 <>
@@ -253,7 +253,7 @@ const AttributeList = () => {
                             setSearchText(e.target.value)
                         }} placeholder="Search here..." />
                         <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-                            <Icon sx={{ color: "#000" }}>close</Icon>
+                            <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
                         </IconButton>
                     </Box>
                 </Box>
@@ -290,7 +290,7 @@ const AttributeList = () => {
                                 {row.slug == "color" && mockDataProductColor.map(color => color.name).join()}
                                 {row.slug == "size" && mockDataProductSize.map(color => color.name).join()}
                             </TableCell>
-                            <TableCell align="center" >
+                            <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
                                     id="long-button"

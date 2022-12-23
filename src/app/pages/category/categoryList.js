@@ -62,7 +62,8 @@ const CategoryList = () => {
       id: "action",
       label: "Action",
       action: true,
-      width: 80,
+      align: 'right',
+      width: 40,
       sortDisable: true,
       renderCell: (
         <>
@@ -193,7 +194,7 @@ const CategoryList = () => {
               setSearchText(e.target.value)
             }} placeholder="Search here..." />
             <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-              <Icon sx={{ color: "#000" }}>close</Icon>
+              <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
             </IconButton>
           </Box>
 
@@ -250,7 +251,7 @@ const CategoryList = () => {
                   </Typography>
                 }
               </TableCell>
-              <TableCell >
+              <TableCell align='right' sx={{ pr: "18px" }}>
                 <IconButton
                   aria-label="more"
                   id="long-button"
