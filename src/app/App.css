@@ -9,6 +9,10 @@
     .searchBoxWidth {
         width: 100%
     }
+
+    .mediaPart {
+        flex-direction: column;
+    }
 }
 
 .list-group {

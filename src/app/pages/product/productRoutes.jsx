@@ -1,8 +1,10 @@
 import Loadable from 'app/components/Loadable';
 import { lazy } from 'react';
+import Demo from './demo';
 
 const AttributeList = Loadable(lazy(() => import('./attribute/attributeList')));
 const AddProduct = Loadable(lazy(() => import('./addProduct/addProduct')));
+const ProductMedia = Loadable(lazy(() => import('./media/index')));
 const ProductList = Loadable(lazy(() => import('./productList')));
 const ColorList = Loadable(lazy(() => import('./color/colorList')));
 const SizeList = Loadable(lazy(() => import('./size/sizeList')));
@@ -12,9 +14,11 @@ const SizeDetail = Loadable(lazy(() => import('./size/sizeDetails')));
 const TagDetail = Loadable(lazy(() => import('./tag/tagDetails')));
 
 const ProductRoutes = [
+    { path: '/product/demo', element: <Demo /> },
     { path: '/product/attributes', element: <AttributeList /> },
     { path: '/product/list', element: <ProductList /> },
     { path: '/product/add', element: <AddProduct /> },
+    { path: '/product/media', element: <ProductMedia /> },
     { path: '/product/add/:id', element: <AddProduct /> },
     { path: '/product/color', element: <ColorList /> },
     { path: '/product/color/detail', element: <ColorDetail /> },

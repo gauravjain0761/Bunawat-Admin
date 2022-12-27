@@ -28,6 +28,8 @@ export const navigations = [
     children: [
       { name: 'Attributes', iconText: 'SI', path: '/product/attributes' },
       { name: 'Product', iconText: 'SI', path: '/product/list' },
+      { name: 'Media', iconText: 'SI', path: '/product/media' },
+      { name: 'Drag Table', iconText: 'SI', path: '/product/demo' },
     ],
   },
 

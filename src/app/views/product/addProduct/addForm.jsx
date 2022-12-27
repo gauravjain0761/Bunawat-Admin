@@ -83,17 +83,28 @@ const ProductForm = ({ data = {} }) => {
     };
 
     const handleChange = (event) => {
-        console.log(event.target.name)
         if (event.target.name == "home") {
             let visibility = formData?.visibility ?? {}
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
         } else if (event.target.name == "image") {
             const images = formData[event.target.name] ?? []
-            setFormData({ ...formData, [event.target.name]: [...images, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
+            const newImages = Array.prototype.slice.call(event.target.files).map((image) => {
+                return {
+                    url: URL.createObjectURL(image),
+                    checked: false
+                }
+            })
+            setFormData({ ...formData, [event.target.name]: [...images, ...newImages] });
         } else if (event.target.name == "videos") {
             const videos = formData[event.target.name] ?? []
-            setFormData({ ...formData, [event.target.name]: [...videos, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
+            const newVideos = Array.prototype.slice.call(event.target.files).map((video) => {
+                return {
+                    url: URL.createObjectURL(video),
+                    checked: false
+                }
+            })
+            setFormData({ ...formData, [event.target.name]: [...videos, ...newVideos] });
         } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "costPrice" || event.target.name == "reSellerPrice" || event.target.name == "influncerCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
@@ -297,23 +308,81 @@ const ProductForm = ({ data = {} }) => {
         )
     });
 
-    const SortableList = SortableContainer(({ items, type }) => {
+    const SortableList = SortableContainer(({ items }) => {
         return (
             <Box className="list-group">
                 {items?.map((item, index) => {
-                    if (type == 'image') {
-                        return (
-                            <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
-                        );
-                    }
                     return (
-                        <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
+                        <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
                     );
                 })}
+                <Button
+                    variant="contained"
+                    component="label"
+                    sx={{
+                        width: "160px",
+                        height: "160px",
+                        background: "transparent",
+                        color: "#000",
+                        border: "2px dashed",
+                        margin: "10px 10px 0 0",
+
+                        "&:hover": {
+                            background: "transparent",
+                        }
+                    }} >
+                    <Icon>add</Icon>
+                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Image</Span>
+                    <input
+                        type="file"
+                        name="image"
+                        multiple
+                        accept="image/png, image/gif, image/jpeg"
+                        hidden
+                        onClick={(event) => { event.target.value = '' }}
+                        onChange={handleChange} />
+                </Button>
             </Box>
         );
     });
 
+    const SortableVideoList = SortableContainer(({ items }) => {
+        return (
+            <Box className="list-group">
+                {items?.map((item, index) => {
+                    return (
+                        <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
+                    );
+                })}
+                <Button
+                    variant="contained"
+                    component="label"
+                    sx={{
+                        width: "160px",
+                        height: "160px",
+                        background: "transparent",
+                        color: "#000",
+                        border: "2px dashed",
+                        margin: "20px 10px 0 0",
+
+                        "&:hover": {
+                            background: "transparent",
+                        }
+                    }} >
+                    <Icon>add</Icon>
+                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Video</Span>
+                    <input
+                        type="file"
+                        name="videos"
+                        multiple
+                        accept="video/mp4,video/x-m4v,video/*"
+                        hidden
+                        onClick={(event) => { event.target.value = '' }}
+                        onChange={handleChange} />
+                </Button>
+            </Box>
+        );
+    });
 
     return (
         <div>
@@ -441,11 +510,8 @@ const ProductForm = ({ data = {} }) => {
 
                             <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
                                 <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
-                                <Box sx={{
-                                    display: "flex",
-                                    flexWrap: "wrap",
-                                }}>
-                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} type='image' />
+                                <Box className="list-group">
+                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
                                     {/* {image?.length > 0 && image?.map((img, i) => (
                                         <Box key={i}
                                             sx={{
@@ -472,7 +538,7 @@ const ProductForm = ({ data = {} }) => {
                                             </Box>
                                         </Box>
                                     ))} */}
-                                    <Button
+                                    {/* <Button
                                         variant="contained"
                                         component="label"
                                         sx={{
@@ -492,19 +558,17 @@ const ProductForm = ({ data = {} }) => {
                                         <input
                                             type="file"
                                             name="image"
+                                            multiple
                                             accept="image/png, image/gif, image/jpeg"
                                             hidden
                                             onClick={(event) => { event.target.value = '' }}
                                             onChange={handleChange} />
-                                    </Button>
+                                    </Button> */}
                                 </Box>
 
-                                <Box sx={{
-                                    display: "flex",
-                                    flexWrap: "wrap",
-                                }}>
+                                <Box className="list-group">
 
-                                    <SortableList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} type='video' />
+                                    <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
                                     {/* {videos?.length > 0 && videos?.map((video, i) => (
                                         <Box key={i}
                                             sx={{
@@ -536,7 +600,7 @@ const ProductForm = ({ data = {} }) => {
                                             </Box>
                                         </Box>
                                     ))} */}
-                                    <Button
+                                    {/* <Button
                                         variant="contained"
                                         component="label"
                                         sx={{
@@ -560,7 +624,7 @@ const ProductForm = ({ data = {} }) => {
                                             hidden
                                             onClick={(event) => { event.target.value = '' }}
                                             onChange={handleChange} />
-                                    </Button>
+                                    </Button> */}
                                 </Box>
                             </Box>
 
@@ -700,7 +764,7 @@ const ProductForm = ({ data = {} }) => {
                                 </DialogContent>
                                 <DialogActions>
                                     <Button onClick={() => setDopen(false)} type='button'>
-                                        Cancle
+                                        Cancel
                                     </Button>
                                     <Button onClick={() => pickColor()} type='button'>
                                         Pick Color
@@ -748,7 +812,6 @@ const ProductForm = ({ data = {} }) => {
                             </>}
 
                             <FormControl>
-                                <FormLabel id="demo-row-radio-buttons-group-label">Is Active</FormLabel>
                                 <RadioGroup
                                     row
                                     value={isActive ?? "active"}
