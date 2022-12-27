@@ -32,6 +32,7 @@ import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
+import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -151,7 +152,6 @@ const ProductForm = ({ data = {} }) => {
                 value
             }
         }
-        console.log(attributes)
         setFormData({ ...formData, attributeData: attributes });
     }
 
@@ -226,13 +226,98 @@ const ProductForm = ({ data = {} }) => {
         isActive,
     } = formData;
 
+    const onSortEnd = ({ oldIndex, newIndex }) => {
+        setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
+    }
+
+    const onSortVideoEnd = ({ oldIndex, newIndex }) => {
+        setFormData({ ...formData, videos: arrayMove(videos, oldIndex, newIndex) });
+    }
+
+
+    const SortableImageItem = SortableElement(({ item, i }) => {
+        return (
+            <Box key={i} sx={{
+                width: "160px",
+                height: "200px",
+                margin: "10px 10px 0 0",
+                position: "relative"
+            }}>
+                <img src={item.url} width="100%" height="160px" />
+                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
+                    <Switch
+                        sx={{
+                            color: "red",
+                            cursor: "pointer"
+                        }}
+                        checked={item.checked}
+                        onChange={() => handleSwitchImage(i)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item.checked ? "Active" : "InActive"}</Span>
+                    <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                        color: "red",
+                        cursor: "pointer",
+                    }}>delete</Icon> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                </Box>
+            </Box>
+        )
+    });
+
+    const SortableVideoItem = SortableElement(({ item, i }) => {
+        return (
+            <Box key={i}
+                sx={{
+                    width: "160px",
+                    height: "200px",
+                    margin: "20px 10px 0 0",
+                    position: "relative"
+                }}>
+                <video width="100%" height="160px" autoPlay={true} muted={true} loop={true} playsInline={true}
+                    style={{ objectFit: "fill", borderRadius: "10px" }}>
+                    <source src={item.url} type="video/mp4" />
+                </video>
+                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
+                    <Switch
+                        sx={{
+                            color: "red",
+                            cursor: "pointer",
+                            zIndex: "999"
+                        }}
+                        checked={item.checked}
+                        onChange={() => handleSwitchVideo(i, 4)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item.checked ? "Active" : "InActive"}</Span>
+                    <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
+                        color: "red",
+                        cursor: "pointer",
+                        zIndex: "999"
+                    }}>delete</Icon> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                </Box>
+            </Box>
+        )
+    });
+
+    const SortableList = SortableContainer(({ items, type }) => {
+        return (
+            <Box className="list-group">
+                {items?.map((item, index) => {
+                    if (type == 'image') {
+                        return (
+                            <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
+                        );
+                    }
+                    return (
+                        <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
+                    );
+                })}
+            </Box>
+        );
+    });
+
+
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                {isSupported() ?
-                    <button onClick={pickColor}>Pick color</button>
-                    : <span>EyeDropper API not supported in this browser</span>
-                }
                 <SimpleCard title="Product" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -360,7 +445,8 @@ const ProductForm = ({ data = {} }) => {
                                     display: "flex",
                                     flexWrap: "wrap",
                                 }}>
-                                    {image?.length > 0 && image?.map((img, i) => (
+                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} type='image' />
+                                    {/* {image?.length > 0 && image?.map((img, i) => (
                                         <Box key={i}
                                             sx={{
                                                 width: "160px",
@@ -385,7 +471,7 @@ const ProductForm = ({ data = {} }) => {
                                                 }}>delete</Icon> <Span onClick={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
                                             </Box>
                                         </Box>
-                                    ))}
+                                    ))} */}
                                     <Button
                                         variant="contained"
                                         component="label"
@@ -417,7 +503,9 @@ const ProductForm = ({ data = {} }) => {
                                     display: "flex",
                                     flexWrap: "wrap",
                                 }}>
-                                    {videos?.length > 0 && videos?.map((video, i) => (
+
+                                    <SortableList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} type='video' />
+                                    {/* {videos?.length > 0 && videos?.map((video, i) => (
                                         <Box key={i}
                                             sx={{
                                                 width: "160px",
@@ -447,7 +535,7 @@ const ProductForm = ({ data = {} }) => {
                                                 }}>delete</Icon> <Span onClick={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
                                             </Box>
                                         </Box>
-                                    ))}
+                                    ))} */}
                                     <Button
                                         variant="contained"
                                         component="label"

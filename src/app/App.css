@@ -10,3 +10,20 @@
         width: 100%
     }
 }
+
+.list-group {
+    flex-flow: row;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.list-group-item {
+    width: 160px;
+    height: 200px;
+    list-style-type: none;
+    user-select: none;
+    outline: none;
+    box-sizing: border-box;
+    margin: 0;
+    background: transparent;
+}
