@@ -30,7 +30,6 @@ import { mockDataProductColor } from "fake-db/data/product/color/colorList";
 import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 
