@@ -4,6 +4,10 @@ import {
     Box,
     Button,
     Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -19,12 +23,14 @@ import {
     Switch,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
+import useEyeDropper from 'use-eye-dropper'
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { mockDataProductColor } from "fake-db/data/product/color/colorList";
 import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 
@@ -34,8 +40,10 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const ProductForm = ({ data = {} }) => {
+    const { open, close, isSupported } = useEyeDropper()
+    const [dOpen, setDopen] = useState(false)
     const [formData, setFormData] = useState({
-        ...data, pCategory: "None", attributeData: [{
+        ...data, pCategory: "None", color: '#000', attributeData: [{
             type: 'single',
             name: 'color',
             value: null
@@ -43,12 +51,16 @@ const ProductForm = ({ data = {} }) => {
             type: 'multi',
             name: 'size',
             value: []
+        }, {
+            type: 'single',
+            name: 'swatch',
+            value: "#000"
         }]
     });
     const navigate = useNavigate();
     useEffect(() => {
         setFormData({
-            ...data, pCategory: "None", attributeData: [{
+            ...data, pCategory: "None", color: '#000', attributeData: [{
                 type: 'single',
                 name: 'color',
                 value: null
@@ -56,6 +68,10 @@ const ProductForm = ({ data = {} }) => {
                 type: 'multi',
                 name: 'size',
                 value: []
+            }, {
+                type: 'single',
+                name: 'swatch',
+                value: "#000"
             }]
         })
     }, [data])
@@ -78,7 +94,7 @@ const ProductForm = ({ data = {} }) => {
         } else if (event.target.name == "videos") {
             const videos = formData[event.target.name] ?? []
             setFormData({ ...formData, [event.target.name]: [...videos, { url: URL.createObjectURL(event.target.files[0]), checked: false }] });
-        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "reSellerPrice" || event.target.name == "influncerCommission") {
+        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "costPrice" || event.target.name == "reSellerPrice" || event.target.name == "influncerCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -106,8 +122,12 @@ const ProductForm = ({ data = {} }) => {
             type: 'multi',
             name: 'size',
             value: []
+        }, {
+            type: 'single',
+            name: 'swatch',
+            value: "#000"
         }]
-        setFormData({ ...formData, attributeData: attributesData, attributeList: attributesList });
+        setFormData({ ...formData, color: '#000', attributeData: attributesData, attributeList: attributesList });
     }
 
     const handleDeleteAttribute = (index) => {
@@ -132,6 +152,7 @@ const ProductForm = ({ data = {} }) => {
                 value
             }
         }
+        console.log(attributes)
         setFormData({ ...formData, attributeData: attributes });
     }
 
@@ -146,6 +167,11 @@ const ProductForm = ({ data = {} }) => {
         if (images?.filter((img) => img.checked).length < max) {
             images[index] = { ...images[index], checked: !images[index].checked }
             setFormData({ ...formData, image: images });
+        } else {
+            if (images[index].checked) {
+                images[index] = { ...images[index], checked: !images[index].checked }
+                setFormData({ ...formData, image: images });
+            }
         }
     };
 
@@ -160,8 +186,25 @@ const ProductForm = ({ data = {} }) => {
         if (videos?.filter((video) => video.checked).length < max) {
             videos[index] = { ...videos[index], checked: !videos[index].checked }
             setFormData({ ...formData, videos: videos });
+        } else {
+            if (videos[index].checked) {
+                videos[index] = { ...videos[index], checked: !videos[index].checked }
+                setFormData({ ...formData, videos: videos });
+            }
         }
     };
+
+    const pickColor = () => {
+        open()
+            .then(color => {
+                handleAddValueAttribute('single', 'swatch', color.sRGBHex)
+                setDopen(false)
+            })
+            .catch(e => {
+                setDopen(false)
+                console.log(e)
+            })
+    }
 
     const {
         category,
@@ -171,6 +214,7 @@ const ProductForm = ({ data = {} }) => {
         description,
         image,
         videos,
+        costPrice,
         mrp,
         salePrice,
         reSellerPrice,
@@ -180,12 +224,16 @@ const ProductForm = ({ data = {} }) => {
         attributeType,
         attributeData,
         attributeList,
-        isActive
+        isActive,
     } = formData;
 
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+                {isSupported() ?
+                    <button onClick={pickColor}>Pick color</button>
+                    : <span>EyeDropper API not supported in this browser</span>
+                }
                 <SimpleCard title="Product" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -200,25 +248,61 @@ const ProductForm = ({ data = {} }) => {
                                         color: "#000",
                                         opacity: "1 !important"
                                     }}>Ethnic Sets</MenuItem>
-                                    <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
+                                    <MenuItem value="Palazzo Sets" sx={{
+                                        fontWeight: 500,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
                                     <MenuItem value="Pant Sets" disabled sx={{
-                                        fontWeight: 600,
+                                        fontWeight: 500,
                                         color: "#000",
                                         opacity: "1 !important"
                                     }}>&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
-                                    <MenuItem value="Shararas">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shararas</MenuItem>
-                                    <MenuItem value="Lehengas">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lehengas</MenuItem>
-                                    <MenuItem value="Skirt Sets">&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem>
+                                    <MenuItem value="Shararas" sx={{
+                                        fontWeight: 400,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shararas</MenuItem>
+                                    <MenuItem value="Lehengas" sx={{
+                                        fontWeight: 400,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lehengas</MenuItem>
+                                    <MenuItem value="Skirt Sets" sx={{
+                                        fontWeight: 500,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem>
                                     <MenuItem value="Floor Length Designs" disabled sx={{
                                         fontWeight: 600,
                                         color: "#000",
                                         opacity: "1 !important"
                                     }}>Floor Length Designs</MenuItem>
-                                    <MenuItem value="Floor Length Anarkalis">&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
-                                    <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
-                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                    <MenuItem value="Floor Length Anarkalis" sx={{
+                                        fontWeight: 500,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
+                                    <MenuItem value="Gowns" sx={{
+                                        fontWeight: 500,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }} >&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
+                                    <MenuItem value="Lehengas" sx={{
+                                        fontWeight: 600,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>Lehengas</MenuItem>
+                                    <MenuItem value="Shararas" sx={{
+                                        fontWeight: 600,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>Shararas</MenuItem>
+                                    <MenuItem value="Stylised Drapes" sx={{
+                                        fontWeight: 600,
+                                        color: "#000",
+                                        opacity: "1 !important"
+                                    }}>Stylised Drapes</MenuItem>
 
                                 </Select>
                             </FormControl>
@@ -395,8 +479,18 @@ const ProductForm = ({ data = {} }) => {
 
                             <TextField
                                 type="text"
-                                name="mrp"
+                                name="costPrice"
+                                label="Cost Price"
                                 sx={{ mt: 1 }}
+                                onChange={handleChange}
+                                value={costPrice || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <TextField
+                                type="text"
+                                name="mrp"
                                 label="MRP"
                                 onChange={handleChange}
                                 value={mrp || ""}
@@ -424,7 +518,7 @@ const ProductForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <FormControl>
+                            {/* <FormControl>
                                 <FormLabel id="demo-row-radio-buttons-group-label">Influncer Commission Type</FormLabel>
                                 <RadioGroup
                                     row
@@ -445,7 +539,7 @@ const ProductForm = ({ data = {} }) => {
                                 value={influncerCommission || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
-                            />
+                            /> */}
 
                             <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel id="demo-simple-select-label">Tax Type</InputLabel>
@@ -464,6 +558,19 @@ const ProductForm = ({ data = {} }) => {
                             <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes</Span>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
                                 {attributeData?.length > 0 && attributeData?.map((data, index) => {
+                                    if (data?.name == 'swatch') {
+                                        return (
+                                            <Box sx={{
+                                                width: '30px', height: '53px', display: 'flex', alignItems: 'center', justifyContent: 'center        '
+                                            }} onClick={() => {
+                                                setDopen(true)
+                                            }}>
+                                                <Box sx={{
+                                                    width: '30px', height: '30px', background: data?.value, borderRadius: '50%'
+                                                }}></Box>
+                                            </Box>
+                                        )
+                                    }
                                     return (
                                         <Autocomplete
                                             key={index}
@@ -486,13 +593,33 @@ const ProductForm = ({ data = {} }) => {
                                     )
                                 })}
 
-
                                 <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
                                     <Icon>add</Icon>
                                     <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
                                 </Button>
                             </Box>
-
+                            <Dialog
+                                open={dOpen}
+                                aria-labelledby="responsive-dialog-title">
+                                <DialogTitle id="responsive-dialog-title">
+                                    Pick Color
+                                </DialogTitle>
+                                <DialogContent>
+                                    {image?.[0]?.url ?
+                                        <img src={image?.[0]?.url} width="100%" height="160px" />
+                                        :
+                                        <>Please Select Image First.</>
+                                    }
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={() => setDopen(false)} type='button'>
+                                        Cancle
+                                    </Button>
+                                    <Button onClick={() => pickColor()} type='button'>
+                                        Pick Color
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
                             {attributeList?.length > 0 && <> <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes List</Span>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "20px", mb: 2 }}>
                                     {attributeList?.map((data, index) => {

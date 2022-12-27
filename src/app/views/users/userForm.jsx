@@ -10,8 +10,11 @@ import {
     FormLabel,
     Grid,
     Icon,
+    InputLabel,
+    MenuItem,
     Radio,
     RadioGroup,
+    Select,
     styled,
     Typography,
 } from "@mui/material";
@@ -88,6 +91,7 @@ const UserForm = ({ data = {}, userType }) => {
         address_one,
         address_two,
         post_code,
+        collection,
         pan_number,
         type,
         bankName,
@@ -96,6 +100,7 @@ const UserForm = ({ data = {}, userType }) => {
         upiID,
         customerType,
         agencyName,
+        notes,
         commissionType,
         baseCommission,
         thresholdCommission,
@@ -207,16 +212,30 @@ const UserForm = ({ data = {}, userType }) => {
                             } */}
 
                             {(type == "influncer") &&
-                                <TextField
-                                    type="text"
-                                    name="agencyName"
-                                    label="Agency Name"
-                                    onChange={handleChange}
-                                    value={agencyName || ""}
-                                    validators={["required"]}
-                                    errorMessages={["this field is required"]}
-                                />
+                                <>
+                                    <TextField
+                                        type="text"
+                                        name="agencyName"
+                                        label="Agency Name"
+                                        onChange={handleChange}
+                                        value={agencyName || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+
+                                    <TextField
+                                        type="text"
+                                        name="notes"
+                                        label="Notes"
+                                        onChange={handleChange}
+                                        value={notes || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+                                </>
                             }
+
+
 
                         </Grid>
 
@@ -275,6 +294,26 @@ const UserForm = ({ data = {}, userType }) => {
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
+
+                            {(type == "influncer") &&
+                                <FormControl fullWidth >
+                                    <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={collection}
+                                        name="collection"
+                                        label="Collection"
+                                        onChange={handleChange}>
+                                        <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
+                                        <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
+                                        <MenuItem value="Lehengas">Lehengas</MenuItem>
+                                        <MenuItem value="Shararas">Shararas</MenuItem>
+                                        <MenuItem value="Shararas">Shararas</MenuItem>
+                                        <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            }
                         </Grid>
                     </Grid>
                 </SimpleCard>

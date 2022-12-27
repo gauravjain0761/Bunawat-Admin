@@ -49,9 +49,16 @@ const CollectionForm = ({ data = {} }) => {
             let visibility = formData?.visibility ?? {}
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
+        } else if (event.target.name == "image") {
+            setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
+    };
+
+
+    const handleDeleteImage = () => {
+        setFormData({ ...formData, image: null });
     };
 
     const {
@@ -61,7 +68,8 @@ const CollectionForm = ({ data = {} }) => {
         count,
         pCategory,
         visibility,
-        product_id
+        productId,
+        image
     } = formData;
 
     return (
@@ -122,6 +130,72 @@ const CollectionForm = ({ data = {} }) => {
                                     />
                                 </FormGroup>
                             </FormControl>
+
+                            {visibility?.home &&
+                                <>
+                                    <Box display="flex" flexDirection="column">
+                                        <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                        <Box sx={{
+                                            display: "flex",
+                                            flexWrap: "wrap",
+                                        }}>
+                                            {image ?
+                                                <Box
+                                                    sx={{
+                                                        width: "150px",
+                                                        height: "170px",
+                                                        margin: "10px 10px 0 0",
+                                                        position: "relative"
+                                                    }}>
+                                                    <img src={image} width="100%" height="90%" />
+                                                    <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
+                                                        <Icon onClick={() => handleDeleteImage()} sx={{
+                                                            color: "red",
+                                                            cursor: "pointer",
+                                                        }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                    </Box>
+                                                </Box>
+                                                :
+                                                <Button
+                                                    variant="contained"
+                                                    component="label"
+                                                    sx={{
+                                                        width: "150px",
+                                                        height: "150px",
+                                                        background: "transparent",
+                                                        color: "#000",
+                                                        border: "2px dashed",
+                                                        margin: "10px 10px 0 0",
+
+                                                        "&:hover": {
+                                                            background: "transparent",
+                                                        }
+                                                    }} >
+                                                    <Icon>add</Icon>
+                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                    <input
+                                                        type="file"
+                                                        name="image"
+                                                        accept="image/png, image/gif, image/jpeg"
+                                                        hidden
+                                                        onClick={(event) => { event.target.value = '' }}
+                                                        onChange={handleChange} />
+                                                </Button>
+                                            }
+                                        </Box>
+                                    </Box>
+
+                                    <TextField
+                                        sx={{ mt: 3 }}
+                                        type="text"
+                                        name="productId"
+                                        label="Link with productId"
+                                        onChange={handleChange}
+                                        value={productId || ""}
+                                    />
+
+                                </>
+                            }
                         </Grid>
 
                     </Grid>
