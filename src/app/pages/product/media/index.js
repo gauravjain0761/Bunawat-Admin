@@ -51,7 +51,7 @@ const ProductMedia = () => {
                         }}
                             value={tab} onChange={handleChange} aria-label="basic tabs example">
                             <Tab label="Images" />
-                            <Tab label="Video" />
+                            <Tab label="Videos" />
                         </Tabs>
                     </Box>
                 </Box>
