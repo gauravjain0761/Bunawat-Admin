@@ -43,7 +43,7 @@ const ProductMediaSingleList = () => {
                     </Stack>
                 </Title>
             </CardHeader>
-            <Box sx={{ width: '50%', ml: 3, mb: 2 }}>
+            <Box sx={{ width: { lg: '50%', md: '75%', sm: '100%' }, px: 3, mb: 2 }}>
                 <TableContainer component={Paper} sx={{ border: '1px solid #000' }}>
                     <Table sx={{ minWidth: '100%' }} aria-label="simple table">
                         <TableHead>
