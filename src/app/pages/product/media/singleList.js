@@ -39,7 +39,7 @@ const ProductMediaSingleList = () => {
                         <IconButton sx={{ color: "#000", p: 0, mr: 1 }} onClick={() => navigate(-1)}>
                             <Icon>arrow_back</Icon>
                         </IconButton>
-                        Media List ( {designNo} )
+                        Media List ( ABCD1234 )
                     </Stack>
                 </Title>
             </CardHeader>
