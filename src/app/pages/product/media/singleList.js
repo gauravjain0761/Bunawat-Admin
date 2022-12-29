@@ -1,7 +1,9 @@
-import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogTitle, Icon, IconButton, Paper, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs } from '@mui/material'
+import { Box, Button, Card, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Fade, Icon, IconButton, Paper, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs } from '@mui/material'
 import { mockDataProductMedia } from 'fake-db/data/product/media/data'
 import styled from '@emotion/styled';
 import React, { useState } from 'react'
+import { Menu, MenuItem } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { UIColor } from 'app/utils/constant';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -11,6 +13,10 @@ const ProductMediaSingleList = () => {
     const [dOpen, setDopen] = useState(false)
     const [dData, setDData] = useState(null)
     const [tab, setTab] = React.useState(0);
+    const [selectedImage, setImageSelected] = useState(mockDataProductMedia.filter(x => x.type == 'image').map(() => { return false }));
+    const [selectedVideo, setVideoSelected] = useState(mockDataProductMedia.filter(x => x.type == 'video').map(() => { return false }));
+    const [actionImageOpen, setActionImageOpen] = useState(mockDataProductMedia.filter(x => x.type == 'image').map(() => { return null }));
+    const [actionVideoOpen, setActionVideoOpen] = useState(mockDataProductMedia.filter(x => x.type == 'video').map(() => { return null }));
 
     const handleChange = (event, newValue) => {
         setTab(newValue);
@@ -48,24 +54,18 @@ const ProductMediaSingleList = () => {
                     <Table sx={{ minWidth: '100%' }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0 }} align="center">Size</TableCell>
-                                <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0 }} align="center">Quantity</TableCell>
+                                <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0, borderBottom: 'none' }} align="center">Size</TableCell>
+                                <TableCell align="center">M</TableCell>
+                                <TableCell align="center">L</TableCell>
+                                <TableCell align="center">XL</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0, borderBottom: 'none' }} align="center">Quantity</TableCell>
+                                <TableCell align="center">15</TableCell>
+                                <TableCell align="center">76</TableCell>
+                                <TableCell align="center">84</TableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}  >
-                                <TableCell align="center">M</TableCell>
-                                <TableCell align="center">30</TableCell>
-                            </TableRow>
-                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell align="center">L</TableCell>
-                                <TableCell align="center">75</TableCell>
-                            </TableRow>
-                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell align="center">XL</TableCell>
-                                <TableCell align="center">40</TableCell>
-                            </TableRow>
-                        </TableBody>
                     </Table>
                 </TableContainer>
             </Box>
@@ -93,19 +93,103 @@ const ProductMediaSingleList = () => {
                 </Box>
                 {tab == 0 &&
                     <>
+                        {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                            width: '100%',
+                        }}><Box component='span' sx={{
+                            fontWeight: 700,
+                            fontSize: '16px'
+                        }}>Select All
+                                <Checkbox sx={{
+                                    color: '#000',
+                                }}
+                                    checked={selectedImage.filter(x => x).length == selectedImage.length}
+                                    indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
+                                    onChange={(e) => {
+                                        let tempSelect = [...selectedImage]
+                                        tempSelect = tempSelect.map(x => e.target.checked)
+                                        setImageSelected(tempSelect)
+                                    }}
+                                />
+                            </Box>
+                            <Box component='span' sx={{
+                                fontWeight: 700,
+                                fontSize: '16px',
+                                cursor: 'pointer'
+                            }}>Share
+                            </Box>
+                        </Stack>}
                         {mockDataProductMedia.filter(x => x.type == 'image').map((item, i) => {
                             return (
                                 <Box key={item.id} sx={{
                                     width: "200px",
                                     height: "200px",
-                                    margin: "10px 10px 0 0",
+                                    margin: "0px 10px 0 0",
                                     position: "relative",
                                     cursor: 'pointer'
-                                }} onClick={() => {
-                                    setDopen(true)
-                                    setDData(item)
+                                }} onClick={(e) => {
+                                    // setDopen(true)
+                                    // setDData(item)
                                 }}>
                                     <img src={item.url} width="100%" height="200px" />
+                                    <Checkbox sx={{
+                                        position: 'absolute',
+                                        top: '2px',
+                                        left: '2px',
+                                        color: '#000',
+                                        background: '#fff'
+                                    }}
+                                        checked={selectedImage[i]}
+                                        onChange={(e) => {
+                                            let tempSelect = [...selectedImage]
+                                            tempSelect[i] = !tempSelect[i]
+                                            setImageSelected(tempSelect)
+                                        }}
+                                    />
+                                    <IconButton
+                                        aria-label="more"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '2px',
+                                            right: '2px',
+                                            color: '#000',
+                                            background: '#fff'
+                                        }}
+                                        id="long-button"
+                                        aria-controls={Boolean(actionImageOpen[i]) ? 'long-menu' : undefined}
+                                        aria-expanded={Boolean(actionImageOpen[i]) ? 'true' : undefined}
+                                        aria-haspopup="true"
+                                        onClick={(e) => {
+                                            let temp = [...actionImageOpen];
+                                            if (!temp[i]) {
+                                                temp = temp.map(() => { return null })
+                                            }
+                                            temp[i] = e.currentTarget
+                                            setActionImageOpen(temp)
+                                        }}>
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                    <Menu
+                                        id="fade-menu"
+                                        MenuListProps={{
+                                            'aria-labelledby': 'fade-button',
+                                        }}
+                                        anchorEl={actionImageOpen[i]}
+                                        open={Boolean(actionImageOpen[i])}
+                                        onClose={() => {
+                                            let temp = [...actionImageOpen];
+                                            temp = temp.map(() => { return null })
+                                            setActionImageOpen(temp)
+                                        }}
+                                        TransitionComponent={Fade} >
+                                        <MenuItem onClick={() => { }}>Share</MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setDopen(true)
+                                            setDData(item)
+                                            let temp = [...actionImageOpen];
+                                            temp = temp.map(() => { return null })
+                                            setActionImageOpen(temp)
+                                        }}>View</MenuItem>
+                                    </Menu>
                                 </Box>
                             )
                         })}
@@ -114,22 +198,106 @@ const ProductMediaSingleList = () => {
 
                 {tab == 1 &&
                     <>
+                        {selectedVideo.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                            width: '100%',
+                        }}><Box component='span' sx={{
+                            fontWeight: 700,
+                            fontSize: '16px'
+                        }}>Select All
+                                <Checkbox sx={{
+                                    color: '#000',
+                                }}
+                                    checked={selectedVideo.filter(x => x).length == selectedVideo.length}
+                                    indeterminate={selectedVideo.filter(x => x).length != selectedVideo.length}
+                                    onChange={(e) => {
+                                        let tempSelect = [...selectedVideo]
+                                        tempSelect = tempSelect.map(x => e.target.checked)
+                                        setVideoSelected(tempSelect)
+                                    }}
+                                />
+                            </Box>
+                            <Box component='span' sx={{
+                                fontWeight: 700,
+                                fontSize: '16px',
+                                cursor: 'pointer'
+                            }}>Share
+                            </Box>
+                        </Stack>}
                         {mockDataProductMedia.filter(x => x.type == 'video').map((item, i) => {
                             return (
                                 <Box key={item.id} sx={{
                                     width: "200px",
                                     height: "200px",
-                                    margin: "10px 10px 0 0",
+                                    margin: "0px 10px 0 0",
                                     position: "relative",
                                     cursor: 'pointer'
                                 }} onClick={() => {
-                                    setDopen(true)
-                                    setDData(item)
+                                    // setDopen(true)
+                                    // setDData(item)
                                 }}>
                                     <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
                                         style={{ objectFit: "fill" }}>
                                         <source src={item.url} type="video/mp4" />
                                     </video>
+                                    <Checkbox sx={{
+                                        position: 'absolute',
+                                        top: '2px',
+                                        left: '2px',
+                                        color: '#000',
+                                        background: '#fff'
+                                    }}
+                                        value={selectedVideo[i]}
+                                        onChange={(e) => {
+                                            let tempSelect = [...selectedVideo]
+                                            tempSelect[i] = !tempSelect[i]
+                                            setVideoSelected(tempSelect)
+                                        }}
+                                    />
+                                    <IconButton
+                                        aria-label="more"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '2px',
+                                            right: '2px',
+                                            color: '#000',
+                                            background: '#fff'
+                                        }}
+                                        id="long-button"
+                                        aria-controls={Boolean(actionVideoOpen[i]) ? 'long-menu' : undefined}
+                                        aria-expanded={Boolean(actionVideoOpen[i]) ? 'true' : undefined}
+                                        aria-haspopup="true"
+                                        onClick={(e) => {
+                                            let temp = [...actionVideoOpen];
+                                            if (!temp[i]) {
+                                                temp = temp.map(() => { return null })
+                                            }
+                                            temp[i] = e.currentTarget
+                                            setActionVideoOpen(temp)
+                                        }}>
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                    <Menu
+                                        id="fade-menu"
+                                        MenuListProps={{
+                                            'aria-labelledby': 'fade-button',
+                                        }}
+                                        anchorEl={actionVideoOpen[i]}
+                                        open={Boolean(actionVideoOpen[i])}
+                                        onClose={() => {
+                                            let temp = [...actionVideoOpen];
+                                            temp = temp.map(() => { return null })
+                                            setActionVideoOpen(temp)
+                                        }}
+                                        TransitionComponent={Fade} >
+                                        <MenuItem onClick={() => { }}>Share</MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setDopen(true)
+                                            setDData(item)
+                                            let temp = [...actionVideoOpen];
+                                            temp = temp.map(() => { return null })
+                                            setActionVideoOpen(temp)
+                                        }}>View</MenuItem>
+                                    </Menu>
                                 </Box>
                             )
                         })}
