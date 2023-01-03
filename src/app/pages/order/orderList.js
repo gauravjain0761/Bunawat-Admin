@@ -29,39 +29,39 @@ const OrderList = () => {
         {
             id: "OrderNo",
             label: "Order No",
-            width: 80
+            width: 100
         },
         {
             id: "OrderDate",
             label: "Order Date",
-            width: 80
+            width: 100
         },
         {
             id: "OrderType",
             label: "Order Type",
-            width: 80
+            width: 100
         },
         {
             id: "OrderUserType",
             label: "Order User Type",
-            width: 80
+            width: 100
         },
         {
             id: "UserName",
             label: "Order UserName",
-            width: 80
+            width: 100
         },
         {
             id: "OrderStatus",
             label: "Order Status",
             align: "center",
-            width: 80
+            width: 150
         },
         {
             id: "OrderAmount",
             label: "Order Amount",
             align: "center",
-            width: 80
+            width: 100
         },
         {
             id: "action",
