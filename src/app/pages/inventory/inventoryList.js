@@ -49,6 +49,7 @@ const InventoryList = () => {
         {
             id: "sku",
             label: "SKU",
+            align: "center",
             width: 80
         },
         {
@@ -282,7 +283,7 @@ const InventoryList = () => {
                                 <TableCell sx={{ pl: '15px' }}>{row.dnumber}</TableCell>
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row.count}</TableCell>
-                                <TableCell>{row.sku}</TableCell>
+                                <TableCell align="center">{row.sku}</TableCell>
                                 <TableCell align="center">{row.instock}</TableCell>
                                 <TableCell align="center">{row.threshold}</TableCell>
                                 <TableCell align="center">{row.shop}</TableCell>

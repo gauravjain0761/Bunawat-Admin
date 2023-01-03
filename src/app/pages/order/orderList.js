@@ -11,13 +11,13 @@ import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
+import { mockDataOrderManagement } from 'fake-db/data/order/orderData';
 import { Span } from 'app/components/Typography';
-import { mockDataUserPayment } from 'fake-db/data/user/userPaymentHistory';
 
-const UserCartDetail = () => {
+const OrderList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataUserPayment);
+    const [rows, setRows] = useState(mockDataOrderManagement);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -27,25 +27,78 @@ const UserCartDetail = () => {
 
     const columns = [
         {
+            id: "OrderNo",
+            label: "Order No",
+            width: 80
+        },
+        {
+            id: "OrderDate",
+            label: "Order Date",
+            width: 80
+        },
+        {
+            id: "OrderType",
+            label: "Order Type",
+            width: 80
+        },
+        {
+            id: "OrderUserType",
+            label: "Order User Type",
+            width: 80
+        },
+        {
             id: "UserName",
-            label: "UserName",
+            label: "Order UserName",
             width: 80
         },
         {
-            id: "Product Name",
-            label: "Product Name",
-            width: 80
-        },
-        {
-            id: "Email",
-            label: "Email",
-            width: 80
-        },
-        {
-            id: "Price",
-            label: "Price",
+            id: "OrderStatus",
+            label: "Order Status",
             align: "center",
             width: 80
+        },
+        {
+            id: "OrderAmount",
+            label: "Order Amount",
+            align: "center",
+            width: 80
+        },
+        {
+            id: "action",
+            label: "Action",
+            action: true,
+            align: 'right',
+            width: 80,
+            sortDisable: true,
+            renderCell: (
+                <>
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        sx={{ color: "#fff" }}
+                        aria-controls={Boolean(actionAllOpen) ? 'long-menu' : undefined}
+                        aria-expanded={Boolean(actionAllOpen) ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={(e) => setActionAllOpen(e.currentTarget)}>
+                        <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="fade-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'fade-button',
+                        }}
+                        anchorEl={actionAllOpen}
+                        open={Boolean(actionAllOpen)}
+                        onClose={() => setActionAllOpen(null)}
+                        TransitionComponent={Fade}
+                    >
+                        <MenuItem onClick={() => {
+                            setOpen(true);
+                            setActionAllOpen(null)
+                        }}>Delete</MenuItem>
+                    </Menu>
+                </>
+            )
         }
     ];
 
@@ -125,7 +178,7 @@ const UserCartDetail = () => {
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <CardHeader className="searchBoxSeaprate">
-                <Title>User Cart Detail</Title>
+                <Title>Order List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
                         border: "1px solid #000",
@@ -150,7 +203,7 @@ const UserCartDetail = () => {
                         </IconButton>
                     </Box>
 
-                    {/* <Button color="primary" variant="contained" type="submit"
+                    <Button color="primary" variant="contained" type="submit"
                         // onClick={() => navigate(`/order/add`)}
                         sx={{
                             backgroundColor: UIColor, color: "#fff",
@@ -160,7 +213,7 @@ const UserCartDetail = () => {
                         }}>
                         <Icon>add</Icon>
                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Order</Span>
-                    </Button> */}
+                    </Button>
                 </Box>
             </CardHeader>
             <TableComponent
@@ -189,10 +242,44 @@ const UserCartDetail = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{row.userName}</TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell >{row.email}</TableCell>
-                            <TableCell align="center">{row.remainBalance}</TableCell>
+                            <TableCell>{row.no}</TableCell>
+                            <TableCell>{row.date}</TableCell>
+                            <TableCell >{row.ordertype}</TableCell>
+                            <TableCell >{row.orderusertype}</TableCell>
+                            <TableCell>{row.username}</TableCell>
+                            <TableCell align="center"><Box component='span' sx={{
+                                color: row.status == "Completed" ? '#2e4453' : '#777',
+                                background: row.status == "Completed" ? '#c8d7e1' : '#e5e5e5',
+                                padding: '10px',
+                                borderRadius: '4px'
+                            }}>{row.status}</Box></TableCell>
+                            <TableCell align="center">{row.amount}</TableCell>
+                            <TableCell align='right' sx={{ pr: "18px" }}>
+                                <IconButton
+                                    aria-label="more"
+                                    id="long-button"
+                                    aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
+                                    aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
+                                    aria-haspopup="true"
+                                    onClick={(e) => handleActionClick(e, index)}>
+                                    <MoreVertIcon />
+                                </IconButton>
+                                <Menu
+                                    id="fade-menu"
+                                    MenuListProps={{
+                                        'aria-labelledby': 'fade-button',
+                                    }}
+                                    anchorEl={actionOpen[index]}
+                                    open={Boolean(actionOpen[index])}
+                                    onClose={handleActionClose}
+                                    TransitionComponent={Fade}
+                                >
+                                    <MenuItem onClick={() => {
+                                        // setOpen(true);
+                                        // handleActionClose();
+                                    }}>View</MenuItem>
+                                </Menu>
+                            </TableCell>
                         </TableRow>
                     );
                 }}
@@ -208,4 +295,4 @@ const UserCartDetail = () => {
     );
 }
 
-export default UserCartDetail;
+export default OrderList;

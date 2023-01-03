@@ -8,6 +8,7 @@ import { Navigate } from 'react-router-dom';
 import MatxLayout from './components/MatxLayout/MatxLayout';
 import categoryRoutes from './pages/category/categoryRoutes';
 import inventoryRoutes from './pages/inventory/inventoryRoutes';
+import orderRoutes from './pages/order/orderRoutes';
 import productRoutes from './pages/product/productRoutes';
 import userRoute from './pages/users/userRoutes';
 
@@ -18,7 +19,7 @@ const routes = [
         <MatxLayout />
       </AuthGuard>
     ),
-    children: [...dashboardRoutes, ...chartsRoute, ...materialRoutes, ...userRoute, ...categoryRoutes, ...productRoutes, ...inventoryRoutes],
+    children: [...dashboardRoutes, ...chartsRoute, ...materialRoutes, ...userRoute, ...categoryRoutes, ...productRoutes, ...inventoryRoutes, ...orderRoutes],
   },
   ...sessionRoutes,
   { path: '/', element: <Navigate to="customer" /> },

@@ -756,19 +756,19 @@ const UserForm = ({ data = {}, userType }) => {
                     </Box>
                     {(type == "customer") && <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
                         <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
-                        // onClick={() => navigate("/user/wishlist")}
+                            onClick={() => navigate("/user/wishlist")}
                         >
                             <Icon>star_rate</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
                         </Button>
                         <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
-                        // onClick={() => navigate("/user/cart/details")}
+                            onClick={() => navigate("/user/cart/details")}
                         >
                             <Icon>star_rate</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
                         </Button>
                         <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
-                        // onClick={() => navigate("/user/payment/history")}
+                            onClick={() => navigate("/user/payment/history")}
                         >
                             <Icon>star_rate</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>

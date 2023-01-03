@@ -39,6 +39,13 @@ export const navigations = [
       { name: 'Inventory', iconText: 'SI', path: '/inventory/list' },
     ],
   },
+  {
+    name: 'Order Management',
+    icon: 'dashboard',
+    children: [
+      { name: 'Order', iconText: 'SI', path: '/order/list' },
+    ],
+  },
 
   // { name: 'User List', iconText: 'SI', path: '/user/list' },
   // { name: 'User details', iconText: 'SU', path: '/user/details' },
