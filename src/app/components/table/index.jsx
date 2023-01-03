@@ -11,7 +11,7 @@ import { UIColor } from "app/utils/constant";
 import { visuallyHidden } from '@mui/utils';
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, disableCheckBox, disableColumns } =
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, disableCheckBox, extraPaddingOnFirstColumn } =
     props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -33,8 +33,8 @@ function EnhancedTableHead(props) {
             />
           </TableCell>
         }
-        {headCells.map((headCell) => (
-          <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: (headCell?.action) ? "18px" : 0 }}
+        {headCells.map((headCell, i) => (
+          <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: (headCell?.action) ? "18px" : 0, paddingLeft: (!!extraPaddingOnFirstColumn && (i == 0)) ? '15px' : '0px' }}
             key={headCell.id}
             width={headCell?.width ?? "100%"}
             align={headCell?.align ? headCell?.align : 'left'}
@@ -72,7 +72,7 @@ function EnhancedTableHead(props) {
 }
 
 const TableComponent = (props) => {
-  let { rows, columns, selected, renderRow, page, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination } = props;
+  let { rows, columns, selected, renderRow, page, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination, extraPaddingOnFirstColumn } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -120,17 +120,20 @@ const TableComponent = (props) => {
             aria-labelledby="tableTitle"
             size={'medium'}
           >
-            <EnhancedTableHead
-              numSelected={selected?.length}
-              disableColumns={disableColumns}
-              order={order}
-              disableCheckBox={disableCheckBox ?? false}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              headCells={columns}
-            />
+            {!disableColumns &&
+              <EnhancedTableHead
+                numSelected={selected?.length}
+                disableColumns={disableColumns}
+                order={order}
+                extraPaddingOnFirstColumn={extraPaddingOnFirstColumn}
+                disableCheckBox={disableCheckBox ?? false}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+                headCells={columns}
+              />
+            }
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                rows.sort(getComparator(order, orderBy)).slice() */}

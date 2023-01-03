@@ -23,10 +23,6 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     <Typography>{data?.instock}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography sx={{ fontWeight: 700 }}>Threshold: &nbsp;</Typography>
-                    <Typography>{data?.threshold}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography sx={{ fontWeight: 700 }}>Shop: &nbsp;</Typography>
                     <Typography>{data?.shop}</Typography>
                 </Box>
@@ -40,7 +36,7 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         name="taxType"
-                        label="Tax Type">
+                        label="Variant List">
                         <MenuItem value="Standard">ABCD</MenuItem>
                         <MenuItem value="6%">PQRS</MenuItem>
                     </Select>

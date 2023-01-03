@@ -1,5 +1,6 @@
 export const mockDataInventoryManagement = [{
     "id": 1,
+    'dnumber': 'ABCD1234',
     "name": "Lyssa",
     "sku": "ABCD12345",
     "count": 25,
@@ -10,6 +11,7 @@ export const mockDataInventoryManagement = [{
     "total": "60",
     "data": [{
         "id": 1,
+        'dnumber': 'ABCD1234',
         "name": "Lyssa",
         "sku": "ABCD12345",
         "count": 25,
@@ -21,6 +23,7 @@ export const mockDataInventoryManagement = [{
         "active": true
     }, {
         "id": 2,
+        'dnumber': 'PQRS7890',
         "name": "Bartosinski",
         "sku": "PQRS12345",
         "count": 25,
@@ -34,6 +37,7 @@ export const mockDataInventoryManagement = [{
     "active": true
 }, {
     "id": 2,
+    'dnumber': 'PQRS7890',
     "name": "Bartosinski",
     "sku": "PQRS12345",
     "count": 25,
@@ -44,6 +48,7 @@ export const mockDataInventoryManagement = [{
     "total": "410",
     "data": [{
         "id": 1,
+        'dnumber': 'ABCD1234',
         "name": "Lyssa",
         "sku": "ABCD12345",
         "count": 25,
@@ -55,6 +60,7 @@ export const mockDataInventoryManagement = [{
         "active": true
     }, {
         "id": 2,
+        'dnumber': 'PQRS7890',
         "name": "Bartosinski",
         "sku": "PQRS12345",
         "count": 25,

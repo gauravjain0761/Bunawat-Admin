@@ -31,9 +31,14 @@ const InventoryList = () => {
     const [searchText, setSearchText] = useState('');
     const columns = [
         {
+            id: "dnumber",
+            label: "Design NO",
+            width: 120
+        },
+        {
             id: "p_name",
             label: "Product Name",
-            width: 150
+            width: 100
         },
         {
             id: "variant_count",
@@ -258,6 +263,8 @@ const InventoryList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                extraPaddingOnFirstColumn={true}
+                disableCheckBox={true}
                 selected={selected}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row.name);
@@ -272,67 +279,14 @@ const InventoryList = () => {
                                 key={row.name}
                                 selected={isItemSelected}
                             >
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        color="primary"
-                                        onClick={(event) => handleClick(event, row.name)}
-                                        checked={isItemSelected}
-                                        inputProps={{
-                                            'aria-labelledby': labelId,
-                                        }}
-                                    />
-                                </TableCell>
+                                <TableCell sx={{ pl: '15px' }}>{row.dnumber}</TableCell>
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row.count}</TableCell>
                                 <TableCell>{row.sku}</TableCell>
-                                <TableCell align="center">
-                                    <TextField
-                                        type="number"
-                                        name="instock"
-                                        label="In Stock"
-                                        onChange={handleChange}
-                                        // value={row.instock || ""}
-                                        defaultValue={row.instock || ""}
-                                        validators={["required"]}
-                                        errorMessages={["this field is required"]}
-                                    />
-                                </TableCell>
-                                <TableCell align="center">
-                                    <TextField
-                                        type="text"
-                                        name="threshold"
-                                        label="Threshold"
-                                        onChange={handleChange}
-                                        // value={row.instock || ""}
-                                        defaultValue={row.threshold || ""}
-                                        validators={["required"]}
-                                        errorMessages={["this field is required"]}
-                                    />
-                                </TableCell>
-                                <TableCell align="center">
-                                    <TextField
-                                        type="number"
-                                        name="shop"
-                                        label="Shop"
-                                        onChange={handleChange}
-                                        // value={row.instock || ""}
-                                        defaultValue={row.shop || ""}
-                                        validators={["required"]}
-                                        errorMessages={["this field is required"]}
-                                    />
-                                </TableCell>
-                                <TableCell align="center">
-                                    <TextField
-                                        type="text"
-                                        name="preorder"
-                                        label="Preorder"
-                                        onChange={handleChange}
-                                        // value={row.instock || ""}
-                                        defaultValue={row.preorder || ""}
-                                        validators={["required"]}
-                                        errorMessages={["this field is required"]}
-                                    />
-                                </TableCell>
+                                <TableCell align="center">{row.instock}</TableCell>
+                                <TableCell align="center">{row.threshold}</TableCell>
+                                <TableCell align="center">{row.shop}</TableCell>
+                                <TableCell align="center">{row.preorder}</TableCell>
                                 <TableCell align="center">{row.total}</TableCell>
                                 <TableCell align='right' sx={{ pr: "18px" }}>
                                     <IconButton
@@ -362,8 +316,7 @@ const InventoryList = () => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={1}></TableCell>
-                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                                <TableCell style={{ paddingBottom: 0, paddingTop: 0, padding: 0 }} colSpan={10}>
                                     <Collapse in={collapseOpen[index]} timeout="auto" unmountOnExit>
                                         <TableComponent
                                             rows={row.data}
@@ -382,10 +335,11 @@ const InventoryList = () => {
                                                         tabIndex={-1}
                                                         key={row.name}
                                                     >
-                                                        <TableCell>{row.name}</TableCell>
-                                                        <TableCell align="center">{row.count}</TableCell>
-                                                        <TableCell>{row.sku}</TableCell>
-                                                        <TableCell align="center">
+                                                        <TableCell align="center" width={120 ?? "100%"}>↳ {row.dnumber}</TableCell>
+                                                        <TableCell width={100 ?? "100%"}>{row.name}</TableCell>
+                                                        <TableCell width={80 ?? "100%"} align="center">Variation</TableCell>
+                                                        <TableCell width={80 ?? "100%"}>{row.sku}</TableCell>
+                                                        <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
                                                                 type="number"
                                                                 name="instock"
@@ -397,9 +351,9 @@ const InventoryList = () => {
                                                                 errorMessages={["this field is required"]}
                                                             />
                                                         </TableCell>
-                                                        <TableCell align="center">
+                                                        <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
-                                                                type="text"
+                                                                type="number"
                                                                 name="threshold"
                                                                 label="Threshold"
                                                                 onChange={handleChange}
@@ -409,7 +363,7 @@ const InventoryList = () => {
                                                                 errorMessages={["this field is required"]}
                                                             />
                                                         </TableCell>
-                                                        <TableCell align="center">
+                                                        <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
                                                                 type="number"
                                                                 name="shop"
@@ -421,9 +375,9 @@ const InventoryList = () => {
                                                                 errorMessages={["this field is required"]}
                                                             />
                                                         </TableCell>
-                                                        <TableCell align="center">
+                                                        <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
-                                                                type="text"
+                                                                type="number"
                                                                 name="preorder"
                                                                 label="Preorder"
                                                                 onChange={handleChange}
@@ -433,8 +387,8 @@ const InventoryList = () => {
                                                                 errorMessages={["this field is required"]}
                                                             />
                                                         </TableCell>
-                                                        <TableCell align="center">{row.total}</TableCell>
-                                                        <TableCell align='right' sx={{ pr: "18px" }}>
+                                                        <TableCell width={80 ?? "100%"} align="center">{row.total}</TableCell>
+                                                        <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
                                                             <IconButton
                                                                 aria-label="more"
                                                                 id="long-button"
