@@ -32,17 +32,17 @@ const InventoryList = () => {
     const columns = [
         {
             id: "dnumber",
-            label: "Design NO",
+            label: `Design \nNo`,
             width: 120
         },
         {
             id: "p_name",
-            label: "Product Name",
+            label: "Product \nName",
             width: 100
         },
         {
             id: "variant_count",
-            label: "Variant Count",
+            label: "Variant \nCount",
             align: "center",
             width: 80
         },
@@ -53,31 +53,31 @@ const InventoryList = () => {
         },
         {
             id: "in_stock",
-            label: "InStock QTY",
+            label: "InStock \nQTY",
             align: "center",
             width: 100
         },
         {
             id: "threshold_qty",
-            label: "ThreShold QTY",
+            label: "ThreShold \nQTY",
             align: "center",
             width: 100
         },
         {
             id: "shop_qty",
-            label: "Shop QTY",
+            label: "Shop \nQTY",
             align: "center",
             width: 100
         },
         {
-            id: "preoreder_qty",
-            label: "PreOreder QTY",
+            id: "preorder_qty",
+            label: "PreOrder \nQTY",
             align: "center",
             width: 100
         },
         {
             id: "total_qty",
-            label: "Total QTY",
+            label: "Total \nQTY",
             align: "center",
             width: 80
         },
