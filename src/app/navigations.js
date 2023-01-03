@@ -32,6 +32,13 @@ export const navigations = [
       { name: 'Drag Table', iconText: 'SI', path: '/product/demo' },
     ],
   },
+  {
+    name: 'Inventory Management',
+    icon: 'dashboard',
+    children: [
+      { name: 'Inventory', iconText: 'SI', path: '/inventory/list' },
+    ],
+  },
 
   // { name: 'User List', iconText: 'SI', path: '/user/list' },
   // { name: 'User details', iconText: 'SU', path: '/user/details' },

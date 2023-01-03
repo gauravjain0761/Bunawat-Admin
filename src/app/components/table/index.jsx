@@ -11,7 +11,7 @@ import { UIColor } from "app/utils/constant";
 import { visuallyHidden } from '@mui/utils';
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells } =
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, disableCheckBox, disableColumns } =
     props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -19,18 +19,20 @@ function EnhancedTableHead(props) {
 
   return (
     <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox" sx={{ backgroundColor: UIColor }}>
-          <Checkbox
-            sx={{ color: "#fff" }}
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
+      <TableRow >
+        {!disableCheckBox &&
+          <TableCell padding="checkbox" sx={{ backgroundColor: UIColor }}>
+            <Checkbox
+              sx={{ color: "#fff" }}
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                'aria-label': 'select all desserts',
+              }}
+            />
+          </TableCell>
+        }
         {headCells.map((headCell) => (
           <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: (headCell?.action) ? "18px" : 0 }}
             key={headCell.id}
@@ -70,7 +72,7 @@ function EnhancedTableHead(props) {
 }
 
 const TableComponent = (props) => {
-  let { rows, columns, selected, renderRow, page, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick } = props;
+  let { rows, columns, selected, renderRow, page, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -111,7 +113,7 @@ const TableComponent = (props) => {
   }
 
   return (
-    <Box sx={{ width: '98%', mx: "auto", mt: 2 }}>
+    <Box sx={!extraDisable ? { width: '98%', mx: "auto", mt: 2 } : {}}>
       <Paper sx={{ width: '100%' }}>
         <TableContainer>
           <Table
@@ -119,8 +121,10 @@ const TableComponent = (props) => {
             size={'medium'}
           >
             <EnhancedTableHead
-              numSelected={selected.length}
+              numSelected={selected?.length}
+              disableColumns={disableColumns}
               order={order}
+              disableCheckBox={disableCheckBox ?? false}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
@@ -136,15 +140,17 @@ const TableComponent = (props) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 20, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {!disablePagination &&
+          <TablePagination
+            rowsPerPageOptions={[10, 20, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        }
       </Paper>
     </Box>
   );
