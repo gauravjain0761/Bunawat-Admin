@@ -32,7 +32,7 @@ const InventoryList = () => {
     const columns = [
         {
             id: "dnumber",
-            label: `Design \nNo`,
+            label: `Design \nNo/SKU`,
             width: 120
         },
         {
@@ -47,26 +47,8 @@ const InventoryList = () => {
             width: 80
         },
         {
-            id: "sku",
-            label: "SKU",
-            align: "center",
-            width: 80
-        },
-        {
             id: "in_stock",
             label: "InStock \nQTY",
-            align: "center",
-            width: 100
-        },
-        {
-            id: "threshold_qty",
-            label: "ThreShold \nQTY",
-            align: "center",
-            width: 100
-        },
-        {
-            id: "shop_qty",
-            label: "Shop \nQTY",
             align: "center",
             width: 100
         },
@@ -81,6 +63,18 @@ const InventoryList = () => {
             label: "Total \nQTY",
             align: "center",
             width: 80
+        },
+        {
+            id: "threshold_qty",
+            label: "ThreShold \nQTY",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "mappedvariant",
+            label: "Mapped \nVariant",
+            align: "center",
+            width: 100
         },
         {
             id: "action",
@@ -281,14 +275,18 @@ const InventoryList = () => {
                                 selected={isItemSelected}
                             >
                                 <TableCell sx={{ pl: '15px' }}>{row.dnumber}</TableCell>
-                                <TableCell>{row.name}</TableCell>
+                                <TableCell>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <img style={{ marginRight: '5px' }} src="https://www.thoughtco.com/thmb/ctxxtfGGeK5f_-S3f8J-jbY-Gp8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/close-up-of-clothes-hanging-in-row-739240657-5a78b11f8e1b6e003715c0ec.jpg" width='50px' height='50px' />
+                                        {row.name}
+                                    </Box>
+                                </TableCell>
                                 <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row.count}</TableCell>
-                                <TableCell align="center">{row.sku}</TableCell>
                                 <TableCell align="center">{row.instock}</TableCell>
-                                <TableCell align="center">{row.threshold}</TableCell>
-                                <TableCell align="center">{row.shop}</TableCell>
                                 <TableCell align="center">{row.preorder}</TableCell>
                                 <TableCell align="center">{row.total}</TableCell>
+                                <TableCell align="center">{row.threshold}</TableCell>
+                                <TableCell align="center">ABCD12,XYZ67</TableCell>
                                 <TableCell align='right' sx={{ pr: "18px" }}>
                                     <IconButton
                                         aria-label="more"
@@ -317,7 +315,7 @@ const InventoryList = () => {
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell style={{ paddingBottom: 0, paddingTop: 0, padding: 0 }} colSpan={10}>
+                                <TableCell style={{ paddingBottom: 0, paddingTop: 0, padding: 0 }} colSpan={9}>
                                     <Collapse in={collapseOpen[index]} timeout="auto" unmountOnExit>
                                         <TableComponent
                                             rows={row.data}
@@ -337,9 +335,13 @@ const InventoryList = () => {
                                                         key={row.name}
                                                     >
                                                         <TableCell align="center" width={120 ?? "100%"}>↳ {row.dnumber}</TableCell>
-                                                        <TableCell width={100 ?? "100%"}>{row.name}</TableCell>
+                                                        <TableCell width={100 ?? "100%"}>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <img style={{ marginRight: '5px' }} src="https://content.jdmagicbox.com/comp/bhawanipatna/t9/9999p6670.6670.181223085624.h8t9/catalogue/india-fashion-cloth-store-bazarpada-bhawanipatna-zh5wdnprwx.jpg?clr=5c470a" width='50px' height='50px' />
+                                                                {row.name}
+                                                            </Box>
+                                                        </TableCell>
                                                         <TableCell width={80 ?? "100%"} align="center">Variation</TableCell>
-                                                        <TableCell width={80 ?? "100%"}>{row.sku}</TableCell>
                                                         <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
                                                                 type="number"
@@ -348,30 +350,6 @@ const InventoryList = () => {
                                                                 onChange={handleChange}
                                                                 // value={row.instock || ""}
                                                                 defaultValue={row.instock || ""}
-                                                                validators={["required"]}
-                                                                errorMessages={["this field is required"]}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">
-                                                            <TextField
-                                                                type="number"
-                                                                name="threshold"
-                                                                label="Threshold"
-                                                                onChange={handleChange}
-                                                                // value={row.instock || ""}
-                                                                defaultValue={row.threshold || ""}
-                                                                validators={["required"]}
-                                                                errorMessages={["this field is required"]}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">
-                                                            <TextField
-                                                                type="number"
-                                                                name="shop"
-                                                                label="Shop"
-                                                                onChange={handleChange}
-                                                                // value={row.instock || ""}
-                                                                defaultValue={row.shop || ""}
                                                                 validators={["required"]}
                                                                 errorMessages={["this field is required"]}
                                                             />
@@ -389,6 +367,8 @@ const InventoryList = () => {
                                                             />
                                                         </TableCell>
                                                         <TableCell width={80 ?? "100%"} align="center">{row.total}</TableCell>
+                                                        <TableCell width={100 ?? "100%"} align="center">{row.threshold}</TableCell>
+                                                        <TableCell width={100 ?? "100%"} align="center"></TableCell>
                                                         <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
                                                             <IconButton
                                                                 aria-label="more"
@@ -413,7 +393,7 @@ const InventoryList = () => {
                                                                     setMoveQTYPopUP(true);
                                                                     setSingleMoveQTY(row)
                                                                     handleActionCollapseClose();
-                                                                }}>Move QTY</MenuItem>
+                                                                }}>Map QTY</MenuItem>
                                                             </Menu>
                                                         </TableCell>
                                                     </TableRow>

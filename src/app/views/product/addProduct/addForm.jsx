@@ -163,6 +163,7 @@ const ProductForm = ({ data = {} }) => {
                 value
             }
         }
+        console.log(attributes)
         setFormData({ ...formData, attributeData: attributes });
     }
 
@@ -236,6 +237,8 @@ const ProductForm = ({ data = {} }) => {
         attributeList,
         isActive,
     } = formData;
+
+    const disableInventoryList = ['instock', 'instock_leadtime', 'preorder', 'preorder_leadtime'];
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
@@ -706,9 +709,9 @@ const ProductForm = ({ data = {} }) => {
                                 </Select>
                             </FormControl>
 
-                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes</Span>
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Inventory</Span>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
-                                {attributeData?.length > 0 && attributeData?.map((data, index) => {
+                                {attributeData?.length > 0 && attributeData?.filter(item => !disableInventoryList.includes(item?.name))?.map((data, index) => {
                                     if (data?.name == 'swatch') {
                                         return (
                                             <Box sx={{
@@ -744,11 +747,64 @@ const ProductForm = ({ data = {} }) => {
                                     )
                                 })}
 
+                            </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>InStock</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
+                                <TextField
+                                    type="number"
+                                    name="instock"
+                                    sx={{ width: "400px" }}
+                                    label="In Stock"
+                                    onChange={(e) => handleAddValueAttribute('single', 'instock', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "instock")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="number"
+                                    name="instock_leadtime"
+                                    sx={{ width: "400px" }}
+                                    label="Leadtime"
+                                    onChange={(e) => handleAddValueAttribute('single', 'instock_leadtime', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "instock_leadtime")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+                            </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>Preorder</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
+                                <TextField
+                                    type="number"
+                                    name="preorder"
+                                    fullWidth
+                                    label="Preorder"
+                                    sx={{ width: "400px" }}
+                                    onChange={(e) => handleAddValueAttribute('single', 'preorder', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "preorder")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="number"
+                                    name="preorder_leadtime"
+                                    label="Leadtime"
+                                    sx={{ width: "400px" }}
+                                    onChange={(e) => handleAddValueAttribute('single', 'preorder_leadtime', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "preorder_leadtime")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
                                 <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
                                     <Icon>add</Icon>
                                     <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
                                 </Button>
                             </Box>
+
                             <Dialog
                                 open={dOpen}
                                 aria-labelledby="responsive-dialog-title">

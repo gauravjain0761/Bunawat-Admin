@@ -46,6 +46,14 @@ export const navigations = [
       { name: 'Order', iconText: 'SI', path: '/order/list' },
     ],
   },
+  {
+    name: 'Marketing Management',
+    icon: 'dashboard',
+    children: [
+      { name: 'Notifications', iconText: 'SI', path: '/notifications/list' },
+      { name: 'Coupons', iconText: 'SI', path: '/coupons/list' },
+    ],
+  },
 
   // { name: 'User List', iconText: 'SI', path: '/user/list' },
   // { name: 'User details', iconText: 'SU', path: '/user/details' },

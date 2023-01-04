@@ -11,13 +11,13 @@ import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
-import { mockDataCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
 import { Span } from 'app/components/Typography';
+import { mockDataCouponManagement } from 'fake-db/data/marketing/couponData';
 
-const ProductList = () => {
+const CouponList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataCategoryTreeManagement);
+    const [rows, setRows] = useState(mockDataCouponManagement);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -27,20 +27,34 @@ const ProductList = () => {
 
     const columns = [
         {
-            id: "category",
-            label: "Name",
-            width: 200
+            id: "Coupon Code",
+            label: "Coupon Code",
+            width: 120
         },
         {
-            id: "slug",
-            label: "SKU",
-            width: 80
+            id: "Discount Type",
+            label: "Discount Type",
+            width: 130
         },
         {
-            id: "count",
-            label: "Design No",
-            align: "center",
-            width: 80
+            id: "Value",
+            label: "Value",
+            width: 100
+        },
+        {
+            id: "Description",
+            label: "Description",
+            width: 120
+        },
+        {
+            id: "uses_limit",
+            label: "Uses/Limit",
+            width: 110
+        },
+        {
+            id: "expiry_date",
+            label: "Expiry Date",
+            width: 110
         },
         {
             id: "action",
@@ -157,7 +171,7 @@ const ProductList = () => {
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <CardHeader className="searchBoxSeaprate">
-                <Title>Product List</Title>
+                <Title>Coupon List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
                         border: "1px solid #000",
@@ -182,14 +196,16 @@ const ProductList = () => {
                         </IconButton>
                     </Box>
 
-                    <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/product/add`)} sx={{
-                        backgroundColor: UIColor, color: "#fff",
-                        "&:hover": {
-                            backgroundColor: UIColor, color: "#fff"
-                        }
-                    }}>
-                        <Icon s>add</Icon>
-                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Product</Span>
+                    <Button color="primary" variant="contained" type="submit"
+                        // onClick={() => navigate(`/order/add`)}
+                        sx={{
+                            backgroundColor: UIColor, color: "#fff",
+                            "&:hover": {
+                                backgroundColor: UIColor, color: "#fff"
+                            }
+                        }}>
+                        <Icon>add</Icon>
+                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Coupon</Span>
                     </Button>
                 </Box>
             </CardHeader>
@@ -219,14 +235,12 @@ const ProductList = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <img style={{ marginRight: '5px' }} src="https://content.jdmagicbox.com/comp/bhawanipatna/t9/9999p6670.6670.181223085624.h8t9/catalogue/india-fashion-cloth-store-bazarpada-bhawanipatna-zh5wdnprwx.jpg?clr=5c470a" width='50px' height='50px' />
-                                    {row.category}
-                                </Box>
-                            </TableCell>
-                            <TableCell>{row.slug}</TableCell>
-                            <TableCell align="center">{row.count}</TableCell>
+                            <TableCell>{row.code}</TableCell>
+                            <TableCell>{row.discounttype}</TableCell>
+                            <TableCell >{row.value}</TableCell>
+                            <TableCell >{row.description}</TableCell>
+                            <TableCell>{row.uses}/{row.limit}</TableCell>
+                            <TableCell >{row.expirydate}</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
@@ -247,7 +261,10 @@ const ProductList = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}
                                 >
-                                    <MenuItem onClick={() => navigate(`/product/add/${row.id}`)}>Edit</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        // setOpen(true);
+                                        // handleActionClose();
+                                    }}>View</MenuItem>
                                     <MenuItem onClick={() => {
                                         setOpen(true);
                                         handleActionClose();
@@ -269,4 +286,4 @@ const ProductList = () => {
     );
 }
 
-export default ProductList;
+export default CouponList;

@@ -11,13 +11,13 @@ import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
-import { mockDataCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
 import { Span } from 'app/components/Typography';
+import { mockDataNotificationManagement } from 'fake-db/data/marketing/notificationData';
 
-const ProductList = () => {
+const NotificationList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataCategoryTreeManagement);
+    const [rows, setRows] = useState(mockDataNotificationManagement);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -27,20 +27,24 @@ const ProductList = () => {
 
     const columns = [
         {
-            id: "category",
-            label: "Name",
-            width: 200
+            id: "title",
+            label: "Title",
+            width: 100
         },
         {
-            id: "slug",
-            label: "SKU",
-            width: 80
+            id: "type",
+            label: "Type",
+            width: 100
         },
         {
-            id: "count",
-            label: "Design No",
-            align: "center",
-            width: 80
+            id: "usertype",
+            label: "User Type",
+            width: 100
+        },
+        {
+            id: "date",
+            label: "Date",
+            width: 100
         },
         {
             id: "action",
@@ -157,7 +161,7 @@ const ProductList = () => {
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <CardHeader className="searchBoxSeaprate">
-                <Title>Product List</Title>
+                <Title>Notification List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
                         border: "1px solid #000",
@@ -182,14 +186,16 @@ const ProductList = () => {
                         </IconButton>
                     </Box>
 
-                    <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/product/add`)} sx={{
-                        backgroundColor: UIColor, color: "#fff",
-                        "&:hover": {
-                            backgroundColor: UIColor, color: "#fff"
-                        }
-                    }}>
-                        <Icon s>add</Icon>
-                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Product</Span>
+                    <Button color="primary" variant="contained" type="submit"
+                        // onClick={() => navigate(`/order/add`)}
+                        sx={{
+                            backgroundColor: UIColor, color: "#fff",
+                            "&:hover": {
+                                backgroundColor: UIColor, color: "#fff"
+                            }
+                        }}>
+                        <Icon>add</Icon>
+                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Notification</Span>
                     </Button>
                 </Box>
             </CardHeader>
@@ -219,14 +225,10 @@ const ProductList = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <img style={{ marginRight: '5px' }} src="https://content.jdmagicbox.com/comp/bhawanipatna/t9/9999p6670.6670.181223085624.h8t9/catalogue/india-fashion-cloth-store-bazarpada-bhawanipatna-zh5wdnprwx.jpg?clr=5c470a" width='50px' height='50px' />
-                                    {row.category}
-                                </Box>
-                            </TableCell>
-                            <TableCell>{row.slug}</TableCell>
-                            <TableCell align="center">{row.count}</TableCell>
+                            <TableCell>{row.title}</TableCell>
+                            <TableCell>{row.type}</TableCell>
+                            <TableCell >{row.usertype}</TableCell>
+                            <TableCell >{row.date}</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
@@ -247,11 +249,18 @@ const ProductList = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}
                                 >
-                                    <MenuItem onClick={() => navigate(`/product/add/${row.id}`)}>Edit</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        // setOpen(true);
+                                        // handleActionClose();
+                                    }}>View</MenuItem>
                                     <MenuItem onClick={() => {
                                         setOpen(true);
                                         handleActionClose();
                                     }}>Delete</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        // setOpen(true);
+                                        // handleActionClose();
+                                    }}>Send Again</MenuItem>
                                 </Menu>
                             </TableCell>
                         </TableRow>
@@ -269,4 +278,4 @@ const ProductList = () => {
     );
 }
 
-export default ProductList;
+export default NotificationList;
