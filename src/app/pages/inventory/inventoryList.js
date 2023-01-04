@@ -286,7 +286,7 @@ const InventoryList = () => {
                                 <TableCell align="center">{row.preorder}</TableCell>
                                 <TableCell align="center">{row.total}</TableCell>
                                 <TableCell align="center">{row.threshold}</TableCell>
-                                <TableCell align="center">ABCD12,XYZ67</TableCell>
+                                <TableCell align="center"></TableCell>
                                 <TableCell align='right' sx={{ pr: "18px" }}>
                                     <IconButton
                                         aria-label="more"
@@ -369,7 +369,7 @@ const InventoryList = () => {
                                                         </TableCell>
                                                         <TableCell width={80 ?? "100%"} align="center">{row.total}</TableCell>
                                                         <TableCell width={100 ?? "100%"} align="center">{row.threshold}</TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center"></TableCell>
+                                                        <TableCell width={100 ?? "100%"} align="center">{row.mapvariant}</TableCell>
                                                         <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
                                                             <IconButton
                                                                 aria-label="more"

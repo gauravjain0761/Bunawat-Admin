@@ -19,6 +19,7 @@ export const mockDataInventoryManagement = [{
         "threshold": "15",
         "shop": "5",
         "preorder": "25",
+        "mapvariant": "ABCD12",
         "total": "60",
         "active": true
     }, {
@@ -31,6 +32,7 @@ export const mockDataInventoryManagement = [{
         "threshold": "25",
         "shop": "65",
         "preorder": "42",
+        "mapvariant": "XYZ67",
         "total": "410",
         "active": true
     }],
@@ -56,6 +58,7 @@ export const mockDataInventoryManagement = [{
         "threshold": "15",
         "shop": "5",
         "preorder": "25",
+        "mapvariant": "ABCD12",
         "total": "60",
         "active": true
     }, {
@@ -68,6 +71,7 @@ export const mockDataInventoryManagement = [{
         "threshold": "25",
         "shop": "65",
         "preorder": "42",
+        "mapvariant": "XYZ67",
         "total": "410",
         "active": true
     }],
