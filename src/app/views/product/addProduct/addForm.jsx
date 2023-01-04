@@ -238,7 +238,7 @@ const ProductForm = ({ data = {} }) => {
         isActive,
     } = formData;
 
-    const disableInventoryList = ['instock', 'instock_leadtime', 'preorder', 'preorder_leadtime'];
+    const disableInventoryList = ['instock_qty', 'threshold_qty', 'instock_leadtime', 'preorder_qty', 'preorder_leadtime', 'mapped_variant'];
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
@@ -753,11 +753,23 @@ const ProductForm = ({ data = {} }) => {
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
                                 <TextField
                                     type="number"
-                                    name="instock"
+                                    name="instock_qty"
                                     sx={{ width: "400px" }}
-                                    label="In Stock"
-                                    onChange={(e) => handleAddValueAttribute('single', 'instock', e.target.value)}
-                                    value={attributeData?.find(item => item?.name == "instock")?.value ?? ''}
+                                    label="In Stock QTY"
+                                    onChange={(e) => handleAddValueAttribute('single', 'instock_qty', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "instock_qty")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="number"
+                                    fullWidth
+                                    sx={{ width: "400px" }}
+                                    name="threshold_qty"
+                                    label="Threshold QTY"
+                                    onChange={(e) => handleAddValueAttribute('single', 'threshold_qty', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "threshold_qty")?.value ?? ''}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -778,12 +790,12 @@ const ProductForm = ({ data = {} }) => {
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
                                 <TextField
                                     type="number"
-                                    name="preorder"
+                                    name="preorder_qty"
                                     fullWidth
-                                    label="Preorder"
+                                    label="Preorder QTY"
                                     sx={{ width: "400px" }}
-                                    onChange={(e) => handleAddValueAttribute('single', 'preorder', e.target.value)}
-                                    value={attributeData?.find(item => item?.name == "preorder")?.value ?? ''}
+                                    onChange={(e) => handleAddValueAttribute('single', 'preorder_qty', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "preorder_qty")?.value ?? ''}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -799,12 +811,32 @@ const ProductForm = ({ data = {} }) => {
                                     errorMessages={["this field is required"]}
                                 />
 
+                            </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>Mapped Variant</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
+                                <Autocomplete
+                                    multiple={true}
+                                    id="tags-outlined"
+                                    fullWidth
+                                    sx={{ width: "400px" }}
+                                    options={['ABCD', 'PQRS']}
+                                    onChange={(e, newValue) => handleAddValueAttribute('multi', 'mapped_variant', newValue)}
+                                    value={attributeData?.find(item => item?.name == "mapped_variant")?.value ?? []}
+                                    getOptionLabel={(option) => option}
+                                    filterSelectedOptions
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label='Variant List'
+                                        />
+                                    )}
+                                />
                                 <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
                                     <Icon>add</Icon>
                                     <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
                                 </Button>
                             </Box>
-
                             <Dialog
                                 open={dOpen}
                                 aria-labelledby="responsive-dialog-title">
@@ -850,7 +882,7 @@ const ProductForm = ({ data = {} }) => {
                                                         <Box sx={{ display: 'flex' }}>
 
                                                             <Box component='span'>
-                                                                {item?.name.charAt(0).toUpperCase() + item?.name.slice(1)}
+                                                                {item?.name.split("_")?.map(x => (x?.charAt(0)?.toUpperCase() + x?.slice(1)))?.join(" ") ?? ''}
                                                             </Box>
                                                             <Box component='span'>
                                                                 &nbsp;&nbsp;:&nbsp;&nbsp;

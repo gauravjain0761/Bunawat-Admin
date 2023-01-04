@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import React from 'react'
 
 const MoveQTYModel = ({ open, handleClose, data }) => {
@@ -11,28 +11,87 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
             aria-labelledby="responsive-dialog-title"
         >
             <DialogTitle id="responsive-dialog-title">
-                Map QTY
+                Edit
             </DialogTitle>
             <DialogContent>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography sx={{ fontWeight: 700 }}>Product Name: &nbsp;</Typography>
                     <Typography>{data?.name}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography sx={{ fontWeight: 700 }}>In Stoke: &nbsp;</Typography>
-                    <Typography>{data?.instock}</Typography>
-                </Box>
-                <FormControl fullWidth sx={{ mt: 2, }}>
-                    <InputLabel id="demo-simple-select-label">Variant List</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        name="taxType"
-                        label="Variant List">
-                        <MenuItem value="Standard">ABCD</MenuItem>
-                        <MenuItem value="6%">PQRS</MenuItem>
-                    </Select>
-                </FormControl>
+                </Box> */}
+                <TextField
+                    type="number"
+                    fullWidth
+                    sx={{ mt: 2, }}
+                    name="instock"
+                    label="In Stock QTY"
+                    // onChange={handleChange}
+                    // value={row.instock || ""}
+                    defaultValue={data.instock || ""}
+                    validators={["required"]}
+                    errorMessages={["this field is required"]}
+                />
+                <TextField
+                    type="number"
+                    fullWidth
+                    sx={{ mt: 2, }}
+                    name="threshold"
+                    label="Threshold QTY"
+                    // onChange={handleChange}
+                    // value={row.instock || ""}
+                    defaultValue={data.threshold || ""}
+                    validators={["required"]}
+                    errorMessages={["this field is required"]}
+                />
+                <TextField
+                    type="number"
+                    fullWidth
+                    sx={{ mt: 2, }}
+                    name="instock_leadtime"
+                    label="In Stock Leadtime"
+                    // onChange={handleChange}
+                    // value={row.instock || ""}
+                    defaultValue={""}
+                    validators={["required"]}
+                    errorMessages={["this field is required"]}
+                />
+                <TextField
+                    type="number"
+                    fullWidth
+                    sx={{ mt: 2, }}
+                    name="preorder"
+                    label="Preorder"
+                    // onChange={handleChange}
+                    // value={row.instock || ""}
+                    defaultValue={data.preorder || ""}
+                    validators={["required"]}
+                    errorMessages={["this field is required"]}
+                />
+                <TextField
+                    type="number"
+                    fullWidth
+                    sx={{ mt: 2, }}
+                    name="preorder_leadtime"
+                    label="Preorder Leadtime"
+                    // onChange={handleChange}
+                    // value={row.instock || ""}
+                    defaultValue={""}
+                    validators={["required"]}
+                    errorMessages={["this field is required"]}
+                />
+                <Autocomplete
+                    multiple={true}
+                    id="tags-outlined"
+                    sx={{ mt: 2, }}
+                    options={['ABCD', 'PQRS']}
+                    getOptionLabel={(option) => option}
+                    filterSelectedOptions
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label='Variant List'
+                        />
+                    )}
+                />
             </DialogContent>
             <DialogActions>
                 <Button autoFocus onClick={handleClose}>

@@ -303,7 +303,8 @@ const InventoryList = () => {
                                             'aria-labelledby': 'fade-button',
                                         }}
                                         anchorEl={actionOpen[index]}
-                                        open={Boolean(actionOpen[index])}
+                                        // open={Boolean(actionOpen[index])}
+                                        open={false}
                                         onClose={handleActionClose}
                                         TransitionComponent={Fade}
                                     >
@@ -393,7 +394,7 @@ const InventoryList = () => {
                                                                     setMoveQTYPopUP(true);
                                                                     setSingleMoveQTY(row)
                                                                     handleActionCollapseClose();
-                                                                }}>Map QTY</MenuItem>
+                                                                }}>Edit</MenuItem>
                                                             </Menu>
                                                         </TableCell>
                                                     </TableRow>

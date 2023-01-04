@@ -64,6 +64,18 @@ const OrderList = () => {
             width: 100
         },
         {
+            id: "Source",
+            label: "Source",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "Age",
+            label: "Age",
+            align: "center",
+            width: 60
+        },
+        {
             id: "action",
             label: "Action",
             action: true,
@@ -254,6 +266,8 @@ const OrderList = () => {
                                 borderRadius: '4px'
                             }}>{row.status}</Box></TableCell>
                             <TableCell align="center">{row.amount}</TableCell>
+                            <TableCell align="center">Direct</TableCell>
+                            <TableCell align="center">20</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
