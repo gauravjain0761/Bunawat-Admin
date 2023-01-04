@@ -187,7 +187,7 @@ const NotificationList = () => {
                     </Box>
 
                     <Button color="primary" variant="contained" type="submit"
-                        // onClick={() => navigate(`/order/add`)}
+                        onClick={() => navigate(`/notifications/add`)}
                         sx={{
                             backgroundColor: UIColor, color: "#fff",
                             "&:hover": {

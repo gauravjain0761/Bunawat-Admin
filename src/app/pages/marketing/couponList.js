@@ -197,7 +197,7 @@ const CouponList = () => {
                     </Box>
 
                     <Button color="primary" variant="contained" type="submit"
-                        // onClick={() => navigate(`/order/add`)}
+                        onClick={() => navigate(`/coupons/add`)}
                         sx={{
                             backgroundColor: UIColor, color: "#fff",
                             "&:hover": {
