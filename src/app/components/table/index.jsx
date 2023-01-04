@@ -72,7 +72,7 @@ function EnhancedTableHead(props) {
 }
 
 const TableComponent = (props) => {
-  let { rows, columns, selected, renderRow, page, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination, extraPaddingOnFirstColumn } = props;
+  let { rows, columns, selected, renderRow, page, totalCount, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination, extraPaddingOnFirstColumn } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -138,16 +138,15 @@ const TableComponent = (props) => {
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                rows.sort(getComparator(order, orderBy)).slice() */}
               {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(renderRow)}
             </TableBody>
           </Table>
         </TableContainer>
         {!disablePagination &&
           <TablePagination
-            rowsPerPageOptions={[10, 20, 25]}
+            rowsPerPageOptions={[1, 10, 20, 25]}
             component="div"
-            count={rows.length}
+            count={totalCount ?? 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

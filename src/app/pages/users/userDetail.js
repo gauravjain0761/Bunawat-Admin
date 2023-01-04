@@ -1,8 +1,9 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import { SimpleCard } from "app/components";
+import { API_URL } from "app/constant/api";
+import { ApiGet } from "app/service/api";
 import UserForm from "app/views/users/userForm";
-import { mockDataCustomerUserList, mockDataInfluncerUserList, mockDataResellerUserList } from "fake-db/data/user/userList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -17,12 +18,33 @@ const Container = styled("div")(({ theme }) => ({
 
 const UserDetail = () => {
     const { id, type } = useParams();
-    const [data, setData] = useState();
+    const [data, setData] = useState({});
+
+    const getURL = (role) => {
+        if (role == 'Customer') {
+            return API_URL.getCustomer
+        }
+        if (role == 'influencer') {
+            return API_URL.getInfluencer
+        }
+        if (role == 'Reseller') {
+            return API_URL.getResller
+        }
+    }
+
+    const getData = async (id, type) => {
+        await ApiGet(`${getURL(type)}/${id}`)
+            .then((response) => {
+                setData(response?.data ?? {});
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
 
     useEffect(() => {
         if (id && type) {
-            const finalData = type == "Customer" ? mockDataCustomerUserList : type == "Reseller" ? mockDataResellerUserList : mockDataInfluncerUserList
-            setData(finalData.find(item => item.id == id))
+            getData(id, type)
         }
     }, [id, type])
 

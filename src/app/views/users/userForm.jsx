@@ -61,7 +61,7 @@ const UserForm = ({ data = {}, userType }) => {
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "mobile" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalCommission") {
+        if (event.target.name == "phone" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -80,9 +80,9 @@ const UserForm = ({ data = {}, userType }) => {
     const {
         image,
         userName,
-        firstName,
-        lastName,
-        mobile,
+        fname,
+        lname,
+        phone,
         email,
         password,
         state,
@@ -128,7 +128,7 @@ const UserForm = ({ data = {}, userType }) => {
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             {/* <Box sx={{ mb: 3.5 }} display="flex" alignItems="center">
-                                <Avatar name={firstName} round={true} size="50" />
+                                <Avatar name={fname} round={true} size="50" />
                                 <Button>
                                     Change
                                 </Button>
@@ -136,20 +136,20 @@ const UserForm = ({ data = {}, userType }) => {
 
                             <TextField
                                 type="text"
-                                name="firstName"
+                                name="fname"
                                 label="First Name"
                                 onChange={handleChange}
-                                value={firstName || ""}
+                                value={fname || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
 
                             <TextField
                                 type="text"
-                                name="lastName"
+                                name="lname"
                                 label="Last Name"
                                 onChange={handleChange}
-                                value={lastName || ""}
+                                value={lname || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -166,10 +166,10 @@ const UserForm = ({ data = {}, userType }) => {
 
                             <TextField
                                 type="text"
-                                name="mobile"
-                                label="Mobile Nubmer"
+                                name="phone"
+                                label="Phone Nubmer"
                                 onChange={handleChange}
-                                value={mobile || ""}
+                                value={phone || ""}
                                 validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                 errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                             />
@@ -342,20 +342,20 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="firstName"
+                                    name="fname"
                                     label="First Name"
                                     onChange={handleChange}
-                                    value={firstName || ""}
+                                    value={fname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
 
                                 <TextField
                                     type="text"
-                                    name="lastName"
+                                    name="lname"
                                     label="Last Name"
                                     onChange={handleChange}
-                                    value={lastName || ""}
+                                    value={lname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -372,10 +372,10 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="mobile"
-                                    label="Mobile Nubmer"
+                                    name="phone"
+                                    label="Phone Nubmer"
                                     onChange={handleChange}
-                                    value={mobile || ""}
+                                    value={phone || ""}
                                     validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                     errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                 />
@@ -468,20 +468,20 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="firstName"
+                                    name="fname"
                                     label="First Name"
                                     onChange={handleChange}
-                                    value={firstName || ""}
+                                    value={fname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
 
                                 <TextField
                                     type="text"
-                                    name="lastName"
+                                    name="lname"
                                     label="Last Name"
                                     onChange={handleChange}
-                                    value={lastName || ""}
+                                    value={lname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -498,10 +498,10 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="mobile"
-                                    label="Mobile Nubmer"
+                                    name="phone"
+                                    label="Phone Nubmer"
                                     onChange={handleChange}
-                                    value={mobile || ""}
+                                    value={phone || ""}
                                     validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                     errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                 />
@@ -705,7 +705,7 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="firstName"
+                                    name="bankAccountNumber"
                                     label="Bank Account Number"
                                     onChange={handleChange}
                                     value={bankAccountNumber || ""}
@@ -715,7 +715,7 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="lastName"
+                                    name="lname"
                                     label="Bank IFSC Code"
                                     onChange={handleChange}
                                     value={bankIFSC || ""}

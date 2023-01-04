@@ -7,4 +7,13 @@ export const API_URL = {
     addCustomer: "customer/add",
     addResller: "resller/add",
     addInfluencer: "influencer/add",
+    getCustomers: "customer/getall",
+    getResllers: "reseller/getall",
+    getInfluencers: "influencer/getall",
+    deleteCustomers: "customer/remove",
+    deleteResllers: "reseller/remove",
+    deleteInfluencers: "influencer/remove",
+    getCustomer: "customer",
+    getResller: "reseller",
+    getInfluencer: "influencer",
 }
