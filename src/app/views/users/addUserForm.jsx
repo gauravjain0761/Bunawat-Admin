@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
+import { API_URL } from "app/constant/api";
+import { ApiPost } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
@@ -36,9 +38,43 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
         }
     }, [data])
 
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
+
+    const getURL = (role) => {
+        if (role == 'customer') {
+            return API_URL.addCustomer
+        }
+        if (role == 'Reseller') {
+            return API_URL.addResller
+        }
+        if (role == 'influencer') {
+            return API_URL.addInfluencer
+        }
+    }
+
+    const getBack = (role) => {
+        if (role == 'customer') {
+            navigate("/customer")
+        }
+        if (role == 'Reseller') {
+            navigate("/reseller")
+        }
+        if (role == 'influencer') {
+            navigate("/influncer")
+        }
+    }
+
+    const handleSubmit = async () => {
+        if (getURL() != "") {
+            await ApiPost(getURL(formData?.role), formData)
+                .then((response) => {
+                    getBack(formData?.role)
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        } else {
+
+        }
     };
 
     const handleChange = (event) => {
@@ -59,9 +95,9 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
     };
 
     const {
-        firstName,
-        lastName,
-        mobile,
+        fname,
+        lname,
+        phone,
         email,
         password,
         role,
@@ -76,20 +112,20 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                             <TextField
                                 type="text"
-                                name="firstName"
+                                name="fname"
                                 label="First Name"
                                 onChange={handleChange}
-                                value={firstName || ""}
+                                value={fname || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
 
                             <TextField
                                 type="text"
-                                name="lastName"
+                                name="lname"
                                 label="Last Name"
                                 onChange={handleChange}
-                                value={lastName || ""}
+                                value={lname || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -106,10 +142,10 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
 
                             <TextField
                                 type="text"
-                                name="mobile"
-                                label="Mobile Nubmer"
+                                name="phone"
+                                label="Phone Nubmer"
                                 onChange={handleChange}
-                                value={mobile || ""}
+                                value={phone || ""}
                                 validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                 errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                             />
@@ -135,9 +171,9 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                     inputProps={{ readOnly: disableRole }}
                                     label="User Role"
                                     onChange={handleChange}>
-                                    <MenuItem value="Customer">Customer</MenuItem>
+                                    <MenuItem value="customer">Customer</MenuItem>
                                     <MenuItem value="Reseller">Reseller</MenuItem>
-                                    <MenuItem value="Influncer">Influncer</MenuItem>
+                                    <MenuItem value="influencer">Influencer</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -159,7 +195,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                            <Button color="primary" variant="contained" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>
@@ -170,7 +206,6 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                         </Box>
                     </Box>
                 </SimpleCard>
-
             </ValidatorForm>
         </div >
     );

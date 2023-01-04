@@ -4,7 +4,7 @@ import UserList from '../userList'
 
 const Influncer = () => {
     return (
-        <UserList data={mockDataInfluncerUserList} type="Influncer" />
+        <UserList data={mockDataInfluncerUserList} type="influencer" />
     )
 }
 

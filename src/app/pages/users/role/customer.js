@@ -4,7 +4,7 @@ import UserList from '../userList'
 
 const Customer = () => {
     return (
-        <UserList data={mockDataCustomerUserList} type="Customer" />
+        <UserList data={mockDataCustomerUserList} type="customer" />
     )
 }
 
