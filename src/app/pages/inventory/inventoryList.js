@@ -66,7 +66,7 @@ const InventoryList = () => {
         },
         {
             id: "threshold_qty",
-            label: "ThreShold \nQTY",
+            label: "Threshold \nQTY",
             align: "center",
             width: 100
         },

@@ -33,33 +33,33 @@ const OrderList = () => {
         },
         {
             id: "OrderDate",
-            label: "Order Date",
+            label: "Date",
             width: 100
         },
         {
             id: "OrderType",
-            label: "Order Type",
+            label: "Type",
             width: 100
         },
         {
             id: "OrderUserType",
-            label: "Order User Type",
+            label: "User Type",
             width: 100
         },
         {
             id: "UserName",
-            label: "Order UserName",
+            label: "UserName",
             width: 100
         },
         {
             id: "OrderStatus",
-            label: "Order Status",
+            label: "Status",
             align: "center",
             width: 150
         },
         {
             id: "OrderAmount",
-            label: "Order Amount",
+            label: "Amount",
             align: "center",
             width: 100
         },

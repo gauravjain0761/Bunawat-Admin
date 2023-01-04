@@ -47,7 +47,7 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     fullWidth
                     sx={{ mt: 2, }}
                     name="instock_leadtime"
-                    label="In Stock Leadtime"
+                    label="In Stock Lead Time"
                     // onChange={handleChange}
                     // value={row.instock || ""}
                     defaultValue={""}
@@ -59,7 +59,7 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     fullWidth
                     sx={{ mt: 2, }}
                     name="preorder"
-                    label="Preorder"
+                    label="Preorder QTY"
                     // onChange={handleChange}
                     // value={row.instock || ""}
                     defaultValue={data.preorder || ""}
@@ -71,7 +71,7 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     fullWidth
                     sx={{ mt: 2, }}
                     name="preorder_leadtime"
-                    label="Preorder Leadtime"
+                    label="Preorder Lead Time"
                     // onChange={handleChange}
                     // value={row.instock || ""}
                     defaultValue={""}
@@ -82,13 +82,13 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     multiple={true}
                     id="tags-outlined"
                     sx={{ mt: 2, }}
-                    options={['ABCD', 'PQRS']}
+                    options={['ABCD12', 'XYZ67']}
                     getOptionLabel={(option) => option}
                     filterSelectedOptions
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            label='Variant List'
+                            label='Mapped Variant List'
                         />
                     )}
                 />

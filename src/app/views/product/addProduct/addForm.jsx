@@ -238,7 +238,7 @@ const ProductForm = ({ data = {} }) => {
         isActive,
     } = formData;
 
-    const disableInventoryList = ['instock_qty', 'threshold_qty', 'instock_leadtime', 'preorder_qty', 'preorder_leadtime', 'mapped_variant'];
+    const disableInventoryList = ['instock_qty', 'threshold_qty', 'instock_lead_time', 'preorder_qty', 'preorder_lead_time', 'mapped_variant'];
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
@@ -765,7 +765,7 @@ const ProductForm = ({ data = {} }) => {
                                 <TextField
                                     type="number"
                                     fullWidth
-                                    sx={{ width: "400px" }}
+                                    sx={{ minWidth: "400px" }}
                                     name="threshold_qty"
                                     label="Threshold QTY"
                                     onChange={(e) => handleAddValueAttribute('single', 'threshold_qty', e.target.value)}
@@ -776,11 +776,11 @@ const ProductForm = ({ data = {} }) => {
 
                                 <TextField
                                     type="number"
-                                    name="instock_leadtime"
+                                    name="instock_lead_time"
                                     sx={{ width: "400px" }}
-                                    label="Leadtime"
-                                    onChange={(e) => handleAddValueAttribute('single', 'instock_leadtime', e.target.value)}
-                                    value={attributeData?.find(item => item?.name == "instock_leadtime")?.value ?? ''}
+                                    label="Lead Time"
+                                    onChange={(e) => handleAddValueAttribute('single', 'instock_lead_time', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "instock_lead_time")?.value ?? ''}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -802,11 +802,11 @@ const ProductForm = ({ data = {} }) => {
 
                                 <TextField
                                     type="number"
-                                    name="preorder_leadtime"
-                                    label="Leadtime"
+                                    name="preorder_lead_time"
+                                    label="Lead Time"
                                     sx={{ width: "400px" }}
-                                    onChange={(e) => handleAddValueAttribute('single', 'preorder_leadtime', e.target.value)}
-                                    value={attributeData?.find(item => item?.name == "preorder_leadtime")?.value ?? ''}
+                                    onChange={(e) => handleAddValueAttribute('single', 'preorder_lead_time', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "preorder_lead_time")?.value ?? ''}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -820,7 +820,7 @@ const ProductForm = ({ data = {} }) => {
                                     id="tags-outlined"
                                     fullWidth
                                     sx={{ width: "400px" }}
-                                    options={['ABCD', 'PQRS']}
+                                    options={['ABCD12', 'XYZ67']}
                                     onChange={(e, newValue) => handleAddValueAttribute('multi', 'mapped_variant', newValue)}
                                     value={attributeData?.find(item => item?.name == "mapped_variant")?.value ?? []}
                                     getOptionLabel={(option) => option}
