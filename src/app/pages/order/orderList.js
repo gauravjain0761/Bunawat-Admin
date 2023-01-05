@@ -216,7 +216,7 @@ const OrderList = () => {
                     </Box>
 
                     <Button color="primary" variant="contained" type="submit"
-                        // onClick={() => navigate(`/order/add`)}
+                        onClick={() => navigate(`/order/add`)}
                         sx={{
                             backgroundColor: UIColor, color: "#fff",
                             "&:hover": {

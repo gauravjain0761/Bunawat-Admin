@@ -28,7 +28,7 @@ const SimpleCard = ({ children, title, subtitle, backArrow }) => {
           <Icon>arrow_back</Icon>
         </IconButton>}
     </Box>
-    <CardRoot elevation={6} sx={{ border: `2px solid ${UIColor}`, borderRadius: "0 0 8px 8px" }}>
+    <CardRoot elevation={6} sx={{ border: `2px solid ${UIColor}`, borderRadius: "0 0 8px 8px", height: 'auto' }}>
       {children}
     </CardRoot>
   </>
