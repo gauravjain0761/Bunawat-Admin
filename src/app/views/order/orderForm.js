@@ -12,13 +12,21 @@ import {
     Icon,
     InputLabel,
     MenuItem,
+    Paper,
     Radio,
     RadioGroup,
     Select,
     styled,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Typography,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
+import TableComponent from "app/components/table";
 import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
@@ -33,12 +41,42 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const OrderForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState(data);
+    const [formData, setFormData] = useState({ ...data, userType: 'customer' });
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
 
+    const columns = [
+        {
+            id: "pName",
+            label: "Product Name",
+            sortDisable: true,
+            width: 100
+        },
+        {
+            id: "In Stoke QTY",
+            label: "In Stoke QTY",
+            align: 'center',
+            sortDisable: true,
+            width: 100
+        },
+        {
+            id: "qty",
+            label: "QTY",
+            align: 'center',
+            sortDisable: true,
+            width: 100
+        },
+        {
+            id: "Action",
+            label: "Action",
+            action: true,
+            sortDisable: true,
+            align: 'right',
+            width: 80
+        },
+    ];
     useEffect(() => {
-        setFormData(data)
+        setFormData({ ...data, userType: 'customer' })
     }, [data])
 
 
@@ -49,7 +87,7 @@ const OrderForm = ({ data = {} }) => {
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "phone") {
+        if (event.target.name == "phone" || event.target.name == "qty") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -74,6 +112,12 @@ const OrderForm = ({ data = {} }) => {
     const addProductToCart = () => {
         let temp = formData?.productList ?? [];
         temp = [...temp, { qty, pName }]
+        setFormData({ ...formData, productList: temp, pName: '', qty: '' });
+    }
+
+    const handleDeleteProduct = (index) => {
+        let temp = formData?.productList ?? [];
+        temp = temp.filter((data, i) => i != index)
         setFormData({ ...formData, productList: temp, pName: '', qty: '' });
     }
 
@@ -127,7 +171,7 @@ const OrderForm = ({ data = {} }) => {
                                         <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>User Type</FormLabel>
                                         <RadioGroup
                                             row
-                                            value={userType ?? ""}
+                                            value={userType ?? "customer"}
                                             onChange={handleChange}
                                             aria-labelledby="demo-row-radio-buttons-group-label"
                                             name="userType">
@@ -184,62 +228,86 @@ const OrderForm = ({ data = {} }) => {
                                         )}
                                     />
 
-                                    {pName && <Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Typography sx={{ fontWeight: 700 }}>Product Name: &nbsp;</Typography>
-                                            <Typography>{pName}</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ flex: 1 }}>
-                                                <TextField
-                                                    type="text"
-                                                    name="qty"
-                                                    sx={{ mt: 2 }}
-                                                    label="QTY"
-                                                    onChange={handleChange}
-                                                    value={qty || ""}
-                                                />
-                                            </Box>
-                                            <Button color="primary" variant="contained" type="button" sx={{ width: { lg: "150px", md: '100px' }, height: '53px', ml: 2 }} onClick={addProductToCart}>
-                                                <Icon>add</Icon>
-                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
-                                            </Button>
-                                        </Box>
+                                    {/* {pName && 
+                                    <Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Typography sx={{ fontWeight: 700 }}>Product Name: &nbsp;</Typography>
+                                    <Typography>{pName}</Typography>
                                     </Box>
-                                    }
-                                    {productList?.length > 0 && productList?.map((data) => {
-                                        return (
-                                            <Box sx={{
-                                                border: '1px solid',
-                                                borderRadius: '4px',
-                                                padding: '10px',
-                                                position: 'relative',
-                                                my: 2
-                                            }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Typography sx={{ fontWeight: 700 }}>Product Name: &nbsp;</Typography>
-                                                    <Typography>{data?.pName}</Typography>
+                                    
+                                    </Box>
+                                } */}
+                                    {pName &&
+                                        <Box>
+                                            <TableContainer component={Paper}>
+                                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell align="center">Price</TableCell>
+                                                            <TableCell align="center">In Stock QTY</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                                            <TableCell align="center" component="th" scope="row">{pName == 'P_02' ? 1000 : 1500}</TableCell>
+                                                            <TableCell align="center" component="th" scope="row">{pName == 'P_02' ? 75 : 44}</TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Box sx={{ flex: 1 }}>
+                                                    <TextField
+                                                        type="text"
+                                                        name="qty"
+                                                        sx={{ mt: 2 }}
+                                                        label="QTY"
+                                                        onChange={handleChange}
+                                                        value={qty || ""}
+                                                    />
                                                 </Box>
-                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Typography sx={{ fontWeight: 700 }}>QTY: &nbsp;</Typography>
-                                                    <Typography>{data?.qty}</Typography>
-                                                </Box>
-                                                <Icon onClick={() => handleDeleteImage()} sx={{
-                                                    color: "red",
-                                                    position: 'absolute',
-                                                    right: '-10px',
-                                                    top: '-10px',
-                                                    cursor: "pointer",
-                                                }}>delete</Icon>
+                                                <Button color="primary" variant="contained" type="button" sx={{ width: { lg: "150px", md: '100px' }, height: '53px', ml: 2 }} onClick={addProductToCart}>
+                                                    <Icon>add</Icon>
+                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
+                                                </Button>
                                             </Box>
-                                        )
-                                    })}
+                                        </Box>
+                                    }
+
+                                    {productList?.length > 0 && <TableComponent
+                                        rows={productList}
+                                        columns={columns}
+                                        disableCheckBox={true}
+                                        disablePagination={true}
+                                        extraPaddingOnFirstColumn={true}
+                                        renderRow={(row, index) => {
+                                            return (
+                                                <TableRow
+                                                    hover
+                                                    role="checkbox"
+                                                    tabIndex={-1}
+                                                    key={row.pName}
+                                                >
+                                                    <TableCell sx={{ paddingLeft: '15px' }}>{row.pName}</TableCell>
+                                                    <TableCell align="center" >44</TableCell>
+                                                    <TableCell align="center">{row.qty}</TableCell>
+                                                    <TableCell align='right' sx={{ pr: "24px" }}>
+                                                        <Icon onClick={() => handleDeleteProduct(index)} sx={{
+                                                            color: "red",
+                                                            cursor: "pointer",
+                                                        }}>delete</Icon>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        }}
+                                    />
+                                    }
                                 </Grid>
                             </Grid>
                         </SimpleCard>
                     </Grid>
                     <Grid item lg={6} md={12} sm={12} xs={12} >
-                        <SimpleCard title="Info" backArrow={false}>
+                        <SimpleCard title="Order Detail" backArrow={false}>
                             <Typography variant="h6">Billing Address</Typography>
                             <Grid container spacing={1}>
                                 <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>

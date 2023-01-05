@@ -318,7 +318,7 @@ const UserForm = ({ data = {}, userType }) => {
                     </Grid>
                 </SimpleCard>
 
-                {(userType == "Reseller") && <Accordion expanded={expanded === 'Billing'} onChange={handleChangeExpand('Billing')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
+                {/* {(userType == "Reseller") && <Accordion expanded={expanded === 'Billing'} onChange={handleChangeExpand('Billing')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -442,7 +442,7 @@ const UserForm = ({ data = {}, userType }) => {
                         </Grid>
                     </AccordionDetails>
                 </Accordion>
-                }
+                } */}
 
                 {(userType == "influencer") && <Accordion expanded={expanded === 'Shipping'} onChange={handleChangeExpand('Shipping')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
