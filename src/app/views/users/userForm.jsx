@@ -184,7 +184,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            {(type == "reseller" || type == "influncer") &&
+                            {(userType == "Reseller" || userType == "influencer") &&
                                 <TextField
                                     name="text"
                                     type="pan_number"
@@ -196,7 +196,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 />
                             }
 
-                            {/* {type == "customer" &&
+                            {/* {userType == "Customer" &&
                                 <FormControl>
                                     <FormLabel id="demo-row-radio-buttons-group-label">Customer Type</FormLabel>
                                     <RadioGroup
@@ -211,7 +211,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 </FormControl>
                             } */}
 
-                            {(type == "influncer") &&
+                            {(userType == "influencer") &&
                                 <>
                                     <TextField
                                         type="text"
@@ -295,7 +295,7 @@ const UserForm = ({ data = {}, userType }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            {(type == "influncer") &&
+                            {(userType == "influencer") &&
                                 <FormControl fullWidth >
                                     <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                     <Select
@@ -318,7 +318,7 @@ const UserForm = ({ data = {}, userType }) => {
                     </Grid>
                 </SimpleCard>
 
-                {(type == "reseller") && <Accordion expanded={expanded === 'Billing'} onChange={handleChangeExpand('Billing')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
+                {(userType == "Reseller") && <Accordion expanded={expanded === 'Billing'} onChange={handleChangeExpand('Billing')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -444,7 +444,7 @@ const UserForm = ({ data = {}, userType }) => {
                 </Accordion>
                 }
 
-                {(type == "influncer") && <Accordion expanded={expanded === 'Shipping'} onChange={handleChangeExpand('Shipping')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
+                {(userType == "influencer") && <Accordion expanded={expanded === 'Shipping'} onChange={handleChangeExpand('Shipping')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -570,7 +570,7 @@ const UserForm = ({ data = {}, userType }) => {
                 </Accordion>
                 }
 
-                {(type == "influncer") && <Accordion expanded={expanded === 'Commission'} onChange={handleChangeExpand('Commission')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
+                {(userType == "influencer") && <Accordion expanded={expanded === 'Commission'} onChange={handleChangeExpand('Commission')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -681,7 +681,7 @@ const UserForm = ({ data = {}, userType }) => {
                 </Accordion>
                 }
 
-                {(type == "reseller" || type == "influncer") && <Accordion expanded={expanded === 'Account'} onChange={handleChangeExpand('Account')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
+                {(userType == "Reseller" || userType == "influencer") && <Accordion expanded={expanded === 'Account'} onChange={handleChangeExpand('Account')} sx={{ borderRadius: "0 0 8px 8px", mt: 2 }}>
                     <AccordionSummary
                         sx={{ backgroundColor: UIColor, color: "#fff" }}
                         expandIcon={<ExpandMoreIcon sx={{ color: "#fff" }} />}
@@ -754,7 +754,7 @@ const UserForm = ({ data = {}, userType }) => {
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                         </Button>
                     </Box>
-                    {(type == "customer") && <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                    {(userType == "Customer") && <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
                         <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
                             onClick={() => navigate("/user/wishlist")}
                         >
