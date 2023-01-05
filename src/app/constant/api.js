@@ -4,6 +4,7 @@ export const API_ROUTES = {
 }
 
 export const API_URL = {
+    adminLogin: "admin_login",
     addCustomer: "customer/add",
     addResller: "resller/add",
     addInfluencer: "influencer/add",

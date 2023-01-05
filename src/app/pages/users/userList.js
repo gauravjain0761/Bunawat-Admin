@@ -10,12 +10,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
-import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { Span } from 'app/components/Typography';
 import { API_URL } from 'app/constant/api';
 import { ApiGet } from 'app/service/api';
+import DeleteModel from 'app/views/users/model/deleteModel';
 
 const UserList = ({ type }) => {
   const navigate = useNavigate();

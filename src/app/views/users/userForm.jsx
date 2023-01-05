@@ -27,9 +27,9 @@ import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { UIColor } from "app/utils/constant";
-import DeleteModel from "../models/deleteModel";
 import ReactDatePicker from "react-datepicker";
 import { format } from "date-fns";
+import DeleteModel from "./model/deleteModel";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -777,7 +777,7 @@ const UserForm = ({ data = {}, userType }) => {
                     }
                 </Box>
             </ValidatorForm>
-            <DeleteModel open={open} handleClose={() => setOpen(false)} />
+            <DeleteModel open={open} deleteData={formData} type={userType} handleClose={() => setOpen(false)} />
         </div >
     );
 };
