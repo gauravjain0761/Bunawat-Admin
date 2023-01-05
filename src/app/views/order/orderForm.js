@@ -240,7 +240,7 @@ const OrderForm = ({ data = {} }) => {
                                     {pName &&
                                         <Box>
                                             <TableContainer component={Paper}>
-                                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                                <Table sx={{ minWidth: '100%' }} aria-label="simple table">
                                                     <TableHead>
                                                         <TableRow>
                                                             <TableCell align="center">Price</TableCell>
