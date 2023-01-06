@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import TableComponent from 'app/components/table';
 import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -13,17 +12,22 @@ import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
+import { API_URL } from 'app/constant/api';
+import { ApiGet } from 'app/service/api';
+import DeleteCollectionModel from 'app/views/category/model/deleteCollectionModel';
 
 const CollectionList = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [rows, setRows] = useState(mockDataCategoryManagement);
+  const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
   const [actionAllOpen, setActionAllOpen] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [deleteData, setDeleteData] = useState(null);
 
   const columns = [
     {
@@ -86,9 +90,24 @@ const CollectionList = () => {
     }
   ];
 
+  const getData = async () => {
+    await ApiGet(`${API_URL.getCollections}?page=${page}&limit=${rowsPerPage}`)
+      .then((response) => {
+        setRows(response?.data ?? []);
+        setTotalCount(response?.totalCount);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }
+
+  React.useEffect(() => {
+    getData();
+  }, [page, rowsPerPage])
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = rows.map((n) => n?._id);
       setSelected(newSelected);
       return;
     }
@@ -211,23 +230,23 @@ const CollectionList = () => {
               role="checkbox"
               aria-checked={isItemSelected}
               tabIndex={-1}
-              key={row.name}
+              key={row?._id}
               selected={isItemSelected}
             >
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary"
-                  onClick={(event) => handleClick(event, row.name)}
+                  onClick={(event) => handleClick(event, row?._id)}
                   checked={isItemSelected}
                   inputProps={{
                     'aria-labelledby': labelId,
                   }}
                 />
               </TableCell>
-              <TableCell > {row.name} </TableCell>
-              <TableCell >{row.description}</TableCell>
-              <TableCell>{row.slug}</TableCell>
-              <TableCell align="center">{row.count}</TableCell>
+              <TableCell > {row?.name} </TableCell>
+              <TableCell >{row?.description}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell align="center">-</TableCell>
               <TableCell align='right' sx={{ pr: "18px" }}>
                 <IconButton
                   aria-label="more"
@@ -248,8 +267,9 @@ const CollectionList = () => {
                   onClose={handleActionClose}
                   TransitionComponent={Fade}
                 >
-                  <MenuItem onClick={() => navigate(`/collection/details/${row.id}`)}>Edit</MenuItem>
+                  <MenuItem onClick={() => navigate(`/collection/details/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
+                    setDeleteData(row)
                     setOpen(true);
                     handleActionClose();
                   }}>Delete</MenuItem>
@@ -265,7 +285,10 @@ const CollectionList = () => {
         handleSelectAllClick={handleSelectAllClick}
       />
 
-      <DeleteModel open={open} handleClose={() => setOpen(false)} />
+      <DeleteCollectionModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
+        setDeleteData(null);
+        setOpen(false);
+      }} />
     </Card>
   );
 }

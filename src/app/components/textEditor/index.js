@@ -13,19 +13,20 @@ const editorConfiguration = {
     }
 };
 
-const TextEditor = () => {
+const TextEditor = ({ data, setData }) => {
     return (
         <CKEditor
             editor={ClassicEditor}
             config={editorConfiguration}
-            data=""
+            data={data ?? ""}
             onReady={editor => {
                 // You can store the "editor" and use when it is needed.
                 console.log('Editor is ready to use!', editor);
             }}
             onChange={(event, editor) => {
                 const data = editor.getData();
-                console.log({ event, editor, data });
+                console.log('Blur.', "editor", event, editor, data);
+                setData(data);
             }}
             onBlur={(event, editor) => {
                 console.log('Blur.', editor);

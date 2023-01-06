@@ -1,7 +1,8 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
+import { API_URL } from "app/constant/api";
+import { ApiGet } from "app/service/api";
 import CollectionForm from "app/views/category/collectionForm";
-import { mockDataCategoryManagement } from "fake-db/data/category/categoryManagement";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -18,17 +19,26 @@ const CategoryDetail = () => {
     const { id } = useParams();
     const [data, setData] = useState({});
 
+    const getData = async (id) => {
+        await ApiGet(`${API_URL.getCollection}/${id}`)
+            .then((response) => {
+                setData(response?.data ?? {});
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
     useEffect(() => {
         if (id) {
-            setData(mockDataCategoryManagement.find(item => item.id == id))
+            getData(id)
         }
     }, [id])
 
-    console.log(data)
     return (
         <Container>
             <Stack spacing={3}>
-                <CollectionForm data={data} />
+                <CollectionForm data={data} id={id} />
             </Stack>
         </Container>
     );

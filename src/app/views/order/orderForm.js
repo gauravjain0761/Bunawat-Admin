@@ -657,7 +657,7 @@ const OrderForm = ({ data = {} }) => {
                     </Grid>
                 </ValidatorForm>
             </Box >
-            <Box sx={{
+            {productList?.length > 0 && <Box sx={{
                 width: '100%', height: '80px', background: '#fff',
                 position: 'sticky',
                 zIndex: 999,
@@ -702,6 +702,7 @@ const OrderForm = ({ data = {} }) => {
                     </Box>
                 </Box>
             </Box>
+            }
         </Box >
     );
 };

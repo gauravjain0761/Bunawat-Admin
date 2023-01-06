@@ -17,4 +17,9 @@ export const API_URL = {
     getCustomer: "customer",
     getResller: "reseller",
     getInfluencer: "influencer",
+    getCollections: "collection/getall",
+    getCollection: "collection",
+    deleteCollection: "collection/remove",
+    addCollection: "collection/add",
+    editCollection: "collection/update",
 }

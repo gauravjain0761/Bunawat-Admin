@@ -20,6 +20,8 @@ import {
 import { SimpleCard } from "app/components";
 import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
+import { API_URL } from "app/constant/api";
+import { ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
@@ -31,17 +33,45 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const CollectionForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState({ ...data, pCategory: "None" });
+const CollectionForm = ({ data = {}, id }) => {
+    const [formData, setFormData] = useState(data);
+    const [description, setDescription] = useState(data);
     const navigate = useNavigate();
     useEffect(() => {
-        setFormData({ ...data, pCategory: "None" })
+        setFormData(data)
+        setDescription(data?.description)
     }, [data])
 
-
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
+    const handleSubmit = async () => {
+        if (id) {
+            await ApiPut(`${API_URL.editCollection}/${id}`, {
+                "name": formData?.name,
+                "description": description,
+                "colleciton_list": [],
+                "categories_list": [],
+                "product_list": []
+            })
+                .then((response) => {
+                    navigate("/collection/list")
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        } else {
+            await ApiPost(API_URL.addCollection, {
+                "name": formData?.name,
+                "description": description,
+                "colleciton_list": [],
+                "categories_list": [],
+                "product_list": []
+            })
+                .then((response) => {
+                    navigate("/collection/list")
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        }
     };
 
     const handleChange = (event) => {
@@ -64,9 +94,6 @@ const CollectionForm = ({ data = {} }) => {
     const {
         name,
         slug,
-        description,
-        count,
-        pCategory,
         visibility,
         productId,
         image
@@ -89,27 +116,8 @@ const CollectionForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <TextField
-                                type="text"
-                                name="slug"
-                                label="slug"
-                                value={slug || ""}
-                                onChange={handleChange}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-                            {/* <TextField
-                                type="text"
-                                name="description"
-                                label="Description"
-                                onChange={handleChange}
-                                value={description || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            /> */}
-
                             <Box sx={{ mb: 2 }}>
-                                <TextEditor />
+                                <TextEditor data={description} setData={(d) => setDescription(d)} />
                             </Box>
 
                             <Autocomplete
