@@ -43,6 +43,12 @@ const ParentCategory = () => {
             width: 80
         },
         {
+            id: "subCount",
+            label: "Sub Category\nCount",
+            align: "center",
+            width: 120
+        },
+        {
             id: "status",
             label: "Status",
             align: "center",
@@ -228,6 +234,7 @@ const ParentCategory = () => {
                             <TableCell>{row.category}</TableCell>
                             <TableCell>{row.slug}</TableCell>
                             <TableCell align="center">{row.count}</TableCell>
+                            <TableCell align="center">5</TableCell>
                             <TableCell align="center">
                                 {row.active ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>

@@ -48,6 +48,12 @@ const SubCategoryAdd = () => {
             align: "center"
         },
         {
+            id: "parentCount",
+            label: "Parent Category\nCount",
+            width: 140,
+            align: "center"
+        },
+        {
             id: "status",
             label: "Status",
             width: 80,
@@ -234,6 +240,7 @@ const SubCategoryAdd = () => {
                             <TableCell > {row.name} </TableCell>
                             <TableCell>{row.slug}</TableCell>
                             <TableCell align="center">{row.count}</TableCell>
+                            <TableCell align="center">3</TableCell>
                             <TableCell align="center">
                                 {row.active ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
