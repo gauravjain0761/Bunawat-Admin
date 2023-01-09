@@ -244,7 +244,7 @@ const CollectionList = () => {
                 />
               </TableCell>
               <TableCell > {row?.name} </TableCell>
-              <TableCell >{row?.description}</TableCell>
+              <TableCell >{row?.description?.replace(/<[^>]+>/g, '')}</TableCell>
               <TableCell>-</TableCell>
               <TableCell align="center">-</TableCell>
               <TableCell align='right' sx={{ pr: "18px" }}>

@@ -231,6 +231,8 @@ const OrderForm = ({ data = {} }) => {
                                     
                                     </Box>
                                 } */}
+
+
                                         {pName &&
                                             <Box>
                                                 <TableContainer component={Paper}>
@@ -267,6 +269,7 @@ const OrderForm = ({ data = {} }) => {
                                                 </Box>
                                             </Box>
                                         }
+
                                         {productList?.length > 0 &&
                                             productList?.map((data, index) => {
                                                 return (
@@ -281,58 +284,80 @@ const OrderForm = ({ data = {} }) => {
                                                         <Table sx={{ minWidth: '100%', border: '1px solid' }} aria-label="simple table">
                                                             <TableHead>
                                                                 <TableRow sx={{ border: 'none' }}>
-                                                                    <TableCell sx={{ border: '1px solid', px: 1 }} align="left">
-                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'row', xs: 'column' } }}>
-                                                                            <Typography sx={{ fontWeight: 700 }}>DesignNo/SKU:</Typography>
-                                                                            <Typography sx={{ pl: 1 }}>ABCD1234</Typography>
+                                                                    <TableCell sx={{ border: '1px solid' }} align="left">
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
+                                                                            <Typography sx={{ fontWeight: 700 }}>DesignNo/SKU</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>ABCD1234</Typography>
                                                                         </Box>
                                                                     </TableCell>
-                                                                    <TableCell sx={{ border: '1px solid', px: 1 }} align="left">
-                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'row', xs: 'column' } }}>
-                                                                            <Typography sx={{ fontWeight: 700 }}>QTY:</Typography>
-                                                                            <Typography sx={{ pl: 1 }}><input defaultValue={data?.qty} type="number" name="qty" style={{ width: '100%' }} /></Typography>
+                                                                    <TableCell sx={{ border: '1px solid' }} align="left">
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
+                                                                            <Typography sx={{ fontWeight: 700 }}>QTY</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>
+                                                                                <TextField
+                                                                                    className="numberRemove"
+                                                                                    sx={{
+                                                                                        border: 'none',
+                                                                                        px: '5px',
+                                                                                        '&.MuiFormControl-root': {
+                                                                                            m: 0,
+                                                                                            mb: 0
+                                                                                        },
+                                                                                        'input': {
+                                                                                            p: 0,
+                                                                                            textAlign: 'center'
+                                                                                        },
+                                                                                        'fieldset': {
+                                                                                            border: 'none',
+                                                                                        },
+                                                                                    }}
+                                                                                    type="number"
+                                                                                    defaultValue={data?.qty}
+                                                                                    name="qty"
+                                                                                />
+                                                                            </Typography>
                                                                         </Box>
                                                                     </TableCell>
                                                                 </TableRow>
                                                                 <TableRow sx={{ border: 'none' }}>
-                                                                    <TableCell sx={{ border: '1px solid', px: 1 }} align="left">
-                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'row', xs: 'column' } }}>
-                                                                            <Typography sx={{ fontWeight: 700 }}>Price:</Typography>
-                                                                            <Typography sx={{ pl: 1 }}>1000</Typography>
+                                                                    <TableCell sx={{ border: '1px solid' }} align="left">
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
+                                                                            <Typography sx={{ fontWeight: 700 }}>Price</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>1000</Typography>
                                                                         </Box>
                                                                     </TableCell>
-                                                                    <TableCell sx={{ border: '1px solid', px: 1 }} align="left">
-                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'row', xs: 'column' } }}>
-                                                                            <Typography sx={{ fontWeight: 700 }}>Total Amt.:</Typography>
-                                                                            <Typography sx={{ pl: 1 }}>{1000 * data?.qty}</Typography>
+                                                                    <TableCell sx={{ border: '1px solid' }} align="left">
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
+                                                                            <Typography sx={{ fontWeight: 700 }}>Total Amount</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>5000</Typography>
                                                                         </Box>
                                                                     </TableCell>
                                                                 </TableRow>
                                                             </TableHead>
                                                         </Table>
                                                         {/* <Box sx={{ border: '0.5px solid' }}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexDirection: { sm: 'row', xs: 'column' }, flexWrap: 'wrap', p: '5px' }}>
-                                                                <Box sx={{ flex: 2 }}>
-                                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                                                                        <Typography sx={{ fontWeight: 700 }}>Price&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
-                                                                        <Typography sx={{ fontWeight: 700 }}>:&nbsp; 1000</Typography>
+                                                                    <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexDirection: { sm: 'row', xs: 'column' }, flexWrap: 'wrap', p: '5px' }}>
+                                                                        <Box sx={{ flex: 2 }}>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                                                                                <Typography sx={{ fontWeight: 700 }}>Price&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+                                                                                <Typography sx={{ fontWeight: 700 }}>:&nbsp; 1000</Typography>
+                                                                            </Box>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                                                                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amt.&nbsp;&nbsp;</Typography>
+                                                                                <Typography sx={{ fontWeight: 700, color: 'red' }}>:&nbsp; {1000 * data?.qty}</Typography>
+                                                                            </Box>
+                                                                        </Box>
+                                                                        <Box sx={{ flex: 2 }}>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', whiteSpace: 'nowrap' }}>
+                                                                                <Typography sx={{ fontWeight: 700 }}>QTY&nbsp; :&nbsp;</Typography>
+                                                                                <Typography sx={{ fontWeight: 700 }}>
+                                                                                    <input defaultValue={data?.qty} type="number" name="qty" style={{ width: '100%' }} />
+                                                                                </Typography>
+                                                                            </Box>
+                                                                        </Box>
                                                                     </Box>
-                                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                                                                        <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amt.&nbsp;&nbsp;</Typography>
-                                                                        <Typography sx={{ fontWeight: 700, color: 'red' }}>:&nbsp; {1000 * data?.qty}</Typography>
-                                                                    </Box>
-                                                                </Box>
-                                                                <Box sx={{ flex: 2 }}>
-                                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', whiteSpace: 'nowrap' }}>
-                                                                        <Typography sx={{ fontWeight: 700 }}>QTY&nbsp; :&nbsp;</Typography>
-                                                                        <Typography sx={{ fontWeight: 700 }}>
-                                                                            <input defaultValue={data?.qty} type="number" name="qty" style={{ width: '100%' }} />
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Box>
-                                                            </Box>
-                                                        </Box> */}
+                                                                </Box> */}
                                                     </Box>
                                                 )
                                             })}
