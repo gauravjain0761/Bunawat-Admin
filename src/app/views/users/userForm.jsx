@@ -498,9 +498,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                                 <TextField
                                     type="text"
-                                    name="userName"
+                                    name="username"
                                     id="standard-basic"
-                                    value={shipping?.userName || ""}
+                                    value={shipping?.username || ""}
                                     onChange={(e) => handleChange(e, 'shipping')}
                                     label="Username (Min length 4, Max length 10)"
                                 />

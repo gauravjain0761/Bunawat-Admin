@@ -13,10 +13,16 @@ import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { mockDataOrderManagement } from 'fake-db/data/order/orderData';
 import { Span } from 'app/components/Typography';
+import StatusModel from 'app/views/order/models/statusModel';
+import PaymentModel from 'app/views/order/models/paymentModel';
+import TrackingModel from 'app/views/order/models/trackingModel';
 
 const OrderList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
+    const [statusPopup, setStatusPopup] = useState(false);
+    const [trackingPopup, setTrackingPopup] = useState(false);
+    const [paymentPopup, setPaymentPopup] = useState(false);
     const [rows, setRows] = useState(mockDataOrderManagement);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
@@ -170,6 +176,55 @@ const OrderList = () => {
         setPage(0);
     };
 
+    const getColor = (status) => {
+        let color = '#777';
+        let background = '#e5e5e5';
+        if (status == "Pending payment") {
+            color = '#777'
+            background = '#e5e5e5'
+        }
+        if (status == "Processing") {
+            color = '#5b841b'
+            background = '#5b841b'
+        }
+        if (status == "On hold") {
+            color = '#94660c'
+            background = '#f8dda7'
+        }
+        if (status == "Completed") {
+            color = '#2e4453'
+            background = '#c8d7e1'
+        }
+        if (status == "Cancelled") {
+            color = '#777'
+            background = '#e5e5e5'
+        }
+        if (status == "Refunded") {
+            color = '#777'
+            background = '#e5e5e5'
+        }
+        if (status == "Failed") {
+            color = '#761919'
+            background = '#eba3a3'
+        }
+        if (status == "Packed") {
+            color = '#777'
+            background = '#e5e5e5'
+        }
+        if (status == "Shipped") {
+            color = '#777'
+            background = '#e5e5e5'
+        }
+        if (status == "Replaced") {
+            color = '#777'
+            background = '#e5e5e5'
+        }
+        return {
+            color,
+            background
+        }
+    }
+
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -260,8 +315,7 @@ const OrderList = () => {
                             <TableCell >{row.orderusertype}</TableCell>
                             <TableCell>{row.username}</TableCell>
                             <TableCell align="center"><Box component='span' sx={{
-                                color: row.status == "Completed" ? '#2e4453' : '#777',
-                                background: row.status == "Completed" ? '#c8d7e1' : '#e5e5e5',
+                                ...getColor(row.status),
                                 padding: '10px',
                                 borderRadius: '4px'
                             }}>{row.status}</Box></TableCell>
@@ -286,12 +340,23 @@ const OrderList = () => {
                                     anchorEl={actionOpen[index]}
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
-                                    TransitionComponent={Fade}
-                                >
+                                    TransitionComponent={Fade}>
                                     <MenuItem onClick={() => {
-                                        // setOpen(true);
-                                        // handleActionClose();
-                                    }}>View</MenuItem>
+                                        setStatusPopup(true);
+                                        handleActionClose();
+                                    }}>Update Status</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        setTrackingPopup(true);
+                                        handleActionClose();
+                                    }}>Update Tracking No</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        setPaymentPopup(true);
+                                        handleActionClose();
+                                    }}>Update Payment Info</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        navigate('/order/detail');
+                                        handleActionClose();
+                                    }}>View Order</MenuItem>
                                 </Menu>
                             </TableCell>
                         </TableRow>
@@ -305,6 +370,9 @@ const OrderList = () => {
             />
 
             <DeleteModel open={open} handleClose={() => setOpen(false)} />
+            <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
+            <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
+            <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} />
         </Card>
     );
 }

@@ -1,10 +1,10 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
-import OrderDetailForm from "app/views/order/orderDetailForm";
+import OrderForm from "app/views/order/orderForm";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const OrderDetail = () => {
+const AddOrder = () => {
     const { id, type } = useParams();
     const [data, setData] = useState({});
 
@@ -16,9 +16,9 @@ const OrderDetail = () => {
 
     return (
         <Stack spacing={3}>
-            <OrderDetailForm data={data} type={type} />
+            <OrderForm data={data} type={type} />
         </Stack>
     );
 };
 
-export default OrderDetail;
+export default AddOrder;

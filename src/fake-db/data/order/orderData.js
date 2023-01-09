@@ -5,7 +5,7 @@ export const mockDataOrderManagement = [{
     "ordertype": "New",
     "orderusertype": "Customer",
     "username": "zone liyo",
-    "status": "Pending payment",
+    "status": "Failed",
     "amount": "5000",
     "active": true
 }, {
