@@ -30,19 +30,18 @@ import { UIColor } from "app/utils/constant";
 import ReactDatePicker from "react-datepicker";
 import { format } from "date-fns";
 import DeleteModel from "./model/deleteModel";
+import { ApiPut } from "app/service/api";
+import { API_URL } from "app/constant/api";
+import moment from "moment";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
     marginBottom: "16px",
 }));
 
-const UserForm = ({ data = {}, userType }) => {
+const UserForm = ({ data = {}, userType, id }) => {
     const [formData, setFormData] = useState(data);
     const [open, setOpen] = useState(false);
-    const [isOpenStart, setIsOpenStart] = useState(false);
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
-
     const [expanded, setExpanded] = useState(false);
 
     const handleChangeExpand = (panel) => (event, isExpanded) => {
@@ -55,31 +54,76 @@ const UserForm = ({ data = {}, userType }) => {
         setFormData(data)
     }, [data])
 
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
+
+    const getURL = (role) => {
+        if (role == 'Customer') {
+            return API_URL.editCustomer
+        }
+        if (role == 'Reseller') {
+            return API_URL.editResller
+        }
+        if (role == 'influencer') {
+            return API_URL.editInfluencer
+        }
+    }
+
+    const getBack = (role) => {
+        if (role == 'Customer') {
+            navigate("/customer")
+        }
+        if (role == 'Reseller') {
+            navigate("/reseller")
+        }
+        if (role == 'influencer') {
+            navigate("/influncer")
+        }
+    }
+
+    const handleSubmit = async (event) => {
+        if (getURL() != "") {
+            await ApiPut(`${getURL(userType)}/${id}`, formData)
+                .then((response) => {
+                    getBack(userType)
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        } else {
+
+        }
     };
 
-    const handleChange = (event) => {
+    const handleChange = (event, subName) => {
         if (event.target.name == "phone" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
-                setFormData({ ...formData, [event.target.name]: onlyNums });
+                if (subName) {
+                    setFormData({ ...formData, [subName]: { ...formData?.[subName], [event.target.name]: onlyNums } });
+                } else {
+                    setFormData({ ...formData, [event.target.name]: onlyNums });
+                }
             } else if (onlyNums.length === 10) {
                 const number = onlyNums.replace(
                     /(\d{3})(\d{3})(\d{4})/,
                     '($1) $2-$3'
                 );
-                setFormData({ ...formData, [event.target.name]: onlyNums });
+                if (subName) {
+                    setFormData({ ...formData, [subName]: { ...formData?.[subName], [event.target.name]: onlyNums } });
+                } else {
+                    setFormData({ ...formData, [event.target.name]: onlyNums });
+                }
             }
         } else {
-            setFormData({ ...formData, [event.target.name]: event.target.value });
+            if (subName) {
+                setFormData({ ...formData, [subName]: { ...formData?.[subName], [event.target.name]: event.target.value } });
+            } else {
+                setFormData({ ...formData, [event.target.name]: event.target.value });
+            }
         }
+        console.log(formData, subName)
     };
 
     const {
-        image,
-        userName,
         fname,
         lname,
         phone,
@@ -88,24 +132,19 @@ const UserForm = ({ data = {}, userType }) => {
         state,
         district,
         city,
-        address_one,
-        address_two,
-        post_code,
+        address_1,
+        address_2,
         collection,
-        pan_number,
-        type,
-        bankName,
-        bankAccountNumber,
-        bankIFSC,
-        upiID,
-        customerType,
+        pan,
+        pincode,
+        bank_name,
+        account_number,
+        bank_ifsc,
+        upi,
         agencyName,
         notes,
-        commissionType,
-        baseCommission,
-        thresholdCommission,
-        additionalcommissionType,
-        additionalCommission
+        shipping,
+        commission
     } = formData;
 
     const DateCustomInput = ({ value, label, onClick, className }) => (
@@ -186,10 +225,10 @@ const UserForm = ({ data = {}, userType }) => {
 
                             {(userType == "Reseller" || userType == "influencer") &&
                                 <TextField
-                                    name="text"
-                                    type="pan_number"
+                                    name="pan"
+                                    type="text"
                                     label="Pan Number"
-                                    value={pan_number || ""}
+                                    value={pan || ""}
                                     onChange={handleChange}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
@@ -250,8 +289,8 @@ const UserForm = ({ data = {}, userType }) => {
                                 errorMessages={["this field is required"]}
                             />
                             <TextField
-                                name="text"
-                                type="district"
+                                name="district"
+                                type="text"
                                 label="District"
                                 value={district || ""}
                                 onChange={handleChange}
@@ -259,8 +298,8 @@ const UserForm = ({ data = {}, userType }) => {
                                 errorMessages={["this field is required"]}
                             />
                             <TextField
-                                name="text"
-                                type="city"
+                                name="city"
+                                type="text"
                                 label="City"
                                 value={city || ""}
                                 onChange={handleChange}
@@ -268,28 +307,28 @@ const UserForm = ({ data = {}, userType }) => {
                                 errorMessages={["this field is required"]}
                             />
                             <TextField
-                                name="text"
-                                type="address_one"
+                                name="address_1"
+                                type="text"
                                 label="Address - 1"
-                                value={address_one || ""}
+                                value={address_1 || ""}
                                 onChange={handleChange}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
                             <TextField
-                                name="text"
-                                type="address_two"
+                                name="address_2"
+                                type="text"
                                 label="Address - 2"
-                                value={address_two || ""}
+                                value={address_2 || ""}
                                 onChange={handleChange}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
                             <TextField
-                                name="text"
-                                type="post_code"
+                                name="pincode"
+                                type="text"
                                 label="Post Code"
-                                value={post_code || ""}
+                                value={pincode || ""}
                                 onChange={handleChange}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
@@ -461,8 +500,8 @@ const UserForm = ({ data = {}, userType }) => {
                                     type="text"
                                     name="userName"
                                     id="standard-basic"
-                                    value={userName || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.userName || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     label="Username (Min length 4, Max length 10)"
                                 />
 
@@ -470,8 +509,8 @@ const UserForm = ({ data = {}, userType }) => {
                                     type="text"
                                     name="fname"
                                     label="First Name"
-                                    onChange={handleChange}
-                                    value={fname || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
+                                    value={shipping?.fname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -480,8 +519,8 @@ const UserForm = ({ data = {}, userType }) => {
                                     type="text"
                                     name="lname"
                                     label="Last Name"
-                                    onChange={handleChange}
-                                    value={lname || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
+                                    value={shipping?.lname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -490,8 +529,8 @@ const UserForm = ({ data = {}, userType }) => {
                                     type="email"
                                     name="email"
                                     label="Email"
-                                    value={email || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.email || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required", "isEmail"]}
                                     errorMessages={["this field is required", "email is not valid"]}
                                 />
@@ -500,8 +539,8 @@ const UserForm = ({ data = {}, userType }) => {
                                     type="text"
                                     name="phone"
                                     label="Phone Nubmer"
-                                    onChange={handleChange}
-                                    value={phone || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
+                                    value={shipping?.phone || ""}
                                     validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                     errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                 />
@@ -513,54 +552,54 @@ const UserForm = ({ data = {}, userType }) => {
                                 <TextField
                                     type="text"
                                     name="state"
-                                    value={state || ""}
+                                    value={shipping?.state || ""}
                                     label="State"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
                                 <TextField
-                                    name="text"
-                                    type="district"
+                                    type="text"
+                                    name="district"
                                     label="District"
-                                    value={district || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.district || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
                                 <TextField
-                                    name="text"
-                                    type="city"
+                                    type="text"
+                                    name="city"
                                     label="City"
-                                    value={city || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.city || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
                                 <TextField
-                                    name="text"
-                                    type="address_one"
+                                    name="address_1"
+                                    type="text"
                                     label="Address - 1"
-                                    value={address_one || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.address_1 || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
                                 <TextField
-                                    name="text"
-                                    type="address_two"
+                                    name="address_2"
+                                    type="text"
                                     label="Address - 2"
-                                    value={address_two || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.address_2 || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
                                 <TextField
-                                    name="text"
-                                    type="post_code"
+                                    name="pincode"
+                                    type="text"
                                     label="Post Code"
-                                    value={post_code || ""}
-                                    onChange={handleChange}
+                                    value={shipping?.pincode || ""}
+                                    onChange={(e) => handleChange(e, 'shipping')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -598,23 +637,23 @@ const UserForm = ({ data = {}, userType }) => {
                                     }
                                 }}>
                                     <ReactDatePicker
-                                        selected={startDate}
-                                        onChange={(date) => setStartDate(date)}
+                                        selected={commission?.start_date ? new Date(commission?.start_date) : new Date()}
+                                        onChange={(date) => setFormData({ ...formData, commission: { ...formData?.commission, start_date: date } })}
                                         selectsStart
                                         className="startDate"
                                         customInput={<DateCustomInput label="Start Date" className="startDate" />}
-                                        startDate={startDate}
-                                        endDate={endDate}
+                                        startDate={commission?.start_date ? new Date(commission?.start_date) : new Date()}
+                                        endDate={commission?.end_date ? new Date(commission?.end_date) : new Date()}
                                     />
                                     <ReactDatePicker
-                                        selected={endDate}
-                                        onChange={(date) => setEndDate(date)}
+                                        selected={commission?.end_date ? new Date(commission?.end_date) : new Date()}
+                                        onChange={(date) => setFormData({ ...formData, commission: { ...formData?.commission, end_date: date } })}
                                         selectsEnd
                                         customInput={<DateCustomInput label="End Date" className="endDate" />}
                                         className="endDate"
-                                        startDate={startDate}
-                                        endDate={endDate}
-                                        minDate={startDate}
+                                        startDate={commission?.start_date ? commission?.start_date : new Date()}
+                                        endDate={commission?.end_date ? commission?.end_date : new Date()}
+                                        minDate={commission?.start_date ? commission?.start_date : new Date()}
                                     />
                                 </Box>
 
@@ -622,21 +661,21 @@ const UserForm = ({ data = {}, userType }) => {
                                     <FormLabel id="demo-row-radio-buttons-group-label"> Base Commission Type</FormLabel>
                                     <RadioGroup
                                         row
-                                        value={commissionType ?? "Fixed"}
-                                        onChange={handleChange}
+                                        value={commission?.base_commission_type ?? "FIX"}
+                                        onChange={(e) => handleChange(e, 'commission')}
                                         aria-labelledby="demo-row-radio-buttons-group-label"
-                                        name="commissionType">
-                                        <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
-                                        <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
+                                        name="base_commission_type">
+                                        <FormControlLabel value="FIX" control={<Radio />} label="Fixed" />
+                                        <FormControlLabel value="PCT" control={<Radio />} label="Percentage" />
                                     </RadioGroup>
                                 </FormControl>
 
                                 <TextField
                                     type="text"
-                                    name="baseCommission"
+                                    name="base_commission"
                                     id="standard-basic"
-                                    value={baseCommission || ""}
-                                    onChange={handleChange}
+                                    value={commission?.base_commission ?? ""}
+                                    onChange={(e) => handleChange(e, 'commission')}
                                     label="Base Commission"
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
@@ -644,10 +683,10 @@ const UserForm = ({ data = {}, userType }) => {
 
                                 <TextField
                                     type="text"
-                                    name="thresholdCommission"
+                                    name="thersold_commission"
                                     label="Threshold Commission"
-                                    onChange={handleChange}
-                                    value={thresholdCommission || ""}
+                                    value={commission?.thersold_commission ?? ""}
+                                    onChange={(e) => handleChange(e, 'commission')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -656,21 +695,21 @@ const UserForm = ({ data = {}, userType }) => {
                                     <FormLabel id="demo-row-radio-buttons-group-label">Additional Commission Type</FormLabel>
                                     <RadioGroup
                                         row
-                                        value={additionalcommissionType ?? "Percentage"}
-                                        onChange={handleChange}
+                                        value={commission?.additional_commission_type ?? "PCT"}
+                                        onChange={(e) => handleChange(e, 'commission')}
                                         aria-labelledby="demo-row-radio-buttons-group-label"
-                                        name="additionalcommissionType">
-                                        <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
-                                        <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
+                                        name="additional_commission_type">
+                                        <FormControlLabel value="FIX" control={<Radio />} label="Fixed" />
+                                        <FormControlLabel value="PCT" control={<Radio />} label="Percentage" />
                                     </RadioGroup>
                                 </FormControl>
 
                                 <TextField
                                     type="text"
-                                    name="additionalCommission"
+                                    name="additional_commission"
                                     label="Additional Commission"
-                                    onChange={handleChange}
-                                    value={additionalCommission || ""}
+                                    value={commission?.additional_commission ?? ""}
+                                    onChange={(e) => handleChange(e, 'commission')}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -696,38 +735,38 @@ const UserForm = ({ data = {}, userType }) => {
                             <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                                 <TextField
                                     type="text"
-                                    name="userName"
+                                    name="bank_name"
                                     id="standard-basic"
-                                    value={bankName || ""}
+                                    value={bank_name || ""}
                                     onChange={handleChange}
                                     label="Bank Name"
                                 />
 
                                 <TextField
                                     type="text"
-                                    name="bankAccountNumber"
+                                    name="account_number"
                                     label="Bank Account Number"
                                     onChange={handleChange}
-                                    value={bankAccountNumber || ""}
+                                    value={account_number || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
 
                                 <TextField
                                     type="text"
-                                    name="lname"
+                                    name="bank_ifsc"
                                     label="Bank IFSC Code"
                                     onChange={handleChange}
-                                    value={bankIFSC || ""}
+                                    value={bank_ifsc || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
 
                                 <TextField
                                     type="text"
-                                    name="email"
+                                    name="upi"
                                     label="UPI ID"
-                                    value={upiID || ""}
+                                    value={upi || ""}
                                     onChange={handleChange}
                                     validators={["required", "isEmail"]}
                                     errorMessages={["this field is required", "email is not valid"]}

@@ -51,7 +51,7 @@ const UserDetail = () => {
     return (
         <Container>
             <Stack spacing={3}>
-                <UserForm data={data} userType={type} />
+                <UserForm data={data} id={id} userType={type} />
             </Stack>
         </Container>
     );
