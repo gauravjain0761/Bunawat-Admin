@@ -4,64 +4,93 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Card, Container, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, TextField } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import { SimpleCard } from 'app/components';
+import { isMdScreen, isMobile } from 'app/utils/utils';
 import { Span } from 'app/components/Typography';
-import { ApiGet, ApiPut } from 'app/service/api';
+import { ApiGet, ApiPost } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
-import DeleteParentSubCategoryModel from 'app/views/category/model/deleteParentSubCategoryModel';
+import DeleteVariantModel from 'app/views/product/model/deleteVariantModel';
 
-const SubCategoryAdd = () => {
+const VarientList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
+    const [formData, setFormData] = useState({});
     const [searchText, setSearchText] = useState('');
+    const [totalCount, setTotalCount] = useState(0);
     const [deleteData, setDeleteData] = useState(null);
+    const { id } = useParams();
 
+    const getData = async () => {
+        await ApiGet(`${API_URL.getVarients}/${id}`)
+            .then((response) => {
+                setRows(response?.data ?? []);
+                setTotalCount(response?.totalCount);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage])
+
+    const handleSubmit = async (event) => {
+        if (id) {
+            await ApiPost(`${API_URL.addVarient}`, { name: formData?.name, attribute: id })
+                .then((response) => {
+                    setFormData({ ...formData, name: "" });
+                    getData();
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        }
+
+    };
+
+    const handleChange = (event) => {
+        if (event.target.name == "home") {
+            let visibility = formData?.visibility ?? {}
+            visibility = { ...visibility, [event.target.name]: event.target.checked }
+            setFormData({ ...formData, visibility });
+        } else {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+        }
+    };
+
+
+    const {
+        name,
+        slug,
+        description,
+        visibility,
+        product_id
+    } = formData;
     const columns = [
         {
-            id: "parent_cateogry_id",
-            label: "Parent Category Name",
-            width: 200
-        },
-        {
             id: "name",
-            label: "Parent Sub Category Name",
-            width: 250
+            label: "Name",
+            width: 150
         },
         {
-            id: "code",
-            label: "Code",
+            id: "slug",
+            label: "Slug",
             width: 80
-        },
-        {
-            id: "count",
-            label: "Count",
-            width: 80,
-            align: "center"
-        },
-        {
-            id: "parentCount",
-            label: "Parent Category\nCount",
-            width: 140,
-            align: "center"
-        },
-        {
-            id: "isActive",
-            label: "Status",
-            width: 80,
-            align: "center"
         },
         {
             id: "action",
@@ -90,8 +119,7 @@ const SubCategoryAdd = () => {
                         anchorEl={actionAllOpen}
                         open={Boolean(actionAllOpen)}
                         onClose={() => setActionAllOpen(null)}
-                        TransitionComponent={Fade}
-                    >
+                        TransitionComponent={Fade}>
                         <MenuItem onClick={() => {
                             setOpen(true);
                             setActionAllOpen(null)
@@ -101,33 +129,6 @@ const SubCategoryAdd = () => {
             )
         }
     ];
-
-    const getData = async () => {
-        await ApiGet(`${API_URL.getParentSubCategorys}?page=${page}&limit=${rowsPerPage}`)
-            .then((response) => {
-                setRows(response?.data ?? []);
-                setTotalCount(response?.totalCount);
-            })
-            .catch((error) => {
-                console.log("Error", error);
-            });
-    }
-
-    const editStatusData = async (id, status) => {
-        await ApiPut(`${API_URL.editParentSubCategory}/${id}`, {
-            isActive: status
-        })
-            .then((response) => {
-                getData()
-            })
-            .catch((error) => {
-                console.log("Error", error);
-            });
-    }
-
-    React.useEffect(() => {
-        getData();
-    }, [page, rowsPerPage])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -185,7 +186,6 @@ const SubCategoryAdd = () => {
         setPage(0);
     };
 
-
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
     const CardHeader = styled(Box)(() => ({
@@ -202,10 +202,52 @@ const SubCategoryAdd = () => {
         fontWeight: '500',
         textTransform: 'capitalize',
     }));
+
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader className="searchBoxSeaprate">
-                <Title>Parent Sub Category List</Title>
+            <Container>
+                <Stack spacing={3}>
+                    <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+                        <SimpleCard title="Varient" >
+                            <Grid container spacing={12}>
+                                <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+
+                                    <TextField
+                                        sx={{
+                                            width: "100%",
+                                            marginBottom: "16px",
+                                        }}
+                                        type="text"
+                                        name="name"
+                                        label="Name"
+                                        onChange={handleChange}
+                                        value={name || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+
+                                </Grid>
+
+                            </Grid>
+                            <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                                <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Icon>arrow_back</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                    </Button>
+                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
+                                        <Icon>send</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                                    </Button>
+                                </Box>
+                            </Box>
+                        </SimpleCard>
+
+                    </ValidatorForm>
+                </Stack>
+            </Container>
+            <CardHeader sx={{ mt: 2 }} className="searchBoxSeaprate">
+                <Title>Varient List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
                         border: "1px solid #000",
@@ -222,23 +264,13 @@ const SubCategoryAdd = () => {
                             height: '36px',
                             background: "transparent",
                             color: "#000",
-                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                        }} type="text" value={searchText} onChange={(e) => {
                             setSearchText(e.target.value)
                         }} placeholder="Search here..." />
                         <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
                             <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
                         </IconButton>
                     </Box>
-
-                    <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/sub`)} sx={{
-                        backgroundColor: UIColor, color: "#fff",
-                        "&:hover": {
-                            backgroundColor: UIColor, color: "#fff"
-                        }
-                    }}>
-                        <Icon>add</Icon>
-                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Parent Sub Category</Span>
-                    </Button>
                 </Box>
             </CardHeader>
             <TableComponent
@@ -268,23 +300,9 @@ const SubCategoryAdd = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{row?.parent_cateogry_id?.name}</TableCell>
-                            <TableCell > {row.name} </TableCell>
-                            <TableCell>{row.code}</TableCell>
-                            <TableCell align="center">-</TableCell>
-                            <TableCell align="center">-</TableCell>
-                            <TableCell align="center">
-                                {row?.isActive ?
-                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
-                                        Active
-                                    </Typography>
-                                    :
-                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
-                                        InActive
-                                    </Typography>
-                                }
-                            </TableCell>
-                            <TableCell align='right' sx={{ pr: "18px" }}>
+                            <TableCell>{row.name} </TableCell>
+                            <TableCell>{row.slug}</TableCell>
+                            <TableCell align='right' sx={{ pr: "18px" }} >
                                 <IconButton
                                     aria-label="more"
                                     id="long-button"
@@ -303,8 +321,6 @@ const SubCategoryAdd = () => {
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
-                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                                    <MenuItem onClick={() => navigate(`/category/details/sub/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
                                         setOpen(true);
@@ -322,7 +338,7 @@ const SubCategoryAdd = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <DeleteParentSubCategoryModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
+            <DeleteVariantModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
                 setDeleteData(null);
                 setOpen(false);
             }} />
@@ -330,4 +346,4 @@ const SubCategoryAdd = () => {
     );
 }
 
-export default SubCategoryAdd;
+export default VarientList;

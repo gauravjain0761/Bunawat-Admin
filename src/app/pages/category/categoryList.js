@@ -267,8 +267,8 @@ const CategoryList = () => {
                   }}
                 />
               </TableCell>
-              <TableCell>{row.parent_cateogry_id}</TableCell>
-              <TableCell>{row.sub_category_id}</TableCell>
+              <TableCell>{row?.parent_cateogry_id?.name}</TableCell>
+              <TableCell>{row?.sub_category_id?.name}</TableCell>
               <TableCell > {row.name} </TableCell>
               <TableCell>{row.code}</TableCell>
               <TableCell align="center">-</TableCell>

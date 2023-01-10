@@ -40,4 +40,11 @@ export const API_URL = {
     addCategory: "category/add",
     editCategory: "category/update",
     deleteCategory: "category/remove",
+    getAttributes: "attribute/getall",
+    getAttribute: "attribute",
+    addAttribute: "attribute/add",
+    deleteAttribute: "attribute/remove",
+    getVarients: "variant/getall",
+    addVarient: "variant/add",
+    deleteVarient: "variant/remove",
 }

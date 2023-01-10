@@ -7,6 +7,7 @@ const AddProduct = Loadable(lazy(() => import('./addProduct/addProduct')));
 const ProductMedia = Loadable(lazy(() => import('./media/index')));
 const ProductMediaSingleList = Loadable(lazy(() => import('./media/singleList')));
 const ProductList = Loadable(lazy(() => import('./productList')));
+const VarientList = Loadable(lazy(() => import('./varient/varientList')));
 const ColorList = Loadable(lazy(() => import('./color/colorList')));
 const SizeList = Loadable(lazy(() => import('./size/sizeList')));
 const TagList = Loadable(lazy(() => import('./tag/tagList')));
@@ -22,6 +23,7 @@ const ProductRoutes = [
     { path: '/product/media', element: <ProductMedia /> },
     { path: '/product/media/:designNo', element: <ProductMediaSingleList /> },
     { path: '/product/add/:id', element: <AddProduct /> },
+    { path: '/product/attributes/:id', element: <VarientList /> },
     { path: '/product/color', element: <ColorList /> },
     { path: '/product/color/detail', element: <ColorDetail /> },
     { path: '/product/color/detail/:id', element: <ColorDetail /> },

@@ -4,55 +4,65 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Container, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import { Button, Card, Container, Fade, FormControl, FormControlLabel, FormLabel, Grid, Icon, IconButton, Menu, MenuItem, Radio, RadioGroup, Stack, TextField } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
-import { mockDataProductColor } from 'fake-db/data/product/color/colorList';
-import { mockDataProductSize } from 'fake-db/data/product/size/sizeList';
-import { mockDataProductAttribute } from 'fake-db/data/product/attribute/attributeList';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { SimpleCard } from 'app/components';
 import { isMdScreen, isMobile } from 'app/utils/utils';
 import { Span } from 'app/components/Typography';
+import { ApiGet, ApiPost } from 'app/service/api';
+import { API_URL } from 'app/constant/api';
+import DeleteAttributesModel from 'app/views/product/model/deleteAttributesModel';
 
 const AttributeList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataProductAttribute);
+    const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
-
     const [formData, setFormData] = useState({});
+    const [deleteData, setDeleteData] = useState(null);
 
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
+    const getData = async () => {
+        await ApiGet(`${API_URL.getAttributes}?page=${page}&limit=${rowsPerPage}`)
+            .then((response) => {
+                setRows(response?.data ?? []);
+                setTotalCount(response?.totalCount);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage])
+
+    const handleSubmit = async (event) => {
+        await ApiPost(`${API_URL.addAttribute}`, formData)
+            .then((response) => {
+                setFormData({ ...formData, name: "", multiselect: false });
+                getData();
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "home") {
-            let visibility = formData?.visibility ?? {}
-            visibility = { ...visibility, [event.target.name]: event.target.checked }
-            setFormData({ ...formData, visibility });
-        } else {
-            setFormData({ ...formData, [event.target.name]: event.target.value });
-        }
+        setFormData({ ...formData, [event.target.name]: event.target.value });
     };
 
-    const {
-        id,
-        name,
-        slug,
-        orderBy,
-    } = formData;
     const columns = [
         {
             id: "name",
@@ -109,7 +119,7 @@ const AttributeList = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n?._id);
             setSelected(newSelected);
             return;
         }
@@ -163,6 +173,10 @@ const AttributeList = () => {
         setPage(0);
     };
 
+    const {
+        name,
+        multiselect,
+    } = formData;
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -181,11 +195,6 @@ const AttributeList = () => {
         textTransform: 'capitalize',
     }));
 
-
-    const TextField = styled(TextValidator)(() => ({
-        width: "100%",
-        marginBottom: "16px",
-    }));
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <Container>
@@ -196,24 +205,35 @@ const AttributeList = () => {
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
 
                                     <TextField
+                                        sx={{
+                                            width: "100%",
+                                            marginBottom: "16px",
+                                        }}
                                         type="text"
                                         name="name"
                                         label="Name"
-                                        onChange={handleChange}
+                                        onChange={(event) => setFormData({ ...formData, name: event.target.value })}
                                         value={name || ""}
                                         validators={["required"]}
                                         errorMessages={["this field is required"]}
                                     />
 
-                                    <TextField
-                                        type="text"
-                                        name="slug"
-                                        label="slug"
-                                        value={slug || ""}
-                                        onChange={handleChange}
-                                        validators={["required"]}
-                                        errorMessages={["this field is required"]}
-                                    />
+                                    <FormControl sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center'
+                                    }}>
+                                        <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Multiselect</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            value={multiselect ?? false}
+                                            onChange={handleChange}
+                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                            name="multiselect">
+                                            <FormControlLabel value={true} control={<Radio />} label="Enable" />
+                                            <FormControlLabel value={false} control={<Radio />} label="Disable" />
+                                        </RadioGroup>
+                                    </FormControl>
 
                                 </Grid>
 
@@ -227,7 +247,6 @@ const AttributeList = () => {
                                 </Box>
                             </Box>
                         </SimpleCard>
-
                     </ValidatorForm>
                 </Stack>
             </Container>
@@ -249,7 +268,7 @@ const AttributeList = () => {
                             height: '36px',
                             background: "transparent",
                             color: "#000",
-                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                        }} type="text" value={searchText} onChange={(e) => {
                             setSearchText(e.target.value)
                         }} placeholder="Search here..." />
                         <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
@@ -261,9 +280,10 @@ const AttributeList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                totalCount={totalCount}
                 selected={selected}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                         <TableRow
@@ -271,7 +291,7 @@ const AttributeList = () => {
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
-                            key={row.name}
+                            key={row?._id}
                             selected={isItemSelected}
                         >
                             <TableCell padding="checkbox">
@@ -287,8 +307,7 @@ const AttributeList = () => {
                             <TableCell>{row.name} </TableCell>
                             <TableCell>{row.slug}</TableCell>
                             <TableCell>
-                                {row.slug == "color" && mockDataProductColor.map(color => color.name).join()}
-                                {row.slug == "size" && mockDataProductSize.map(color => color.name).join()}
+                                -
                             </TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
@@ -310,9 +329,10 @@ const AttributeList = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
                                     <MenuItem onClick={() => {
-                                        navigate(`/product/${row.slug}`)
+                                        navigate(`/product/attributes/${row?._id}`)
                                     }}>Add</MenuItem>
                                     <MenuItem onClick={() => {
+                                        setDeleteData(row)
                                         setOpen(true);
                                         handleActionClose();
                                     }}>Delete</MenuItem>
@@ -328,7 +348,10 @@ const AttributeList = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <DeleteModel open={open} handleClose={() => setOpen(false)} />
+            <DeleteAttributesModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
+                setDeleteData(null);
+                setOpen(false);
+            }} />
         </Card>
     );
 }

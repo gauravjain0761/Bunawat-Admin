@@ -32,6 +32,7 @@ import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { UIColor } from "app/utils/constant";
 import { isMdScreen, isMobile } from "app/utils/utils";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import ReactDatePicker from "react-datepicker";
@@ -145,48 +146,30 @@ const OrderDetailForm = ({ data = {} }) => {
                                     <Grid item lg={4} md={12} sm={12} xs={12}>
                                         <Stack>
                                             <Typography variant="h6">General</Typography>
-                                            <Stack>
+                                            <Stack flexDirection='row' alignItems='center'>
                                                 <Typography sx={{ color: '#777' }}>Date created:</Typography>
-                                                <ReactDatePicker
-                                                    selected={create_date ? create_date : new Date()}
-                                                    onChange={(date) => setFormData({ ...formData, create_date: date })}
-                                                    selectsStart
-                                                    className="create_date"
-                                                    customInput={<DateCustomInput label="Date" className="create_date" />}
-                                                />
+                                                <Typography sx={{ ml: 1 }}>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
                                             </Stack>
-                                            <FormControl fullWidth sx={{ mt: '5px' }}>
-                                                <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    value={status}
-                                                    name="status"
-                                                    label="Select Status"
-                                                    onChange={handleChange}>
-                                                    <MenuItem value="Pending payment">Pending payment</MenuItem>
-                                                    <MenuItem value="Processing">Processing</MenuItem>
-                                                    <MenuItem value="Packed">Packed</MenuItem>
-                                                    <MenuItem value="Shipped">Shipped</MenuItem>
-                                                    <MenuItem value="On hold">On hold</MenuItem>
-                                                    <MenuItem value="Completed">Completed</MenuItem>
-                                                    <MenuItem value="Cancelled">Cancelled</MenuItem>
-                                                    <MenuItem value="Refunded">Refunded</MenuItem>
-                                                    <MenuItem value="Failed">Failed</MenuItem>
-                                                    <MenuItem value="Replaced">Replaced</MenuItem>
-                                                    <MenuItem value="Draft">Draft</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                            <Stack sx={{ mt: '5px' }}>
+                                            <Stack flexDirection='row' alignItems='center'>
+                                                <Typography sx={{ color: '#777' }}>Status:</Typography>
+                                                <Typography sx={{ ml: 1 }}>Completed</Typography>
+                                            </Stack>
+                                            <Stack>
                                                 <Typography sx={{ color: '#777' }}>Customer</Typography>
                                                 <Typography>Juhi Bagaria (#4331 &ndash; bagaria.namrata@gmail.com)</Typography>
+                                            </Stack>
+                                            <Stack flexDirection='row' alignItems='center'>
+                                                <Typography sx={{ color: '#777' }}>Payment Mode:</Typography>
+                                                <Typography sx={{ ml: 1 }}>COD</Typography>
                                             </Stack>
                                         </Stack>
                                     </Grid>
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
                                         <Stack>
                                             <Typography variant="h6">Billing</Typography>
+                                            <Typography sx={{ color: '#777' }}>Name:</Typography>
                                             <Typography>Juhi Bagaria</Typography>
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
                                             <Typography>M-19,Civil Town ship</Typography>
                                             <Typography>Rourkela 769004</Typography>
                                             <Typography>Odisha</Typography>
@@ -201,7 +184,9 @@ const OrderDetailForm = ({ data = {} }) => {
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
                                         <Stack>
                                             <Typography variant="h6">Shipping</Typography>
+                                            <Typography sx={{ color: '#777' }}>Name:</Typography>
                                             <Typography>Juhi Bagaria</Typography>
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
                                             <Typography>M-19,Civil Town ship</Typography>
                                             <Typography>Rourkela 769004</Typography>
                                             <Typography>Odisha</Typography>
