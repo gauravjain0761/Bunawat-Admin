@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import { mockDataCategoryManagement } from 'fake-db/data/category/categoryManagement';
 import TableComponent from 'app/components/table';
 import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -13,26 +12,31 @@ import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
+import { ApiGet, ApiPut } from 'app/service/api';
+import { API_URL } from 'app/constant/api';
+import DeleteCategoryModel from 'app/views/category/model/deleteCategoryModel';
 
 const CategoryList = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [rows, setRows] = useState(mockDataCategoryManagement);
+  const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
   const [actionAllOpen, setActionAllOpen] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [deleteData, setDeleteData] = useState(null);
 
   const columns = [
     {
-      id: "category",
+      id: "parent_cateogry_id",
       label: "Parent Category Name",
       width: 200
     },
     {
-      id: "subCategory",
+      id: "sub_category_id",
       label: "Parent Sub Category Name",
       width: 250
     },
@@ -42,7 +46,7 @@ const CategoryList = () => {
       width: 200
     },
     {
-      id: "slug",
+      id: "code",
       label: "Code",
       width: 80
     },
@@ -53,7 +57,7 @@ const CategoryList = () => {
       align: "center"
     },
     {
-      id: "status",
+      id: "isActive",
       label: "Status",
       width: 80,
       align: "center"
@@ -96,6 +100,33 @@ const CategoryList = () => {
       )
     }
   ];
+
+  const getData = async () => {
+    await ApiGet(`${API_URL.getCategorys}?page=${page}&limit=${rowsPerPage}`)
+      .then((response) => {
+        setRows(response?.data ?? []);
+        setTotalCount(response?.totalCount);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }
+
+  const editStatusData = async (id, status) => {
+    await ApiPut(`${API_URL.editCategory}/${id}`, {
+      isActive: status
+    })
+      .then((response) => {
+        getData()
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }
+
+  React.useEffect(() => {
+    getData();
+  }, [page, rowsPerPage])
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -213,6 +244,7 @@ const CategoryList = () => {
         rows={rows}
         columns={columns}
         selected={selected}
+        totalCount={totalCount}
         renderRow={(row, index) => {
           const isItemSelected = isSelected(row.name);
           const labelId = `enhanced-table-checkbox-${index}`;
@@ -235,13 +267,13 @@ const CategoryList = () => {
                   }}
                 />
               </TableCell>
-              <TableCell>{row.category}</TableCell>
-              <TableCell>{row.subCategory}</TableCell>
+              <TableCell>{row.parent_cateogry_id}</TableCell>
+              <TableCell>{row.sub_category_id}</TableCell>
               <TableCell > {row.name} </TableCell>
-              <TableCell>{row.slug}</TableCell>
-              <TableCell align="center">{row.count}</TableCell>
+              <TableCell>{row.code}</TableCell>
+              <TableCell align="center">-</TableCell>
               <TableCell align="center">
-                {row.active ?
+                {row?.isActive ?
                   <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
                     Active
                   </Typography>
@@ -271,9 +303,10 @@ const CategoryList = () => {
                   onClose={handleActionClose}
                   TransitionComponent={Fade}
                 >
-                  <MenuItem>{!row.active ? "Active" : "InActive"}  </MenuItem>
-                  <MenuItem onClick={() => navigate(`/category/details/list/${row.id}`)}>Edit</MenuItem>
+                  <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
+                  <MenuItem onClick={() => navigate(`/category/details/list/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
+                    setDeleteData(row)
                     setOpen(true);
                     handleActionClose();
                   }}>Delete</MenuItem>
@@ -289,7 +322,11 @@ const CategoryList = () => {
         handleSelectAllClick={handleSelectAllClick}
       />
 
-      <DeleteModel open={open} handleClose={() => setOpen(false)} />
+
+      <DeleteCategoryModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
+        setDeleteData(null);
+        setOpen(false);
+      }} />
     </Card>
   );
 }

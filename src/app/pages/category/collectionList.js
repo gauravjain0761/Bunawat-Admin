@@ -221,6 +221,7 @@ const CollectionList = () => {
         rows={rows}
         columns={columns}
         selected={selected}
+        totalCount={totalCount}
         renderRow={(row, index) => {
           const isItemSelected = isSelected(row.name);
           const labelId = `enhanced-table-checkbox-${index}`;

@@ -21,7 +21,7 @@ import { SimpleCard } from "app/components";
 import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { API_URL } from "app/constant/api";
-import { ApiPost, ApiPut } from "app/service/api";
+import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
@@ -35,21 +35,63 @@ const TextField = styled(TextValidator)(() => ({
 
 const CollectionForm = ({ data = {}, id }) => {
     const [formData, setFormData] = useState(data);
-    const [description, setDescription] = useState(data);
+    const [description, setDescription] = useState("");
+    const [categoryList, setCategoryList] = useState([]);
+    const [collectionList, setCollectionList] = useState([]);
     const navigate = useNavigate();
+
     useEffect(() => {
         setFormData(data)
         setDescription(data?.description)
     }, [data])
+
+    const getCategory = async () => {
+        await ApiGet(`${API_URL.getCategorys}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCategoryList(response?.data?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getCollection = async () => {
+        await ApiGet(`${API_URL.getCollections}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionList(response?.data?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    useEffect(() => {
+        getCategory();
+        getCollection();
+    }, [])
 
     const handleSubmit = async () => {
         if (id) {
             await ApiPut(`${API_URL.editCollection}/${id}`, {
                 "name": formData?.name,
                 "description": description,
-                "colleciton_list": [],
-                "categories_list": [],
-                "product_list": []
+                "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
+                "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
+                "product_list": [formData?.productId]
             })
                 .then((response) => {
                     navigate("/collection/list")
@@ -61,9 +103,9 @@ const CollectionForm = ({ data = {}, id }) => {
             await ApiPost(API_URL.addCollection, {
                 "name": formData?.name,
                 "description": description,
-                "colleciton_list": [],
-                "categories_list": [],
-                "product_list": []
+                "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
+                "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
+                "product_list": [formData?.productId]
             })
                 .then((response) => {
                     navigate("/collection/list")
@@ -81,6 +123,8 @@ const CollectionForm = ({ data = {}, id }) => {
             setFormData({ ...formData, visibility });
         } else if (event.target.name == "image") {
             setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+        } else if (event.target.name == "linkType") {
+            setFormData({ ...formData, linkValue: null, [event.target.name]: event.target.value });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -93,7 +137,8 @@ const CollectionForm = ({ data = {}, id }) => {
 
     const {
         name,
-        slug,
+        linkType,
+        linkValue,
         visibility,
         productId,
         image
@@ -120,12 +165,49 @@ const CollectionForm = ({ data = {}, id }) => {
                                 <TextEditor data={description} setData={(d) => setDescription(d)} />
                             </Box>
 
-                            <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={["Saree", "Dress", "Full Dress"]}
-                                renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
-                            />
+                            <FormControl sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel>
+                                <RadioGroup
+                                    row
+                                    value={linkType ?? "category"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="linkType">
+                                    <FormControlLabel value="category" control={<Radio />} label="Category" />
+                                    <FormControlLabel value="collection" control={<Radio />} label="Collection" />
+                                </RadioGroup>
+                            </FormControl>
+
+                            {linkType == 'collection' ?
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    onChange={(e, newValue) => {
+                                        setFormData({ ...formData, linkValue: newValue });
+                                    }}
+                                    value={linkValue ?? null}
+                                    options={collectionList}
+                                    getOptionLabel={(option) => option?.label}
+                                    renderInput={(params) => <TextField {...params} label="Link with collection " />}
+                                />
+                                :
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    onChange={(e, newValue) => {
+                                        setFormData({ ...formData, linkValue: newValue });
+                                    }}
+                                    value={linkValue ?? null}
+                                    options={categoryList}
+                                    getOptionLabel={(option) => option?.label}
+                                    renderInput={(params) => <TextField {...params} label="Link with category" />}
+                                />
+                            }
+
 
                             <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard" >
                                 {/* <FormLabel component="legend">Visibility</FormLabel> */}

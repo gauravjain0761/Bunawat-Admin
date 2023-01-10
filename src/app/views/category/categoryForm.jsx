@@ -21,6 +21,8 @@ import {
 import { SimpleCard } from "app/components";
 import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
+import { API_URL } from "app/constant/api";
+import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
@@ -32,33 +34,179 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const CategoryForm = ({ data = {}, type }) => {
+const CategoryForm = ({ data = {}, id, type }) => {
     const [formData, setFormData] = useState(data);
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
+    const [description, setDescription] = useState("");
+    const [categoryList, setCategoryList] = useState([]);
+    const [parentCategoryList, setParentCategoryList] = useState([]);
+    const [parentSubCategoryList, setParentSubCategoryList] = useState([]);
+    const [collectionList, setCollectionList] = useState([]);
 
     useEffect(() => {
-        setFormData(data)
+        let temp = { ...data }
+        if (temp?.link_with == 'COLLECTION') {
+            temp = { ...temp, linkValue: temp?.colleciton_list?.[0], productId: temp?.product_list?.[0] ?? '' }
+        } else {
+            temp = { ...temp, linkValue: temp?.categories_list?.[0], productId: temp?.product_list?.[0] ?? '' }
+        }
+        setFormData(temp)
+        setDescription(data?.description)
     }, [data])
 
 
-    const handleSubmit = (event) => {
-        if (!searchParams.get("redirect")) {
-            alert("Success")
-            console.log("submitted");
-            console.log(event);
+    const getCategory = async () => {
+        await ApiGet(`${API_URL.getCategorys}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCategoryList(response?.data?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getCollection = async () => {
+        await ApiGet(`${API_URL.getCollections}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionList(response?.data?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getParentCategory = async () => {
+        await ApiGet(`${API_URL.getParentCategorys}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setParentCategoryList(response?.data?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getParentSubCategory = async () => {
+        await ApiGet(`${API_URL.getParentSubCategorys}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setParentSubCategoryList(response?.data?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    useEffect(() => {
+        if (type == "sub" || type == "list") getParentCategory();
+        if (type == "list") getParentSubCategory();
+        getCategory();
+        getCollection();
+    }, [type])
+
+    const getEditURL = (role) => {
+        if (role == 'parent') {
+            return API_URL.editParentCategory
+        }
+        if (role == 'sub') {
+            return API_URL.editParentSubCategory
+        }
+        if (role == 'list') {
+            return API_URL.editCategory
+        }
+    }
+
+    const getURL = (role) => {
+        if (role == 'parent') {
+            return API_URL.addParentCategory
+        }
+        if (role == 'sub') {
+            return API_URL.addParentSubCategory
+        }
+        if (role == 'list') {
+            return API_URL.addCategory
+        }
+    }
+
+    const handleSubmit = async (event) => {
+        const { link_with, linkValue, productId, ...payload } = formData
+        if (id) {
+            await ApiPut(`${getEditURL(type)}/${id}`, {
+                description,
+                ...payload,
+                link_with: link_with ?? 'CATEGORY',
+                "image": "",
+                "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
+                "categories_list": link_with == 'COLLECTION' ? [] : [linkValue],
+                "product_list": productId ? [productId] : []
+            })
+                .then((response) => {
+                    if (!searchParams.get("redirect")) {
+                        navigate(`/category/${type}`)
+                    } else {
+                        navigate(`/category/details/${searchParams.get("redirect")}`)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
         } else {
-            navigate(`/category/details/${searchParams.get("redirect")}`)
+            await ApiPost(`${getURL(type)}`, {
+                description,
+                ...payload,
+                link_with: link_with ?? 'CATEGORY',
+                "image": "",
+                "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
+                "categories_list": linkValue ? (link_with == 'COLLECTION' ? [] : [linkValue]) : [],
+                "product_list": productId ? [productId] : []
+            })
+                .then((response) => {
+                    if (!searchParams.get("redirect")) {
+                        navigate(`/category/${type}`)
+                    } else {
+                        navigate(`/category/details/${searchParams.get("redirect")}`)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
         }
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "home") {
-            let visibility = formData?.visibility ?? {}
-            visibility = { ...visibility, [event.target.name]: event.target.checked }
-            setFormData({ ...formData, visibility });
+        if (event.target.name == "home_visibilty") {
+            setFormData({ ...formData, [event.target.name]: event.target.checked });
         } else if (event.target.name == "image") {
             setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+        } else if (event.target.name == "link_with") {
+            setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -70,15 +218,15 @@ const CategoryForm = ({ data = {}, type }) => {
 
     const {
         name,
-        slug,
-        description,
-        sCategory,
+        sub_category_id,
         title,
-        pCategory,
-        visibility,
-        categoryCode,
+        parent_cateogry_id,
+        home_visibilty,
         productId,
-        image
+        image,
+        link_with,
+        linkValue,
+        code
     } = formData;
 
     const getTitle = () => {
@@ -106,20 +254,13 @@ const CategoryForm = ({ data = {}, type }) => {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={pCategory}
-                                        name="pCategory"
+                                        value={parent_cateogry_id ?? ''}
+                                        name="parent_cateogry_id"
                                         label="Parent Category"
                                         onChange={handleChange}>
-                                        <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                        {/* <MenuItem value="Palazzo Sets">&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
-                                        <MenuItem value="Pant Sets">&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
-                                        <MenuItem value="Skirt Sets">&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem> */}
-                                        <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                        {/* <MenuItem value="Floor Length Anarkalis">&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
-                                        <MenuItem value="Gowns">&nbsp;&nbsp;&nbsp;Gowns</MenuItem> */}
-                                        <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                        <MenuItem value="Shararas">Shararas</MenuItem>
-                                        <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                        {parentCategoryList?.map((item) => (
+                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
                                     </Select>
                                     <Typography onClick={() => navigate(`/category/details/parent?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
                                         Add Parent Category
@@ -133,15 +274,13 @@ const CategoryForm = ({ data = {}, type }) => {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={sCategory}
-                                        name="sCategory"
+                                        value={sub_category_id ?? ''}
+                                        name="sub_category_id"
                                         label="Parent Sub Category"
                                         onChange={handleChange}>
-                                        <MenuItem value="Palazzo Sets">Palazzo Sets</MenuItem>
-                                        <MenuItem value="Pant Sets">Pant Sets</MenuItem>
-                                        <MenuItem value="Skirt Sets">Skirt Sets</MenuItem>
-                                        <MenuItem value="Floor Length Anarkalis">Floor Length Anarkalis</MenuItem>
-                                        <MenuItem value="Gowns">Gowns</MenuItem>
+                                        {parentSubCategoryList?.map((item) => (
+                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
                                     </Select>
                                     <Typography onClick={() => navigate(`/category/details/sub?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
                                         Add Parent Sub Category
@@ -155,6 +294,8 @@ const CategoryForm = ({ data = {}, type }) => {
                                 label="Name"
                                 onChange={handleChange}
                                 value={name || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
                             />
 
                             <TextField
@@ -163,55 +304,86 @@ const CategoryForm = ({ data = {}, type }) => {
                                 label="Title"
                                 onChange={handleChange}
                                 value={title || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
                             />
 
                             <TextField
                                 type="text"
-                                name="slug"
-                                label="Slug"
-                                value={slug || ""}
-                                onChange={handleChange}
-                            />
-                            {/* <TextField
-                                type="text"
-                                name="description"
-                                label="Description"
-                                onChange={handleChange}
-                                value={description || ""}
-                            /> */}
-
-                            <Box sx={{ mb: 2 }}>
-                                <TextEditor />
-                            </Box>
-
-                            <TextField
-                                type="text"
-                                name="categoryCode"
+                                name="code"
                                 label="Code"
                                 onChange={handleChange}
-                                value={categoryCode || ""}
+                                value={code || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
                             />
 
-                            <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={["Saree", "Dress", "Full Dress"]}
-                                renderInput={(params) => <TextField {...params} label="Link with category or collection" />}
-                            />
+                            <Box sx={{ mb: 2 }}>
+                                <TextEditor data={description} setData={(d) => setDescription(d)} />
+                            </Box>
+
+                            <FormControl sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel>
+                                <RadioGroup
+                                    row
+                                    value={link_with ?? "category"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="link_with">
+                                    <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" />
+                                    <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" />
+                                </RadioGroup>
+                            </FormControl>
+
+                            {link_with == 'COLLECTION' ?
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Link with collection</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={linkValue ?? ''}
+                                        name="linkValue"
+                                        label="Link with collection"
+                                        onChange={handleChange}>
+                                        {collectionList?.map((item) => (
+                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                :
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Link with category</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={linkValue ?? ''}
+                                        name="linkValue"
+                                        label="Link with category"
+                                        onChange={handleChange}>
+                                        {categoryList?.map((item) => (
+                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            }
 
                             <FormControl sx={{ mb: 1, flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
                                 {/* <FormLabel component="legend">Visibility</FormLabel> */}
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
-                                            <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
+                                            <Checkbox checked={home_visibilty ?? false} onChange={handleChange} name="home_visibilty" />
                                         }
                                         label="Home Visibility"
                                     />
                                 </FormGroup>
                             </FormControl>
 
-                            {visibility?.home &&
+                            {home_visibilty &&
                                 <>
                                     <Box display="flex" flexDirection="column">
                                         <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>

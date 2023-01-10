@@ -1,10 +1,9 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import { SimpleCard } from "app/components";
+import { API_URL } from "app/constant/api";
+import { ApiGet } from "app/service/api";
 import CategoryForm from "app/views/category/categoryForm";
-import { mockDataCategoryManagement } from "fake-db/data/category/categoryManagement";
-import { mockDataCategoryTreeManagement, mockDataSubCategoryTreeManagement } from "fake-db/data/category/categoryTreeList";
-import { mockDataUserList } from "fake-db/data/user/userList";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -21,17 +20,40 @@ const CategoryDetail = () => {
     const { id, type } = useParams();
     const [data, setData] = useState({});
 
-    useEffect(() => {
-        if (id) {
-            const finalData = type == "parent" ? mockDataCategoryTreeManagement : type == "sub" ? mockDataSubCategoryTreeManagement : mockDataCategoryManagement
-            setData(finalData.find(item => item.id == id))
+    const getURL = (role) => {
+        if (role == 'parent') {
+            return API_URL.getParentCategory
         }
-    }, [id])
+        if (role == 'sub') {
+            return API_URL.getParentSubCategory
+        }
+        if (role == 'list') {
+            return API_URL.getCategory
+        }
+    }
+
+    const getData = async (id, type) => {
+        await ApiGet(`${getURL(type)}/${id}`)
+            .then((response) => {
+                setData(response?.data ?? {});
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    useEffect(() => {
+        if (id && type) {
+            getData(id, type)
+        } else {
+            setData([])
+        }
+    }, [id, type])
 
     return (
         <Container>
             <Stack spacing={3}>
-                <CategoryForm data={data} type={type} />
+                <CategoryForm data={data} id={id} type={type} />
             </Stack>
         </Container>
     );

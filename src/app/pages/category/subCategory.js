@@ -11,23 +11,27 @@ import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
-import { mockDataSubCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
 import { Span } from 'app/components/Typography';
+import { ApiGet, ApiPut } from 'app/service/api';
+import { API_URL } from 'app/constant/api';
+import DeleteParentSubCategoryModel from 'app/views/category/model/deleteParentSubCategoryModel';
 
 const SubCategoryAdd = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataSubCategoryTreeManagement);
+    const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [deleteData, setDeleteData] = useState(null);
 
     const columns = [
         {
-            id: "category",
+            id: "parent_cateogry_id",
             label: "Parent Category Name",
             width: 200
         },
@@ -37,7 +41,7 @@ const SubCategoryAdd = () => {
             width: 250
         },
         {
-            id: "slug",
+            id: "code",
             label: "Code",
             width: 80
         },
@@ -54,7 +58,7 @@ const SubCategoryAdd = () => {
             align: "center"
         },
         {
-            id: "status",
+            id: "isActive",
             label: "Status",
             width: 80,
             align: "center"
@@ -97,6 +101,33 @@ const SubCategoryAdd = () => {
             )
         }
     ];
+
+    const getData = async () => {
+        await ApiGet(`${API_URL.getParentSubCategorys}?page=${page}&limit=${rowsPerPage}`)
+            .then((response) => {
+                setRows(response?.data ?? []);
+                setTotalCount(response?.totalCount);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const editStatusData = async (id, status) => {
+        await ApiPut(`${API_URL.editParentSubCategory}/${id}`, {
+            isActive: status
+        })
+            .then((response) => {
+                getData()
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -214,6 +245,7 @@ const SubCategoryAdd = () => {
                 rows={rows}
                 columns={columns}
                 selected={selected}
+                totalCount={totalCount}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
@@ -236,13 +268,13 @@ const SubCategoryAdd = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{row.category}</TableCell>
+                            <TableCell>{row.parent_cateogry_id}</TableCell>
                             <TableCell > {row.name} </TableCell>
-                            <TableCell>{row.slug}</TableCell>
-                            <TableCell align="center">{row.count}</TableCell>
-                            <TableCell align="center">3</TableCell>
+                            <TableCell>{row.code}</TableCell>
+                            <TableCell align="center">-</TableCell>
+                            <TableCell align="center">-</TableCell>
                             <TableCell align="center">
-                                {row.active ?
+                                {row?.isActive ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
                                         Active
                                     </Typography>
@@ -270,11 +302,11 @@ const SubCategoryAdd = () => {
                                     anchorEl={actionOpen[index]}
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
-                                    TransitionComponent={Fade}
-                                >
-                                    <MenuItem>{!row.active ? "Active" : "InActive"}  </MenuItem>
-                                    <MenuItem onClick={() => navigate(`/category/details/sub/${row.id}`)}>Edit</MenuItem>
+                                    TransitionComponent={Fade}>
+                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
+                                    <MenuItem onClick={() => navigate(`/category/details/sub/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
+                                        setDeleteData(row)
                                         setOpen(true);
                                         handleActionClose();
                                     }}>Delete</MenuItem>
@@ -290,7 +322,10 @@ const SubCategoryAdd = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <DeleteModel open={open} handleClose={() => setOpen(false)} />
+            <DeleteParentSubCategoryModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
+                setDeleteData(null);
+                setOpen(false);
+            }} />
         </Card>
     );
 }

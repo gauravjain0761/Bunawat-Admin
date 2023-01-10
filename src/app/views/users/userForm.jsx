@@ -30,7 +30,7 @@ import { UIColor } from "app/utils/constant";
 import ReactDatePicker from "react-datepicker";
 import { format } from "date-fns";
 import DeleteModel from "./model/deleteModel";
-import { ApiPut } from "app/service/api";
+import { ApiGet, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import moment from "moment";
 
@@ -43,16 +43,38 @@ const UserForm = ({ data = {}, userType, id }) => {
     const [formData, setFormData] = useState(data);
     const [open, setOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const [collectionData, setCollectionData] = useState([]);
 
     const handleChangeExpand = (panel) => (event, isExpanded) => {
         console.log(event.target, isExpanded)
         setExpanded(isExpanded ? panel : false);
     };
 
+    const getCollection = async () => {
+        await ApiGet(API_URL.getCollections)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionData(response?.data?.map((item) => {
+                        return {
+                            label: item?.name,
+                            value: item?._id
+                        }
+                    }))
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    };
+
     const navigate = useNavigate();
     useEffect(() => {
         setFormData(data)
     }, [data])
+
+    useEffect(() => {
+        getCollection()
+    }, [])
 
 
     const getURL = (role) => {
@@ -80,8 +102,9 @@ const UserForm = ({ data = {}, userType, id }) => {
     }
 
     const handleSubmit = async (event) => {
+        const { shipping, ...payload } = formData
         if (getURL() != "") {
-            await ApiPut(`${getURL(userType)}/${id}`, formData)
+            await ApiPut(`${getURL(userType)}/${id}`, { ...payload, shipping_address: shipping })
                 .then((response) => {
                     getBack(userType)
                 })
@@ -120,7 +143,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                 setFormData({ ...formData, [event.target.name]: event.target.value });
             }
         }
-        console.log(formData, subName)
+        console.log(formData, !!subName, collectionData)
     };
 
     const {
@@ -134,14 +157,14 @@ const UserForm = ({ data = {}, userType, id }) => {
         city,
         address_1,
         address_2,
-        collection,
+        collections,
         pan,
         pincode,
         bank_name,
         account_number,
         bank_ifsc,
         upi,
-        agencyName,
+        agency_name,
         notes,
         shipping,
         commission
@@ -177,7 +200,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 name="fname"
                                 label="First Name"
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 value={fname || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
@@ -187,7 +210,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 name="lname"
                                 label="Last Name"
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 value={lname || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
@@ -198,7 +221,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="email"
                                 label="Email"
                                 value={email || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required", "isEmail"]}
                                 errorMessages={["this field is required", "email is not valid"]}
                             />
@@ -207,7 +230,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 name="phone"
                                 label="Phone Nubmer"
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 value={phone || ""}
                                 validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                 errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
@@ -218,7 +241,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="password"
                                 label="Password"
                                 value={password || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -229,7 +252,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="text"
                                     label="Pan Number"
                                     value={pan || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -241,7 +264,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     <RadioGroup
                                         row
                                         value={customerType ?? "Active"}
-                                        onChange={handleChange}
+                                        onChange={(e) => handleChange(e)}
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         name="customerType">
                                         <FormControlLabel value="Active" control={<Radio />} label="Active" />
@@ -254,10 +277,10 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 <>
                                     <TextField
                                         type="text"
-                                        name="agencyName"
+                                        name="agency_name"
                                         label="Agency Name"
-                                        onChange={handleChange}
-                                        value={agencyName || ""}
+                                        onChange={(e) => handleChange(e)}
+                                        value={agency_name || ""}
                                         validators={["required"]}
                                         errorMessages={["this field is required"]}
                                     />
@@ -266,7 +289,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                         type="text"
                                         name="notes"
                                         label="Notes"
-                                        onChange={handleChange}
+                                        onChange={(e) => handleChange(e)}
                                         value={notes || ""}
                                         validators={["required"]}
                                         errorMessages={["this field is required"]}
@@ -284,7 +307,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="state"
                                 value={state || ""}
                                 label="State"
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -293,7 +316,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 label="District"
                                 value={district || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -302,7 +325,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 label="City"
                                 value={city || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -311,7 +334,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 label="Address - 1"
                                 value={address_1 || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -320,7 +343,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 label="Address - 2"
                                 value={address_2 || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -329,27 +352,26 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="text"
                                 label="Post Code"
                                 value={pincode || ""}
-                                onChange={handleChange}
+                                onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
-
                             {(userType == "influencer") &&
                                 <FormControl fullWidth >
                                     <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={collection}
-                                        name="collection"
+                                        value={collections ?? ""}
+                                        defaultValue={collections ?? ""}
+                                        name="collections"
                                         label="Collection"
-                                        onChange={handleChange}>
-                                        <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                        <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                        <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                        <MenuItem value="Shararas">Shararas</MenuItem>
-                                        <MenuItem value="Shararas">Shararas</MenuItem>
-                                        <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                        onChange={(e) => handleChange(e)}>
+                                        {collectionData?.map((item) => {
+                                            return (
+                                                <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
+                                            )
+                                        })}
                                     </Select>
                                 </FormControl>
                             }
@@ -375,7 +397,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     name="userName"
                                     id="standard-basic"
                                     value={userName || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     label="Username (Min length 4, Max length 10)"
                                 />
 
@@ -383,7 +405,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="text"
                                     name="fname"
                                     label="First Name"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     value={fname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
@@ -393,7 +415,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="text"
                                     name="lname"
                                     label="Last Name"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     value={lname || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
@@ -404,7 +426,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     name="email"
                                     label="Email"
                                     value={email || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required", "isEmail"]}
                                     errorMessages={["this field is required", "email is not valid"]}
                                 />
@@ -413,7 +435,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="text"
                                     name="phone"
                                     label="Phone Nubmer"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     value={phone || ""}
                                     validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                     errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
@@ -428,7 +450,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     name="state"
                                     value={state || ""}
                                     label="State"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -437,7 +459,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="district"
                                     label="District"
                                     value={district || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -446,7 +468,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="city"
                                     label="City"
                                     value={city || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -455,7 +477,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="address_one"
                                     label="Address - 1"
                                     value={address_one || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -464,7 +486,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="address_two"
                                     label="Address - 2"
                                     value={address_two || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -473,7 +495,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="post_code"
                                     label="Post Code"
                                     value={post_code || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
@@ -738,7 +760,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     name="bank_name"
                                     id="standard-basic"
                                     value={bank_name || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     label="Bank Name"
                                 />
 
@@ -746,7 +768,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="text"
                                     name="account_number"
                                     label="Bank Account Number"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     value={account_number || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
@@ -756,7 +778,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     type="text"
                                     name="bank_ifsc"
                                     label="Bank IFSC Code"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     value={bank_ifsc || ""}
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
@@ -767,7 +789,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     name="upi"
                                     label="UPI ID"
                                     value={upi || ""}
-                                    onChange={handleChange}
+                                    onChange={(e) => handleChange(e)}
                                     validators={["required", "isEmail"]}
                                     errorMessages={["this field is required", "email is not valid"]}
                                 />
