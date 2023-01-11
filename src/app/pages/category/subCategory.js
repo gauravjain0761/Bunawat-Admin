@@ -31,7 +31,7 @@ const SubCategoryAdd = () => {
 
     const columns = [
         {
-            id: "parent_cateogry_id",
+            id: "pName",
             label: "Parent Category Name",
             width: 200
         },
@@ -105,7 +105,12 @@ const SubCategoryAdd = () => {
     const getData = async () => {
         await ApiGet(`${API_URL.getParentSubCategorys}?page=${page}&limit=${rowsPerPage}`)
             .then((response) => {
-                setRows(response?.data ?? []);
+                setRows(response?.data?.map(item => {
+                    return {
+                        ...item,
+                        pName: item?.parent_cateogry_id?.name
+                    }
+                }) ?? []);
                 setTotalCount(response?.totalCount);
             })
             .catch((error) => {
@@ -268,7 +273,7 @@ const SubCategoryAdd = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{row?.parent_cateogry_id?.name}</TableCell>
+                            <TableCell>{row?.pName}</TableCell>
                             <TableCell > {row.name} </TableCell>
                             <TableCell>{row.code}</TableCell>
                             <TableCell align="center">-</TableCell>

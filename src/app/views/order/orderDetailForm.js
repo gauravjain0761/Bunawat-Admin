@@ -33,7 +33,7 @@ import { Span } from "app/components/Typography";
 import { UIColor } from "app/utils/constant";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import ReactDatePicker from "react-datepicker";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
@@ -349,6 +349,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             <Button variant="outlined" onClick={() => setStatusPopup(true)}>Status</Button>
                                                             <Button variant="outlined" onClick={() => setTrackingPopup(true)}>Tracking No</Button>
                                                             <Button variant="outlined" onClick={() => setPaymentPopup(true)}>Payment Info</Button>
+                                                            <Button variant="outlined">Notes</Button>
                                                             <Button variant="outlined">Invoice</Button>
                                                             <Button variant="outlined">Packing Slip</Button>
                                                         </Box>

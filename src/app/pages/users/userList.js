@@ -14,8 +14,9 @@ import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { Span } from 'app/components/Typography';
 import { API_URL } from 'app/constant/api';
-import { ApiGet } from 'app/service/api';
+import { ApiGet, ApiPut } from 'app/service/api';
 import DeleteModel from 'app/views/users/model/deleteModel';
+import { toast } from 'material-react-toastify';
 
 const UserList = ({ type }) => {
   const navigate = useNavigate();
@@ -43,11 +44,36 @@ const UserList = ({ type }) => {
     }
   }
 
+  const getEditURL = (role) => {
+    if (role == 'Customer') {
+      return API_URL.editCustomer
+    }
+    if (role == 'Reseller') {
+      return API_URL.editResller
+    }
+    if (role == 'influencer') {
+      return API_URL.editInfluencer
+    }
+  }
+
   const getData = async (type) => {
     await ApiGet(`${getURL(type)}?page=${page}&limit=${rowsPerPage}`)
       .then((response) => {
         setRows(response?.data ?? []);
         setTotalCount(response?.totalCount);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }
+
+  const editStatusData = async (id, status) => {
+    await ApiPut(`${getEditURL(type)}/${id}`, {
+      isActive: status
+    })
+      .then((response) => {
+        getData(type)
+        handleActionClose()
       })
       .catch((error) => {
         console.log("Error", error);
@@ -63,12 +89,12 @@ const UserList = ({ type }) => {
 
   const columns = [
     {
-      id: "name",
+      id: "fname",
       label: "Name",
       width: 200,
     },
     {
-      id: "mobile",
+      id: "phone",
       label: "Mobile",
       width: 250,
     },
@@ -76,6 +102,12 @@ const UserList = ({ type }) => {
       id: "email",
       label: "Email",
       width: 200,
+    },
+    {
+      id: "isActive",
+      label: "Status",
+      align: "center",
+      width: 80
     },
     {
       id: "action",
@@ -261,6 +293,17 @@ const UserList = ({ type }) => {
               <TableCell >{`${row.fname} ${row.lname}`}</TableCell>
               <TableCell >{row.phone}</TableCell>
               <TableCell  > {row.email} </TableCell>
+              <TableCell align="center">
+                {row?.isActive ?
+                  <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                    Active
+                  </Typography>
+                  :
+                  <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                    InActive
+                  </Typography>
+                }
+              </TableCell>
               <TableCell align='right' sx={{ pr: "18px" }}>
                 <IconButton
                   aria-label="more"
@@ -281,6 +324,7 @@ const UserList = ({ type }) => {
                   onClose={handleActionClose}
                   TransitionComponent={Fade}
                 >
+                  <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                   <MenuItem onClick={() => navigate(`/user/details/${type}/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
                     setDeleteData(row)

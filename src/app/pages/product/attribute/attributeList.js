@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Container, Fade, FormControl, FormControlLabel, FormLabel, Grid, Icon, IconButton, Menu, MenuItem, Radio, RadioGroup, Stack, TextField } from '@mui/material';
+import { Button, Card, Container, Fade, FormControl, FormControlLabel, FormLabel, Grid, Icon, IconButton, Menu, MenuItem, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -67,7 +67,7 @@ const AttributeList = () => {
         {
             id: "name",
             label: "Name",
-            width: 150
+            width: 100
         },
         {
             id: "slug",
@@ -75,8 +75,21 @@ const AttributeList = () => {
             width: 80
         },
         {
+            id: "multiselect",
+            label: "Type",
+            align: "center",
+            width: 80
+        },
+        {
+            id: "isActive",
+            label: "Status",
+            align: "center",
+            width: 80
+        },
+        {
             id: "count",
             label: "Variant",
+            sortDisable: true,
             width: 250
         },
         {
@@ -116,6 +129,19 @@ const AttributeList = () => {
             )
         }
     ];
+
+    const editStatusData = async (id, status) => {
+        // await ApiPut(`${API_URL.editCollect}/${id}`, {
+        //   isActive: status
+        // })
+        //   .then((response) => {
+        //     getData(type)
+        //     handleActionClose()
+        //   })
+        //   .catch((error) => {
+        //     console.log("Error", error);
+        //   });
+    }
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -250,7 +276,15 @@ const AttributeList = () => {
                     </ValidatorForm>
                 </Stack>
             </Container>
-            <CardHeader sx={{ mt: 2 }} className="searchBoxSeaprate">
+            <Box sx={{
+                mt: 2,
+                display: 'flex',
+                paddingLeft: '24px',
+                paddingRight: '24px',
+                marginBottom: '12px',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+            }} className="searchBoxSeaprate">
                 <Title>Attribute List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
@@ -276,7 +310,7 @@ const AttributeList = () => {
                         </IconButton>
                     </Box>
                 </Box>
-            </CardHeader>
+            </Box>
             <TableComponent
                 rows={rows}
                 columns={columns}
@@ -306,6 +340,20 @@ const AttributeList = () => {
                             </TableCell>
                             <TableCell>{row.name} </TableCell>
                             <TableCell>{row.slug}</TableCell>
+                            <TableCell align="center">
+                                {row?.multiselect ? 'Multiselect' : 'Single'}
+                            </TableCell>
+                            <TableCell align="center">
+                                {row?.isActive ?
+                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                        Active
+                                    </Typography>
+                                    :
+                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                        InActive
+                                    </Typography>
+                                }
+                            </TableCell>
                             <TableCell>
                                 {row?.variants?.map((item) => item?.name)?.join(", ")}
                             </TableCell>
@@ -328,6 +376,7 @@ const AttributeList = () => {
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
+                                    {/* <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem> */}
                                     <MenuItem onClick={() => {
                                         navigate(`/product/attributes/${row?._id}`)
                                     }}>Add</MenuItem>

@@ -8,6 +8,8 @@ import { Store } from './redux/Store';
 import routes from './routes';
 import "react-datepicker/dist/react-datepicker.css";
 import './App.css';
+import { ToastContainer } from 'material-react-toastify';
+import 'material-react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const content = useRoutes(routes);
@@ -17,6 +19,10 @@ const App = () => {
       <SettingsProvider>
         <MatxTheme>
           <AuthProvider>{content}</AuthProvider>
+          <ToastContainer position="top-right"
+            theme="colored"
+            autoClose={2000}
+            hideProgressBar={false} />
         </MatxTheme>
       </SettingsProvider>
     </Provider>

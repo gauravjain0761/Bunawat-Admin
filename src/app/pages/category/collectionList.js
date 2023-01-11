@@ -13,7 +13,7 @@ import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
 import { API_URL } from 'app/constant/api';
-import { ApiGet } from 'app/service/api';
+import { ApiGet, ApiPut } from 'app/service/api';
 import DeleteCollectionModel from 'app/views/category/model/deleteCollectionModel';
 
 const CollectionList = () => {
@@ -50,6 +50,12 @@ const CollectionList = () => {
       label: "Count",
       align: "center",
       width: 100,
+    },
+    {
+      id: "isActive",
+      label: "Status",
+      align: "center",
+      width: 80
     },
     {
       id: "action",
@@ -95,6 +101,19 @@ const CollectionList = () => {
       .then((response) => {
         setRows(response?.data ?? []);
         setTotalCount(response?.totalCount);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }
+
+  const editStatusData = async (id, status) => {
+    await ApiPut(`${API_URL.editCollection}/${id}`, {
+      isActive: status
+    })
+      .then((response) => {
+        getData()
+        handleActionClose()
       })
       .catch((error) => {
         console.log("Error", error);
@@ -248,6 +267,17 @@ const CollectionList = () => {
               <TableCell >{row?.description?.replace(/<[^>]+>/g, '')}</TableCell>
               <TableCell>-</TableCell>
               <TableCell align="center">-</TableCell>
+              <TableCell align="center">
+                {row?.isActive ?
+                  <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                    Active
+                  </Typography>
+                  :
+                  <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                    InActive
+                  </Typography>
+                }
+              </TableCell>
               <TableCell align='right' sx={{ pr: "18px" }}>
                 <IconButton
                   aria-label="more"
@@ -268,6 +298,7 @@ const CollectionList = () => {
                   onClose={handleActionClose}
                   TransitionComponent={Fade}
                 >
+                  <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                   <MenuItem onClick={() => navigate(`/collection/details/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
                     setDeleteData(row)

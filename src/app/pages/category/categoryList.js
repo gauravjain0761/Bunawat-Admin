@@ -31,12 +31,12 @@ const CategoryList = () => {
 
   const columns = [
     {
-      id: "parent_cateogry_id",
+      id: "pName",
       label: "Parent Category Name",
       width: 200
     },
     {
-      id: "sub_category_id",
+      id: "sName",
       label: "Parent Sub Category Name",
       width: 250
     },
@@ -104,7 +104,13 @@ const CategoryList = () => {
   const getData = async () => {
     await ApiGet(`${API_URL.getCategorys}?page=${page}&limit=${rowsPerPage}`)
       .then((response) => {
-        setRows(response?.data ?? []);
+        setRows(response?.data?.map(item => {
+          return {
+            ...item,
+            pName: item?.parent_cateogry_id?.name,
+            sName: item?.sub_category_id?.name,
+          }
+        }) ?? []);
         setTotalCount(response?.totalCount);
       })
       .catch((error) => {
@@ -267,8 +273,8 @@ const CategoryList = () => {
                   }}
                 />
               </TableCell>
-              <TableCell>{row?.parent_cateogry_id?.name}</TableCell>
-              <TableCell>{row?.sub_category_id?.name}</TableCell>
+              <TableCell>{row?.pName}</TableCell>
+              <TableCell>{row?.sName}</TableCell>
               <TableCell > {row.name} </TableCell>
               <TableCell>{row.code}</TableCell>
               <TableCell align="center">-</TableCell>

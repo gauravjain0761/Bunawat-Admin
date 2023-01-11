@@ -78,7 +78,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "mobile") {
+        if (event.target.name == "phone") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });

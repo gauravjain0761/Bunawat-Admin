@@ -199,7 +199,14 @@ const ParentCategory = () => {
     }));
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader className="searchBoxSeaprate">
+            <Box sx={{
+                display: 'flex',
+                paddingLeft: '24px',
+                paddingRight: '24px',
+                marginBottom: '12px',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+            }} className="searchBoxSeaprate">
                 <Title>Parent Category List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
@@ -217,7 +224,7 @@ const ParentCategory = () => {
                             height: '36px',
                             background: "transparent",
                             color: "#000",
-                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                        }} type="text" value={searchText} onChange={(e) => {
                             setSearchText(e.target.value)
                         }} placeholder="Search here..." />
                         <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
@@ -235,7 +242,7 @@ const ParentCategory = () => {
                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Parent Category</Span>
                     </Button>
                 </Box>
-            </CardHeader>
+            </Box>
             <TableComponent
                 rows={rows}
                 columns={columns}

@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Container, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, TextField } from '@mui/material';
+import { Button, Card, Container, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -93,6 +93,12 @@ const VarientList = () => {
             width: 80
         },
         {
+            id: "isActive",
+            label: "Status",
+            align: "center",
+            width: 80
+        },
+        {
             id: "action",
             label: "Action",
             action: true,
@@ -129,6 +135,19 @@ const VarientList = () => {
             )
         }
     ];
+
+    const editStatusData = async (id, status) => {
+        // await ApiPut(`${API_URL.editCollect}/${id}`, {
+        //   isActive: status
+        // })
+        //   .then((response) => {
+        //     getData(type)
+        //     handleActionClose()
+        //   })
+        //   .catch((error) => {
+        //     console.log("Error", error);
+        //   });
+    }
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -302,6 +321,17 @@ const VarientList = () => {
                             </TableCell>
                             <TableCell>{row.name} </TableCell>
                             <TableCell>{row.slug}</TableCell>
+                            <TableCell align="center">
+                                {row?.isActive ?
+                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                        Active
+                                    </Typography>
+                                    :
+                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                        InActive
+                                    </Typography>
+                                }
+                            </TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }} >
                                 <IconButton
                                     aria-label="more"
@@ -321,6 +351,7 @@ const VarientList = () => {
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
+                                    {/* <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem> */}
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
                                         setOpen(true);
