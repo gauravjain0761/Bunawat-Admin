@@ -17,6 +17,7 @@ import {
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
 import { API_URL } from "app/constant/api";
+import { toast } from 'material-react-toastify';
 import { ApiPost } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
@@ -67,9 +68,11 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
         if (getURL() != "") {
             await ApiPost(getURL(formData?.role), formData)
                 .then((response) => {
+                    toast.success('Add Successfully!')
                     getBack(formData?.role)
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         } else {
@@ -103,6 +106,13 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
         role,
         customerType
     } = formData;
+
+    if (!ValidatorForm.hasValidationRule('isPassword')) {
+        ValidatorForm.addValidationRule('isPassword', (value) => {
+            const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            return strongRegex.test(value);
+        });
+    }
 
     return (
         <div>
@@ -147,7 +157,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 onChange={handleChange}
                                 value={phone || ""}
                                 validators={["required", "minStringLength:10", "maxStringLength: 10"]}
-                                errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
+                                errorMessages={["this field is required", "Enter valid number", "Enter strong number"]}
                             />
 
                             <TextField
@@ -156,8 +166,8 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 label="Password"
                                 value={password || ""}
                                 onChange={handleChange}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
+                                validators={["required", "isPassword"]}
+                                errorMessages={["this field is required", "Enter valid password"]}
                             />
 
                             <FormControl fullWidth >

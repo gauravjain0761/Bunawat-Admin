@@ -17,6 +17,7 @@ import { isMdScreen, isMobile } from 'app/utils/utils';
 import { Span } from 'app/components/Typography';
 import { ApiGet, ApiPost } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
+import { toast } from 'material-react-toastify';
 import DeleteVariantModel from 'app/views/product/model/deleteVariantModel';
 
 const VarientList = () => {
@@ -53,10 +54,12 @@ const VarientList = () => {
         if (id) {
             await ApiPost(`${API_URL.addVarient}`, { name: formData?.name, attribute: id })
                 .then((response) => {
+                    toast.success('Add Successfully!')
                     setFormData({ ...formData, name: "" });
                     getData();
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         }
@@ -141,10 +144,12 @@ const VarientList = () => {
         //   isActive: status
         // })
         //   .then((response) => {
+        // toast.success('Edit Successfully!')
         //     getData(type)
         //     handleActionClose()
         //   })
         //   .catch((error) => {
+        // toast.error(error?.error)
         //     console.log("Error", error);
         //   });
     }

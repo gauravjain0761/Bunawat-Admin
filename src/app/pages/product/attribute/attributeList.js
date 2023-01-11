@@ -13,6 +13,7 @@ import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { SimpleCard } from 'app/components';
+import { toast } from 'material-react-toastify';
 import { isMdScreen, isMobile } from 'app/utils/utils';
 import { Span } from 'app/components/Typography';
 import { ApiGet, ApiPost } from 'app/service/api';
@@ -51,10 +52,12 @@ const AttributeList = () => {
     const handleSubmit = async (event) => {
         await ApiPost(`${API_URL.addAttribute}`, formData)
             .then((response) => {
+                toast.success('Add Successfully!')
                 setFormData({ ...formData, name: "", multiselect: false });
                 getData();
             })
             .catch((error) => {
+                toast.error(error?.error)
                 console.log("Error", error);
             });
     };
@@ -135,10 +138,12 @@ const AttributeList = () => {
         //   isActive: status
         // })
         //   .then((response) => {
+        // toast.success('Edit Successfully!')
         //     getData(type)
         //     handleActionClose()
         //   })
         //   .catch((error) => {
+        // toast.error(error?.error)
         //     console.log("Error", error);
         //   });
     }

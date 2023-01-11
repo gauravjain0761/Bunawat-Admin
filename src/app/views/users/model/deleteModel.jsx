@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { API_URL } from 'app/constant/api'
 import { ApiDelete } from 'app/service/api'
+import { toast } from 'material-react-toastify';
 import React from 'react'
 
 const DeleteModel = ({ open, deleteData, getData, type, handleClose }) => {
@@ -20,10 +21,12 @@ const DeleteModel = ({ open, deleteData, getData, type, handleClose }) => {
     const handleDelete = async () => {
         await ApiDelete(`${getURL(type)}/${deleteData?._id}`)
             .then((response) => {
+                toast.success('Delete Successfully!')
                 if (getData) getData(type)
                 handleClose()
             })
             .catch((error) => {
+                toast.error(error?.error)
                 console.log("Error", error);
             });
     }

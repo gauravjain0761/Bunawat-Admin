@@ -2,7 +2,6 @@ import { API_ROUTES } from 'app/constant/api';
 import axios from 'axios'
 import url from 'url'
 import Storage from './storage';
-import { toast } from 'material-react-toastify';
 
 const { BASE_URL, API_VERSION } = API_ROUTES;
 const API_BASE_URL = url.format(BASE_URL + API_VERSION);
@@ -12,7 +11,6 @@ export const ApiGet = (url, params = {}, options = {}) => {
     return new Promise((resolve, reject) => {
         axios.get(`${API_BASE_URL}/${url}`, { params, ...getHttpMemberOptions(options, true) })
             .then((responseJson) => {
-                toast.success('Success!');
                 resolve(responseJson.data);
             })
             .catch((error) => {
@@ -22,7 +20,7 @@ export const ApiGet = (url, params = {}, options = {}) => {
                 } else {
                     reject({
                         code: error?.response?.status,
-                        error: error?.response?.data?.error
+                        error: error?.response?.data?.message
                     });
                 }
             });
@@ -34,7 +32,6 @@ export const ApiPost = (url, fromData = {}, options = {}) => {
     return new Promise((resolve, reject) => {
         axios.post(`${API_BASE_URL}/${url}`, fromData, getHttpMemberOptions(options, true))
             .then((responseJson) => {
-                toast.success('Success!');
                 resolve(responseJson.data);
             })
             .catch((error) => {
@@ -44,7 +41,7 @@ export const ApiPost = (url, fromData = {}, options = {}) => {
                 } else {
                     reject({
                         code: error?.response?.status,
-                        error: error?.response?.data?.error
+                        error: error?.response?.data?.message
                     });
                 }
             });
@@ -57,7 +54,6 @@ export const ApiPut = (url, fromData = {}, options = {}) => {
     return new Promise((resolve, reject) => {
         axios.put(`${API_BASE_URL}/${url}`, fromData, getHttpMemberOptions(options, true))
             .then((responseJson) => {
-                toast.success('Success!');
                 resolve(responseJson.data);
             })
             .catch((error) => {
@@ -67,7 +63,7 @@ export const ApiPut = (url, fromData = {}, options = {}) => {
                 } else {
                     reject({
                         code: error?.response?.status,
-                        error: error.response.data.error
+                        error: error?.response?.data?.message
                     });
                 }
             });
@@ -79,7 +75,6 @@ export const ApiDelete = (url, data = {}, options = {}) => {
     return new Promise((resolve, reject) => {
         axios.delete(`${API_BASE_URL}/${url}`, { data, ...getHttpMemberOptions(options, true) })
             .then((responseJson) => {
-                toast.success('Success!');
                 resolve(responseJson.data);
             })
             .catch((error) => {
@@ -89,7 +84,7 @@ export const ApiDelete = (url, data = {}, options = {}) => {
                 } else {
                     reject({
                         code: error?.response?.status,
-                        error: error?.response?.data?.error
+                        error: error?.response?.data?.message
                     });
                 }
             });
@@ -101,7 +96,6 @@ export const ApiGetNoAuth = (url, params = {}, options = {}) => {
     return new Promise((resolve, reject) => {
         axios.get(`${API_BASE_URL}/${url}`, { params, ...getHttpMemberOptions(options) })
             .then((responseJson) => {
-                toast.success('Success!');
                 resolve(responseJson.data);
             })
             .catch((error) => {
@@ -110,7 +104,7 @@ export const ApiGetNoAuth = (url, params = {}, options = {}) => {
                 } else {
                     reject({
                         code: error?.response?.status,
-                        error: error?.response?.data?.error
+                        error: error?.response?.data?.message
                     });
                 }
             });
@@ -122,7 +116,6 @@ export const ApiPostNoAuth = (url, fromData, options = {}) => {
     return new Promise((resolve, reject) => {
         axios.post(`${API_BASE_URL}/${url}`, fromData, getHttpMemberOptions(options))
             .then((responseJson) => {
-                toast.success('Success!');
                 resolve(responseJson.data);
             })
             .catch((error) => {
@@ -132,7 +125,7 @@ export const ApiPostNoAuth = (url, fromData, options = {}) => {
                 } else {
                     reject({
                         code: error?.response?.status,
-                        error: error?.response?.data?.error
+                        error: error?.response?.data?.message
                     });
                 }
             });

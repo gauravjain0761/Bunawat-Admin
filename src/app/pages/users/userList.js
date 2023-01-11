@@ -72,10 +72,12 @@ const UserList = ({ type }) => {
       isActive: status
     })
       .then((response) => {
+        toast.success('Edit Successfully!')
         getData(type)
         handleActionClose()
       })
       .catch((error) => {
+        toast.error(error?.error)
         console.log("Error", error);
       });
   }

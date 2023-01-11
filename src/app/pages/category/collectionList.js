@@ -9,6 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
+import { toast } from 'material-react-toastify';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
@@ -112,10 +113,12 @@ const CollectionList = () => {
       isActive: status
     })
       .then((response) => {
+        toast.success('Edit Successfully!')
         getData()
         handleActionClose()
       })
       .catch((error) => {
+        toast.error(error?.error)
         console.log("Error", error);
       });
   }

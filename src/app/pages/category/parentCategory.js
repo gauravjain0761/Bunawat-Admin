@@ -8,6 +8,7 @@ import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
+import { toast } from 'material-react-toastify';
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
@@ -112,10 +113,12 @@ const ParentCategory = () => {
             isActive: status
         })
             .then((response) => {
+                toast.success('Edit Successfully!')
                 getData()
                 handleActionClose()
             })
             .catch((error) => {
+                toast.error(error?.error)
                 console.log("Error", error);
             });
     }

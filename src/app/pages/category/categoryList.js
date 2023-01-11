@@ -13,6 +13,7 @@ import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
 import { ApiGet, ApiPut } from 'app/service/api';
+import { toast } from 'material-react-toastify';
 import { API_URL } from 'app/constant/api';
 import DeleteCategoryModel from 'app/views/category/model/deleteCategoryModel';
 
@@ -123,9 +124,11 @@ const CategoryList = () => {
       isActive: status
     })
       .then((response) => {
+        toast.success('Edit Successfully!')
         getData()
       })
       .catch((error) => {
+        toast.error(error?.error)
         console.log("Error", error);
       });
   }

@@ -26,6 +26,7 @@ import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
+import { toast } from 'material-react-toastify';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -168,6 +169,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                 "product_list": productId ? [productId] : []
             })
                 .then((response) => {
+                    toast.success('Edit Successfully!')
                     if (!searchParams.get("redirect")) {
                         navigate(`/category/${type}`)
                     } else {
@@ -175,6 +177,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     }
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         } else {
@@ -188,6 +191,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                 "product_list": productId ? [productId] : []
             })
                 .then((response) => {
+                    toast.success('Add Successfully!')
                     if (!searchParams.get("redirect")) {
                         navigate(`/category/${type}`)
                     } else {
@@ -195,6 +199,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     }
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         }

@@ -3,6 +3,7 @@ import { Span } from 'app/components/Typography'
 import { API_URL } from 'app/constant/api'
 import { ApiDelete } from 'app/service/api'
 import { UIColor } from 'app/utils/constant'
+import { toast } from 'material-react-toastify';
 import React, { useState } from 'react'
 
 const PaymentModel = ({ open, deleteData, getData, handleClose }) => {

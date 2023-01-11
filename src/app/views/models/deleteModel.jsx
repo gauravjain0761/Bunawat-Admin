@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { API_URL } from 'app/constant/api'
 import { ApiDelete } from 'app/service/api'
+import { toast } from 'material-react-toastify';
 import React from 'react'
 
 const DeleteModel = ({ open, handleClose }) => {

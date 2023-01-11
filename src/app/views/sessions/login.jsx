@@ -8,6 +8,7 @@ import { ApiPost } from 'app/service/api';
 import Storage from 'app/service/storage';
 import { UIColor } from 'app/utils/constant';
 import { Formik } from 'formik';
+import { toast } from 'material-react-toastify';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -59,11 +60,13 @@ const JwtLogin = () => {
     try {
       await ApiPost(`${API_URL.adminLogin}`, values)
         .then((response) => {
+          toast.success('Login Successfully!')
           Storage.set(STORAGE_KEY.token, response?.data?.auth_token)
           Storage.set(STORAGE_KEY.user, JSON.stringify(response?.data))
           navigate('/');
         })
         .catch((error) => {
+          toast.error(error?.error)
           setLoading(false);
           console.log("Error", error);
         });

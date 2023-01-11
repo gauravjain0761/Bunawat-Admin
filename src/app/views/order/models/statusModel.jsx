@@ -1,6 +1,7 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { API_URL } from 'app/constant/api'
 import { ApiDelete } from 'app/service/api'
+import { toast } from 'material-react-toastify';
 import React, { useState } from 'react'
 
 const StatusModel = ({ open, deleteData, getData, handleClose }) => {

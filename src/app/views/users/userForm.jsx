@@ -32,6 +32,7 @@ import { format } from "date-fns";
 import DeleteModel from "./model/deleteModel";
 import { ApiGet, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
+import { toast } from 'material-react-toastify';
 import moment from "moment";
 
 const TextField = styled(TextValidator)(() => ({
@@ -106,9 +107,11 @@ const UserForm = ({ data = {}, userType, id }) => {
         if (getURL() != "") {
             await ApiPut(`${getURL(userType)}/${id}`, { ...payload })
                 .then((response) => {
+                    toast.success('Edit Successfully!')
                     getBack(userType)
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         } else {

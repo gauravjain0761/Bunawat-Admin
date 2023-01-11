@@ -24,6 +24,7 @@ import { API_URL } from "app/constant/api";
 import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
+import { toast } from 'material-react-toastify';
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
@@ -94,9 +95,11 @@ const CollectionForm = ({ data = {}, id }) => {
                 "product_list": [formData?.productId]
             })
                 .then((response) => {
+                    toast.success('Edit Successfully!')
                     navigate("/collection/list")
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         } else {
@@ -108,9 +111,11 @@ const CollectionForm = ({ data = {}, id }) => {
                 "product_list": [formData?.productId]
             })
                 .then((response) => {
+                    toast.success('Add Successfully!')
                     navigate("/collection/list")
                 })
                 .catch((error) => {
+                    toast.error(error?.error)
                     console.log("Error", error);
                 });
         }
