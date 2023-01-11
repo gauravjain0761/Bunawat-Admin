@@ -40,7 +40,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
 
 
     const getURL = (role) => {
-        if (role == 'customer') {
+        if (role == 'Customer') {
             return API_URL.addCustomer
         }
         if (role == 'Reseller') {
@@ -52,7 +52,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
     }
 
     const getBack = (role) => {
-        if (role == 'customer') {
+        if (role == 'Customer') {
             navigate("/customer")
         }
         if (role == 'Reseller') {
@@ -171,7 +171,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                     inputProps={{ readOnly: disableRole }}
                                     label="User Role"
                                     onChange={handleChange}>
-                                    <MenuItem value="customer">Customer</MenuItem>
+                                    <MenuItem value="Customer">Customer</MenuItem>
                                     <MenuItem value="Reseller">Reseller</MenuItem>
                                     <MenuItem value="influencer">Influencer</MenuItem>
                                 </Select>

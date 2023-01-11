@@ -310,13 +310,32 @@ const OrderDetailForm = ({ data = {} }) => {
                                     <Table sx={{ width: '100%' }} aria-label="simple table">
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
-                                                <TableCell width='120px' sx={{ border: 'none', pl: 2 }} align='left'>
-                                                    <Button variant="outlined">Refund</Button>
-                                                </TableCell>
-                                                <TableCell sx={{ border: 'none', pr: 2 }} align="right">
-                                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                        <Icon>info</Icon>
-                                                        <Typography> This order is no longer editable.</Typography>
+                                                <TableCell sx={{ border: 'none', pl: { lg: 2, xs: 1 } }} align='left'>
+                                                    <Box sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1,
+                                                        justifyContent: 'space-between',
+                                                        flexWrap: 'wrap'
+                                                    }}>
+                                                        <Box sx={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: 1,
+                                                            justifyContent: 'flex-start',
+                                                            flexWrap: 'wrap'
+                                                        }}>
+                                                            <Button variant="outlined">Refund</Button>
+                                                            <Button variant="outlined">Status</Button>
+                                                            <Button variant="outlined">Tracking No</Button>
+                                                            <Button variant="outlined">Payment Info</Button>
+                                                            <Button variant="outlined">Invoice</Button>
+                                                            <Button variant="outlined">Packing Slip</Button>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                                            <Icon>info</Icon>
+                                                            <Typography> This order is no longer editable.</Typography>
+                                                        </Box>
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>

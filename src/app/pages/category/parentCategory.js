@@ -113,6 +113,7 @@ const ParentCategory = () => {
         })
             .then((response) => {
                 getData()
+                handleActionClose()
             })
             .catch((error) => {
                 console.log("Error", error);

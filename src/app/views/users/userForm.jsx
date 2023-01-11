@@ -102,9 +102,9 @@ const UserForm = ({ data = {}, userType, id }) => {
     }
 
     const handleSubmit = async (event) => {
-        const { shipping, ...payload } = formData
+        const { ...payload } = formData
         if (getURL() != "") {
-            await ApiPut(`${getURL(userType)}/${id}`, { ...payload, shipping_address: shipping })
+            await ApiPut(`${getURL(userType)}/${id}`, { ...payload })
                 .then((response) => {
                     getBack(userType)
                 })
