@@ -307,7 +307,7 @@ const AttributeList = () => {
                             <TableCell>{row.name} </TableCell>
                             <TableCell>{row.slug}</TableCell>
                             <TableCell>
-                                -
+                                {row?.variants?.map((item) => item?.name)?.join(", ")}
                             </TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton

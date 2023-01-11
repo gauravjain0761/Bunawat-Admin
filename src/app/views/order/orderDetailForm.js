@@ -38,6 +38,9 @@ import Avatar from "react-avatar";
 import ReactDatePicker from "react-datepicker";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import PaymentModel from "./models/paymentModel";
+import StatusModel from "./models/statusModel";
+import TrackingModel from "./models/trackingModel";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -48,6 +51,9 @@ const OrderDetailForm = ({ data = {} }) => {
     const [formData, setFormData] = useState({ ...data, userType: 'customer' });
     const navigate = useNavigate();
     const [rows, setRows] = useState([{}, {}, {}]);
+    const [statusPopup, setStatusPopup] = useState(false);
+    const [trackingPopup, setTrackingPopup] = useState(false);
+    const [paymentPopup, setPaymentPopup] = useState(false);
     let [searchParams, setSearchParams] = useSearchParams();
 
     const columns = [
@@ -347,9 +353,9 @@ const OrderDetailForm = ({ data = {} }) => {
                     </Grid>
                 </ValidatorForm>
             </Box >
-            {/* <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
+            <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
             <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
-            <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} /> */}
+            <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} />
         </Box >
     );
 };
