@@ -152,22 +152,36 @@ const OrderDetailForm = ({ data = {} }) => {
                                     <Grid item lg={4} md={12} sm={12} xs={12}>
                                         <Stack>
                                             <Typography variant="h6">General</Typography>
-                                            <Stack flexDirection='row' alignItems='center'>
+                                            {/* <Stack flexDirection='row' alignItems='center'>
                                                 <Typography sx={{ color: '#777' }}>Date created:</Typography>
                                                 <Typography sx={{ ml: 1 }}>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
-                                            </Stack>
-                                            <Stack flexDirection='row' alignItems='center'>
-                                                <Typography sx={{ color: '#777' }}>Status:</Typography>
-                                                <Typography sx={{ ml: 1 }}>Completed</Typography>
-                                            </Stack>
-                                            <Stack>
-                                                <Typography sx={{ color: '#777' }}>Customer</Typography>
-                                                <Typography>Juhi Bagaria (#4331 &ndash; bagaria.namrata@gmail.com)</Typography>
-                                            </Stack>
-                                            <Stack flexDirection='row' alignItems='center'>
-                                                <Typography sx={{ color: '#777' }}>Payment Mode:</Typography>
-                                                <Typography sx={{ ml: 1 }}>COD</Typography>
-                                            </Stack>
+                                            </Stack> */}
+                                            <Typography sx={{ color: '#777' }}>Order No:</Typography>
+                                            <Typography>ABCD1234</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Date created:</Typography>
+                                            <Typography>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Order Type:</Typography>
+                                            <Typography>New</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Order User Type:</Typography>
+                                            <Typography>Customer</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Order Status:</Typography>
+                                            <Typography>Confirmed</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Amount:</Typography>
+                                            <Typography>5000</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Payment Mode:</Typography>
+                                            <Typography >COD</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Source:</Typography>
+                                            <Typography>Direct</Typography>
+
+                                            <Typography sx={{ mt: 1, color: '#777' }}>Customer</Typography>
+                                            <Typography>Juhi Bagaria (#4331 &ndash; bagaria.namrata@gmail.com)</Typography>
                                         </Stack>
                                     </Grid>
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -332,9 +346,9 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             flexWrap: 'wrap'
                                                         }}>
                                                             <Button variant="outlined">Refund</Button>
-                                                            <Button variant="outlined">Status</Button>
-                                                            <Button variant="outlined">Tracking No</Button>
-                                                            <Button variant="outlined">Payment Info</Button>
+                                                            <Button variant="outlined" onClick={() => setStatusPopup(true)}>Status</Button>
+                                                            <Button variant="outlined" onClick={() => setTrackingPopup(true)}>Tracking No</Button>
+                                                            <Button variant="outlined" onClick={() => setPaymentPopup(true)}>Payment Info</Button>
                                                             <Button variant="outlined">Invoice</Button>
                                                             <Button variant="outlined">Packing Slip</Button>
                                                         </Box>
