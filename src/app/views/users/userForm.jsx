@@ -803,8 +803,8 @@ const UserForm = ({ data = {}, userType, id }) => {
                 </Accordion>
                 }
 
-                <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                    <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexWrap: 'wrap' }}>
+                    <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexWrap='wrap'>
                         <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                             <Icon>arrow_back</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
@@ -818,7 +818,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
                         </Button>
                     </Box>
-                    {(userType == "Customer") && <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
+                    {(userType == "Customer") && < >
                         <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }}
                             onClick={() => navigate("/user/wishlist")}
                         >
@@ -837,7 +837,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                             <Icon>star_rate</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
                         </Button>
-                    </Box>
+                    </>
                     }
                 </Box>
             </ValidatorForm>
