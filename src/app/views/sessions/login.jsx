@@ -3,8 +3,9 @@ import { Card, Checkbox, Grid, TextField } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
 import { Paragraph } from 'app/components/Typography';
 import { API_URL } from 'app/constant/api';
-import useAuth from 'app/hooks/useAuth';
+import { STORAGE_KEY } from 'app/constant/storage';
 import { ApiPost } from 'app/service/api';
+import Storage from 'app/service/storage';
 import { UIColor } from 'app/utils/constant';
 import { Formik } from 'formik';
 import { useState } from 'react';
@@ -37,9 +38,8 @@ const JWTRoot = styled(JustifyBox)(() => ({
 
 // inital login credentials
 const initialValues = {
-  email: 'bunawat@admin.com',
-  password: 'dummyPass',
-  remember: true,
+  email: 'admin@gmail.com',
+  password: '123456789',
 };
 
 // form field validation schema
@@ -53,21 +53,20 @@ const validationSchema = Yup.object().shape({
 const JwtLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
-      // await ApiPost(`${API_URL.adminLogin}`, values)
-      //   .then((response) => {
-      //     navigate('/');
-      //   })
-      //   .catch((error) => {
-      //     setLoading(false);
-      //     console.log("Error", error);
-      //   });
-      await login(values.email, values.password);
-      navigate('/');
+      await ApiPost(`${API_URL.adminLogin}`, values)
+        .then((response) => {
+          Storage.set(STORAGE_KEY.token, response?.data?.auth_token)
+          Storage.set(STORAGE_KEY.user, JSON.stringify(response?.data))
+          navigate('/');
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log("Error", error);
+        });
     } catch (e) {
       setLoading(false);
     }
@@ -85,6 +84,14 @@ const JwtLogin = () => {
 
           <Grid item sm={6} xs={12}>
             <ContentBox>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: '50px'
+              }}>
+                <img src="/assets/images/bunawat_logo.svg" width="100%" alt="" />
+              </Box>
               <Formik
                 onSubmit={handleFormSubmit}
                 initialValues={initialValues}

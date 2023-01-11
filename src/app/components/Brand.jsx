@@ -24,10 +24,7 @@ const Brand = ({ children }) => {
   return (
     <BrandRoot>
       <Box display="flex" alignItems="center">
-        <MatxLogo />
-        <StyledSpan mode={mode} className="sidenavHoverShow">
-          Bunawat
-        </StyledSpan>
+        <img src="/assets/images/bunawat_logo_white.svg" width="100%" alt="" />
       </Box>
 
       <Box className="sidenavHoverShow" sx={{ display: mode === 'compact' ? 'none' : 'block' }}>

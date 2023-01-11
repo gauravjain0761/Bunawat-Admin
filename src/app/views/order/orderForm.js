@@ -619,6 +619,8 @@ const OrderForm = ({ data = {} }) => {
                                         name="paymentType">
                                         <FormControlLabel value="cod" control={<Radio />} label="COD" />
                                         <FormControlLabel value="online" control={<Radio />} label="Online" />
+                                        <FormControlLabel value="credits" control={<Radio />} label="Credits" />
+                                        <FormControlLabel value="partialCredits" control={<Radio />} label="Partial Credits" />
                                     </RadioGroup>
                                 </FormControl>
                                 {paymentType == 'online' &&

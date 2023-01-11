@@ -187,35 +187,19 @@ const OrderList = () => {
             color = '#5b841b'
             background = '#5b841b'
         }
-        if (status == "On hold") {
-            color = '#94660c'
-            background = '#f8dda7'
-        }
-        if (status == "Completed") {
+        if (status == "Confirmed") {
             color = '#2e4453'
             background = '#c8d7e1'
         }
-        if (status == "Cancelled") {
-            color = '#777'
-            background = '#e5e5e5'
-        }
-        if (status == "Refunded") {
-            color = '#777'
-            background = '#e5e5e5'
-        }
-        if (status == "Failed") {
-            color = '#761919'
-            background = '#eba3a3'
-        }
-        if (status == "Packed") {
-            color = '#777'
-            background = '#e5e5e5'
-        }
         if (status == "Shipped") {
+            color = '#94660c'
+            background = '#f8dda7'
+        }
+        if (status == "Return") {
             color = '#777'
             background = '#e5e5e5'
         }
-        if (status == "Replaced") {
+        if (status == "Cancelled") {
             color = '#777'
             background = '#e5e5e5'
         }

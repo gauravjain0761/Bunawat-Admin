@@ -57,15 +57,10 @@ const StatusModel = ({ open, deleteData, getData, handleClose }) => {
                             onChange={handleChange}>
                             <MenuItem value="Pending payment">Pending payment</MenuItem>
                             <MenuItem value="Processing">Processing</MenuItem>
-                            <MenuItem value="Packed">Packed</MenuItem>
+                            <MenuItem value="Confirmed">Confirmed</MenuItem>
                             <MenuItem value="Shipped">Shipped</MenuItem>
-                            <MenuItem value="On hold">On hold</MenuItem>
-                            <MenuItem value="Completed">Completed</MenuItem>
+                            <MenuItem value="Return">Return</MenuItem>
                             <MenuItem value="Cancelled">Cancelled</MenuItem>
-                            <MenuItem value="Refunded">Refunded</MenuItem>
-                            <MenuItem value="Failed">Failed</MenuItem>
-                            <MenuItem value="Replaced">Replaced</MenuItem>
-                            <MenuItem value="Draft">Draft</MenuItem>
                         </Select>
                     </FormControl>
                 </DialogContentText>

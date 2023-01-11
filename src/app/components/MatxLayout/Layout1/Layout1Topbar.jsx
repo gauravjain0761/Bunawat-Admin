@@ -2,12 +2,14 @@ import { Avatar, Hidden, Icon, IconButton, MenuItem, useMediaQuery } from '@mui/
 import { Box, styled, useTheme } from '@mui/system';
 import { MatxMenu, MatxSearchBox } from 'app/components';
 import { themeShadows } from 'app/components/MatxTheme/themeColors';
+import { STORAGE_KEY } from 'app/constant/storage';
 import { NotificationProvider } from 'app/contexts/NotificationContext';
 import useAuth from 'app/hooks/useAuth';
 import useSettings from 'app/hooks/useSettings';
+import Storage from 'app/service/storage';
 import { topBarHeight } from 'app/utils/constant';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Span } from '../../../components/Typography';
 import NotificationBar from '../../NotificationBar/NotificationBar';
 import ShoppingCart from '../../ShoppingCart';
@@ -72,8 +74,8 @@ const IconBox = styled('div')(({ theme }) => ({
 
 const Layout1Topbar = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { settings, updateSettings } = useSettings();
-  const { logout, user } = useAuth();
   const isMdScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const updateSidebarMode = (sidebarSettings) => {
@@ -130,10 +132,15 @@ const Layout1Topbar = () => {
               <UserMenu>
                 <Hidden xsDown>
                   <Span>
-                    Hi <strong>{user.name}</strong>
+                    Hi <strong>Admin</strong>
                   </Span>
                 </Hidden>
-                <Avatar src={user.avatar} sx={{ cursor: 'pointer' }} />
+                <Avatar src="/assets/images/bunawat_avatar.svg" sx={{
+                  cursor: 'pointer',
+                  "img": {
+                    objectFit: 'none'
+                  }
+                }} />
               </UserMenu>
             }
           >
@@ -156,14 +163,18 @@ const Layout1Topbar = () => {
               <Span> Settings </Span>
             </StyledItem> */}
 
-            <StyledItem onClick={logout}>
+            <StyledItem onClick={() => {
+              Storage.delete(STORAGE_KEY.token)
+              Storage.delete(STORAGE_KEY.user)
+              navigate('/');
+            }}>
               <Icon> power_settings_new </Icon>
               <Span> Logout </Span>
             </StyledItem>
           </MatxMenu>
         </Box>
-      </TopbarContainer>
-    </TopbarRoot>
+      </TopbarContainer >
+    </TopbarRoot >
   );
 };
 

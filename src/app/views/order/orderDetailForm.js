@@ -347,6 +347,9 @@ const OrderDetailForm = ({ data = {} }) => {
                     </Grid>
                 </ValidatorForm>
             </Box >
+            {/* <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
+            <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
+            <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} /> */}
         </Box >
     );
 };
