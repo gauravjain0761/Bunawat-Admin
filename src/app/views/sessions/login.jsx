@@ -90,7 +90,7 @@ const JwtLogin = () => {
                 justifyContent: 'center',
                 mb: '50px'
               }}>
-                <img src="/assets/images/bunawat_logo.svg" width="100%" alt="" />
+                <img src="/assets/images/bunawat_logo.svg" width="100px" alt="" />
               </Box>
               <Formik
                 onSubmit={handleFormSubmit}
