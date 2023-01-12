@@ -48,8 +48,8 @@ const TextField = styled(TextValidator)(() => ({
 const ProductForm = ({ data = {} }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [dOpen, setDopen] = useState(false)
-    const [categoryList, setCategoryList] = useState([])
     const [description, setDescription] = useState("");
+    const [categoryList, setCategoryList] = useState([])
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -85,7 +85,6 @@ const ProductForm = ({ data = {} }) => {
             }]
         })
     }, [data])
-
 
     const getCategoryList = async () => {
         await ApiGet(`${API_URL.getCategoryList}`)
@@ -140,7 +139,6 @@ const ProductForm = ({ data = {} }) => {
                             })
                         }
                     }) ?? [];
-                    console.log(categoryList)
                     setCategoryList(categoryList);
                 }
             })

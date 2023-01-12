@@ -1,5 +1,7 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
+import { API_URL } from "app/constant/api";
+import { ApiGet } from "app/service/api";
 import ProductForm from "app/views/product/addProduct/addForm";
 import ProductEditForm from "app/views/product/addProduct/editForm";
 import { useEffect, useState } from "react";
@@ -18,13 +20,24 @@ const AddProduct = () => {
     const { id } = useParams();
     const [data, setData] = useState({});
 
+    const getData = async (id) => {
+        await ApiGet(`${API_URL.getProduct}/${id}`)
+            .then((response) => {
+                setData(response?.data ?? {});
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
     useEffect(() => {
         if (id) {
-            setData([].find(item => item.id == id))
+            getData(id)
+        } else {
+            setData([])
         }
     }, [id])
 
-    console.log(data)
     return (
         <Container>
             <Stack spacing={3}>

@@ -299,7 +299,7 @@ const ProductList = () => {
                                     TransitionComponent={Fade}
                                 >
                                     <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                                    <MenuItem onClick={() => navigate(`/product/add/${row.id}`)}>Edit</MenuItem>
+                                    <MenuItem onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setOpen(true);
                                         handleActionClose();
