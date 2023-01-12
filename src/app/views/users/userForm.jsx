@@ -34,6 +34,7 @@ import { ApiGet, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import { toast } from 'material-react-toastify';
 import moment from "moment";
+import { LoadingButton } from "@mui/lab";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -45,6 +46,7 @@ const UserForm = ({ data = {}, userType, id }) => {
     const [open, setOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [collectionData, setCollectionData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleChangeExpand = (panel) => (event, isExpanded) => {
         console.log(event.target, isExpanded)
@@ -103,15 +105,18 @@ const UserForm = ({ data = {}, userType, id }) => {
     }
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         const { ...payload } = formData
         if (getURL() != "") {
             await ApiPut(`${getURL(userType)}/${id}`, { ...payload })
                 .then((response) => {
                     toast.success('Edit Successfully!')
+                    setLoading(false)
                     getBack(userType)
                 })
                 .catch((error) => {
                     toast.error(error?.error)
+                    setLoading(false)
                     console.log("Error", error);
                 });
         } else {
@@ -818,14 +823,19 @@ const UserForm = ({ data = {}, userType, id }) => {
 
                 <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexWrap: 'wrap' }}>
                     <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexWrap='wrap'>
-                        <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                        <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                             <Icon>arrow_back</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                         </Button>
-                        <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                            <Icon>send</Icon>
-                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                        </Button>
+                        <LoadingButton
+                            loading={loading}
+                            loadingPosition="start"
+                            type="submit"
+                            sx={{ mr: 2, mt: 2 }}
+                            startIcon={<Icon>send</Icon>}
+                            variant="contained">
+                            Save
+                        </LoadingButton>
                         <Button color="error" variant="contained" onClick={() => setOpen(true)} sx={{ mr: 2, mt: 2 }}>
                             <Icon>delete</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>

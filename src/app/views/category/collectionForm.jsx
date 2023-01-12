@@ -28,6 +28,7 @@ import { toast } from 'material-react-toastify';
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -37,6 +38,7 @@ const TextField = styled(TextValidator)(() => ({
 const CollectionForm = ({ data = {}, id }) => {
     const [formData, setFormData] = useState(data);
     const [description, setDescription] = useState("");
+    const [loading, setLoading] = useState(false);
     const [categoryList, setCategoryList] = useState([]);
     const [collectionList, setCollectionList] = useState([]);
     const navigate = useNavigate();
@@ -86,6 +88,7 @@ const CollectionForm = ({ data = {}, id }) => {
     }, [])
 
     const handleSubmit = async () => {
+        setLoading(true)
         if (id) {
             await ApiPut(`${API_URL.editCollection}/${id}`, {
                 "name": formData?.name,
@@ -95,10 +98,12 @@ const CollectionForm = ({ data = {}, id }) => {
                 "product_list": [formData?.productId]
             })
                 .then((response) => {
+                    setLoading(false)
                     toast.success('Edit Successfully!')
                     navigate("/collection/list")
                 })
                 .catch((error) => {
+                    setLoading(false)
                     toast.error(error?.error)
                     console.log("Error", error);
                 });
@@ -111,10 +116,12 @@ const CollectionForm = ({ data = {}, id }) => {
                 "product_list": [formData?.productId]
             })
                 .then((response) => {
+                    setLoading(false)
                     toast.success('Add Successfully!')
                     navigate("/collection/list")
                 })
                 .catch((error) => {
+                    setLoading(false)
                     toast.error(error?.error)
                     console.log("Error", error);
                 });
@@ -300,14 +307,15 @@ const CollectionForm = ({ data = {}, id }) => {
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
-                            {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>delete</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
-                            </Button> */}
+                            <LoadingButton
+                                loading={loading}
+                                loadingPosition="start"
+                                type="submit"
+                                sx={{ mr: 2, mt: 2 }}
+                                startIcon={<Icon>send</Icon>}
+                                variant="contained">
+                                Save
+                            </LoadingButton>
                         </Box>
                     </Box>
                 </SimpleCard>

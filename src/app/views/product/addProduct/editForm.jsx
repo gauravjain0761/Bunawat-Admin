@@ -26,6 +26,7 @@ import {
     Switch,
     TableCell,
     TableRow,
+    Typography,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import useEyeDropper from 'use-eye-dropper'
@@ -33,13 +34,16 @@ import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { mockDataProductColor } from "fake-db/data/product/color/colorList";
 import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
 import TableComponent from "app/components/table";
+import TextEditor from "app/components/textEditor";
+import { ApiGet } from "app/service/api";
+import { API_URL } from "app/constant/api";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -64,6 +68,7 @@ const ProductEditForm = ({ data = {} }) => {
     const navigate = useNavigate();
     const [actionOpen, setActionOpen] = useState(formData?.attributeList?.map(() => { return null }) ?? []);
     const [actionAllOpen, setActionAllOpen] = useState(null);
+    const [attributes, setAttributes] = useState([]);
 
     // useEffect(() => {
     //     setFormData({
@@ -83,10 +88,31 @@ const ProductEditForm = ({ data = {} }) => {
     //     })
     // }, [data])
 
+    const getData = async () => {
+        await ApiGet(`${API_URL.getAttributes}`)
+            .then((response) => {
+                setAttributes(response?.data?.map((item) => {
+                    return {
+                        type: 'single',
+                        name: item?.slug,
+                        value: null,
+                        options: item?.variants?.map(x => x?.name)
+                    }
+                }) ?? []);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [])
+
     const columns = [
         {
             id: "dnumber",
-            label: `Design \nNo/SKU`,
+            label: "SKU",
             width: 120
         },
         {
@@ -114,22 +140,30 @@ const ProductEditForm = ({ data = {} }) => {
             width: 100
         },
         {
-            id: "in_stock_threshold_qty",
-            label: "InStock \nThreshold QTY",
+            id: "in_stock_threshold",
+            label: "InStock \nThreshold",
             align: "center",
             width: 100
         },
         {
-            id: "swetch",
-            label: "Swetch",
+            id: "Swatch",
+            label: "Swatch",
             align: "center",
+            sortDisable: true,
             width: 100
         },
         {
             id: "mappedvariant",
             label: "Mapped \nVariant",
+            sortDisable: true,
             align: "center",
             width: 100
+        },
+        {
+            id: "isActive",
+            label: "Status",
+            align: "center",
+            width: 80
         },
         {
             id: "action",
@@ -138,7 +172,6 @@ const ProductEditForm = ({ data = {} }) => {
             align: 'right',
             width: 80,
             sortDisable: true,
-
             renderCell: (
                 <>
                     <IconButton
@@ -598,15 +631,10 @@ const ProductEditForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <TextField
-                                type="text"
-                                name="description"
-                                label="Description"
-                                onChange={handleChange}
-                                value={description || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+
+                            <Box sx={{ mb: 2 }}>
+                                <TextEditor />
+                            </Box>
 
                             <TextField
                                 type="text"
@@ -699,30 +727,16 @@ const ProductEditForm = ({ data = {} }) => {
 
                             <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Add Attributes</Span>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
-                                {attributeData?.length > 0 && attributeData?.filter(item => !disableInventoryList.includes(item?.name))?.map((data, index) => {
-                                    if (data?.name == 'swatch') {
-                                        return (
-                                            <Box key={index} sx={{
-                                                width: '30px', height: '53px', display: 'flex', alignItems: 'center', justifyContent: 'center        '
-                                            }} onClick={() => {
-                                                setDopen(true)
-                                            }}>
-                                                <Box sx={{
-                                                    width: '30px', height: '30px', background: data?.value, borderRadius: '50%'
-                                                }}></Box>
-                                            </Box>
-                                        )
-                                    }
+                                {attributes?.map((data, index) => {
                                     return (
                                         <Autocomplete
                                             key={index}
                                             sx={{ width: "400px" }}
                                             multiple={data?.type == 'single' ? false : true}
                                             id="tags-outlined"
-                                            value={data?.value}
-                                            onChange={(event, newValue) => handleAddValueAttribute(data?.type, data?.name, newValue)}
-                                            options={data?.name == "color" ? mockDataProductColor.map(color => color.name) :
-                                                mockDataProductSize.map(size => size.name)}
+                                            // value={data?.value}
+                                            // onChange={(event, newValue) => handleAddValueAttribute(data?.type, data?.name, newValue)}
+                                            options={data?.options}
                                             getOptionLabel={(option) => option}
                                             filterSelectedOptions
                                             renderInput={(params) => (
@@ -831,6 +845,17 @@ const ProductEditForm = ({ data = {} }) => {
                                                     </Box>
                                                 </TableCell>
                                                 <TableCell align="center">ABCD123,XYZ456</TableCell>
+                                                <TableCell align="center">
+                                                    {row?.isActive ?? true ?
+                                                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                                            Active
+                                                        </Typography>
+                                                        :
+                                                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                                            InActive
+                                                        </Typography>
+                                                    }
+                                                </TableCell>
                                                 <TableCell align='right' sx={{ pr: "18px" }}>
                                                     <IconButton
                                                         aria-label="more"

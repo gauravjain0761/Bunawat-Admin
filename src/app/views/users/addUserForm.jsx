@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -32,6 +33,7 @@ const TextField = styled(TextValidator)(() => ({
 
 const AddUserForm = ({ data = {}, disableRole = false }) => {
     const [formData, setFormData] = useState(data ?? {});
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
         if (data) {
@@ -65,14 +67,17 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
     }
 
     const handleSubmit = async () => {
+        setLoading(true)
         if (getURL() != "") {
             await ApiPost(getURL(formData?.role), formData)
                 .then((response) => {
                     toast.success('Add Successfully!')
+                    setLoading(false)
                     getBack(formData?.role)
                 })
                 .catch((error) => {
                     toast.error(error?.error)
+                    setLoading(false)
                     console.log("Error", error);
                 });
         } else {
@@ -209,10 +214,15 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
+                            <LoadingButton
+                                loading={loading}
+                                loadingPosition="start"
+                                type="submit"
+                                sx={{ mr: 2, mt: 2 }}
+                                startIcon={<Icon>send</Icon>}
+                                variant="contained">
+                                Save
+                            </LoadingButton>
                         </Box>
                     </Box>
                 </SimpleCard>

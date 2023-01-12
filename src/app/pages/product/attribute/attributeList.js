@@ -19,6 +19,7 @@ import { Span } from 'app/components/Typography';
 import { ApiGet, ApiPost } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
 import DeleteAttributesModel from 'app/views/product/model/deleteAttributesModel';
+import { LoadingButton } from '@mui/lab';
 
 const AttributeList = () => {
     const navigate = useNavigate();
@@ -32,6 +33,7 @@ const AttributeList = () => {
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [formData, setFormData] = useState({});
+    const [loading, setLoading] = useState(false);
     const [deleteData, setDeleteData] = useState(null);
 
     const getData = async () => {
@@ -50,13 +52,16 @@ const AttributeList = () => {
     }, [page, rowsPerPage])
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         await ApiPost(`${API_URL.addAttribute}`, formData)
             .then((response) => {
+                setLoading(false)
                 toast.success('Add Successfully!')
                 setFormData({ ...formData, name: "", multiselect: false });
                 getData();
             })
             .catch((error) => {
+                setLoading(false)
                 toast.error(error?.error)
                 console.log("Error", error);
             });
@@ -271,10 +276,15 @@ const AttributeList = () => {
                             </Grid>
                             <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                                 <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                        <Icon>send</Icon>
-                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                                    </Button>
+                                    <LoadingButton
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        type="submit"
+                                        sx={{ mr: 2, mt: 2 }}
+                                        startIcon={<Icon>send</Icon>}
+                                        variant="contained">
+                                        Save
+                                    </LoadingButton>
                                 </Box>
                             </Box>
                         </SimpleCard>

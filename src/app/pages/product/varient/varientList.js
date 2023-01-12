@@ -19,10 +19,12 @@ import { ApiGet, ApiPost } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
 import { toast } from 'material-react-toastify';
 import DeleteVariantModel from 'app/views/product/model/deleteVariantModel';
+import { LoadingButton } from '@mui/lab';
 
 const VarientList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
@@ -51,14 +53,17 @@ const VarientList = () => {
     }, [page, rowsPerPage])
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         if (id) {
             await ApiPost(`${API_URL.addVarient}`, { name: formData?.name, attribute: id })
                 .then((response) => {
+                    setLoading(false)
                     toast.success('Add Successfully!')
                     setFormData({ ...formData, name: "" });
                     getData();
                 })
                 .catch((error) => {
+                    setLoading(false)
                     toast.error(error?.error)
                     console.log("Error", error);
                 });
@@ -259,10 +264,15 @@ const VarientList = () => {
                                         <Icon>arrow_back</Icon>
                                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                                     </Button>
-                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                        <Icon>send</Icon>
-                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                                    </Button>
+                                    <LoadingButton
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        type="submit"
+                                        sx={{ mr: 2, mt: 2 }}
+                                        startIcon={<Icon>send</Icon>}
+                                        variant="contained">
+                                        Save
+                                    </LoadingButton>
                                 </Box>
                             </Box>
                         </SimpleCard>

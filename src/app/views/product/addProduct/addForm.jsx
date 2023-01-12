@@ -33,6 +33,7 @@ import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
+import TextEditor from "app/components/textEditor";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -491,15 +492,9 @@ const ProductForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <TextField
-                                type="text"
-                                name="description"
-                                label="Description"
-                                onChange={handleChange}
-                                value={description || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+                            <Box sx={{ mb: 2 }}>
+                                <TextEditor />
+                            </Box>
 
                             <TextField
                                 type="text"

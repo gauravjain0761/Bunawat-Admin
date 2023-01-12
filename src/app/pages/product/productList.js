@@ -43,6 +43,12 @@ const ProductList = () => {
             width: 120
         },
         {
+            id: "isActive",
+            label: "Status",
+            align: "center",
+            width: 80
+        },
+        {
             id: "action",
             label: "Action",
             action: true,
@@ -227,6 +233,17 @@ const ProductList = () => {
                             </TableCell>
                             <TableCell>{row.slug}</TableCell>
                             <TableCell align="center">{row.count}</TableCell>
+                            <TableCell align="center">
+                                {row?.isActive ?? true ?
+                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                        Active
+                                    </Typography>
+                                    :
+                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                        InActive
+                                    </Typography>
+                                }
+                            </TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"

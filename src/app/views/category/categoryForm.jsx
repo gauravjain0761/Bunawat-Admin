@@ -29,6 +29,7 @@ import Avatar from "react-avatar";
 import { toast } from 'material-react-toastify';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -39,6 +40,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const [formData, setFormData] = useState(data);
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
+    const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
     const [categoryList, setCategoryList] = useState([]);
     const [parentCategoryList, setParentCategoryList] = useState([]);
@@ -157,6 +159,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
     }
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         const { link_with, linkValue, productId, ...payload } = formData
         if (id) {
             await ApiPut(`${getEditURL(type)}/${id}`, {
@@ -170,6 +173,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
             })
                 .then((response) => {
                     toast.success('Edit Successfully!')
+                    setLoading(false)
                     if (!searchParams.get("redirect")) {
                         navigate(`/category/${type}`)
                     } else {
@@ -177,6 +181,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     }
                 })
                 .catch((error) => {
+                    setLoading(false)
                     toast.error(error?.error)
                     console.log("Error", error);
                 });
@@ -192,6 +197,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
             })
                 .then((response) => {
                     toast.success('Add Successfully!')
+                    setLoading(false)
                     if (!searchParams.get("redirect")) {
                         navigate(`/category/${type}`)
                     } else {
@@ -199,6 +205,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     }
                 })
                 .catch((error) => {
+                    setLoading(false)
                     toast.error(error?.error)
                     console.log("Error", error);
                 });
@@ -462,29 +469,16 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
-                            {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>delete</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
-                            </Button> */}
+                            <LoadingButton
+                                loading={loading}
+                                loadingPosition="start"
+                                type="submit"
+                                sx={{ mr: 2, mt: 2 }}
+                                startIcon={<Icon>send</Icon>}
+                                variant="contained">
+                                Save
+                            </LoadingButton>
                         </Box>
-                        {/* <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"} >
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/wishlist")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User wishlist</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/cart/details")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User Cart Details</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate("/user/payment/history")}>
-                                <Icon>star_rate</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>User payment history</Span>
-                            </Button>
-                        </Box> */}
                     </Box>
                 </SimpleCard>
 
