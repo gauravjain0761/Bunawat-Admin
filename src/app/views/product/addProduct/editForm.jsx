@@ -756,6 +756,7 @@ const ProductEditForm = ({ data = {} }) => {
                                                 role="checkbox"
                                                 tabIndex={-1}
                                                 key={index}
+                                                sx={{ border: '1px solid' }}
                                             >
                                                 <TableCell sx={{ pl: '15px' }}>ABCD1234BlueM</TableCell>
                                                 <TableCell align="center">
