@@ -241,7 +241,7 @@ const ParentCategory = () => {
                             backgroundColor: UIColor, color: "#fff"
                         }
                     }}>
-                        <Icon s>add</Icon>
+                        <Icon>add</Icon>
                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Parent Category</Span>
                     </Button>
                 </Box>

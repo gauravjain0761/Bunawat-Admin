@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import useEyeDropper from 'use-eye-dropper'
+import { toast } from 'material-react-toastify';
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { mockDataProductColor } from "fake-db/data/product/color/colorList";
@@ -34,6 +35,10 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
 import TextEditor from "app/components/textEditor";
+import { API_URL } from "app/constant/api";
+import { ApiGet, ApiPost } from "app/service/api";
+import React from "react";
+import { LoadingButton } from "@mui/lab";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -43,6 +48,10 @@ const TextField = styled(TextValidator)(() => ({
 const ProductForm = ({ data = {} }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [dOpen, setDopen] = useState(false)
+    const [categoryList, setCategoryList] = useState([])
+    const [description, setDescription] = useState("");
+    const [collectionList, setCollectionList] = useState([])
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         ...data, pCategory: "None", color: '#000', attributeData: [{
             type: 'single',
@@ -78,9 +87,104 @@ const ProductForm = ({ data = {} }) => {
     }, [data])
 
 
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
+    const getCategoryList = async () => {
+        await ApiGet(`${API_URL.getCategoryList}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    let temp = [...response?.data]
+                    let categoryList = [];
+                    temp = temp?.map(level1 => {
+                        if (level1?.sub_categories?.length == 0) {
+                            categoryList.push({
+                                label: level1?.name,
+                                value: level1?._id,
+                                disabled: false,
+                                fontWeight: 600,
+                                type: 'parent'
+                            })
+                        } else {
+                            categoryList.push({
+                                label: level1?.name,
+                                value: level1?._id,
+                                disabled: true,
+                                fontWeight: 600,
+                                type: 'parent'
+                            })
+                            level1?.sub_categories?.map(level2 => {
+                                if (level2?.categories?.length == 0) {
+                                    categoryList.push({
+                                        label: level2?.name,
+                                        value: level2?._id,
+                                        disabled: false,
+                                        fontWeight: 500,
+                                        type: 'sub'
+                                    })
+                                } else {
+                                    categoryList.push({
+                                        label: level2?.name,
+                                        value: level2?._id,
+                                        disabled: true,
+                                        fontWeight: 500,
+                                        type: 'sub'
+                                    })
+                                    level2?.categories?.map(level3 => {
+                                        categoryList.push({
+                                            label: level3?.name,
+                                            value: level3?._id,
+                                            fontWeight: 400,
+                                            disabled: false,
+                                            type: 'category'
+                                        })
+                                    })
+                                }
+                            })
+                        }
+                    }) ?? [];
+                    console.log(categoryList)
+                    setCategoryList(categoryList);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getCollectionList = async () => {
+        await ApiGet(`${API_URL.getCollections}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionList(response?.data?.map(item => ({
+                        label: item?.name,
+                        value: item?._id
+                    })) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getCategoryList();
+        getCollectionList();
+    }, [])
+
+    const handleSubmit = async (event) => {
+        setLoading(true)
+        await ApiPost(API_URL.addCollection, {
+            ...formData,
+            description,
+        })
+            .then((response) => {
+                setLoading(false)
+                toast.success('Add Successfully!')
+                navigate("/product/list")
+            })
+            .catch((error) => {
+                setLoading(false)
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
     };
 
     const handleChange = (event) => {
@@ -106,7 +210,7 @@ const ProductForm = ({ data = {} }) => {
                 }
             })
             setFormData({ ...formData, [event.target.name]: [...videos, ...newVideos] });
-        } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "costPrice" || event.target.name == "reSellerPrice" || event.target.name == "influncerCommission") {
+        } else if (event.target.name == "mrp" || event.target.name == "sale_price" || event.target.name == "cost_price" || event.target.name == "reseller_price" || event.target.name == "influncerCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -219,24 +323,16 @@ const ProductForm = ({ data = {} }) => {
     }
 
     const {
-        category,
-        collection,
-        designNo,
+        category_id,
+        collection_id,
         name,
-        description,
         image,
         videos,
-        costPrice,
+        cost_price,
         mrp,
-        salePrice,
-        reSellerPrice,
-        influncerCommissionType,
-        influncerCommission,
-        taxType,
-        attributeType,
-        attributeData,
-        attributeList,
-        isActive,
+        sale_price,
+        reseller_price,
+        tax,
     } = formData;
 
     const disableInventoryList = ['instock_qty', 'threshold_qty', 'instock_lead_time', 'preorder_qty', 'preorder_lead_time', 'mapped_variant'];
@@ -397,70 +493,17 @@ const ProductForm = ({ data = {} }) => {
                             <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
                                 <Select id="grouped-native-select" label="Category"
-                                    value={category}
-                                    name="category"
+                                    value={category_id}
+                                    name="category_id"
                                     onChange={handleChange}>
-                                    <MenuItem value="Ethnic Sets" disabled sx={{
-                                        fontWeight: 600,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>Ethnic Sets</MenuItem>
-                                    <MenuItem value="Palazzo Sets" sx={{
-                                        fontWeight: 500,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>&nbsp;&nbsp;&nbsp;Palazzo Sets</MenuItem>
-                                    <MenuItem value="Pant Sets" disabled sx={{
-                                        fontWeight: 500,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>&nbsp;&nbsp;&nbsp;Pant Sets</MenuItem>
-                                    <MenuItem value="Shararas" sx={{
-                                        fontWeight: 400,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shararas</MenuItem>
-                                    <MenuItem value="Lehengas" sx={{
-                                        fontWeight: 400,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lehengas</MenuItem>
-                                    <MenuItem value="Skirt Sets" sx={{
-                                        fontWeight: 500,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>&nbsp;&nbsp;&nbsp;Skirt Sets</MenuItem>
-                                    <MenuItem value="Floor Length Designs" disabled sx={{
-                                        fontWeight: 600,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>Floor Length Designs</MenuItem>
-                                    <MenuItem value="Floor Length Anarkalis" sx={{
-                                        fontWeight: 500,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>&nbsp;&nbsp;&nbsp;Floor Length Anarkalis</MenuItem>
-                                    <MenuItem value="Gowns" sx={{
-                                        fontWeight: 500,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }} >&nbsp;&nbsp;&nbsp;Gowns</MenuItem>
-                                    <MenuItem value="Lehengas" sx={{
-                                        fontWeight: 600,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>Lehengas</MenuItem>
-                                    <MenuItem value="Shararas" sx={{
-                                        fontWeight: 600,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes" sx={{
-                                        fontWeight: 600,
-                                        color: "#000",
-                                        opacity: "1 !important"
-                                    }}>Stylised Drapes</MenuItem>
-
+                                    {categoryList?.map(item => (
+                                        <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
+                                            fontWeight: item?.fontWeight,
+                                            color: "#000",
+                                            opacity: "1 !important"
+                                        }}>{item?.type == "sub" ?
+                                            <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
 
@@ -469,16 +512,13 @@ const ProductForm = ({ data = {} }) => {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={collection}
-                                    name="collection"
+                                    value={collection_id}
+                                    name="collection_id"
                                     label="Collection"
                                     onChange={handleChange}>
-                                    <MenuItem value="Ethnic Sets">Ethnic Sets</MenuItem>
-                                    <MenuItem value="Floor Length Designs">Floor Length Designs</MenuItem>
-                                    <MenuItem value="Lehengas">Lehengas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Shararas">Shararas</MenuItem>
-                                    <MenuItem value="Stylised Drapes">Stylised Drapes</MenuItem>
+                                    {collectionList?.map(item => (
+                                        <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
 
@@ -493,16 +533,16 @@ const ProductForm = ({ data = {} }) => {
                             />
 
                             <Box sx={{ mb: 2 }}>
-                                <TextEditor />
+                                <TextEditor data={description} setData={(d) => setDescription(d)} />
                             </Box>
 
                             <TextField
                                 type="text"
-                                name="costPrice"
+                                name="cost_price"
                                 label="Cost Price"
                                 sx={{ mt: 1 }}
                                 onChange={handleChange}
-                                value={costPrice || ""}
+                                value={cost_price || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -519,20 +559,20 @@ const ProductForm = ({ data = {} }) => {
 
                             <TextField
                                 type="text"
-                                name="salePrice"
+                                name="sale_price"
                                 label="Sale Price"
                                 onChange={handleChange}
-                                value={salePrice || ""}
+                                value={sale_price || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
 
                             <TextField
                                 type="text"
-                                name="reSellerPrice"
+                                name="reseller_price"
                                 label="ReSeller Price"
                                 onChange={handleChange}
-                                value={reSellerPrice || ""}
+                                value={reseller_price || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -565,8 +605,8 @@ const ProductForm = ({ data = {} }) => {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={taxType}
-                                    name="taxType"
+                                    value={tax}
+                                    name="tax"
                                     label="Tax Type"
                                     onChange={handleChange}>
                                     <MenuItem value="Standard">Standard</MenuItem>
@@ -593,10 +633,15 @@ const ProductForm = ({ data = {} }) => {
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
+                            <LoadingButton
+                                loading={loading}
+                                loadingPosition="start"
+                                type="submit"
+                                sx={{ mr: 2, mt: 2 }}
+                                startIcon={<Icon>send</Icon>}
+                                variant="contained">
+                                Save
+                            </LoadingButton>
                         </Box>
                     </Box>
                 </SimpleCard>

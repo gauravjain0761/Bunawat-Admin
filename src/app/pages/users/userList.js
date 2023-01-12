@@ -261,7 +261,7 @@ const UserList = ({ type }) => {
               backgroundColor: UIColor, color: "#fff"
             }
           }}>
-            <Icon s>add</Icon>
+            <Icon>add</Icon>
             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add {type}</Span>
           </Button>
         </Box>

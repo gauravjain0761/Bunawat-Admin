@@ -11,33 +11,36 @@ import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
-import { mockDataCategoryTreeManagement } from 'fake-db/data/category/categoryTreeList';
 import { Span } from 'app/components/Typography';
+import { API_URL } from 'app/constant/api';
+import { toast } from 'material-react-toastify';
+import { ApiGet, ApiPut } from 'app/service/api';
 
 const ProductList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataCategoryTreeManagement);
+    const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalCount, setTotalCount] = useState(0);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
 
     const columns = [
         {
-            id: "category",
+            id: "name",
             label: "Name",
             width: 200
         },
         {
-            id: "slug",
+            id: "design_num",
             label: "Design No",
             width: 100
         },
         {
-            id: "count",
+            id: "variant_count",
             label: "Variant Count",
             align: "center",
             width: 120
@@ -86,6 +89,36 @@ const ProductList = () => {
             )
         }
     ];
+
+    const getData = async () => {
+        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}`)
+            .then((response) => {
+                setRows(response?.data ?? []);
+                setTotalCount(response?.totalCount);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const editStatusData = async (id, status) => {
+        await ApiPut(`${API_URL.editProduct}/${id}`, {
+            isActive: status
+        })
+            .then((response) => {
+                toast.success('Edit Successfully!')
+                getData()
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -194,7 +227,7 @@ const ProductList = () => {
                             backgroundColor: UIColor, color: "#fff"
                         }
                     }}>
-                        <Icon s>add</Icon>
+                        <Icon>add</Icon>
                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Product</Span>
                     </Button>
                 </Box>
@@ -202,6 +235,7 @@ const ProductList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                totalCount={totalCount}
                 selected={selected}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row.name);
@@ -228,11 +262,11 @@ const ProductList = () => {
                             <TableCell>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <img style={{ marginRight: '5px' }} src="https://content.jdmagicbox.com/comp/bhawanipatna/t9/9999p6670.6670.181223085624.h8t9/catalogue/india-fashion-cloth-store-bazarpada-bhawanipatna-zh5wdnprwx.jpg?clr=5c470a" width='50px' height='50px' />
-                                    {row.category}
+                                    {row?.name}
                                 </Box>
                             </TableCell>
-                            <TableCell>{row.slug}</TableCell>
-                            <TableCell align="center">{row.count}</TableCell>
+                            <TableCell>{row?.design_num}</TableCell>
+                            <TableCell align="center">{row?.variant_count}</TableCell>
                             <TableCell align="center">
                                 {row?.isActive ?? true ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
@@ -264,6 +298,7 @@ const ProductList = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}
                                 >
+                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                                     <MenuItem onClick={() => navigate(`/product/add/${row.id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setOpen(true);

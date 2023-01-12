@@ -244,7 +244,7 @@ const CategoryList = () => {
               backgroundColor: UIColor, color: "#fff"
             }
           }}>
-            <Icon s>add</Icon>
+            <Icon>add</Icon>
             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Category</Span>
           </Button>
         </Box>
