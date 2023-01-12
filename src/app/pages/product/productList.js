@@ -33,14 +33,14 @@ const ProductList = () => {
         },
         {
             id: "slug",
-            label: "SKU",
-            width: 80
+            label: "Design No",
+            width: 100
         },
         {
             id: "count",
-            label: "Design No",
+            label: "Variant Count",
             align: "center",
-            width: 80
+            width: 120
         },
         {
             id: "action",

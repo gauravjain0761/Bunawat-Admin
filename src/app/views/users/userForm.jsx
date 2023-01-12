@@ -155,6 +155,7 @@ const UserForm = ({ data = {}, userType, id }) => {
         phone,
         email,
         password,
+        isActive,
         state,
         district,
         city,
@@ -300,7 +301,19 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 </>
                             }
 
-
+                            <FormControl fullWidth >
+                                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={isActive ?? true}
+                                    name="isActive"
+                                    label="Status"
+                                    onChange={(e) => handleChange(e)}>
+                                    <MenuItem value={true}>Active</MenuItem>
+                                    <MenuItem value={false}>InActive</MenuItem>
+                                </Select>
+                            </FormControl>
 
                         </Grid>
 

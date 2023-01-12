@@ -483,6 +483,16 @@ const ProductForm = ({ data = {} }) => {
 
                             <TextField
                                 type="text"
+                                name="designNo"
+                                label="Design No"
+                                onChange={handleChange}
+                                value={designNo || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+                            <TextField
+                                type="text"
                                 name="name"
                                 label="Name"
                                 onChange={handleChange}
@@ -500,6 +510,126 @@ const ProductForm = ({ data = {} }) => {
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
+
+                            <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
+                                <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                <Box className="list-group">
+                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
+                                    {/* {image?.length > 0 && image?.map((img, i) => (
+                                        <Box key={i}
+                                            sx={{
+                                                width: "160px",
+                                                height: "200px",
+                                                margin: "10px 10px 0 0",
+                                                position: "relative"
+                                            }}>
+                                            <img src={img.url} width="100%" height="160px" />
+                                            <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
+                                                <Switch
+                                                    sx={{
+                                                        color: "red",
+                                                        cursor: "pointer"
+                                                    }}
+                                                    checked={img.checked}
+                                                    onChange={() => handleSwitchImage(i)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{img.checked ? "Active" : "InActive"}</Span>
+                                                <Icon onClick={() => handleDeleteImage(i)} sx={{
+                                                    color: "red",
+                                                    cursor: "pointer",
+                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                            </Box>
+                                        </Box>
+                                    ))} */}
+                                    {/* <Button
+                                        variant="contained"
+                                        component="label"
+                                        sx={{
+                                            width: "160px",
+                                            height: "160px",
+                                            background: "transparent",
+                                            color: "#000",
+                                            border: "2px dashed",
+                                            margin: "10px 10px 0 0",
+
+                                            "&:hover": {
+                                                background: "transparent",
+                                            }
+                                        }} >
+                                        <Icon>add</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Image</Span>
+                                        <input
+                                            type="file"
+                                            name="image"
+                                            multiple
+                                            accept="image/png, image/gif, image/jpeg"
+                                            hidden
+                                            onClick={(event) => { event.target.value = '' }}
+                                            onChange={handleChange} />
+                                    </Button> */}
+                                </Box>
+
+                                <Box className="list-group">
+
+                                    <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
+                                    {/* {videos?.length > 0 && videos?.map((video, i) => (
+                                        <Box key={i}
+                                            sx={{
+                                                width: "160px",
+                                                height: "200px",
+                                                margin: "20px 10px 0 0",
+                                                position: "relative"
+                                            }}>
+                                            <video width="100%" height="160px" autoPlay={true} muted={true} loop={true} playsInline={true}
+                                                style={{ objectFit: "fill", borderRadius: "10px" }}>
+                                                <source src={video.url} type="video/mp4" />
+                                            </video>
+                                            <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
+                                                <Switch
+                                                    sx={{
+                                                        color: "red",
+                                                        cursor: "pointer",
+                                                        zIndex: "999"
+                                                    }}
+                                                    checked={video.checked}
+                                                    onChange={() => handleSwitchVideo(i, 4)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{video.checked ? "Active" : "InActive"}</Span>
+                                                <Icon onClick={() => handleDeleteVideo(i)} sx={{
+                                                    color: "red",
+                                                    cursor: "pointer",
+                                                    zIndex: "999"
+                                                }}>delete</Icon> <Span onClick={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                            </Box>
+                                        </Box>
+                                    ))} */}
+                                    {/* <Button
+                                        variant="contained"
+                                        component="label"
+                                        sx={{
+                                            width: "160px",
+                                            height: "160px",
+                                            background: "transparent",
+                                            color: "#000",
+                                            border: "2px dashed",
+                                            margin: "20px 10px 0 0",
+
+                                            "&:hover": {
+                                                background: "transparent",
+                                            }
+                                        }} >
+                                        <Icon>add</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Video</Span>
+                                        <input
+                                            type="file"
+                                            name="videos"
+                                            accept="video/mp4,video/x-m4v,video/*"
+                                            hidden
+                                            onClick={(event) => { event.target.value = '' }}
+                                            onChange={handleChange} />
+                                    </Button> */}
+                                </Box>
+                            </Box>
 
                             <TextField
                                 type="text"
@@ -579,18 +709,209 @@ const ProductForm = ({ data = {} }) => {
                                 </Select>
                             </FormControl>
 
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Inventory</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
+                                {attributeData?.length > 0 && attributeData?.filter(item => !disableInventoryList.includes(item?.name))?.map((data, index) => {
+                                    if (data?.name == 'swatch') {
+                                        return (
+                                            <Box sx={{
+                                                width: '30px', height: '53px', display: 'flex', alignItems: 'center', justifyContent: 'center        '
+                                            }} onClick={() => {
+                                                setDopen(true)
+                                            }}>
+                                                <Box sx={{
+                                                    width: '30px', height: '30px', background: data?.value, borderRadius: '50%'
+                                                }}></Box>
+                                            </Box>
+                                        )
+                                    }
+                                    return (
+                                        <Autocomplete
+                                            key={index}
+                                            sx={{ width: "400px" }}
+                                            multiple={data?.type == 'single' ? false : true}
+                                            id="tags-outlined"
+                                            value={data?.value}
+                                            onChange={(event, newValue) => handleAddValueAttribute(data?.type, data?.name, newValue)}
+                                            options={data?.name == "color" ? mockDataProductColor.map(color => color.name) :
+                                                mockDataProductSize.map(size => size.name)}
+                                            getOptionLabel={(option) => option}
+                                            filterSelectedOptions
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
+                                                />
+                                            )}
+                                        />
+                                    )
+                                })}
 
-                            <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
-                                <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
-                                <Box className="list-group">
-                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
-                                </Box>
-
-                                <Box className="list-group">
-                                    <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
-                                </Box>
                             </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>InStock</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
+                                <TextField
+                                    type="number"
+                                    name="instock_qty"
+                                    sx={{ width: "400px" }}
+                                    label="In Stock QTY"
+                                    onChange={(e) => handleAddValueAttribute('single', 'instock_qty', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "instock_qty")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="number"
+                                    fullWidth
+                                    sx={{ minWidth: "400px" }}
+                                    name="threshold_qty"
+                                    label="Threshold QTY"
+                                    onChange={(e) => handleAddValueAttribute('single', 'threshold_qty', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "threshold_qty")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="number"
+                                    name="instock_lead_time"
+                                    sx={{ width: "400px" }}
+                                    label="Lead Time"
+                                    onChange={(e) => handleAddValueAttribute('single', 'instock_lead_time', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "instock_lead_time")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+                            </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>Preorder</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
+                                <TextField
+                                    type="number"
+                                    name="preorder_qty"
+                                    fullWidth
+                                    label="Preorder QTY"
+                                    sx={{ width: "400px" }}
+                                    onChange={(e) => handleAddValueAttribute('single', 'preorder_qty', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "preorder_qty")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                                <TextField
+                                    type="number"
+                                    name="preorder_lead_time"
+                                    label="Lead Time"
+                                    sx={{ width: "400px" }}
+                                    onChange={(e) => handleAddValueAttribute('single', 'preorder_lead_time', e.target.value)}
+                                    value={attributeData?.find(item => item?.name == "preorder_lead_time")?.value ?? ''}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+
+                            </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>Mapped Variant</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
+                                <Autocomplete
+                                    multiple={true}
+                                    id="tags-outlined"
+                                    fullWidth
+                                    sx={{ width: "400px" }}
+                                    options={['ABCD12', 'XYZ67']}
+                                    onChange={(e, newValue) => handleAddValueAttribute('multi', 'mapped_variant', newValue)}
+                                    value={attributeData?.find(item => item?.name == "mapped_variant")?.value ?? []}
+                                    getOptionLabel={(option) => option}
+                                    filterSelectedOptions
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label='Variant List'
+                                        />
+                                    )}
+                                />
+                                <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
+                                    <Icon>add</Icon>
+                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
+                                </Button>
+                            </Box>
+                            <Dialog
+                                open={dOpen}
+                                aria-labelledby="responsive-dialog-title">
+                                <DialogTitle id="responsive-dialog-title">
+                                    Pick Color
+                                </DialogTitle>
+                                <DialogContent>
+                                    {image?.[0]?.url ?
+                                        <img src={image?.[0]?.url} width="100%" height="160px" />
+                                        :
+                                        <>Please Select Image First.</>
+                                    }
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={() => setDopen(false)} type='button'>
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={() => pickColor()} type='button'>
+                                        Pick Color
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                            {attributeList?.length > 0 && <> <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Attributes List</Span>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "20px", mb: 2 }}>
+                                    {attributeList?.map((data, index) => {
+                                        return (
+                                            <Box sx={{
+                                                display: 'flex', flexDirection: 'column', border: '1px solid',
+                                                padding: '10px 20px',
+                                                borderRadius: '10px',
+                                                position: 'relative',
+                                            }}>
+                                                <Icon onClick={() => handleDeleteAttribute(index)} sx={{
+                                                    position: 'absolute',
+                                                    right: '-10px',
+                                                    top: '-10px',
+                                                    color: "black",
+                                                    cursor: "pointer",
+                                                    zIndex: "999"
+                                                }}>delete</Icon>
+                                                {data?.map(item => {
+                                                    return (
+                                                        <Box sx={{ display: 'flex' }}>
+
+                                                            <Box component='span'>
+                                                                {item?.name.split("_")?.map(x => (x?.charAt(0)?.toUpperCase() + x?.slice(1)))?.join(" ") ?? ''}
+                                                            </Box>
+                                                            <Box component='span'>
+                                                                &nbsp;&nbsp;:&nbsp;&nbsp;
+                                                            </Box>
+                                                            <Box component='span'>
+                                                                {typeof item?.value == 'string' ? item?.value : item?.value?.join(",")}
+                                                            </Box>
+                                                        </Box>
+                                                    )
+                                                })}
+                                            </Box>
+                                        )
+                                    })}
+                                </Box>
+                            </>}
+
+                            <FormControl>
+                                <RadioGroup
+                                    row
+                                    value={isActive ?? "active"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="isActive">
+                                    <FormControlLabel value="active" control={<Radio />} label="Active" />
+                                    <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
+                                </RadioGroup>
+                            </FormControl>
                         </Grid>
+
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
@@ -602,6 +923,10 @@ const ProductForm = ({ data = {} }) => {
                                 <Icon>send</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
                             </Button>
+                            {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
+                                <Icon>delete</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
+                            </Button> */}
                         </Box>
                     </Box>
                 </SimpleCard>

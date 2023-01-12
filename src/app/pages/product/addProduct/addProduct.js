@@ -1,6 +1,7 @@
 import { Stack } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import ProductForm from "app/views/product/addProduct/addForm";
+import ProductEditForm from "app/views/product/addProduct/editForm";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -27,7 +28,11 @@ const AddProduct = () => {
     return (
         <Container>
             <Stack spacing={3}>
-                <ProductForm data={data} />
+                {id ?
+                    <ProductEditForm data={data} />
+                    :
+                    <ProductForm data={{}} />
+                }
             </Stack>
         </Container>
     );

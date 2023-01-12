@@ -14,6 +14,7 @@ import {
     FormLabel,
     Grid,
     Icon,
+    IconButton,
     InputLabel,
     MenuItem,
     Radio,
@@ -21,6 +22,8 @@ import {
     Select,
     styled,
     Switch,
+    TableCell,
+    TableRow,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import useEyeDropper from 'use-eye-dropper'
@@ -33,14 +36,16 @@ import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
+import TableComponent from "app/components/table";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
     marginBottom: "16px",
 }));
 
-const ProductForm = ({ data = {} }) => {
+const ProductEditForm = ({ data = {} }) => {
     const { open, close, isSupported } = useEyeDropper()
+    const [mOpen, setMOpen] = useState(false);
     const [dOpen, setDopen] = useState(false)
     const [formData, setFormData] = useState({
         ...data, pCategory: "None", color: '#000', attributeData: [{
@@ -48,34 +53,73 @@ const ProductForm = ({ data = {} }) => {
             name: 'color',
             value: null
         }, {
-            type: 'multi',
-            name: 'size',
-            value: []
-        }, {
             type: 'single',
-            name: 'swatch',
-            value: "#000"
+            name: 'size',
+            value: null
         }]
     });
     const navigate = useNavigate();
-    useEffect(() => {
-        setFormData({
-            ...data, pCategory: "None", color: '#000', attributeData: [{
-                type: 'single',
-                name: 'color',
-                value: null
-            }, {
-                type: 'multi',
-                name: 'size',
-                value: []
-            }, {
-                type: 'single',
-                name: 'swatch',
-                value: "#000"
-            }]
-        })
-    }, [data])
+    // useEffect(() => {
+    //     setFormData({
+    //         ...data, pCategory: "None", color: '#000', attributeData: [{
+    //             type: 'single',
+    //             name: 'color',
+    //             value: null
+    //         }, {
+    //             type: 'multi',
+    //             name: 'size',
+    //             value: []
+    //         }, {
+    //             type: 'single',
+    //             name: 'swatch',
+    //             value: "#000"
+    //         }]
+    //     })
+    // }, [data])
 
+    const columns = [
+        {
+            id: "dnumber",
+            label: `Design \nNo/SKU`,
+            width: 120
+        },
+        {
+            id: "in_stock",
+            label: "InStock \nQTY",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "threshold_qty",
+            label: "Threshold \nQTY",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "threshold_leaqdtime",
+            label: "Threshold \nLead Time",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "preorder_qty",
+            label: "PreOrder \nQTY",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "total_qty",
+            label: "PreOrder \nLead Time",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "mappedvariant",
+            label: "Mapped \nVariant",
+            align: "center",
+            width: 100
+        },
+    ];
 
     const handleSubmit = (event) => {
         console.log("submitted");
@@ -130,13 +174,9 @@ const ProductForm = ({ data = {} }) => {
             name: 'color',
             value: null
         }, {
-            type: 'multi',
-            name: 'size',
-            value: []
-        }, {
             type: 'single',
-            name: 'swatch',
-            value: "#000"
+            name: 'size',
+            value: null
         }]
         setFormData({ ...formData, color: '#000', attributeData: attributesData, attributeList: attributesList });
     }
@@ -579,7 +619,6 @@ const ProductForm = ({ data = {} }) => {
                                 </Select>
                             </FormControl>
 
-
                             <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
                                 <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
                                 <Box className="list-group">
@@ -590,6 +629,148 @@ const ProductForm = ({ data = {} }) => {
                                     <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
                                 </Box>
                             </Box>
+
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Inventory</Span>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
+                                {attributeData?.length > 0 && attributeData?.filter(item => !disableInventoryList.includes(item?.name))?.map((data, index) => {
+                                    if (data?.name == 'swatch') {
+                                        return (
+                                            <Box key={index} sx={{
+                                                width: '30px', height: '53px', display: 'flex', alignItems: 'center', justifyContent: 'center        '
+                                            }} onClick={() => {
+                                                setDopen(true)
+                                            }}>
+                                                <Box sx={{
+                                                    width: '30px', height: '30px', background: data?.value, borderRadius: '50%'
+                                                }}></Box>
+                                            </Box>
+                                        )
+                                    }
+                                    return (
+                                        <Autocomplete
+                                            key={index}
+                                            sx={{ width: "400px" }}
+                                            multiple={data?.type == 'single' ? false : true}
+                                            id="tags-outlined"
+                                            value={data?.value}
+                                            onChange={(event, newValue) => handleAddValueAttribute(data?.type, data?.name, newValue)}
+                                            options={data?.name == "color" ? mockDataProductColor.map(color => color.name) :
+                                                mockDataProductSize.map(size => size.name)}
+                                            getOptionLabel={(option) => option}
+                                            filterSelectedOptions
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
+                                                />
+                                            )}
+                                        />
+                                    )
+                                })}
+
+                                <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
+                                    <Icon>add</Icon>
+                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
+                                </Button>
+                            </Box>
+
+                            {attributeList?.length > 0 && <Box sx={{ mt: 1 }}>
+                                <TableComponent
+                                    rows={attributeList ?? []}
+                                    columns={columns}
+                                    extraPaddingOnFirstColumn={true}
+                                    disablePagination={true}
+                                    extraDisable={true}
+                                    disableCheckBox={true}
+                                    renderRow={(row, index) => {
+                                        return (
+                                            <TableRow
+                                                hover
+                                                role="checkbox"
+                                                tabIndex={-1}
+                                                key={index}
+                                            >
+                                                <TableCell sx={{ pl: '15px' }}>ABCD1234BlueM</TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        label="InStock QTY"
+                                                        defaultValue={0}
+                                                        sx={{
+                                                            "&.MuiFormControl-root": {
+                                                                mb: 0
+                                                            }
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        label="Threshold QTY"
+                                                        defaultValue={0}
+                                                        sx={{
+                                                            "&.MuiFormControl-root": {
+                                                                mb: 0
+                                                            }
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        label="Threshold Lead Time"
+                                                        defaultValue={0}
+                                                        sx={{
+                                                            "&.MuiFormControl-root": {
+                                                                mb: 0
+                                                            }
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        label="PreOrder QTY"
+                                                        defaultValue={0}
+                                                        sx={{
+                                                            "&.MuiFormControl-root": {
+                                                                mb: 0
+                                                            }
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        label="PreOrder Lead Time"
+                                                        defaultValue={0}
+                                                        sx={{
+                                                            "&.MuiFormControl-root": {
+                                                                mb: 0
+                                                            }
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell onClick={() => setMOpen(true)} sx={{ cursor: 'pointer', color: '#2271b1' }} align="center">Add</TableCell>
+                                            </TableRow>
+                                        );
+                                    }}
+                                />
+                            </Box>
+                            }
+
+
+                            <FormControl>
+                                <RadioGroup
+                                    row
+                                    value={isActive ?? "active"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="isActive">
+                                    <FormControlLabel value="active" control={<Radio />} label="Active" />
+                                    <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
+                                </RadioGroup>
+                            </FormControl>
                         </Grid>
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
@@ -604,11 +785,44 @@ const ProductForm = ({ data = {} }) => {
                             </Button>
                         </Box>
                     </Box>
+                    <Dialog
+                        open={mOpen}
+                        fullWidth
+                        maxWidth="sm"
+                        aria-labelledby="responsive-dialog-title"
+                    >
+                        <DialogTitle id="responsive-dialog-title">
+                            Mapped Variant
+                        </DialogTitle>
+                        <DialogContent>
+                            <Autocomplete
+                                multiple={true}
+                                id="tags-outlined"
+                                sx={{ mt: 2, }}
+                                options={['ABCD12', 'XYZ67']}
+                                getOptionLabel={(option) => option}
+                                filterSelectedOptions
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label='Mapped Variant List'
+                                    />
+                                )}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setMOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button onClick={() => setMOpen(false)} >
+                                Save
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </SimpleCard>
-
             </ValidatorForm>
         </div >
     );
 };
 
-export default ProductForm;
+export default ProductEditForm;
