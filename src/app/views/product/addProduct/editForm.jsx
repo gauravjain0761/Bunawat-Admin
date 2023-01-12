@@ -8,6 +8,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Fade,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -16,6 +17,7 @@ import {
     Icon,
     IconButton,
     InputLabel,
+    Menu,
     MenuItem,
     Radio,
     RadioGroup,
@@ -33,6 +35,7 @@ import { mockDataProductColor } from "fake-db/data/product/color/colorList";
 import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
@@ -48,7 +51,7 @@ const ProductEditForm = ({ data = {} }) => {
     const [mOpen, setMOpen] = useState(false);
     const [dOpen, setDopen] = useState(false)
     const [formData, setFormData] = useState({
-        ...data, pCategory: "None", color: '#000', attributeData: [{
+        ...data, pCategory: "None", color: '#000', attributeList: [{}, {}], attributeData: [{
             type: 'single',
             name: 'color',
             value: null
@@ -59,6 +62,9 @@ const ProductEditForm = ({ data = {} }) => {
         }]
     });
     const navigate = useNavigate();
+    const [actionOpen, setActionOpen] = useState(formData?.attributeList?.map(() => { return null }) ?? []);
+    const [actionAllOpen, setActionAllOpen] = useState(null);
+
     // useEffect(() => {
     //     setFormData({
     //         ...data, pCategory: "None", color: '#000', attributeData: [{
@@ -90,14 +96,8 @@ const ProductEditForm = ({ data = {} }) => {
             width: 100
         },
         {
-            id: "threshold_qty",
-            label: "Threshold \nQTY",
-            align: "center",
-            width: 100
-        },
-        {
-            id: "threshold_leaqdtime",
-            label: "Threshold \nLead Time",
+            id: "in_stock_leaqdtime",
+            label: "InStock \nLead Time",
             align: "center",
             width: 100
         },
@@ -108,8 +108,20 @@ const ProductEditForm = ({ data = {} }) => {
             width: 100
         },
         {
-            id: "total_qty",
+            id: "preorder_leaqdtime",
             label: "PreOrder \nLead Time",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "in_stock_threshold_qty",
+            label: "InStock \nThreshold QTY",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "swetch",
+            label: "Swetch",
             align: "center",
             width: 100
         },
@@ -119,7 +131,62 @@ const ProductEditForm = ({ data = {} }) => {
             align: "center",
             width: 100
         },
+        {
+            id: "action",
+            label: "Action",
+            action: true,
+            align: 'right',
+            width: 80,
+            sortDisable: true,
+
+            renderCell: (
+                <>
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        sx={{ color: "#fff" }}
+                        aria-controls={Boolean(actionAllOpen) ? 'long-menu' : undefined}
+                        aria-expanded={Boolean(actionAllOpen) ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={(e) => setActionAllOpen(e.currentTarget)}>
+                        <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="fade-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'fade-button',
+                        }}
+                        anchorEl={actionAllOpen}
+                        open={Boolean(actionAllOpen)}
+                        onClose={() => setActionAllOpen(null)}
+                        TransitionComponent={Fade}
+                    >
+                        <MenuItem onClick={() => {
+                            setActionAllOpen(null)
+                        }}>Delete</MenuItem>
+                    </Menu>
+                </>
+            )
+        }
     ];
+
+
+    const handleActionClick = (event, index) => {
+        event.preventDefault();
+        event.stopPropagation();
+        let temp = [...actionOpen];
+        if (!temp[index]) {
+            temp = temp.map(() => { return null })
+        }
+        temp[index] = event.currentTarget
+        setActionOpen(temp)
+    };
+
+    const handleActionClose = () => {
+        let temp = [...actionOpen];
+        temp = temp.map(() => { return null })
+        setActionOpen(temp)
+    };
 
     const handleSubmit = (event) => {
         console.log("submitted");
@@ -248,7 +315,7 @@ const ProductEditForm = ({ data = {} }) => {
     const pickColor = () => {
         open()
             .then(color => {
-                handleAddValueAttribute('single', 'swatch', color.sRGBHex)
+                // handleAddValueAttribute('single', 'swatch', color.sRGBHex)
                 setDopen(false)
             })
             .catch(e => {
@@ -630,7 +697,7 @@ const ProductEditForm = ({ data = {} }) => {
                                 </Box>
                             </Box>
 
-                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Inventory</Span>
+                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Add Attributes</Span>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
                                 {attributeData?.length > 0 && attributeData?.filter(item => !disableInventoryList.includes(item?.name))?.map((data, index) => {
                                     if (data?.name == 'swatch') {
@@ -706,19 +773,7 @@ const ProductEditForm = ({ data = {} }) => {
                                                 <TableCell align="center">
                                                     <TextField
                                                         type="number"
-                                                        label="Threshold QTY"
-                                                        defaultValue={0}
-                                                        sx={{
-                                                            "&.MuiFormControl-root": {
-                                                                mb: 0
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <TextField
-                                                        type="number"
-                                                        label="Threshold Lead Time"
+                                                        label="InStock Lead Time"
                                                         defaultValue={0}
                                                         sx={{
                                                             "&.MuiFormControl-root": {
@@ -751,14 +806,62 @@ const ProductEditForm = ({ data = {} }) => {
                                                         }}
                                                     />
                                                 </TableCell>
-                                                <TableCell onClick={() => setMOpen(true)} sx={{ cursor: 'pointer', color: '#2271b1' }} align="center">Add</TableCell>
+                                                <TableCell align="center">
+                                                    <TextField
+                                                        type="number"
+                                                        label="InStock Threshold QTY"
+                                                        defaultValue={0}
+                                                        sx={{
+                                                            "&.MuiFormControl-root": {
+                                                                mb: 0
+                                                            }
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Box sx={{
+                                                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center        '
+                                                    }} onClick={() => {
+                                                        setDopen(true)
+                                                    }}>
+                                                        <Box sx={{
+                                                            width: '30px', height: '30px', background: '#000', borderRadius: '50%'
+                                                        }}></Box>
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell align="center">ABCD123,XYZ456</TableCell>
+                                                <TableCell align='right' sx={{ pr: "18px" }}>
+                                                    <IconButton
+                                                        aria-label="more"
+                                                        id="long-button"
+                                                        aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
+                                                        aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
+                                                        aria-haspopup="true"
+                                                        onClick={(e) => handleActionClick(e, index)}>
+                                                        <MoreVertIcon />
+                                                    </IconButton>
+                                                    <Menu
+                                                        id="fade-menu"
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'fade-button',
+                                                        }}
+                                                        anchorEl={actionOpen[index]}
+                                                        open={Boolean(actionOpen[index])}
+                                                        onClose={handleActionClose}
+                                                        TransitionComponent={Fade}
+                                                    >
+                                                        <MenuItem onClick={() => {
+                                                            setMOpen(true)
+                                                            handleActionClose();
+                                                        }}>Add Mapped Variant</MenuItem>
+                                                    </Menu>
+                                                </TableCell>
                                             </TableRow>
                                         );
                                     }}
                                 />
                             </Box>
                             }
-
 
                             <FormControl>
                                 <RadioGroup
@@ -785,6 +888,30 @@ const ProductEditForm = ({ data = {} }) => {
                             </Button>
                         </Box>
                     </Box>
+
+                    <Dialog
+                        open={dOpen}
+                        aria-labelledby="responsive-dialog-title">
+                        <DialogTitle id="responsive-dialog-title">
+                            Pick Color
+                        </DialogTitle>
+                        <DialogContent>
+                            {image?.[0]?.url ?
+                                <img src={image?.[0]?.url} width="100%" height="160px" />
+                                :
+                                <>Please Select Image First.</>
+                            }
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setDopen(false)} type='button'>
+                                Cancel
+                            </Button>
+                            <Button onClick={() => pickColor()} type='button'>
+                                Pick Color
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
                     <Dialog
                         open={mOpen}
                         fullWidth
