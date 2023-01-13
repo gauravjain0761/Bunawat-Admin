@@ -47,3 +47,7 @@
 .ck-editor__editable_inline {
     min-height: 100px;
 }
+
+.error .ck-editor__editable {
+    border-color: red !important;
+}

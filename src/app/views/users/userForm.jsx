@@ -125,7 +125,7 @@ const UserForm = ({ data = {}, userType, id }) => {
     };
 
     const handleChange = (event, subName) => {
-        if (event.target.name == "phone" || event.target.name == "baseCommission" || event.target.name == "thresholdCommission" || event.target.name == "additionalCommission") {
+        if (event.target.name == "phone") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 if (subName) {
@@ -144,6 +144,13 @@ const UserForm = ({ data = {}, userType, id }) => {
                     setFormData({ ...formData, [event.target.name]: onlyNums });
                 }
             }
+        } else if (event.target.name == "pincode" || event.target.name == "base_commission" || event.target.name == "thersold_commission" || event.target.name == "additional_commission") {
+            const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+            if (subName) {
+                setFormData({ ...formData, [subName]: { ...formData?.[subName], [event.target.name]: onlyNums } });
+            } else {
+                setFormData({ ...formData, [event.target.name]: onlyNums });
+            }
         } else {
             if (subName) {
                 setFormData({ ...formData, [subName]: { ...formData?.[subName], [event.target.name]: event.target.value } });
@@ -151,7 +158,6 @@ const UserForm = ({ data = {}, userType, id }) => {
                 setFormData({ ...formData, [event.target.name]: event.target.value });
             }
         }
-        console.log(formData, !!subName, collectionData)
     };
 
     const {
@@ -191,10 +197,37 @@ const UserForm = ({ data = {}, userType, id }) => {
         />
     );
 
+    if (!ValidatorForm.hasValidationRule('postCode')) {
+        ValidatorForm.addValidationRule('postCode', (value) => {
+            const strongRegex = new RegExp("^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$");;
+            return strongRegex.test(value);
+        });
+    }
+
+    if (!ValidatorForm.hasValidationRule('panCard')) {
+        ValidatorForm.addValidationRule('panCard', (value) => {
+            const strongRegex = new RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}");;
+            return strongRegex.test(value);
+        });
+    }
+
+    if (!ValidatorForm.hasValidationRule('upiId')) {
+        ValidatorForm.addValidationRule('upiId', (value) => {
+            const strongRegex = new RegExp("[\.\-a-z0-9]+@[a-z]+");;
+            return strongRegex.test(value);
+        });
+    }
+
+    if (!ValidatorForm.hasValidationRule('ifscCode')) {
+        ValidatorForm.addValidationRule('ifscCode', (value) => {
+            const strongRegex = new RegExp("^[A-Z]{4}0[A-Z0-9]{6}$");;
+            return strongRegex.test(value);
+        });
+    }
+
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-
                 <SimpleCard title={`${userType} Details`} backArrow={true}>
                     <Grid container spacing={6}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -262,8 +295,8 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     label="Pan Number"
                                     value={pan || ""}
                                     onChange={(e) => handleChange(e)}
-                                    validators={["required"]}
-                                    errorMessages={["this field is required"]}
+                                    validators={["required", "panCard"]}
+                                    errorMessages={["this field is required", "Enter valid number"]}
                                 />
                             }
 
@@ -374,8 +407,8 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 label="Post Code"
                                 value={pincode || ""}
                                 onChange={(e) => handleChange(e)}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
+                                validators={["required", "postCode"]}
+                                errorMessages={["this field is required", "Enter valid code"]}
                             />
                             {(userType == "influencer") &&
                                 <FormControl fullWidth >
@@ -801,8 +834,8 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     label="Bank IFSC Code"
                                     onChange={(e) => handleChange(e)}
                                     value={bank_ifsc || ""}
-                                    validators={["required"]}
-                                    errorMessages={["this field is required"]}
+                                    validators={["required", "ifscCode"]}
+                                    errorMessages={["this field is required", "Enter valid ifsc"]}
                                 />
 
                                 <TextField
@@ -811,8 +844,8 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     label="UPI ID"
                                     value={upi || ""}
                                     onChange={(e) => handleChange(e)}
-                                    validators={["required", "isEmail"]}
-                                    errorMessages={["this field is required", "email is not valid"]}
+                                    validators={["required", "upiId"]}
+                                    errorMessages={["this field is required", "Enter valid UPI"]}
                                 />
 
                             </Grid>

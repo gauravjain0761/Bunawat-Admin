@@ -46,13 +46,14 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const [parentCategoryList, setParentCategoryList] = useState([]);
     const [parentSubCategoryList, setParentSubCategoryList] = useState([]);
     const [collectionList, setCollectionList] = useState([]);
+    const [isErrorDescription, setIsErrorDescription] = useState(false);
 
     useEffect(() => {
         let temp = { ...data }
         if (temp?.link_with == 'COLLECTION') {
-            temp = { ...temp, linkValue: temp?.colleciton_list?.[0], productId: temp?.product_list?.[0] ?? '' }
+            temp = { ...temp, linkValue: temp?.colleciton_list?.[0], productId: temp?.product_list?.[0] ?? '', parent_cateogry_id: temp?.parent_cateogry_id?._id, sub_category_id: temp?.sub_category_id?._id }
         } else {
-            temp = { ...temp, linkValue: temp?.categories_list?.[0], productId: temp?.product_list?.[0] ?? '' }
+            temp = { ...temp, linkValue: temp?.categories_list?.[0], productId: temp?.product_list?.[0] ?? '', parent_cateogry_id: temp?.parent_cateogry_id?._id, sub_category_id: temp?.sub_category_id?._id }
         }
         setFormData(temp)
         setDescription(data?.description)
@@ -117,7 +118,8 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     setParentSubCategoryList(response?.data?.map(item => {
                         return {
                             value: item?._id,
-                            label: item?.name
+                            label: item?.name,
+                            parent_cateogry_id: item?.parent_cateogry_id,
                         }
                     }) ?? []);
                 }
@@ -159,62 +161,68 @@ const CategoryForm = ({ data = {}, id, type }) => {
     }
 
     const handleSubmit = async (event) => {
-        setLoading(true)
         const { link_with, linkValue, productId, ...payload } = formData
-        if (id) {
-            await ApiPut(`${getEditURL(type)}/${id}`, {
-                description,
-                ...payload,
-                link_with: link_with ?? 'CATEGORY',
-                "image": "",
-                "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
-                "categories_list": link_with == 'COLLECTION' ? [] : [linkValue],
-                "product_list": productId ? [productId] : []
-            })
-                .then((response) => {
-                    toast.success('Edit Successfully!')
-                    setLoading(false)
-                    if (!searchParams.get("redirect")) {
-                        navigate(`/category/${type}`)
-                    } else {
-                        navigate(`/category/details/${searchParams.get("redirect")}`)
-                    }
-                })
-                .catch((error) => {
-                    setLoading(false)
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+        if (description == "") {
+            setIsErrorDescription(true)
         } else {
-            await ApiPost(`${getURL(type)}`, {
-                description,
-                ...payload,
-                link_with: link_with ?? 'CATEGORY',
-                "image": "",
-                "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
-                "categories_list": linkValue ? (link_with == 'COLLECTION' ? [] : [linkValue]) : [],
-                "product_list": productId ? [productId] : []
-            })
-                .then((response) => {
-                    toast.success('Add Successfully!')
-                    setLoading(false)
-                    if (!searchParams.get("redirect")) {
-                        navigate(`/category/${type}`)
-                    } else {
-                        navigate(`/category/details/${searchParams.get("redirect")}`)
-                    }
+            setLoading(true)
+            if (id) {
+                await ApiPut(`${getEditURL(type)}/${id}`, {
+                    ...payload,
+                    description,
+                    link_with: link_with ?? 'CATEGORY',
+                    "image": "",
+                    "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
+                    "categories_list": link_with == 'COLLECTION' ? [] : [linkValue],
+                    "product_list": productId ? [productId] : []
                 })
-                .catch((error) => {
-                    setLoading(false)
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+                    .then((response) => {
+                        toast.success('Edit Successfully!')
+                        setLoading(false)
+                        if (!searchParams.get("redirect")) {
+                            navigate(`/category/${type}`)
+                        } else {
+                            navigate(`/category/details/${searchParams.get("redirect")}`)
+                        }
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            } else {
+                await ApiPost(`${getURL(type)}`, {
+                    ...payload,
+                    description,
+                    link_with: link_with ?? 'CATEGORY',
+                    "image": "",
+                    "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
+                    "categories_list": linkValue ? (link_with == 'COLLECTION' ? [] : [linkValue]) : [],
+                    "product_list": productId ? [productId] : []
+                })
+                    .then((response) => {
+                        toast.success('Add Successfully!')
+                        setLoading(false)
+                        if (!searchParams.get("redirect")) {
+                            navigate(`/category/${type}`)
+                        } else {
+                            navigate(`/category/details/${searchParams.get("redirect")}`)
+                        }
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            }
         }
     };
 
     const handleChange = (event) => {
         if (event.target.name == "home_visibilty") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
+        } else if (event.target.name == "parent_cateogry_id") {
+            setFormData({ ...formData, [event.target.name]: event.target.value, sub_category_id: "" });
         } else if (event.target.name == "image") {
             setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
         } else if (event.target.name == "link_with") {
@@ -290,7 +298,8 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         name="sub_category_id"
                                         label="Parent Sub Category"
                                         onChange={handleChange}>
-                                        {parentSubCategoryList?.map((item) => (
+                                        {parentSubCategoryList?.filter(x => x?.parent_cateogry_id?._id == parent_cateogry_id)?.length == 0 && <MenuItem value="" disabled>No Options.</MenuItem>}
+                                        {parentSubCategoryList?.filter(x => x?.parent_cateogry_id?._id == parent_cateogry_id)?.map((item) => (
                                             <MenuItem value={item?.value}>{item?.label}</MenuItem>
                                         ))}
                                     </Select>
@@ -330,8 +339,11 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <Box sx={{ mb: 2 }}>
-                                <TextEditor data={description} setData={(d) => setDescription(d)} />
+                            <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
+                                <TextEditor data={description} setData={(d) => {
+                                    setIsErrorDescription(false)
+                                    setDescription(d)
+                                }} />
                             </Box>
 
                             <FormControl sx={{
