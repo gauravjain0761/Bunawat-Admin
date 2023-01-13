@@ -62,6 +62,7 @@ const ProductEditForm = ({ data = {}, id }) => {
     const [categoryList, setCategoryList] = useState([])
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
+    const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [formData, setFormData] = useState(data ?? {})
     const [selectedSKU, setSelectedSKU] = useState({})
     const [selectedSKUIndex, setSelectedSKUIndex] = useState(-1)
@@ -310,22 +311,26 @@ const ProductEditForm = ({ data = {}, id }) => {
     }, [])
 
     const handleSubmit = async (event) => {
-        setLoading(true)
-        await ApiPut(`${API_URL.editProduct}/${id}`, {
-            ...formData,
-            description,
-            sku_data: formData?.sku_data ?? []
-        })
-            .then((response) => {
-                setLoading(false)
-                toast.success('Edit Successfully!')
-                navigate("/product/list")
+        if (!description) {
+            setIsErrorDescription(true)
+        } else {
+            setLoading(true)
+            await ApiPut(`${API_URL.editProduct}/${id}`, {
+                ...formData,
+                description,
+                sku_data: formData?.sku_data ?? []
             })
-            .catch((error) => {
-                setLoading(false)
-                toast.error(error?.error)
-                console.log("Error", error);
-            });
+                .then((response) => {
+                    setLoading(false)
+                    toast.success('Edit Successfully!')
+                    navigate("/product/list")
+                })
+                .catch((error) => {
+                    setLoading(false)
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
+        }
     };
 
     const handleChange = (event) => {
@@ -693,8 +698,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                         errorMessages={["this field is required"]}
                                     />
 
-
-                                    <Box sx={{ mb: 2 }}>
+                                    <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
                                         <TextEditor data={description} setData={(d) => setDescription(d)} />
                                     </Box>
 

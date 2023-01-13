@@ -52,6 +52,7 @@ const ProductForm = ({ data = {} }) => {
     const [categoryList, setCategoryList] = useState([])
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
+    const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [formData, setFormData] = useState({
         ...data, pCategory: "None", color: '#000', attributeData: [{
             type: 'single',
@@ -168,23 +169,67 @@ const ProductForm = ({ data = {} }) => {
     }, [])
 
     const handleSubmit = async (event) => {
-        setLoading(true)
-        await ApiPost(API_URL.addProduct, {
-            ...formData,
-            description,
-            isActive: true
-        })
+        if (!description) {
+            setIsErrorDescription(true)
+        } else {
+            setLoading(true)
+            await ApiPost(API_URL.addProduct, {
+                ...formData,
+                description,
+                isActive: true
+            })
+                .then((response) => {
+                    setLoading(false)
+                    toast.success('Add Successfully!')
+                    navigate("/product/list")
+                })
+                .catch((error) => {
+                    setLoading(false)
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
+        }
+    };
+
+    const handleImageUpload = async (event) => {
+        const images = formData?.image ?? []
+        let imageData = new FormData();
+        imageData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUpload, imageData)
             .then((response) => {
-                setLoading(false)
-                toast.success('Add Successfully!')
-                navigate("/product/list")
+                if (response?.data) {
+                    setFormData({
+                        ...formData, image: [...images, {
+                            url: response?.data?.Location,
+                            checked: false
+                        }]
+                    });
+                }
             })
             .catch((error) => {
-                setLoading(false)
-                toast.error(error?.error)
                 console.log("Error", error);
             });
-    };
+    }
+
+    const handleImageVideo = async (event) => {
+        const videosList = formData?.videos ?? []
+        let videoData = new FormData();
+        videoData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUpload, videoData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({
+                        ...formData, videos: [...videosList, {
+                            url: response?.data?.Location,
+                            checked: false
+                        }]
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
 
     const handleChange = (event) => {
         if (event.target.name == "home") {
@@ -192,23 +237,9 @@ const ProductForm = ({ data = {} }) => {
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
         } else if (event.target.name == "image") {
-            const images = formData[event.target.name] ?? []
-            const newImages = Array.prototype.slice.call(event.target.files).map((image) => {
-                return {
-                    url: URL.createObjectURL(image),
-                    checked: false
-                }
-            })
-            setFormData({ ...formData, [event.target.name]: [...images, ...newImages] });
+            handleImageUpload(event)
         } else if (event.target.name == "videos") {
-            const videos = formData[event.target.name] ?? []
-            const newVideos = Array.prototype.slice.call(event.target.files).map((video) => {
-                return {
-                    url: URL.createObjectURL(video),
-                    checked: false
-                }
-            })
-            setFormData({ ...formData, [event.target.name]: [...videos, ...newVideos] });
+            handleImageVideo(event)
         } else if (event.target.name == "mrp" || event.target.name == "sale_price" || event.target.name == "cost_price" || event.target.name == "reseller_price" || event.target.name == "influncerCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
@@ -435,7 +466,7 @@ const ProductForm = ({ data = {} }) => {
                     <input
                         type="file"
                         name="image"
-                        multiple
+                        multiple={false}
                         accept="image/png, image/gif, image/jpeg"
                         hidden
                         onClick={(event) => { event.target.value = '' }}
@@ -473,7 +504,7 @@ const ProductForm = ({ data = {} }) => {
                     <input
                         type="file"
                         name="videos"
-                        multiple
+                        multiple={false}
                         accept="video/mp4,video/x-m4v,video/*"
                         hidden
                         onClick={(event) => { event.target.value = '' }}
@@ -531,7 +562,7 @@ const ProductForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <Box sx={{ mb: 2 }}>
+                            <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
                                 <TextEditor data={description} setData={(d) => setDescription(d)} />
                             </Box>
 

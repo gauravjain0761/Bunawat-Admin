@@ -162,7 +162,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
 
     const handleSubmit = async (event) => {
         const { link_with, linkValue, productId, ...payload } = formData
-        if (description == "") {
+        if (!description) {
             setIsErrorDescription(true)
         } else {
             setLoading(true)
@@ -218,22 +218,46 @@ const CategoryForm = ({ data = {}, id, type }) => {
         }
     };
 
+    const handleImageUpload = async (event) => {
+        let imageData = new FormData();
+        imageData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUploadCategory, imageData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const handleDeleteImage = async (event) => {
+        await ApiPost(API_URL.fileRemove, {
+            url: image
+        })
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({ ...formData, image: null });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
     const handleChange = (event) => {
         if (event.target.name == "home_visibilty") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
         } else if (event.target.name == "parent_cateogry_id") {
             setFormData({ ...formData, [event.target.name]: event.target.value, sub_category_id: "" });
         } else if (event.target.name == "image") {
-            setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+            handleImageUpload(event)
         } else if (event.target.name == "link_with") {
             setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
-    };
-
-    const handleDeleteImage = () => {
-        setFormData({ ...formData, image: null });
     };
 
     const {

@@ -40,6 +40,7 @@ const CollectionForm = ({ data = {}, id }) => {
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
     const [categoryList, setCategoryList] = useState([]);
+    const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [collectionList, setCollectionList] = useState([]);
     const navigate = useNavigate();
 
@@ -88,45 +89,78 @@ const CollectionForm = ({ data = {}, id }) => {
     }, [])
 
     const handleSubmit = async () => {
-        setLoading(true)
-        if (id) {
-            await ApiPut(`${API_URL.editCollection}/${id}`, {
-                "name": formData?.name,
-                "description": description,
-                "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
-                "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
-                "product_list": [formData?.productId]
-            })
-                .then((response) => {
-                    setLoading(false)
-                    toast.success('Edit Successfully!')
-                    navigate("/collection/list")
-                })
-                .catch((error) => {
-                    setLoading(false)
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+        if (!description) {
+            setIsErrorDescription(true)
         } else {
-            await ApiPost(API_URL.addCollection, {
-                "name": formData?.name,
-                "description": description,
-                "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
-                "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
-                "product_list": [formData?.productId]
-            })
-                .then((response) => {
-                    setLoading(false)
-                    toast.success('Add Successfully!')
-                    navigate("/collection/list")
+            setLoading(true)
+            if (id) {
+                await ApiPut(`${API_URL.editCollection}/${id}`, {
+                    "name": formData?.name,
+                    "description": description,
+                    "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
+                    "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
+                    "product_list": [formData?.productId]
                 })
-                .catch((error) => {
-                    setLoading(false)
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+                    .then((response) => {
+                        setLoading(false)
+                        toast.success('Edit Successfully!')
+                        navigate("/collection/list")
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            } else {
+                await ApiPost(API_URL.addCollection, {
+                    "name": formData?.name,
+                    "description": description,
+                    "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
+                    "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
+                    "product_list": [formData?.productId]
+                })
+                    .then((response) => {
+                        setLoading(false)
+                        toast.success('Add Successfully!')
+                        navigate("/collection/list")
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            }
         }
     };
+
+
+    const handleImageUpload = async (event) => {
+        let imageData = new FormData();
+        imageData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUploadCollection, imageData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const handleDeleteImage = async (event) => {
+        await ApiPost(API_URL.fileRemove, {
+            url: image
+        })
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({ ...formData, image: null });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
 
     const handleChange = (event) => {
         if (event.target.name == "home") {
@@ -134,17 +168,12 @@ const CollectionForm = ({ data = {}, id }) => {
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
         } else if (event.target.name == "image") {
-            setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+            handleImageUpload(event)
         } else if (event.target.name == "linkType") {
             setFormData({ ...formData, linkValue: null, [event.target.name]: event.target.value });
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
-    };
-
-
-    const handleDeleteImage = () => {
-        setFormData({ ...formData, image: null });
     };
 
     const {
@@ -173,7 +202,7 @@ const CollectionForm = ({ data = {}, id }) => {
                                 errorMessages={["this field is required"]}
                             />
 
-                            <Box sx={{ mb: 2 }}>
+                            <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
                                 <TextEditor data={description} setData={(d) => setDescription(d)} />
                             </Box>
 
