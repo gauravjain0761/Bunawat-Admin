@@ -16,6 +16,7 @@ import { Span } from 'app/components/Typography';
 import { API_URL } from 'app/constant/api';
 import { ApiGet, ApiPut } from 'app/service/api';
 import DeleteCollectionModel from 'app/views/category/model/deleteCollectionModel';
+import DeleteAllModel from 'app/views/models/deleteModel';
 
 const CollectionList = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const CollectionList = () => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
   const [actionAllOpen, setActionAllOpen] = useState(null);
@@ -88,7 +90,7 @@ const CollectionList = () => {
             TransitionComponent={Fade}
           >
             <MenuItem onClick={() => {
-              setOpen(true);
+              setDeleteAllOpen(true);
               setActionAllOpen(null)
             }}>Delete</MenuItem>
           </Menu>
@@ -323,6 +325,11 @@ const CollectionList = () => {
       <DeleteCollectionModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
         setDeleteData(null);
         setOpen(false);
+      }} />
+
+
+      <DeleteAllModel open={deleteAllOpen} handleClose={() => {
+        setDeleteAllOpen(false);
       }} />
     </Card>
   );

@@ -16,6 +16,7 @@ import { ApiGet, ApiPut } from 'app/service/api';
 import { toast } from 'material-react-toastify';
 import { API_URL } from 'app/constant/api';
 import DeleteCategoryModel from 'app/views/category/model/deleteCategoryModel';
+import DeleteAllModel from 'app/views/models/deleteModel';
 
 const CategoryList = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const CategoryList = () => {
   const [actionAllOpen, setActionAllOpen] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [deleteData, setDeleteData] = useState(null);
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
   const columns = [
     {
@@ -93,7 +95,7 @@ const CategoryList = () => {
             TransitionComponent={Fade}
           >
             <MenuItem onClick={() => {
-              setOpen(true);
+              setDeleteAllOpen(true);
               setActionAllOpen(null)
             }}>Delete</MenuItem>
           </Menu>
@@ -335,6 +337,11 @@ const CategoryList = () => {
       <DeleteCategoryModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
         setDeleteData(null);
         setOpen(false);
+      }} />
+
+
+      <DeleteAllModel open={deleteAllOpen} handleClose={() => {
+        setDeleteAllOpen(false);
       }} />
     </Card>
   );

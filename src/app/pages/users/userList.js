@@ -17,6 +17,7 @@ import { API_URL } from 'app/constant/api';
 import { ApiGet, ApiPut } from 'app/service/api';
 import DeleteModel from 'app/views/users/model/deleteModel';
 import { toast } from 'material-react-toastify';
+import DeleteAllModel from 'app/views/models/deleteModel';
 
 const UserList = ({ type }) => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const UserList = ({ type }) => {
   const [actionAllOpen, setActionAllOpen] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [deleteData, setDeleteData] = useState(null);
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
 
   const getURL = (role) => {
@@ -141,7 +143,7 @@ const UserList = ({ type }) => {
             TransitionComponent={Fade}
           >
             <MenuItem onClick={() => {
-              setOpen(true);
+              setDeleteAllOpen(true);
               setActionAllOpen(null)
             }}>Delete</MenuItem>
           </Menu>
@@ -349,6 +351,9 @@ const UserList = ({ type }) => {
       <DeleteModel open={open} deleteData={deleteData} getData={getData} type={type} handleClose={() => {
         setDeleteData(null);
         setOpen(false);
+      }} />
+      <DeleteAllModel open={deleteAllOpen} handleClose={() => {
+        setDeleteAllOpen(false);
       }} />
     </Card>
   );

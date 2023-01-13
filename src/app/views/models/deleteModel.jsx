@@ -4,7 +4,7 @@ import { ApiDelete } from 'app/service/api'
 import { toast } from 'material-react-toastify';
 import React from 'react'
 
-const DeleteModel = ({ open, handleClose }) => {
+const DeleteAllModel = ({ open, handleClose }) => {
 
     return (
         <Dialog
@@ -32,4 +32,4 @@ const DeleteModel = ({ open, handleClose }) => {
     )
 }
 
-export default DeleteModel
+export default DeleteAllModel

@@ -15,6 +15,7 @@ import { Span } from 'app/components/Typography';
 import { ApiGet, ApiPut } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
 import DeleteParentCategoryModel from 'app/views/category/model/deleteParentCategoryModel';
+import DeleteAllModel from 'app/views/models/deleteModel';
 
 const ParentCategory = () => {
     const navigate = useNavigate();
@@ -28,6 +29,7 @@ const ParentCategory = () => {
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [deleteData, setDeleteData] = useState(null);
+    const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
     const columns = [
         {
@@ -88,7 +90,7 @@ const ParentCategory = () => {
                         TransitionComponent={Fade}
                     >
                         <MenuItem onClick={() => {
-                            setOpen(true);
+                            setDeleteAllOpen(true);
                             setActionAllOpen(null)
                         }}>Delete</MenuItem>
                     </Menu>
@@ -329,6 +331,11 @@ const ParentCategory = () => {
             <DeleteParentCategoryModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
                 setDeleteData(null);
                 setOpen(false);
+            }} />
+
+
+            <DeleteAllModel open={deleteAllOpen} handleClose={() => {
+                setDeleteAllOpen(false);
             }} />
         </Card>
     );

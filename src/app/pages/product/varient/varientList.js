@@ -20,6 +20,7 @@ import { API_URL } from 'app/constant/api';
 import { toast } from 'material-react-toastify';
 import DeleteVariantModel from 'app/views/product/model/deleteVariantModel';
 import { LoadingButton } from '@mui/lab';
+import DeleteAllModel from 'app/views/models/deleteModel';
 
 const VarientList = () => {
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ const VarientList = () => {
     const [searchText, setSearchText] = useState('');
     const [totalCount, setTotalCount] = useState(0);
     const [deleteData, setDeleteData] = useState(null);
+    const [deleteAllOpen, setDeleteAllOpen] = useState(false);
     const { id } = useParams();
 
     const getData = async () => {
@@ -135,7 +137,7 @@ const VarientList = () => {
                         onClose={() => setActionAllOpen(null)}
                         TransitionComponent={Fade}>
                         <MenuItem onClick={() => {
-                            setOpen(true);
+                            setDeleteAllOpen(true);
                             setActionAllOpen(null)
                         }}>Delete</MenuItem>
                     </Menu>
@@ -387,6 +389,11 @@ const VarientList = () => {
             <DeleteVariantModel open={open} deleteData={deleteData} getData={getData} handleClose={() => {
                 setDeleteData(null);
                 setOpen(false);
+            }} />
+
+
+            <DeleteAllModel open={deleteAllOpen} handleClose={() => {
+                setDeleteAllOpen(false);
             }} />
         </Card>
     );

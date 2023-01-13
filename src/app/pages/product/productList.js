@@ -15,6 +15,7 @@ import { Span } from 'app/components/Typography';
 import { API_URL } from 'app/constant/api';
 import { toast } from 'material-react-toastify';
 import { ApiGet, ApiPut } from 'app/service/api';
+import DeleteAllModel from 'app/views/models/deleteModel';
 
 const ProductList = () => {
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ const ProductList = () => {
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
     const columns = [
         {
@@ -81,7 +83,7 @@ const ProductList = () => {
                         TransitionComponent={Fade}
                     >
                         <MenuItem onClick={() => {
-                            setOpen(true);
+                            setDeleteAllOpen(true);
                             setActionAllOpen(null)
                         }}>Delete</MenuItem>
                     </Menu>
@@ -317,6 +319,10 @@ const ProductList = () => {
             />
 
             <DeleteModel open={open} handleClose={() => setOpen(false)} />
+
+            <DeleteAllModel open={deleteAllOpen} handleClose={() => {
+                setDeleteAllOpen(false);
+            }} />
         </Card>
     );
 }

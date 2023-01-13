@@ -699,7 +699,11 @@ const ProductEditForm = ({ data = {}, id }) => {
                                     />
 
                                     <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
-                                        <TextEditor data={description} setData={(d) => setDescription(d)} />
+                                        <TextEditor data={description} setData={(d) => {
+                                            setIsErrorDescription(false)
+                                            setDescription(d)
+                                        }} />
+                                        {isErrorDescription && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </Box>
 
                                     <TextField
