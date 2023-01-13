@@ -169,9 +169,10 @@ const ProductForm = ({ data = {} }) => {
 
     const handleSubmit = async (event) => {
         setLoading(true)
-        await ApiPost(API_URL.addCollection, {
+        await ApiPost(API_URL.addProduct, {
             ...formData,
             description,
+            isActive: true
         })
             .then((response) => {
                 setLoading(false)
@@ -607,8 +608,8 @@ const ProductForm = ({ data = {} }) => {
                                     name="tax"
                                     label="Tax Type"
                                     onChange={handleChange}>
-                                    <MenuItem value="Standard">Standard</MenuItem>
-                                    <MenuItem value="6%">6% CGST/IGST</MenuItem>
+                                    <MenuItem value={0}>Standard</MenuItem>
+                                    <MenuItem value={6}>6% CGST/IGST</MenuItem>
                                 </Select>
                             </FormControl>
 

@@ -52,7 +52,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const ProductEditForm = ({ data = {} }) => {
+const ProductEditForm = ({ data = {}, id }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [mOpen, setMOpen] = useState(false);
     const [dOpen, setDopen] = useState(false)
@@ -67,8 +67,8 @@ const ProductEditForm = ({ data = {} }) => {
     const [attributes, setAttributes] = useState([]);
 
     useEffect(() => {
-        setDescription(data?.[0]?.description ?? '')
-        setFormData(data?.[0] ?? {})
+        setDescription(data?.description ?? '')
+        setFormData(data ?? {})
     }, [data])
 
     const getData = async () => {
@@ -288,7 +288,7 @@ const ProductEditForm = ({ data = {} }) => {
 
     const handleSubmit = async (event) => {
         setLoading(true)
-        await ApiPut(API_URL.editProduct, {
+        await ApiPut(`${API_URL.editProduct}/${id}`, {
             ...formData,
             description,
             sku_data: []
@@ -435,7 +435,7 @@ const ProductEditForm = ({ data = {} }) => {
                 console.log(e)
             })
     }
-    console.log("formDataformData", formData)
+
     const {
         category_id,
         collection_id,
@@ -610,7 +610,7 @@ const ProductEditForm = ({ data = {} }) => {
                             <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
                                 <Select id="grouped-native-select" label="Category"
-                                    value={category_id}
+                                    value={category_id ?? ""}
                                     name="category_id"
                                     onChange={handleChange}>
                                     {categoryList?.map(item => (
@@ -623,13 +623,12 @@ const ProductEditForm = ({ data = {} }) => {
                                     ))}
                                 </Select>
                             </FormControl>
-
                             <FormControl fullWidth sx={{ mb: 2 }}>
                                 <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={collection_id}
+                                    value={collection_id ?? ""}
                                     name="collection_id"
                                     label="Collection"
                                     onChange={handleChange}>
@@ -723,12 +722,12 @@ const ProductEditForm = ({ data = {} }) => {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={tax}
+                                    value={tax ?? 0}
                                     name="tax"
                                     label="Tax Type"
                                     onChange={handleChange}>
-                                    <MenuItem value="Standard">Standard</MenuItem>
-                                    <MenuItem value="6%">6% CGST/IGST</MenuItem>
+                                    <MenuItem value={0}>Standard</MenuItem>
+                                    <MenuItem value={6}>6% CGST/IGST</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -743,7 +742,100 @@ const ProductEditForm = ({ data = {} }) => {
                                 </Box>
                             </Box>
 
-                            <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Add Attributes</Span>
+                            <FormControl>
+                                <RadioGroup
+                                    row
+                                    value={isActive ?? "active"}
+                                    onChange={handleChange}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="isActive">
+                                    <FormControlLabel value="active" control={<Radio />} label="Active" />
+                                    <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                <Icon>arrow_back</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                            </Button>
+                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
+                                <Icon>send</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                            </Button>
+                        </Box>
+                    </Box>
+
+                    <Dialog
+                        open={dOpen}
+                        aria-labelledby="responsive-dialog-title">
+                        <DialogTitle id="responsive-dialog-title">
+                            Pick Color
+                        </DialogTitle>
+                        <DialogContent>
+                            {image?.[0]?.url ?
+                                <img src={image?.[0]?.url} width="100%" height="160px" />
+                                :
+                                <>Please Select Image First.</>
+                            }
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setDopen(false)} type='button'>
+                                Cancel
+                            </Button>
+                            <Button onClick={() => pickColor()} type='button'>
+                                Pick Color
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
+                    <Dialog
+                        open={mOpen}
+                        fullWidth
+                        maxWidth="sm"
+                        aria-labelledby="responsive-dialog-title"
+                    >
+                        <DialogTitle id="responsive-dialog-title">
+                            Mapped Variant
+                        </DialogTitle>
+                        <DialogContent>
+                            <Autocomplete
+                                multiple={true}
+                                id="tags-outlined"
+                                sx={{ mt: 2, }}
+                                options={['ABCD12', 'XYZ67']}
+                                getOptionLabel={(option) => option}
+                                filterSelectedOptions
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label='Mapped Variant List'
+                                    />
+                                )}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setMOpen(false)}>
+                                Cancel
+                            </Button>
+                            <LoadingButton
+                                loading={loading}
+                                loadingPosition="start"
+                                type="submit"
+                                sx={{ mr: 2, mt: 2 }}
+                                startIcon={<Icon>send</Icon>}
+                                variant="contained">
+                                Save
+                            </LoadingButton>
+                        </DialogActions>
+                    </Dialog>
+                </SimpleCard>
+
+                <SimpleCard title="Add Attributes" backArrow={false}>
+                    <Grid container spacing={12}>
+                        <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
                                 {attributes?.map((data, index) => {
                                     return (
@@ -906,18 +998,6 @@ const ProductEditForm = ({ data = {} }) => {
                                 />
                             </Box>
                             }
-
-                            <FormControl>
-                                <RadioGroup
-                                    row
-                                    value={isActive ?? "active"}
-                                    onChange={handleChange}
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="isActive">
-                                    <FormControlLabel value="active" control={<Radio />} label="Active" />
-                                    <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
-                                </RadioGroup>
-                            </FormControl>
                         </Grid>
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
@@ -926,10 +1006,15 @@ const ProductEditForm = ({ data = {} }) => {
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
+                            <LoadingButton
+                                loading={false}
+                                loadingPosition="start"
+                                onClick={() => console.log("----------=-===")}
+                                sx={{ mr: 2, mt: 2 }}
+                                startIcon={<Icon>send</Icon>}
+                                variant="contained">
+                                Save
+                            </LoadingButton>
                         </Box>
                     </Box>
 
@@ -985,15 +1070,10 @@ const ProductEditForm = ({ data = {} }) => {
                             <Button onClick={() => setMOpen(false)}>
                                 Cancel
                             </Button>
-                            <LoadingButton
-                                loading={loading}
-                                loadingPosition="start"
-                                type="submit"
-                                sx={{ mr: 2, mt: 2 }}
-                                startIcon={<Icon>send</Icon>}
-                                variant="contained">
-                                Save
-                            </LoadingButton>
+                            <Button color="primary" variant="contained" onClick={() => setMOpen(false)} sx={{ mr: 2, mt: 2 }}>
+                                <Icon>send</Icon>
+                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </SimpleCard>

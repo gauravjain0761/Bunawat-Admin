@@ -42,7 +42,7 @@ const AddProduct = () => {
         <Container>
             <Stack spacing={3}>
                 {id ?
-                    <ProductEditForm data={data} />
+                    <ProductEditForm data={data} id={id} />
                     :
                     <ProductForm data={{}} />
                 }
