@@ -64,6 +64,7 @@ const ProductEditForm = ({ data = {}, id }) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState(data ?? {})
     const [selectedSKU, setSelectedSKU] = useState({})
+    const [selectedSKUIndex, setSelectedSKUIndex] = useState(-1)
     const navigate = useNavigate();
     const [description, setDescription] = useState("");
     const [actionOpen, setActionOpen] = useState(formData?.attributeList?.map(() => { return null }) ?? []);
@@ -469,9 +470,9 @@ const ProductEditForm = ({ data = {}, id }) => {
         open()
             .then(color => {
                 let tempSKU = [...formData?.sku_data] ?? []
-                tempSKU[selectedSKU] = { ...tempSKU[selectedSKU], swatch: color.sRGBHex }
+                tempSKU[selectedSKUIndex] = { ...tempSKU[selectedSKUIndex], swatch: color.sRGBHex }
                 setFormData({ ...formData, sku_data: tempSKU });
-                setSelectedSKU({})
+                setSelectedSKUIndex(-1)
                 setDopen(false)
             })
             .catch(e => {
@@ -495,8 +496,6 @@ const ProductEditForm = ({ data = {}, id }) => {
         isActive,
         sku_data
     } = formData;
-
-    const disableInventoryList = ['instock_qty', 'threshold_qty', 'instock_lead_time', 'preorder_qty', 'preorder_lead_time', 'mapped_variant'];
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
@@ -912,7 +911,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                                                     <Box sx={{
                                                                         width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center        '
                                                                     }} onClick={() => {
-                                                                        setSelectedSKU(index)
+                                                                        setSelectedSKUIndex(index)
                                                                         setDopen(true)
                                                                     }}>
                                                                         <Box sx={{
@@ -920,7 +919,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                                                         }}></Box>
                                                                     </Box>
                                                                 </TableCell>
-                                                                <TableCell align="center">ABCD123,XYZ456</TableCell>
+                                                                <TableCell align="center">{row?.mapVariant?.map(x => x?.name)?.join(", ")}</TableCell>
                                                                 <TableCell align="center">
                                                                     {row?.isActive ?? true ?
                                                                         <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
@@ -954,6 +953,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                                                     >
                                                                         <MenuItem onClick={() => {
                                                                             setSelectedSKU(row)
+                                                                            setSelectedSKUIndex(index)
                                                                             setMOpen(true)
                                                                             handleActionClose();
                                                                         }}>Add Mapped Variant</MenuItem>
@@ -995,12 +995,12 @@ const ProductEditForm = ({ data = {}, id }) => {
                                     <FormControl>
                                         <RadioGroup
                                             row
-                                            value={isActive ?? "active"}
+                                            value={isActive ?? true}
                                             onChange={handleChange}
                                             aria-labelledby="demo-row-radio-buttons-group-label"
                                             name="isActive">
-                                            <FormControlLabel value="active" control={<Radio />} label="Active" />
-                                            <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
+                                            <FormControlLabel value={true} control={<Radio />} label="Active" />
+                                            <FormControlLabel value={false} control={<Radio />} label="InActive" />
                                         </RadioGroup>
                                     </FormControl>
                                 </Box>
@@ -1008,8 +1008,9 @@ const ProductEditForm = ({ data = {}, id }) => {
                         </Grid>
                         <MappedVariantModel open={mOpen} handleClose={() => {
                             setSelectedSKU({});
+                            setSelectedSKUIndex(-1);
                             setMOpen(false)
-                        }} formData={formData} SKUData={SKUData} selectedSKU={selectedSKU} setFormData={setFormData} />
+                        }} formData={formData} SKUData={SKUData} selectedSKU={selectedSKU} selectedSKUIndex={selectedSKUIndex} setFormData={setFormData} />
                     </SimpleCard>
                 </Box>
 

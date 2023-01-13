@@ -6,7 +6,7 @@ import { toast } from 'material-react-toastify';
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 
-const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU, setFormData }) => {
+const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU, selectedSKUIndex, setFormData }) => {
     const [data, setData] = useState(SKUData);
 
     useEffect(() => {
@@ -28,10 +28,12 @@ const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU,
                     multiple={true}
                     id="tags-outlined"
                     sx={{ mt: 2, }}
-                    // value={}
-                    // onChange={(e, newValue)=>{
-
-                    // }}
+                    value={formData?.sku_data?.[selectedSKUIndex]?.mapVariant ?? []}
+                    onChange={(e, newValue) => {
+                        let tempSKU = [...formData?.sku_data] ?? []
+                        tempSKU[selectedSKUIndex] = { ...tempSKU[selectedSKUIndex], mapVariant: newValue }
+                        setFormData({ ...formData, sku_data: tempSKU });
+                    }}
                     options={data}
                     getOptionLabel={(option) => option?.name}
                     filterSelectedOptions
