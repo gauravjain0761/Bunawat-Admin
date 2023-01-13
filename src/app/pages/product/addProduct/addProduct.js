@@ -39,15 +39,13 @@ const AddProduct = () => {
     }, [id])
 
     return (
-        <Container>
-            <Stack spacing={3}>
-                {id ?
-                    <ProductEditForm data={data} id={id} />
-                    :
-                    <ProductForm data={{}} />
-                }
-            </Stack>
-        </Container>
+        <>
+            {id ?
+                <ProductEditForm data={data} id={id} />
+                :
+                <ProductForm data={{}} />
+            }
+        </>
     );
 };
 

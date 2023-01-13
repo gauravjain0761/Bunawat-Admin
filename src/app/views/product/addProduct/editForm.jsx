@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    Container,
     Dialog,
     DialogActions,
     DialogContent,
@@ -22,6 +23,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Stack,
     styled,
     Switch,
     TableCell,
@@ -43,9 +45,10 @@ import { arrayMove, SortableContainer, SortableElement } from "react-sortable-ho
 import TableComponent from "app/components/table";
 import TextEditor from "app/components/textEditor";
 import { toast } from 'material-react-toastify';
-import { ApiGet, ApiPut } from "app/service/api";
+import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import { LoadingButton } from "@mui/lab";
+import MappedVariantModel from "../model/mappedVariant";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -60,11 +63,13 @@ const ProductEditForm = ({ data = {}, id }) => {
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState(data ?? {})
+    const [selectedSKU, setSelectedSKU] = useState({})
     const navigate = useNavigate();
     const [description, setDescription] = useState("");
     const [actionOpen, setActionOpen] = useState(formData?.attributeList?.map(() => { return null }) ?? []);
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [attributes, setAttributes] = useState([]);
+    const [SKUData, setSKUData] = useState([]);
 
     useEffect(() => {
         setDescription(data?.description ?? '')
@@ -79,7 +84,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                         type: 'single',
                         name: item?.slug,
                         value: null,
-                        options: item?.variants?.map(x => x?.name)
+                        options: item?.variants?.map(x => ({ id: x?._id, name: x?.name }))
                     }
                 }) ?? []);
             })
@@ -88,42 +93,59 @@ const ProductEditForm = ({ data = {}, id }) => {
             });
     }
 
+    const getSKUData = async () => {
+        await ApiGet(`${API_URL.getSKUS}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setSKUData(response?.data?.map(item => ({
+                        value: item?._id,
+                        name: item?.sku
+                    })))
+                }
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
+
     React.useEffect(() => {
         getData();
+        getSKUData();
     }, [])
 
     const columns = [
         {
-            id: "dnumber",
+            id: "sku",
             label: "SKU",
             width: 120
         },
         {
-            id: "in_stock",
+            id: "inStock_qty",
             label: "InStock \nQTY",
             align: "center",
             width: 100
         },
         {
-            id: "in_stock_leaqdtime",
+            id: "inStock_lead",
             label: "InStock \nLead Time",
             align: "center",
             width: 100
         },
         {
-            id: "preorder_qty",
+            id: "preOrder_qty",
             label: "PreOrder \nQTY",
             align: "center",
             width: 100
         },
         {
-            id: "preorder_leaqdtime",
+            id: "preOrder_lead",
             label: "PreOrder \nLead Time",
             align: "center",
             width: 100
         },
         {
-            id: "in_stock_threshold",
+            id: "threshold",
             label: "InStock \nThreshold",
             align: "center",
             width: 100
@@ -291,7 +313,7 @@ const ProductEditForm = ({ data = {}, id }) => {
         await ApiPut(`${API_URL.editProduct}/${id}`, {
             ...formData,
             description,
-            sku_data: []
+            sku_data: formData?.sku_data ?? []
         })
             .then((response) => {
                 setLoading(false)
@@ -344,20 +366,45 @@ const ProductEditForm = ({ data = {}, id }) => {
         }
     };
 
-    const handleAddAttribute = () => {
-        let attributesList = formData?.attributeList ?? []
-        let attributesData = formData?.attributeData ?? []
-        attributesList = [...attributesList, attributesData]
-        attributesData = [{
-            type: 'single',
-            name: 'color',
-            value: null
-        }, {
-            type: 'single',
-            name: 'size',
-            value: null
-        }]
-        setFormData({ ...formData, color: '#000', attributeData: attributesData, attributeList: attributesList });
+    const handleSKUData = (event, index) => {
+        const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+        let tempSKU = [...formData?.sku_data] ?? []
+        tempSKU[index] = { ...tempSKU[index], [event.target.name]: onlyNums }
+        setFormData({ ...formData, sku_data: tempSKU });
+    };
+
+    const handleAddAttribute = async () => {
+        let attributesData = [...attributes] ?? []
+        if (attributesData?.filter(x => !!x?.value)?.length > 0) {
+            const selectedAttributes = attributesData?.filter(x => !!x?.value)?.map(data => data?.value?.id);
+            await ApiPost(API_URL.addSKU, {
+                product_id: id,
+                attr: selectedAttributes ?? []
+            })
+                .then((response) => {
+                    if (response?.data?.length > 0) {
+                        setFormData({ ...formData, sku_data: [...formData?.sku_data, ...response?.data] });
+                        toast.success('Add Successfully!')
+                    }
+                })
+                .catch((error) => {
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
+        } else {
+            toast.error('Select Attributes First!')
+        }
+        // attributesList = [...attributesList, attributesData]
+        // attributesData = [{
+        //     type: 'single',
+        //     name: 'color',
+        //     value: null
+        // }, {
+        //     type: 'single',
+        //     name: 'size',
+        //     value: null
+        // }]
+        // setFormData({ ...formData, color: '#000', attributeData: attributesData, attributeList: attributesList });
     }
 
     const handleDeleteAttribute = (index) => {
@@ -366,24 +413,18 @@ const ProductEditForm = ({ data = {}, id }) => {
         setFormData({ ...formData, attributeList: attributesList });
     }
 
-    const handleAddValueAttribute = (type, name, value) => {
-        let attributes = formData?.attributeData ?? []
-        let index = attributes.findIndex(i => i.name == name)
-        if (index == -1) {
-            attributes = [...attributes, {
-                type,
-                name,
-                value
-            }]
-        } else if (index >= 0) {
-            attributes[index] = {
-                type,
-                name,
+    const handleAddValueAttribute = (name, value) => {
+        let attributesData = [...attributes] ?? []
+        let index = attributesData?.findIndex(i => i.name == name)
+        if (index >= 0) {
+            attributesData[index] = {
+                ...attributesData[index],
                 value
             }
         }
-        console.log(attributes)
-        setFormData({ ...formData, attributeData: attributes });
+        console.log(attributesData, index)
+        setAttributes(attributesData ?? []);
+        // setFormData({ ...formData, attributeData: attributess });
     }
 
     const handleDeleteImage = (index) => {
@@ -427,7 +468,10 @@ const ProductEditForm = ({ data = {}, id }) => {
     const pickColor = () => {
         open()
             .then(color => {
-                // handleAddValueAttribute('single', 'swatch', color.sRGBHex)
+                let tempSKU = [...formData?.sku_data] ?? []
+                tempSKU[selectedSKU] = { ...tempSKU[selectedSKU], swatch: color.sRGBHex }
+                setFormData({ ...formData, sku_data: tempSKU });
+                setSelectedSKU({})
                 setDopen(false)
             })
             .catch(e => {
@@ -602,483 +646,412 @@ const ProductEditForm = ({ data = {}, id }) => {
     });
 
     return (
-        <div>
+        <Box sx={{ position: 'relative' }}>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="Product" backArrow={true}>
-                    <Grid container spacing={12}>
-                        <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
-                                <Select id="grouped-native-select" label="Category"
-                                    value={category_id ?? ""}
-                                    name="category_id"
-                                    onChange={handleChange}>
-                                    {categoryList?.map(item => (
-                                        <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
-                                            fontWeight: item?.fontWeight,
-                                            color: "#000",
-                                            opacity: "1 !important"
-                                        }}>{item?.type == "sub" ?
-                                            <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Collection</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={collection_id ?? ""}
-                                    name="collection_id"
-                                    label="Collection"
-                                    onChange={handleChange}>
-                                    {collectionList?.map(item => (
-                                        <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                <Box sx={{ m: { lg: '50px', xs: '20px' } }}>
+                    <SimpleCard title="Product" backArrow={true} paddingZero={true}>
+                        <Grid container spacing={12}>
+                            <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+                                <Box sx={{ padding: '20px 24px 0px 24px' }}>
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
+                                        <Select id="grouped-native-select" label="Category"
+                                            value={category_id ?? ""}
+                                            name="category_id"
+                                            onChange={handleChange}>
+                                            {categoryList?.map(item => (
+                                                <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
+                                                    fontWeight: item?.fontWeight,
+                                                    color: "#000",
+                                                    opacity: "1 !important"
+                                                }}>{item?.type == "sub" ?
+                                                    <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={collection_id ?? ""}
+                                            name="collection_id"
+                                            label="Collection"
+                                            onChange={handleChange}>
+                                            {collectionList?.map(item => (
+                                                <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
 
-                            <TextField
-                                type="text"
-                                name="name"
-                                label="Name"
-                                onChange={handleChange}
-                                value={name || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-
-
-                            <Box sx={{ mb: 2 }}>
-                                <TextEditor data={description} setData={(d) => setDescription(d)} />
-                            </Box>
-
-                            <TextField
-                                type="text"
-                                name="cost_price"
-                                label="Cost Price"
-                                sx={{ mt: 1 }}
-                                onChange={handleChange}
-                                value={cost_price || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-
-                            <TextField
-                                type="text"
-                                name="mrp"
-                                label="MRP---   "
-                                onChange={handleChange}
-                                value={mrp || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-
-                            <TextField
-                                type="text"
-                                name="sale_price"
-                                label="Sale Price"
-                                onChange={handleChange}
-                                value={sale_price || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-
-                            <TextField
-                                type="text"
-                                name="reseller_price"
-                                label="ReSeller Price"
-                                onChange={handleChange}
-                                value={reseller_price || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
-
-                            {/* <FormControl>
-                                <FormLabel id="demo-row-radio-buttons-group-label">Influncer Commission Type</FormLabel>
-                                <RadioGroup
-                                    row
-                                    value={influncerCommissionType ?? "Fixed"}
-                                    onChange={handleChange}
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="influncerCommissionType">
-                                    <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
-                                    <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
-                                </RadioGroup>
-                            </FormControl>
-
-                            <TextField
-                                type="text"
-                                name="influncerCommission"
-                                label="Influncer Commission"
-                                onChange={handleChange}
-                                value={influncerCommission || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            /> */}
-
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Tax Type</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={tax ?? 0}
-                                    name="tax"
-                                    label="Tax Type"
-                                    onChange={handleChange}>
-                                    <MenuItem value={0}>Standard</MenuItem>
-                                    <MenuItem value={6}>6% CGST/IGST</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
-                                <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
-                                <Box className="list-group">
-                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
-                                </Box>
-
-                                <Box className="list-group">
-                                    <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
-                                </Box>
-                            </Box>
-
-                            <FormControl>
-                                <RadioGroup
-                                    row
-                                    value={isActive ?? "active"}
-                                    onChange={handleChange}
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="isActive">
-                                    <FormControlLabel value="active" control={<Radio />} label="Active" />
-                                    <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
-                                </RadioGroup>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                    <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <Dialog
-                        open={dOpen}
-                        aria-labelledby="responsive-dialog-title">
-                        <DialogTitle id="responsive-dialog-title">
-                            Pick Color
-                        </DialogTitle>
-                        <DialogContent>
-                            {image?.[0]?.url ?
-                                <img src={image?.[0]?.url} width="100%" height="160px" />
-                                :
-                                <>Please Select Image First.</>
-                            }
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setDopen(false)} type='button'>
-                                Cancel
-                            </Button>
-                            <Button onClick={() => pickColor()} type='button'>
-                                Pick Color
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-
-                    <Dialog
-                        open={mOpen}
-                        fullWidth
-                        maxWidth="sm"
-                        aria-labelledby="responsive-dialog-title"
-                    >
-                        <DialogTitle id="responsive-dialog-title">
-                            Mapped Variant
-                        </DialogTitle>
-                        <DialogContent>
-                            <Autocomplete
-                                multiple={true}
-                                id="tags-outlined"
-                                sx={{ mt: 2, }}
-                                options={['ABCD12', 'XYZ67']}
-                                getOptionLabel={(option) => option}
-                                filterSelectedOptions
-                                renderInput={(params) => (
                                     <TextField
-                                        {...params}
-                                        label='Mapped Variant List'
+                                        type="text"
+                                        name="name"
+                                        label="Name"
+                                        onChange={handleChange}
+                                        value={name || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
                                     />
-                                )}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setMOpen(false)}>
-                                Cancel
+
+
+                                    <Box sx={{ mb: 2 }}>
+                                        <TextEditor data={description} setData={(d) => setDescription(d)} />
+                                    </Box>
+
+                                    <TextField
+                                        type="text"
+                                        name="cost_price"
+                                        label="Cost Price"
+                                        sx={{ mt: 1 }}
+                                        onChange={handleChange}
+                                        value={cost_price || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+
+                                    <TextField
+                                        type="text"
+                                        name="mrp"
+                                        label="MRP---   "
+                                        onChange={handleChange}
+                                        value={mrp || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+
+                                    <TextField
+                                        type="text"
+                                        name="sale_price"
+                                        label="Sale Price"
+                                        onChange={handleChange}
+                                        value={sale_price || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+
+                                    <TextField
+                                        type="text"
+                                        name="reseller_price"
+                                        label="ReSeller Price"
+                                        onChange={handleChange}
+                                        value={reseller_price || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+
+                                    {/* <FormControl>
+            <FormLabel id="demo-row-radio-buttons-group-label">Influncer Commission Type</FormLabel>
+            <RadioGroup
+                row
+                value={influncerCommissionType ?? "Fixed"}
+                onChange={handleChange}
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="influncerCommissionType">
+                <FormControlLabel value="Fixed" control={<Radio />} label="Fixed" />
+                <FormControlLabel value="Percentage" control={<Radio />} label="Percentage" />
+            </RadioGroup>
+        </FormControl>
+
+        <TextField
+            type="text"
+            name="influncerCommission"
+            label="Influncer Commission"
+            onChange={handleChange}
+            value={influncerCommission || ""}
+            validators={["required"]}
+            errorMessages={["this field is required"]}
+        /> */}
+
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel id="demo-simple-select-label">Tax Type</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={tax ?? 0}
+                                            name="tax"
+                                            label="Tax Type"
+                                            onChange={handleChange}>
+                                            <MenuItem value={0}>Standard</MenuItem>
+                                            <MenuItem value={6}>6% CGST/IGST</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
+                                    <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
+                                        <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                        <Box className="list-group">
+                                            <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
+                                        </Box>
+
+                                        <Box className="list-group">
+                                            <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                <SimpleCard title="Add Attributes" backArrow={false}>
+                                    <Grid container spacing={12}>
+                                        <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
+                                                {attributes?.map((data, index) => {
+                                                    return (
+                                                        <Autocomplete
+                                                            key={index}
+                                                            sx={{ width: "400px" }}
+                                                            multiple={data?.type == 'single' ? false : true}
+                                                            id="tags-outlined"
+                                                            value={data?.value}
+                                                            onChange={(event, newValue) => handleAddValueAttribute(data?.name, newValue)}
+                                                            options={data?.options}
+                                                            getOptionLabel={(option) => option?.name}
+                                                            filterSelectedOptions
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
+                                                                />
+                                                            )}
+                                                        />
+                                                    )
+                                                })}
+
+                                                <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
+                                                    <Icon>add</Icon>
+                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
+                                                </Button>
+                                            </Box>
+
+                                            {sku_data?.length > 0 && <Box sx={{ mt: 1 }}>
+                                                <TableComponent
+                                                    rows={sku_data ?? []}
+                                                    columns={columns}
+                                                    extraPaddingOnFirstColumn={true}
+                                                    disablePagination={true}
+                                                    extraDisable={true}
+                                                    disableCheckBox={true}
+                                                    renderRow={(row, index) => {
+                                                        return (
+                                                            <TableRow
+                                                                hover
+                                                                role="checkbox"
+                                                                tabIndex={-1}
+                                                                key={index}
+                                                                sx={{ border: '1px solid' }}
+                                                            >
+                                                                <TableCell sx={{ pl: '15px' }}>{row?.sku}</TableCell>
+                                                                <TableCell align="center">
+                                                                    <TextField
+                                                                        type="text"
+                                                                        label="InStock QTY"
+                                                                        value={row?.inStock_qty ?? 0}
+                                                                        name="inStock_qty"
+                                                                        onChange={(e) => handleSKUData(e, index)}
+                                                                        sx={{
+                                                                            "&.MuiFormControl-root": {
+                                                                                mb: 0
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <TextField
+                                                                        type="text"
+                                                                        label="InStock Lead Time"
+                                                                        value={row?.inStock_lead ?? 0}
+                                                                        onChange={(e) => handleSKUData(e, index)}
+                                                                        name="inStock_lead"
+                                                                        sx={{
+                                                                            "&.MuiFormControl-root": {
+                                                                                mb: 0
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <TextField
+                                                                        type="text"
+                                                                        label="PreOrder QTY"
+                                                                        value={row?.preOrder_qty ?? 0}
+                                                                        onChange={(e) => handleSKUData(e, index)}
+                                                                        name="preOrder_qty"
+                                                                        sx={{
+                                                                            "&.MuiFormControl-root": {
+                                                                                mb: 0
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <TextField
+                                                                        type="text"
+                                                                        label="PreOrder Lead Time"
+                                                                        value={row?.preOrder_lead ?? 0}
+                                                                        onChange={(e) => handleSKUData(e, index)}
+                                                                        name="preOrder_lead"
+                                                                        sx={{
+                                                                            "&.MuiFormControl-root": {
+                                                                                mb: 0
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <TextField
+                                                                        type="text"
+                                                                        label="InStock Threshold QTY"
+                                                                        value={row?.threshold ?? 0}
+                                                                        onChange={(e) => handleSKUData(e, index)}
+                                                                        name="threshold"
+                                                                        sx={{
+                                                                            "&.MuiFormControl-root": {
+                                                                                mb: 0
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <Box sx={{
+                                                                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center        '
+                                                                    }} onClick={() => {
+                                                                        setSelectedSKU(index)
+                                                                        setDopen(true)
+                                                                    }}>
+                                                                        <Box sx={{
+                                                                            width: '30px', height: '30px', background: row?.swatch ? row?.swatch : '#000', borderRadius: '50%'
+                                                                        }}></Box>
+                                                                    </Box>
+                                                                </TableCell>
+                                                                <TableCell align="center">ABCD123,XYZ456</TableCell>
+                                                                <TableCell align="center">
+                                                                    {row?.isActive ?? true ?
+                                                                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                                                            Active
+                                                                        </Typography>
+                                                                        :
+                                                                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                                                            InActive
+                                                                        </Typography>
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell align='right' sx={{ pr: "18px" }}>
+                                                                    <IconButton
+                                                                        aria-label="more"
+                                                                        id="long-button"
+                                                                        aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
+                                                                        aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
+                                                                        aria-haspopup="true"
+                                                                        onClick={(e) => handleActionClick(e, index)}>
+                                                                        <MoreVertIcon />
+                                                                    </IconButton>
+                                                                    <Menu
+                                                                        id="fade-menu"
+                                                                        MenuListProps={{
+                                                                            'aria-labelledby': 'fade-button',
+                                                                        }}
+                                                                        anchorEl={actionOpen[index]}
+                                                                        open={Boolean(actionOpen[index])}
+                                                                        onClose={handleActionClose}
+                                                                        TransitionComponent={Fade}
+                                                                    >
+                                                                        <MenuItem onClick={() => {
+                                                                            setSelectedSKU(row)
+                                                                            setMOpen(true)
+                                                                            handleActionClose();
+                                                                        }}>Add Mapped Variant</MenuItem>
+                                                                    </Menu>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    }}
+                                                />
+                                            </Box>
+                                            }
+                                        </Grid>
+                                    </Grid>
+
+                                    <Dialog
+                                        open={dOpen}
+                                        aria-labelledby="responsive-dialog-title">
+                                        <DialogTitle id="responsive-dialog-title">
+                                            Pick Color
+                                        </DialogTitle>
+                                        <DialogContent>
+                                            {image?.[0]?.url ?
+                                                <img src={image?.[0]?.url} width="100%" height="160px" />
+                                                :
+                                                <>Please Select Image First.</>
+                                            }
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={() => setDopen(false)} type='button'>
+                                                Cancel
+                                            </Button>
+                                            <Button onClick={() => pickColor()} type='button'>
+                                                Pick Color
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                </SimpleCard>
+                                <Box sx={{ padding: '0px 24px' }}>
+                                    <FormControl>
+                                        <RadioGroup
+                                            row
+                                            value={isActive ?? "active"}
+                                            onChange={handleChange}
+                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                            name="isActive">
+                                            <FormControlLabel value="active" control={<Radio />} label="Active" />
+                                            <FormControlLabel value="inactive" control={<Radio />} label="InActive" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <MappedVariantModel open={mOpen} handleClose={() => {
+                            setSelectedSKU({});
+                            setMOpen(false)
+                        }} formData={formData} SKUData={SKUData} selectedSKU={selectedSKU} setFormData={setFormData} />
+                    </SimpleCard>
+                </Box>
+
+                <Box sx={{
+                    width: '100%', height: '80px', background: '#fff',
+                    position: 'sticky',
+                    zIndex: 999,
+                    bottom: 0,
+                    boxShadow: '0 -8px 16px 0 rgb(85 93 102 / 30%)'
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        width: '100%',
+                        height: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end'
+                    }}>
+                        <Box sx={{
+                            mr: 3
+                        }}>
+                            <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #232a45', color: '#232a45' }}>
+                                Back
                             </Button>
                             <LoadingButton
                                 loading={loading}
                                 loadingPosition="start"
                                 type="submit"
-                                sx={{ mr: 2, mt: 2 }}
-                                startIcon={<Icon>send</Icon>}
-                                variant="contained">
-                                Save
-                            </LoadingButton>
-                        </DialogActions>
-                    </Dialog>
-                </SimpleCard>
-
-                <SimpleCard title="Add Attributes" backArrow={false}>
-                    <Grid container spacing={12}>
-                        <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
-                                {attributes?.map((data, index) => {
-                                    return (
-                                        <Autocomplete
-                                            key={index}
-                                            sx={{ width: "400px" }}
-                                            multiple={data?.type == 'single' ? false : true}
-                                            id="tags-outlined"
-                                            // value={data?.value}
-                                            // onChange={(event, newValue) => handleAddValueAttribute(data?.type, data?.name, newValue)}
-                                            options={data?.options}
-                                            getOptionLabel={(option) => option}
-                                            filterSelectedOptions
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
-                                                />
-                                            )}
-                                        />
-                                    )
-                                })}
-
-                                <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
-                                    <Icon>add</Icon>
-                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
-                                </Button>
-                            </Box>
-
-                            {attributeList?.length > 0 && <Box sx={{ mt: 1 }}>
-                                <TableComponent
-                                    rows={attributeList ?? []}
-                                    columns={columns}
-                                    extraPaddingOnFirstColumn={true}
-                                    disablePagination={true}
-                                    extraDisable={true}
-                                    disableCheckBox={true}
-                                    renderRow={(row, index) => {
-                                        return (
-                                            <TableRow
-                                                hover
-                                                role="checkbox"
-                                                tabIndex={-1}
-                                                key={index}
-                                                sx={{ border: '1px solid' }}
-                                            >
-                                                <TableCell sx={{ pl: '15px' }}>ABCD1234BlueM</TableCell>
-                                                <TableCell align="center">
-                                                    <TextField
-                                                        type="number"
-                                                        label="InStock QTY"
-                                                        defaultValue={0}
-                                                        sx={{
-                                                            "&.MuiFormControl-root": {
-                                                                mb: 0
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <TextField
-                                                        type="number"
-                                                        label="InStock Lead Time"
-                                                        defaultValue={0}
-                                                        sx={{
-                                                            "&.MuiFormControl-root": {
-                                                                mb: 0
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <TextField
-                                                        type="number"
-                                                        label="PreOrder QTY"
-                                                        defaultValue={0}
-                                                        sx={{
-                                                            "&.MuiFormControl-root": {
-                                                                mb: 0
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <TextField
-                                                        type="number"
-                                                        label="PreOrder Lead Time"
-                                                        defaultValue={0}
-                                                        sx={{
-                                                            "&.MuiFormControl-root": {
-                                                                mb: 0
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <TextField
-                                                        type="number"
-                                                        label="InStock Threshold QTY"
-                                                        defaultValue={0}
-                                                        sx={{
-                                                            "&.MuiFormControl-root": {
-                                                                mb: 0
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <Box sx={{
-                                                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center        '
-                                                    }} onClick={() => {
-                                                        setDopen(true)
-                                                    }}>
-                                                        <Box sx={{
-                                                            width: '30px', height: '30px', background: '#000', borderRadius: '50%'
-                                                        }}></Box>
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell align="center">ABCD123,XYZ456</TableCell>
-                                                <TableCell align="center">
-                                                    {row?.isActive ?? true ?
-                                                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
-                                                            Active
-                                                        </Typography>
-                                                        :
-                                                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
-                                                            InActive
-                                                        </Typography>
-                                                    }
-                                                </TableCell>
-                                                <TableCell align='right' sx={{ pr: "18px" }}>
-                                                    <IconButton
-                                                        aria-label="more"
-                                                        id="long-button"
-                                                        aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
-                                                        aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
-                                                        aria-haspopup="true"
-                                                        onClick={(e) => handleActionClick(e, index)}>
-                                                        <MoreVertIcon />
-                                                    </IconButton>
-                                                    <Menu
-                                                        id="fade-menu"
-                                                        MenuListProps={{
-                                                            'aria-labelledby': 'fade-button',
-                                                        }}
-                                                        anchorEl={actionOpen[index]}
-                                                        open={Boolean(actionOpen[index])}
-                                                        onClose={handleActionClose}
-                                                        TransitionComponent={Fade}
-                                                    >
-                                                        <MenuItem onClick={() => {
-                                                            setMOpen(true)
-                                                            handleActionClose();
-                                                        }}>Add Mapped Variant</MenuItem>
-                                                    </Menu>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    }}
-                                />
-                            </Box>
-                            }
-                        </Grid>
-                    </Grid>
-                    <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <LoadingButton
-                                loading={false}
-                                loadingPosition="start"
-                                onClick={() => console.log("----------=-===")}
-                                sx={{ mr: 2, mt: 2 }}
+                                sx={{
+                                    background: '#232a45', ml: 2, color: '#fff',
+                                    "&:hover": {
+                                        background: '#232a45', color: '#fff'
+                                    }
+                                }}
                                 startIcon={<Icon>send</Icon>}
                                 variant="contained">
                                 Save
                             </LoadingButton>
                         </Box>
                     </Box>
-
-                    <Dialog
-                        open={dOpen}
-                        aria-labelledby="responsive-dialog-title">
-                        <DialogTitle id="responsive-dialog-title">
-                            Pick Color
-                        </DialogTitle>
-                        <DialogContent>
-                            {image?.[0]?.url ?
-                                <img src={image?.[0]?.url} width="100%" height="160px" />
-                                :
-                                <>Please Select Image First.</>
-                            }
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setDopen(false)} type='button'>
-                                Cancel
-                            </Button>
-                            <Button onClick={() => pickColor()} type='button'>
-                                Pick Color
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-
-                    <Dialog
-                        open={mOpen}
-                        fullWidth
-                        maxWidth="sm"
-                        aria-labelledby="responsive-dialog-title"
-                    >
-                        <DialogTitle id="responsive-dialog-title">
-                            Mapped Variant
-                        </DialogTitle>
-                        <DialogContent>
-                            <Autocomplete
-                                multiple={true}
-                                id="tags-outlined"
-                                sx={{ mt: 2, }}
-                                options={['ABCD12', 'XYZ67']}
-                                getOptionLabel={(option) => option}
-                                filterSelectedOptions
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label='Mapped Variant List'
-                                    />
-                                )}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setMOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button color="primary" variant="contained" onClick={() => setMOpen(false)} sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </SimpleCard>
+                </Box>
             </ValidatorForm>
-        </div >
+        </Box >
     );
 };
 
