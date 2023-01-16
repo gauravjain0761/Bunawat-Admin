@@ -94,16 +94,16 @@ const AttributeList = () => {
         //     width: 80
         // },
         {
-            id: "isActive",
-            label: "Status",
-            align: "center",
-            width: 80
-        },
-        {
             id: "count",
             label: "Variant",
             sortDisable: true,
             width: 250
+        },
+        {
+            id: "isActive",
+            label: "Status",
+            align: "center",
+            width: 80
         },
         {
             id: "action",
@@ -363,6 +363,9 @@ const AttributeList = () => {
                             {/* <TableCell align="center">
                                 {row?.multiselect ? 'Multiselect' : 'Single'}
                             </TableCell> */}
+                            <TableCell>
+                                {row?.variants?.map((item) => item?.name)?.join(", ")}
+                            </TableCell>
                             <TableCell align="center">
                                 {row?.isActive ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
@@ -373,9 +376,6 @@ const AttributeList = () => {
                                         InActive
                                     </Typography>
                                 }
-                            </TableCell>
-                            <TableCell>
-                                {row?.variants?.map((item) => item?.name)?.join(", ")}
                             </TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton

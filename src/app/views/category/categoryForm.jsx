@@ -162,7 +162,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
     }
 
     const handleSubmit = async (event) => {
-        const { link_with, linkValue, productId, ...payload } = formData
+        const { link_with, linkValue, productId, image, ...payload } = formData
         let tempError = { ...formError }
         if (!description) {
             setIsErrorDescription(true)
@@ -176,6 +176,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
         if (link_with && !linkValue) {
             tempError = { ...tempError, linkValue: true }
         }
+        if (home_visibilty && !image) {
+            tempError = { ...tempError, image: true }
+        }
         if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
             if (id) {
@@ -183,7 +186,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     ...payload,
                     description,
                     link_with: link_with ?? 'CATEGORY',
-                    "image": "",
+                    image: image ?? "",
                     "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
                     "categories_list": link_with == 'COLLECTION' ? [] : [linkValue],
                     "product_list": productId ? [productId] : []
@@ -207,7 +210,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     ...payload,
                     description,
                     link_with: link_with ?? 'CATEGORY',
-                    "image": "",
+                    image: image ?? "",
                     "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
                     "categories_list": linkValue ? (link_with == 'COLLECTION' ? [] : [linkValue]) : [],
                     "product_list": productId ? [productId] : []
@@ -262,6 +265,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const handleChange = (event) => {
         if (event.target.name == "home_visibilty") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
+            setFormError({ ...formError, image: false })
         } else if (event.target.name == "parent_cateogry_id") {
             setFormData({ ...formData, [event.target.name]: event.target.value, sub_category_id: "" });
             setFormError({ ...formError, parent_cateogry_id: false })
@@ -273,11 +277,15 @@ const CategoryForm = ({ data = {}, id, type }) => {
             setFormData({ ...formData, [event.target.name]: onlyUpper?.toUpperCase() });
         } else if (event.target.name == "image") {
             handleImageUpload(event)
+            setFormError({ ...formError, image: false })
         } else if (event.target.name == "link_with") {
             setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
         } else if (event.target.name == "linkValue") {
             setFormData({ ...formData, [event.target.name]: event.target.value });
             setFormError({ ...formError, linkValue: false })
+        } else if (event.target.name == "productId") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, productId: false })
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -308,7 +316,6 @@ const CategoryForm = ({ data = {}, id, type }) => {
         }
     };
 
-
     const handleError = async (event) => {
         let tempError = { ...formError }
         if (!description) {
@@ -322,6 +329,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
         }
         if (link_with && !linkValue) {
             tempError = { ...tempError, linkValue: true }
+        }
+        if (home_visibilty && !image) {
+            tempError = { ...tempError, image: true }
         }
         setFormError(tempError)
     }
@@ -514,31 +524,34 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                     </Box>
                                                 </Box>
                                                 :
-                                                <Button
-                                                    variant="contained"
-                                                    component="label"
-                                                    sx={{
-                                                        width: "150px",
-                                                        height: "150px",
-                                                        background: "transparent",
-                                                        color: "#000",
-                                                        border: "2px dashed",
-                                                        margin: "10px 10px 0 0",
-
-                                                        "&:hover": {
+                                                <Box>
+                                                    <Button
+                                                        variant="contained"
+                                                        component="label"
+                                                        sx={{
+                                                            width: "150px",
+                                                            height: "150px",
                                                             background: "transparent",
-                                                        }
-                                                    }} >
-                                                    <Icon>add</Icon>
-                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
-                                                    <input
-                                                        type="file"
-                                                        name="image"
-                                                        accept="image/png, image/gif, image/jpeg"
-                                                        hidden
-                                                        onClick={(event) => { event.target.value = '' }}
-                                                        onChange={handleChange} />
-                                                </Button>
+                                                            color: "#000",
+                                                            border: "2px dashed",
+                                                            margin: "10px 10px 0 0",
+
+                                                            "&:hover": {
+                                                                background: "transparent",
+                                                            }
+                                                        }} >
+                                                        <Icon>add</Icon>
+                                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                        <input
+                                                            type="file"
+                                                            name="image"
+                                                            accept="image/png, image/gif, image/jpeg"
+                                                            hidden
+                                                            onClick={(event) => { event.target.value = '' }}
+                                                            onChange={handleChange} />
+                                                    </Button>
+                                                    {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
+                                                </Box>
                                             }
                                         </Box>
                                     </Box>
@@ -550,7 +563,10 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         label="Link with product design number"
                                         onChange={handleChange}
                                         value={productId || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
                                     />
+                                    {formError?.productId && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
 
                                 </>
                             }

@@ -43,10 +43,17 @@ const CollectionForm = ({ data = {}, id }) => {
     const [categoryList, setCategoryList] = useState([]);
     const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [collectionList, setCollectionList] = useState([]);
+    const [formError, setFormError] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
-        setFormData(data)
+        let temp = { ...data }
+        if (temp?.link_with == 'COLLECTION') {
+            temp = { ...temp, linkValue: temp?.colleciton_list?.[0], productId: temp?.product_list?.[0] ?? '', parent_cateogry_id: temp?.parent_cateogry_id?._id, sub_category_id: temp?.sub_category_id?._id }
+        } else {
+            temp = { ...temp, linkValue: temp?.categories_list?.[0], productId: temp?.product_list?.[0] ?? '', parent_cateogry_id: temp?.parent_cateogry_id?._id, sub_category_id: temp?.sub_category_id?._id }
+        }
+        setFormData(temp)
         setDescription(data?.description)
     }, [data])
 
@@ -90,16 +97,26 @@ const CollectionForm = ({ data = {}, id }) => {
     }, [])
 
     const handleSubmit = async () => {
+        let tempError = { ...formError }
         if (!description) {
             setIsErrorDescription(true)
-        } else {
+        }
+        if (link_with && !linkValue) {
+            tempError = { ...tempError, linkValue: true }
+        }
+        if (home_visibilty && !image) {
+            tempError = { ...tempError, image: true }
+        }
+        if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
             if (id) {
                 await ApiPut(`${API_URL.editCollection}/${id}`, {
                     "name": formData?.name,
+                    image: formData?.image ?? "",
+                    link_with: formData?.link_with ?? 'CATEGORY',
                     "description": description,
-                    "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
-                    "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
+                    "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
+                    "categories_list": link_with == 'COLLECTION' ? [] : [formData?.linkValue],
                     "product_list": [formData?.productId]
                 })
                     .then((response) => {
@@ -115,9 +132,11 @@ const CollectionForm = ({ data = {}, id }) => {
             } else {
                 await ApiPost(API_URL.addCollection, {
                     "name": formData?.name,
+                    image: formData?.image ?? "",
+                    link_with: formData?.link_with ?? 'CATEGORY',
                     "description": description,
-                    "colleciton_list": formData?.linkType == 'collection' ? [formData?.linkValue?.value] : [],
-                    "categories_list": formData?.linkType == 'collection' ? [] : [formData?.linkValue?.value],
+                    "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
+                    "categories_list": link_with == 'COLLECTION' ? [] : [formData?.linkValue],
                     "product_list": [formData?.productId]
                 })
                     .then((response) => {
@@ -132,6 +151,7 @@ const CollectionForm = ({ data = {}, id }) => {
                     });
             }
         }
+        setFormError(tempError)
     };
 
 
@@ -164,14 +184,19 @@ const CollectionForm = ({ data = {}, id }) => {
     }
 
     const handleChange = (event) => {
-        if (event.target.name == "home") {
-            let visibility = formData?.visibility ?? {}
-            visibility = { ...visibility, [event.target.name]: event.target.checked }
-            setFormData({ ...formData, visibility });
+        if (event.target.name == "home_visibilty") {
+            setFormData({ ...formData, [event.target.name]: event.target.checked });
+            setFormError({ ...formError, image: false })
         } else if (event.target.name == "image") {
             handleImageUpload(event)
+            setFormError({ ...formError, image: false })
+        } else if (event.target.name == "link_with") {
+            setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
         } else if (event.target.name == "linkType") {
             setFormData({ ...formData, linkValue: null, [event.target.name]: event.target.value });
+        } else if (event.target.name == "linkValue") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, linkValue: false })
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -179,16 +204,30 @@ const CollectionForm = ({ data = {}, id }) => {
 
     const {
         name,
-        linkType,
+        link_with,
         linkValue,
-        visibility,
+        home_visibilty,
         productId,
         image
     } = formData;
 
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        if (!description) {
+            setIsErrorDescription(true)
+        }
+        if (link_with && !linkValue) {
+            tempError = { ...tempError, linkValue: true }
+        }
+        if (home_visibilty && !image) {
+            tempError = { ...tempError, image: true }
+        }
+        setFormError(tempError)
+    }
+
     return (
         <div>
-            <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+            <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                 <SimpleCard title="Collection" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -219,55 +258,69 @@ const CollectionForm = ({ data = {}, id }) => {
                                 <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel>
                                 <RadioGroup
                                     row
-                                    value={linkType ?? "category"}
+                                    value={link_with ?? "category"}
                                     onChange={handleChange}
                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="linkType">
-                                    <FormControlLabel value="category" control={<Radio />} label="Category" />
-                                    <FormControlLabel value="collection" control={<Radio />} label="Collection" />
+                                    name="link_with">
+                                    <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" />
+                                    <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" />
                                 </RadioGroup>
                             </FormControl>
 
-                            {linkType == 'collection' ?
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    onChange={(e, newValue) => {
-                                        setFormData({ ...formData, linkValue: newValue });
-                                    }}
-                                    value={linkValue ?? null}
-                                    options={collectionList}
-                                    getOptionLabel={(option) => option?.label}
-                                    renderInput={(params) => <TextField {...params} label="Link with collection " />}
-                                />
+                            {link_with == 'COLLECTION' ?
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Link with collection</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={linkValue ?? ''}
+                                        name="linkValue"
+                                        label="Link with collection"
+                                        sx={{
+                                            border: formError?.linkValue ? '1px solid #FF3D57' : ''
+                                        }}
+                                        onChange={handleChange}>
+                                        {collectionList?.map((item) => (
+                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                    {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                </FormControl>
                                 :
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    onChange={(e, newValue) => {
-                                        setFormData({ ...formData, linkValue: newValue });
-                                    }}
-                                    value={linkValue ?? null}
-                                    options={categoryList}
-                                    getOptionLabel={(option) => option?.label}
-                                    renderInput={(params) => <TextField {...params} label="Link with category" />}
-                                />
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Link with category</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={linkValue ?? ''}
+                                        name="linkValue"
+                                        sx={{
+                                            border: formError?.linkValue ? '1px solid #FF3D57' : ''
+                                        }}
+                                        label="Link with category"
+                                        onChange={handleChange}>
+                                        {categoryList?.map((item) => (
+                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                    {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                </FormControl>
                             }
 
 
-                            <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard" >
+                            <FormControl sx={{ mb: 1, flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
                                 {/* <FormLabel component="legend">Visibility</FormLabel> */}
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
-                                            <Checkbox checked={visibility?.home} onChange={handleChange} name="home" />
+                                            <Checkbox checked={home_visibilty ?? false} onChange={handleChange} name="home_visibilty" />
                                         }
                                         label="Home Visibility"
                                     />
                                 </FormGroup>
                             </FormControl>
 
-                            {visibility?.home &&
+                            {home_visibilty &&
                                 <>
                                     <Box display="flex" flexDirection="column">
                                         <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
@@ -292,31 +345,34 @@ const CollectionForm = ({ data = {}, id }) => {
                                                     </Box>
                                                 </Box>
                                                 :
-                                                <Button
-                                                    variant="contained"
-                                                    component="label"
-                                                    sx={{
-                                                        width: "150px",
-                                                        height: "150px",
-                                                        background: "transparent",
-                                                        color: "#000",
-                                                        border: "2px dashed",
-                                                        margin: "10px 10px 0 0",
-
-                                                        "&:hover": {
+                                                <Box>
+                                                    <Button
+                                                        variant="contained"
+                                                        component="label"
+                                                        sx={{
+                                                            width: "150px",
+                                                            height: "150px",
                                                             background: "transparent",
-                                                        }
-                                                    }} >
-                                                    <Icon>add</Icon>
-                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
-                                                    <input
-                                                        type="file"
-                                                        name="image"
-                                                        accept="image/png, image/gif, image/jpeg"
-                                                        hidden
-                                                        onClick={(event) => { event.target.value = '' }}
-                                                        onChange={handleChange} />
-                                                </Button>
+                                                            color: "#000",
+                                                            border: "2px dashed",
+                                                            margin: "10px 10px 0 0",
+
+                                                            "&:hover": {
+                                                                background: "transparent",
+                                                            }
+                                                        }} >
+                                                        <Icon>add</Icon>
+                                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                        <input
+                                                            type="file"
+                                                            name="image"
+                                                            accept="image/png, image/gif, image/jpeg"
+                                                            hidden
+                                                            onClick={(event) => { event.target.value = '' }}
+                                                            onChange={handleChange} />
+                                                    </Button>
+                                                    {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
+                                                </Box>
                                             }
                                         </Box>
                                     </Box>
@@ -328,6 +384,8 @@ const CollectionForm = ({ data = {}, id }) => {
                                         label="Link with product design number"
                                         onChange={handleChange}
                                         value={productId || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
                                     />
 
                                 </>
