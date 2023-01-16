@@ -47,6 +47,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const [parentSubCategoryList, setParentSubCategoryList] = useState([]);
     const [collectionList, setCollectionList] = useState([]);
     const [isErrorDescription, setIsErrorDescription] = useState(false);
+    const [formError, setFormError] = useState({});
 
     useEffect(() => {
         let temp = { ...data }
@@ -162,9 +163,20 @@ const CategoryForm = ({ data = {}, id, type }) => {
 
     const handleSubmit = async (event) => {
         const { link_with, linkValue, productId, ...payload } = formData
+        let tempError = { ...formError }
         if (!description) {
             setIsErrorDescription(true)
-        } else {
+        }
+        if ((type == 'sub' || type == 'list') && !parent_cateogry_id) {
+            tempError = { ...tempError, parent_cateogry_id: true }
+        }
+        if ((type == 'list') && !sub_category_id) {
+            tempError = { ...tempError, sub_category_id: true }
+        }
+        if (link_with && !linkValue) {
+            tempError = { ...tempError, linkValue: true }
+        }
+        if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
             if (id) {
                 await ApiPut(`${getEditURL(type)}/${id}`, {
@@ -216,6 +228,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     });
             }
         }
+        setFormError(tempError)
     };
 
     const handleImageUpload = async (event) => {
@@ -251,10 +264,20 @@ const CategoryForm = ({ data = {}, id, type }) => {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
         } else if (event.target.name == "parent_cateogry_id") {
             setFormData({ ...formData, [event.target.name]: event.target.value, sub_category_id: "" });
+            setFormError({ ...formError, parent_cateogry_id: false })
+        } else if (event.target.name == "sub_category_id") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, sub_category_id: false })
+        } else if (event.target.name == "code") {
+            const onlyUpper = event.target.value.replace(/[^A-Za-z]/g, '');
+            setFormData({ ...formData, [event.target.name]: onlyUpper?.toUpperCase() });
         } else if (event.target.name == "image") {
             handleImageUpload(event)
         } else if (event.target.name == "link_with") {
             setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
+        } else if (event.target.name == "linkValue") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, linkValue: false })
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -285,9 +308,27 @@ const CategoryForm = ({ data = {}, id, type }) => {
         }
     };
 
+
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        if (!description) {
+            setIsErrorDescription(true)
+        }
+        if ((type == 'sub' || type == 'list') && !parent_cateogry_id) {
+            tempError = { ...tempError, parent_cateogry_id: true }
+        }
+        if ((type == 'list') && !sub_category_id) {
+            tempError = { ...tempError, sub_category_id: true }
+        }
+        if (link_with && !linkValue) {
+            tempError = { ...tempError, linkValue: true }
+        }
+        setFormError(tempError)
+    }
+
     return (
         <div>
-            <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+            <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                 <SimpleCard title={getTitle()} backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -300,12 +341,16 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         id="demo-simple-select"
                                         value={parent_cateogry_id ?? ''}
                                         name="parent_cateogry_id"
+                                        sx={{
+                                            border: formError?.parent_cateogry_id ? '1px solid #FF3D57' : ''
+                                        }}
                                         label="Parent Category"
                                         onChange={handleChange}>
                                         {parentCategoryList?.map((item) => (
                                             <MenuItem value={item?.value}>{item?.label}</MenuItem>
                                         ))}
                                     </Select>
+                                    {formError?.parent_cateogry_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     <Typography onClick={() => navigate(`/category/details/parent?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
                                         Add Parent Category
                                     </Typography>
@@ -321,12 +366,16 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         value={sub_category_id ?? ''}
                                         name="sub_category_id"
                                         label="Parent Sub Category"
+                                        sx={{
+                                            border: formError?.sub_category_id ? '1px solid #FF3D57' : ''
+                                        }}
                                         onChange={handleChange}>
                                         {parentSubCategoryList?.filter(x => x?.parent_cateogry_id?._id == parent_cateogry_id)?.length == 0 && <MenuItem value="" disabled>No Options.</MenuItem>}
                                         {parentSubCategoryList?.filter(x => x?.parent_cateogry_id?._id == parent_cateogry_id)?.map((item) => (
                                             <MenuItem value={item?.value}>{item?.label}</MenuItem>
                                         ))}
                                     </Select>
+                                    {formError?.sub_category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     <Typography onClick={() => navigate(`/category/details/sub?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
                                         Add Parent Sub Category
                                     </Typography>
@@ -397,11 +446,15 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         value={linkValue ?? ''}
                                         name="linkValue"
                                         label="Link with collection"
+                                        sx={{
+                                            border: formError?.linkValue ? '1px solid #FF3D57' : ''
+                                        }}
                                         onChange={handleChange}>
                                         {collectionList?.map((item) => (
                                             <MenuItem value={item?.value}>{item?.label}</MenuItem>
                                         ))}
                                     </Select>
+                                    {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                 </FormControl>
                                 :
                                 <FormControl fullWidth sx={{ mb: 2 }}>
@@ -411,12 +464,16 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         id="demo-simple-select"
                                         value={linkValue ?? ''}
                                         name="linkValue"
+                                        sx={{
+                                            border: formError?.linkValue ? '1px solid #FF3D57' : ''
+                                        }}
                                         label="Link with category"
                                         onChange={handleChange}>
                                         {categoryList?.map((item) => (
                                             <MenuItem value={item?.value}>{item?.label}</MenuItem>
                                         ))}
                                     </Select>
+                                    {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                 </FormControl>
                             }
 
@@ -490,7 +547,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         sx={{ mt: 3 }}
                                         type="text"
                                         name="productId"
-                                        label="Link with productId"
+                                        label="Link with product design number"
                                         onChange={handleChange}
                                         value={productId || ""}
                                     />

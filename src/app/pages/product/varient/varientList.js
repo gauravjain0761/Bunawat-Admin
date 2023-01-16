@@ -57,7 +57,7 @@ const VarientList = () => {
     const handleSubmit = async (event) => {
         setLoading(true)
         if (id) {
-            await ApiPost(`${API_URL.addVarient}`, { name: formData?.name, attribute: id })
+            await ApiPost(`${API_URL.addVarient}`, { name: formData?.name?.trim() ?? '', attribute: id })
                 .then((response) => {
                     setLoading(false)
                     toast.success('Add Successfully!')

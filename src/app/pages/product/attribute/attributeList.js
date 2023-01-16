@@ -55,7 +55,10 @@ const AttributeList = () => {
 
     const handleSubmit = async (event) => {
         setLoading(true)
-        await ApiPost(`${API_URL.addAttribute}`, formData)
+        await ApiPost(`${API_URL.addAttribute}`, {
+            name: formData?.name?.trim() ?? '',
+            multiselect: false,
+        })
             .then((response) => {
                 setLoading(false)
                 toast.success('Add Successfully!')
@@ -84,12 +87,12 @@ const AttributeList = () => {
             label: "Slug",
             width: 80
         },
-        {
-            id: "multiselect",
-            label: "Type",
-            align: "center",
-            width: 80
-        },
+        // {
+        //     id: "multiselect",
+        //     label: "Type",
+        //     align: "center",
+        //     width: 80
+        // },
         {
             id: "isActive",
             label: "Status",
@@ -256,7 +259,7 @@ const AttributeList = () => {
                                         errorMessages={["this field is required"]}
                                     />
 
-                                    <FormControl sx={{
+                                    {/* <FormControl sx={{
                                         display: 'flex',
                                         flexDirection: 'row',
                                         alignItems: 'center'
@@ -271,7 +274,7 @@ const AttributeList = () => {
                                             <FormControlLabel value={true} control={<Radio />} label="Enable" />
                                             <FormControlLabel value={false} control={<Radio />} label="Disable" />
                                         </RadioGroup>
-                                    </FormControl>
+                                    </FormControl> */}
 
                                 </Grid>
 
@@ -357,9 +360,9 @@ const AttributeList = () => {
                             </TableCell>
                             <TableCell>{row.name} </TableCell>
                             <TableCell>{row.slug}</TableCell>
-                            <TableCell align="center">
+                            {/* <TableCell align="center">
                                 {row?.multiselect ? 'Multiselect' : 'Single'}
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell align="center">
                                 {row?.isActive ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>

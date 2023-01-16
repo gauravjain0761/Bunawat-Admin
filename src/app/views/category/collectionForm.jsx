@@ -325,7 +325,7 @@ const CollectionForm = ({ data = {}, id }) => {
                                         sx={{ mt: 3 }}
                                         type="text"
                                         name="productId"
-                                        label="Link with productId"
+                                        label="Link with product design number"
                                         onChange={handleChange}
                                         value={productId || ""}
                                     />

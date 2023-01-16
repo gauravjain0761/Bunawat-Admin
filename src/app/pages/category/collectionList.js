@@ -43,11 +43,11 @@ const CollectionList = () => {
       label: "Description",
       width: 300,
     },
-    {
-      id: "slug",
-      label: "Code",
-      width: 100
-    },
+    // {
+    //   id: "slug",
+    //   label: "Code",
+    //   width: 100
+    // },
     {
       id: "count",
       label: "Count",
@@ -270,7 +270,7 @@ const CollectionList = () => {
               </TableCell>
               <TableCell > {row?.name} </TableCell>
               <TableCell >{row?.description?.replace(/<[^>]+>/g, '')}</TableCell>
-              <TableCell>-</TableCell>
+              {/* <TableCell>-</TableCell> */}
               <TableCell align="center">-</TableCell>
               <TableCell align="center">
                 {row?.isActive ?
