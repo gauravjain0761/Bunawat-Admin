@@ -206,7 +206,7 @@ const AttributeList = () => {
 
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        setPage(newPage + 1);
     };
 
     const handleChangeRowsPerPage = (event) => {

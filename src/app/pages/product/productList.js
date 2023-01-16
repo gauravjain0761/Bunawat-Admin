@@ -170,7 +170,7 @@ const ProductList = () => {
 
 
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        setPage(newPage + 1);
     };
 
     const handleChangeRowsPerPage = (event) => {
@@ -263,7 +263,7 @@ const ProductList = () => {
                             </TableCell>
                             <TableCell>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <img style={{ marginRight: '5px' }} src="https://content.jdmagicbox.com/comp/bhawanipatna/t9/9999p6670.6670.181223085624.h8t9/catalogue/india-fashion-cloth-store-bazarpada-bhawanipatna-zh5wdnprwx.jpg?clr=5c470a" width='50px' height='50px' />
+                                    <img style={{ marginRight: '5px' }} src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
                                     {row?.name}
                                 </Box>
                             </TableCell>

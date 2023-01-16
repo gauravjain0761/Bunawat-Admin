@@ -148,7 +148,7 @@ const TableComponent = (props) => {
             component="div"
             count={totalCount ?? 0}
             rowsPerPage={rowsPerPage}
-            page={page}
+            page={page - 1}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />

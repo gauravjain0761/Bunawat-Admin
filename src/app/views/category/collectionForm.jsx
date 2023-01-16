@@ -75,25 +75,30 @@ const CollectionForm = ({ data = {}, id }) => {
     }
 
     const getCollection = async () => {
-        await ApiGet(`${API_URL.getCollections}`)
-            .then((response) => {
-                if (response?.data?.length > 0) {
-                    setCollectionList(response?.data?.map(item => {
-                        return {
-                            value: item?._id,
-                            label: item?.name
-                        }
-                    }) ?? []);
-                }
-            })
-            .catch((error) => {
-                console.log("Error", error);
-            });
+        if (data?.name) {
+            await ApiGet(`${API_URL.getCollections}`)
+                .then((response) => {
+                    if (response?.data?.length > 0) {
+                        setCollectionList(response?.data?.filter(filter => filter?.name != data?.name)?.map(item => {
+                            return {
+                                value: item?._id,
+                                label: item?.name
+                            }
+                        }) ?? []);
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        }
     }
 
     useEffect(() => {
-        getCategory();
         getCollection();
+    }, [data])
+
+    useEffect(() => {
+        getCategory();
     }, [])
 
     const handleSubmit = async () => {

@@ -201,7 +201,7 @@ const UserList = ({ type }) => {
 
   const handleChangePage = (event, newPage) => {
     console.log("handleChangePage")
-    setPage(newPage);
+    setPage(newPage + 1);
   };
 
   const handleChangeRowsPerPage = (event) => {
