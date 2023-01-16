@@ -68,6 +68,7 @@ export const API_URL = {
     addSKU: "sku/add",
 
     fileUpload: "fileUpload/profile",
+    videoFileUpload: "uploadVideo",
     fileUploadProfile: "fileUpload/profile",
     fileUploadProduct: "fileUpload/product",
     fileUploadCategory: "fileUpload/category",

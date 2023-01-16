@@ -23,7 +23,7 @@ const SubCategoryAdd = () => {
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
@@ -49,14 +49,14 @@ const SubCategoryAdd = () => {
             width: 80
         },
         {
-            id: "count",
+            id: "product_count",
             label: "Count",
             width: 80,
             align: "center"
         },
         {
-            id: "parentCount",
-            label: "Parent Category\nCount",
+            id: "category_count",
+            label: "Category\nCount",
             width: 140,
             align: "center"
         },
@@ -192,7 +192,7 @@ const SubCategoryAdd = () => {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setPage(1);
     };
 
 
@@ -281,8 +281,8 @@ const SubCategoryAdd = () => {
                             <TableCell>{row?.pName}</TableCell>
                             <TableCell > {row.name} </TableCell>
                             <TableCell>{row.code}</TableCell>
-                            <TableCell align="center">-</TableCell>
-                            <TableCell align="center">-</TableCell>
+                            <TableCell align="center">{row?.product_count}</TableCell>
+                            <TableCell align="center">{row?.category_count}</TableCell>
                             <TableCell align="center">
                                 {row?.isActive ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>

@@ -8,9 +8,9 @@ import { useState } from 'react';
 
 const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU, selectedSKUIndex, setFormData }) => {
     const [data, setData] = useState(SKUData);
-
+    console.log(SKUData, selectedSKU)
     useEffect(() => {
-        setData(SKUData?.filter(x => x?.name != selectedSKU?.sku))
+        setData(SKUData?.filter(x => x?.sku != selectedSKU?.sku))
     }, [selectedSKU])
 
     return (
@@ -35,7 +35,7 @@ const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU,
                         setFormData({ ...formData, sku_data: tempSKU });
                     }}
                     options={data}
-                    getOptionLabel={(option) => option?.name}
+                    getOptionLabel={(option) => option?.sku}
                     filterSelectedOptions
                     renderInput={(params) => (
                         <TextField

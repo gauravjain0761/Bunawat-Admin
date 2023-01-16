@@ -30,6 +30,7 @@ import { toast } from 'material-react-toastify';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
+import { filter } from "lodash";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -62,21 +63,36 @@ const CategoryForm = ({ data = {}, id, type }) => {
 
 
     const getCategory = async () => {
-        await ApiGet(`${API_URL.getCategorys}`)
-            .then((response) => {
-                if (response?.data?.length > 0) {
-                    setCategoryList(response?.data?.map(item => {
-                        return {
-                            value: item?._id,
-                            label: item?.name
+        if (data?.name) {
+            await ApiGet(`${API_URL.getCategorys}`)
+                .then((response) => {
+                    if (response?.data?.length > 0) {
+                        if (type == 'list') {
+                            setCategoryList(response?.data?.filter(filter => filter?.name != data?.name)?.map(item => {
+                                return {
+                                    value: item?._id,
+                                    label: item?.name
+                                }
+                            }) ?? []);
+                        } else {
+                            setCategoryList(response?.data?.map(item => {
+                                return {
+                                    value: item?._id,
+                                    label: item?.name
+                                }
+                            }) ?? []);
                         }
-                    }) ?? []);
-                }
-            })
-            .catch((error) => {
-                console.log("Error", error);
-            });
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        }
     }
+
+    useEffect(() => {
+        getCategory();
+    }, [type, data])
 
     const getCollection = async () => {
         await ApiGet(`${API_URL.getCollections}`)
@@ -133,7 +149,6 @@ const CategoryForm = ({ data = {}, id, type }) => {
     useEffect(() => {
         if (type == "sub" || type == "list") getParentCategory();
         if (type == "list") getParentSubCategory();
-        getCategory();
         getCollection();
     }, [type])
 
@@ -185,7 +200,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                 await ApiPut(`${getEditURL(type)}/${id}`, {
                     ...payload,
                     description,
-                    link_with: link_with ?? 'CATEGORY',
+                    link_with: link_with ?? '',
                     image: image ?? "",
                     "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
                     "categories_list": link_with == 'COLLECTION' ? [] : [linkValue],
@@ -209,7 +224,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                 await ApiPost(`${getURL(type)}`, {
                     ...payload,
                     description,
-                    link_with: link_with ?? 'CATEGORY',
+                    link_with: link_with ?? '',
                     image: image ?? "",
                     "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
                     "categories_list": linkValue ? (link_with == 'COLLECTION' ? [] : [linkValue]) : [],
@@ -447,7 +462,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                 </RadioGroup>
                             </FormControl>
 
-                            {link_with == 'COLLECTION' ?
+                            {link_with == 'COLLECTION' &&
                                 <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel id="demo-simple-select-label">Link with collection</InputLabel>
                                     <Select
@@ -466,7 +481,8 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                     </Select>
                                     {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                 </FormControl>
-                                :
+                            }
+                            {link_with == 'CATEGORY' &&
                                 <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel id="demo-simple-select-label">Link with category</InputLabel>
                                     <Select

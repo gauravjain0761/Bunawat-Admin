@@ -319,9 +319,6 @@ const ProductEditForm = ({ data = {}, id }) => {
         if (!category_id) {
             tempError = { ...tempError, category_id: true }
         }
-        if (!collection_id) {
-            tempError = { ...tempError, collection_id: true }
-        }
         if (!tax) {
             tempError = { ...tempError, tax: true }
         }
@@ -346,6 +343,62 @@ const ProductEditForm = ({ data = {}, id }) => {
         setFormError(tempError)
     };
 
+    const handleImageUpload = async (event) => {
+        let imageData = new FormData();
+        const images = formData?.image ?? []
+        imageData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUploadProduct, imageData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({
+                        ...formData, image: [...images, {
+                            url: response?.data?.Location,
+                            isActive: false,
+                            type: 'IMAGE'
+                        }]
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    // const handleDeleteImage = async (event) => {
+    //     await ApiPost(API_URL.fileRemove, {
+    //         url: image
+    //     })
+    //         .then((response) => {
+    //             if (response?.data) {
+    //                 setFormData({ ...formData, image: null });
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log("Error", error);
+    //         });
+    // }
+
+    const handleImageVideo = async (event) => {
+        const videosList = formData?.videos ?? []
+        let videoData = new FormData();
+        videoData.append('video', event.target.files[0]);
+        await ApiPost(API_URL.videoFileUpload, videoData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({
+                        ...formData, videos: [...videosList, {
+                            url: response?.data?.Location,
+                            isActive: false,
+                            type: 'VIDEO'
+                        }]
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
     const handleChange = (event) => {
         if (event.target.name == "home") {
             let visibility = formData?.visibility ?? {}
@@ -354,30 +407,13 @@ const ProductEditForm = ({ data = {}, id }) => {
         } else if (event.target.name == "category_id") {
             setFormData({ ...formData, [event.target.name]: event.target.value });
             setFormError({ ...formError, category_id: false })
-        } else if (event.target.name == "collection_id") {
-            setFormData({ ...formData, [event.target.name]: event.target.value });
-            setFormError({ ...formError, collection_id: false })
         } else if (event.target.name == "tax") {
             setFormData({ ...formData, [event.target.name]: event.target.value });
             setFormError({ ...formError, tax: false })
         } else if (event.target.name == "image") {
-            const images = formData[event.target.name] ?? []
-            const newImages = Array.prototype.slice.call(event.target.files).map((image) => {
-                return {
-                    url: URL.createObjectURL(image),
-                    checked: false
-                }
-            })
-            setFormData({ ...formData, [event.target.name]: [...images, ...newImages] });
+            handleImageUpload(event)
         } else if (event.target.name == "videos") {
-            const videos = formData[event.target.name] ?? []
-            const newVideos = Array.prototype.slice.call(event.target.files).map((video) => {
-                return {
-                    url: URL.createObjectURL(video),
-                    checked: false
-                }
-            })
-            setFormData({ ...formData, [event.target.name]: [...videos, ...newVideos] });
+            handleImageVideo(event)
         } else if (event.target.name == "mrp" || event.target.name == "salePrice" || event.target.name == "costPrice" || event.target.name == "reSellerPrice" || event.target.name == "influncerCommission") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
@@ -463,12 +499,12 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const handleSwitchImage = (index, max = 5) => {
         let images = formData?.image ?? []
-        if (images?.filter((img) => img.checked).length < max) {
-            images[index] = { ...images[index], checked: !images[index].checked }
+        if (images?.filter((img) => img?.isActive).length < max) {
+            images[index] = { ...images[index], isActive: !images[index]?.isActive }
             setFormData({ ...formData, image: images });
         } else {
-            if (images[index].checked) {
-                images[index] = { ...images[index], checked: !images[index].checked }
+            if (images[index]?.isActive) {
+                images[index] = { ...images[index], isActive: !images[index]?.isActive }
                 setFormData({ ...formData, image: images });
             }
         }
@@ -482,12 +518,12 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const handleSwitchVideo = (index, max = 4) => {
         let videos = formData?.videos ?? []
-        if (videos?.filter((video) => video.checked).length < max) {
-            videos[index] = { ...videos[index], checked: !videos[index].checked }
+        if (videos?.filter((video) => video?.isActive).length < max) {
+            videos[index] = { ...videos[index], isActive: !videos[index]?.isActive }
             setFormData({ ...formData, videos: videos });
         } else {
-            if (videos[index].checked) {
-                videos[index] = { ...videos[index], checked: !videos[index].checked }
+            if (videos[index]?.isActive) {
+                videos[index] = { ...videos[index], isActive: !videos[index]?.isActive }
                 setFormData({ ...formData, videos: videos });
             }
         }
@@ -533,9 +569,6 @@ const ProductEditForm = ({ data = {}, id }) => {
         if (!category_id) {
             tempError = { ...tempError, category_id: true }
         }
-        if (!collection_id) {
-            tempError = { ...tempError, collection_id: true }
-        }
         if (!tax) {
             tempError = { ...tempError, tax: true }
         }
@@ -566,10 +599,10 @@ const ProductEditForm = ({ data = {}, id }) => {
                             color: "red",
                             cursor: "pointer"
                         }}
-                        checked={item.checked}
+                        checked={item?.isActive}
                         onChange={() => handleSwitchImage(i)}
                         inputProps={{ 'aria-label': 'controlled' }}
-                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item.checked ? "Active" : "InActive"}</Span>
+                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                     <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
                         color: "red",
                         cursor: "pointer",
@@ -599,10 +632,10 @@ const ProductEditForm = ({ data = {}, id }) => {
                             cursor: "pointer",
                             zIndex: "999"
                         }}
-                        checked={item.checked}
+                        checked={item?.isActive}
                         onChange={() => handleSwitchVideo(i, 4)}
                         inputProps={{ 'aria-label': 'controlled' }}
-                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item.checked ? "Active" : "InActive"}</Span>
+                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                     <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
                         color: "red",
                         cursor: "pointer",
@@ -1071,7 +1104,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                             setSelectedSKU({});
                             setSelectedSKUIndex(-1);
                             setMOpen(false)
-                        }} formData={formData} SKUData={SKUData} selectedSKU={selectedSKU} selectedSKUIndex={selectedSKUIndex} setFormData={setFormData} />
+                        }} formData={formData} SKUData={sku_data} selectedSKU={selectedSKU} selectedSKUIndex={selectedSKUIndex} setFormData={setFormData} />
                     </SimpleCard>
                 </Box>
 

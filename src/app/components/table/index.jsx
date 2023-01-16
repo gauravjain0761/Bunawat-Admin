@@ -144,7 +144,7 @@ const TableComponent = (props) => {
         </TableContainer>
         {!disablePagination &&
           <TablePagination
-            rowsPerPageOptions={[1, 10, 20, 25]}
+            rowsPerPageOptions={[10, 25, 50, 100]}
             component="div"
             count={totalCount ?? 0}
             rowsPerPage={rowsPerPage}

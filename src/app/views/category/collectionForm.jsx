@@ -113,7 +113,7 @@ const CollectionForm = ({ data = {}, id }) => {
                 await ApiPut(`${API_URL.editCollection}/${id}`, {
                     "name": formData?.name,
                     image: formData?.image ?? "",
-                    link_with: formData?.link_with ?? 'CATEGORY',
+                    link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
                     "categories_list": link_with == 'COLLECTION' ? [] : [formData?.linkValue],
@@ -133,7 +133,7 @@ const CollectionForm = ({ data = {}, id }) => {
                 await ApiPost(API_URL.addCollection, {
                     "name": formData?.name,
                     image: formData?.image ?? "",
-                    link_with: formData?.link_with ?? 'CATEGORY',
+                    link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
                     "categories_list": link_with == 'COLLECTION' ? [] : [formData?.linkValue],
@@ -267,7 +267,7 @@ const CollectionForm = ({ data = {}, id }) => {
                                 </RadioGroup>
                             </FormControl>
 
-                            {link_with == 'COLLECTION' ?
+                            {link_with == 'COLLECTION' &&
                                 <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel id="demo-simple-select-label">Link with collection</InputLabel>
                                     <Select
@@ -286,7 +286,8 @@ const CollectionForm = ({ data = {}, id }) => {
                                     </Select>
                                     {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                 </FormControl>
-                                :
+                            }
+                            {link_with == 'CATEGORY' &&
                                 <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel id="demo-simple-select-label">Link with category</InputLabel>
                                     <Select
@@ -395,7 +396,7 @@ const CollectionForm = ({ data = {}, id }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                            <Button color="primary" variant="contained" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                                 <Icon>arrow_back</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                             </Button>

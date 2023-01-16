@@ -23,7 +23,7 @@ const CollectionList = () => {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -49,7 +49,7 @@ const CollectionList = () => {
     //   width: 100
     // },
     {
-      id: "count",
+      id: "product_count",
       label: "Count",
       align: "center",
       width: 100,
@@ -182,7 +182,7 @@ const CollectionList = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(1);
   };
 
 
@@ -271,7 +271,7 @@ const CollectionList = () => {
               <TableCell > {row?.name} </TableCell>
               <TableCell >{row?.description?.replace(/<[^>]+>/g, '')}</TableCell>
               {/* <TableCell>-</TableCell> */}
-              <TableCell align="center">-</TableCell>
+              <TableCell align="center">{row?.product_count}</TableCell>
               <TableCell align="center">
                 {row?.isActive ?
                   <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
