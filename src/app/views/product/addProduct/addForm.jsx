@@ -54,6 +54,7 @@ const ProductForm = ({ data = {} }) => {
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
     const [isErrorDescription, setIsErrorDescription] = useState(false);
+    const [formError, setFormError] = useState({});
     const [formData, setFormData] = useState({
         ...data, pCategory: "None", color: '#000', attributeData: [{
             type: 'single',
@@ -170,9 +171,20 @@ const ProductForm = ({ data = {} }) => {
     }, [])
 
     const handleSubmit = async (event) => {
+        let tempError = { ...formError }
         if (!description) {
             setIsErrorDescription(true)
-        } else {
+        }
+        if (!category_id) {
+            tempError = { ...tempError, category_id: true }
+        }
+        if (!collection_id) {
+            tempError = { ...tempError, collection_id: true }
+        }
+        if (!tax) {
+            tempError = { ...tempError, tax: true }
+        }
+        if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
             await ApiPost(API_URL.addProduct, {
                 ...formData,
@@ -190,13 +202,14 @@ const ProductForm = ({ data = {} }) => {
                     console.log("Error", error);
                 });
         }
+        setFormError(tempError)
     };
 
     const handleImageUpload = async (event) => {
-        const images = formData?.image ?? []
         let imageData = new FormData();
+        const images = formData?.image ?? []
         imageData.append('file', event.target.files[0]);
-        await ApiPost(API_URL.fileUpload, imageData)
+        await ApiPost(API_URL.fileUploadCategory, imageData)
             .then((response) => {
                 if (response?.data) {
                     setFormData({
@@ -211,6 +224,20 @@ const ProductForm = ({ data = {} }) => {
                 console.log("Error", error);
             });
     }
+    console.log("formData", formData)
+    // const handleDeleteImage = async (event) => {
+    //     await ApiPost(API_URL.fileRemove, {
+    //         url: image
+    //     })
+    //         .then((response) => {
+    //             if (response?.data) {
+    //                 setFormData({ ...formData, image: null });
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log("Error", error);
+    //         });
+    // }
 
     const handleImageVideo = async (event) => {
         const videosList = formData?.videos ?? []
@@ -239,6 +266,15 @@ const ProductForm = ({ data = {} }) => {
             setFormData({ ...formData, visibility });
         } else if (event.target.name == "image") {
             handleImageUpload(event)
+        } else if (event.target.name == "category_id") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, category_id: false })
+        } else if (event.target.name == "collection_id") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, collection_id: false })
+        } else if (event.target.name == "tax") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, tax: false })
         } else if (event.target.name == "videos") {
             handleImageVideo(event)
         } else if (event.target.name == "mrp" || event.target.name == "sale_price" || event.target.name == "cost_price" || event.target.name == "reseller_price" || event.target.name == "influncerCommission") {
@@ -365,6 +401,24 @@ const ProductForm = ({ data = {} }) => {
         reseller_price,
         tax,
     } = formData;
+
+
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        if (!description) {
+            setIsErrorDescription(true)
+        }
+        if (!category_id) {
+            tempError = { ...tempError, category_id: true }
+        }
+        if (!collection_id) {
+            tempError = { ...tempError, collection_id: true }
+        }
+        if (!tax) {
+            tempError = { ...tempError, tax: true }
+        }
+        setFormError(tempError)
+    }
 
     const disableInventoryList = ['instock_qty', 'threshold_qty', 'instock_lead_time', 'preorder_qty', 'preorder_lead_time', 'mapped_variant'];
 
@@ -517,7 +571,7 @@ const ProductForm = ({ data = {} }) => {
 
     return (
         <div>
-            <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+            <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                 <SimpleCard title="Product" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -526,6 +580,9 @@ const ProductForm = ({ data = {} }) => {
                                 <Select id="grouped-native-select" label="Category"
                                     value={category_id}
                                     name="category_id"
+                                    sx={{
+                                        border: formError?.category_id ? '1px solid #FF3D57' : ''
+                                    }}
                                     onChange={handleChange}>
                                     {categoryList?.map(item => (
                                         <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
@@ -536,6 +593,7 @@ const ProductForm = ({ data = {} }) => {
                                             <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
                                     ))}
                                 </Select>
+                                {formError?.category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </FormControl>
 
                             <FormControl fullWidth sx={{ mb: 2 }}>
@@ -545,12 +603,16 @@ const ProductForm = ({ data = {} }) => {
                                     id="demo-simple-select"
                                     value={collection_id}
                                     name="collection_id"
+                                    sx={{
+                                        border: formError?.collection_id ? '1px solid #FF3D57' : ''
+                                    }}
                                     label="Collection"
                                     onChange={handleChange}>
                                     {collectionList?.map(item => (
                                         <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
                                     ))}
                                 </Select>
+                                {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </FormControl>
 
                             <TextField
@@ -642,11 +704,15 @@ const ProductForm = ({ data = {} }) => {
                                     id="demo-simple-select"
                                     value={tax}
                                     name="tax"
+                                    sx={{
+                                        border: formError?.tax ? '1px solid #FF3D57' : ''
+                                    }}
                                     label="Tax Type"
                                     onChange={handleChange}>
-                                    <MenuItem value={0}>Standard</MenuItem>
+                                    <MenuItem value={10}>Standard</MenuItem>
                                     <MenuItem value={6}>6% CGST/IGST</MenuItem>
                                 </Select>
+                                {formError?.tax && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </FormControl>
 
 

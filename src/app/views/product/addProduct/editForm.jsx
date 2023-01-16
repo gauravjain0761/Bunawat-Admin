@@ -72,6 +72,7 @@ const ProductEditForm = ({ data = {}, id }) => {
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [attributes, setAttributes] = useState([]);
     const [SKUData, setSKUData] = useState([]);
+    const [formError, setFormError] = useState({});
 
     useEffect(() => {
         setDescription(data?.description ?? '')
@@ -311,9 +312,20 @@ const ProductEditForm = ({ data = {}, id }) => {
     }, [])
 
     const handleSubmit = async (event) => {
+        let tempError = { ...formError }
         if (!description) {
             setIsErrorDescription(true)
-        } else {
+        }
+        if (!category_id) {
+            tempError = { ...tempError, category_id: true }
+        }
+        if (!collection_id) {
+            tempError = { ...tempError, collection_id: true }
+        }
+        if (!tax) {
+            tempError = { ...tempError, tax: true }
+        }
+        if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
             await ApiPut(`${API_URL.editProduct}/${id}`, {
                 ...formData,
@@ -331,6 +343,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                     console.log("Error", error);
                 });
         }
+        setFormError(tempError)
     };
 
     const handleChange = (event) => {
@@ -338,6 +351,15 @@ const ProductEditForm = ({ data = {}, id }) => {
             let visibility = formData?.visibility ?? {}
             visibility = { ...visibility, [event.target.name]: event.target.checked }
             setFormData({ ...formData, visibility });
+        } else if (event.target.name == "category_id") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, category_id: false })
+        } else if (event.target.name == "collection_id") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, collection_id: false })
+        } else if (event.target.name == "tax") {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+            setFormError({ ...formError, tax: false })
         } else if (event.target.name == "image") {
             const images = formData[event.target.name] ?? []
             const newImages = Array.prototype.slice.call(event.target.files).map((image) => {
@@ -502,6 +524,24 @@ const ProductEditForm = ({ data = {}, id }) => {
         sku_data
     } = formData;
 
+
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        if (!description) {
+            setIsErrorDescription(true)
+        }
+        if (!category_id) {
+            tempError = { ...tempError, category_id: true }
+        }
+        if (!collection_id) {
+            tempError = { ...tempError, collection_id: true }
+        }
+        if (!tax) {
+            tempError = { ...tempError, tax: true }
+        }
+        setFormError(tempError)
+    }
+
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
     }
@@ -651,7 +691,7 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     return (
         <Box sx={{ position: 'relative' }}>
-            <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+            <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                 <Box sx={{ m: { lg: '50px', xs: '20px' } }}>
                     <SimpleCard title="Product" backArrow={true} paddingZero={true}>
                         <Grid container spacing={12}>
@@ -660,8 +700,11 @@ const ProductEditForm = ({ data = {}, id }) => {
                                     <FormControl fullWidth sx={{ mb: 2 }}>
                                         <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
                                         <Select id="grouped-native-select" label="Category"
-                                            value={category_id ?? ""}
+                                            value={category_id ?? ''}
                                             name="category_id"
+                                            sx={{
+                                                border: formError?.category_id ? '1px solid #FF3D57' : ''
+                                            }}
                                             onChange={handleChange}>
                                             {categoryList?.map(item => (
                                                 <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
@@ -672,20 +715,26 @@ const ProductEditForm = ({ data = {}, id }) => {
                                                     <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
                                             ))}
                                         </Select>
+                                        {formError?.category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </FormControl>
+
                                     <FormControl fullWidth sx={{ mb: 2 }}>
                                         <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            value={collection_id ?? ""}
+                                            value={collection_id ?? ''}
                                             name="collection_id"
+                                            sx={{
+                                                border: formError?.collection_id ? '1px solid #FF3D57' : ''
+                                            }}
                                             label="Collection"
                                             onChange={handleChange}>
                                             {collectionList?.map(item => (
                                                 <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
                                             ))}
                                         </Select>
+                                        {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </FormControl>
 
                                     <TextField
@@ -720,7 +769,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                     <TextField
                                         type="text"
                                         name="mrp"
-                                        label="MRP---   "
+                                        label="MRP"
                                         onChange={handleChange}
                                         value={mrp || ""}
                                         validators={["required"]}
@@ -777,11 +826,15 @@ const ProductEditForm = ({ data = {}, id }) => {
                                             id="demo-simple-select"
                                             value={tax ?? 0}
                                             name="tax"
+                                            sx={{
+                                                border: formError?.tax ? '1px solid #FF3D57' : ''
+                                            }}
                                             label="Tax Type"
                                             onChange={handleChange}>
-                                            <MenuItem value={0}>Standard</MenuItem>
+                                            <MenuItem value={10}>Standard</MenuItem>
                                             <MenuItem value={6}>6% CGST/IGST</MenuItem>
                                         </Select>
+                                        {formError?.tax && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </FormControl>
 
                                     <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
@@ -795,7 +848,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                         </Box>
                                     </Box>
                                 </Box>
-                                <SimpleCard title="Add Attributes" backArrow={false}>
+                                <SimpleCard title="Add Attributes" backArrow={false} borderRadiusZero={true}>
                                     <Grid container spacing={12}>
                                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
@@ -999,7 +1052,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                         </DialogActions>
                                     </Dialog>
                                 </SimpleCard>
-                                <Box sx={{ padding: '0px 24px' }}>
+                                <Box sx={{ padding: '0px 24px', my: 2 }}>
                                     <FormControl>
                                         <RadioGroup
                                             row
@@ -1034,12 +1087,12 @@ const ProductEditForm = ({ data = {}, id }) => {
                         width: '100%',
                         height: '100%',
                         alignItems: 'center',
-                        justifyContent: 'flex-end'
+                        justifyContent: 'flex-start'
                     }}>
                         <Box sx={{
-                            mr: 3
+                            ml: 3
                         }}>
-                            <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #232a45', color: '#232a45' }}>
+                            <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #1976d2', color: '#1976d2' }}>
                                 Back
                             </Button>
                             <LoadingButton
@@ -1047,9 +1100,9 @@ const ProductEditForm = ({ data = {}, id }) => {
                                 loadingPosition="start"
                                 type="submit"
                                 sx={{
-                                    background: '#232a45', ml: 2, color: '#fff',
+                                    background: '#1976d2', ml: 2, color: '#fff',
                                     "&:hover": {
-                                        background: '#232a45', color: '#fff'
+                                        background: '#1976d2', color: '#fff'
                                     }
                                 }}
                                 startIcon={<Icon>send</Icon>}

@@ -15,7 +15,7 @@ const CardTitle = styled('div')(({ subtitle }) => ({
   marginBottom: !subtitle && '16px',
 }));
 
-const SimpleCard = ({ children, title, subtitle, backArrow, paddingZero = false }) => {
+const SimpleCard = ({ children, title, subtitle, backArrow, paddingZero = false, borderRadiusZero = false }) => {
   const navigate = useNavigate();
   return (<>
     <Box sx={{ backgroundColor: UIColor, color: "#fff", p: 2, mt: 2, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -28,7 +28,7 @@ const SimpleCard = ({ children, title, subtitle, backArrow, paddingZero = false 
           <Icon>arrow_back</Icon>
         </IconButton>}
     </Box>
-    <CardRoot elevation={6} sx={{ border: `2px solid ${UIColor}`, borderRadius: "0 0 8px 8px", height: 'auto', padding: paddingZero ? '0px' : '20px 24px' }}>
+    <CardRoot elevation={6} sx={{ border: `2px solid ${UIColor}`, borderRadius: borderRadiusZero ? '0px' : "0 0 8px 8px", height: 'auto', padding: paddingZero ? '0px' : '20px 24px' }}>
       {children}
     </CardRoot>
   </>
