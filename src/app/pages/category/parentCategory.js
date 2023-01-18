@@ -100,7 +100,7 @@ const ParentCategory = () => {
     ];
 
     const getData = async () => {
-        await ApiGet(`${API_URL.getParentCategorys}?page=${page}&limit=${rowsPerPage}`)
+        await ApiGet(`${API_URL.getParentCategorys}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
@@ -127,7 +127,7 @@ const ParentCategory = () => {
 
     React.useEffect(() => {
         getData();
-    }, [page, rowsPerPage])
+    }, [page, rowsPerPage, searchText])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {

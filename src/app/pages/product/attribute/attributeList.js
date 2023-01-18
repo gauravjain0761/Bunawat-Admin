@@ -46,7 +46,7 @@ const AttributeList = () => {
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
     const getData = async () => {
-        await ApiGet(`${API_URL.getAttributes}?page=${page}&limit=${rowsPerPage}`)
+        await ApiGet(`${API_URL.getAttributes}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
@@ -58,7 +58,7 @@ const AttributeList = () => {
 
     React.useEffect(() => {
         getData();
-    }, [page, rowsPerPage])
+    }, [page, rowsPerPage, searchText])
 
     const handleSubmit = async (event) => {
         setLoading(true)

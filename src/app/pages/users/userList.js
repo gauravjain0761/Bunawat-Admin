@@ -59,7 +59,7 @@ const UserList = ({ type }) => {
   }
 
   const getData = async (type) => {
-    await ApiGet(`${getURL(type)}?page=${page}&limit=${rowsPerPage}`)
+    await ApiGet(`${getURL(type)}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
       .then((response) => {
         setRows(response?.data ?? []);
         setTotalCount(response?.totalCount);
@@ -88,7 +88,7 @@ const UserList = ({ type }) => {
     if (type) {
       getData(type);
     }
-  }, [type, page, rowsPerPage])
+  }, [type, page, rowsPerPage, searchText])
 
 
   const columns = [

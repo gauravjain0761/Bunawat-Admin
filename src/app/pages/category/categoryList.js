@@ -105,7 +105,7 @@ const CategoryList = () => {
   ];
 
   const getData = async () => {
-    await ApiGet(`${API_URL.getCategorys}?page=${page}&limit=${rowsPerPage}`)
+    await ApiGet(`${API_URL.getCategorys}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
       .then((response) => {
         setRows(response?.data?.map(item => {
           return {
@@ -137,7 +137,7 @@ const CategoryList = () => {
 
   React.useEffect(() => {
     getData();
-  }, [page, rowsPerPage])
+  }, [page, rowsPerPage, searchText])
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

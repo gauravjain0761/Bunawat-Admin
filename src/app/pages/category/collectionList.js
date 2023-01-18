@@ -100,7 +100,7 @@ const CollectionList = () => {
   ];
 
   const getData = async () => {
-    await ApiGet(`${API_URL.getCollections}?page=${page}&limit=${rowsPerPage}`)
+    await ApiGet(`${API_URL.getCollections}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
       .then((response) => {
         setRows(response?.data ?? []);
         setTotalCount(response?.totalCount);
@@ -127,7 +127,7 @@ const CollectionList = () => {
 
   React.useEffect(() => {
     getData();
-  }, [page, rowsPerPage])
+  }, [page, rowsPerPage, searchText])
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
