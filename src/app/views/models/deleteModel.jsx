@@ -4,8 +4,20 @@ import { ApiDelete } from 'app/service/api'
 import { toast } from 'material-react-toastify';
 import React from 'react'
 
-const DeleteAllModel = ({ open, handleClose }) => {
-
+const DeleteAllModel = ({ open, deleteData, getData, handleClose }) => {
+    const handleDelete = async () => {
+        await ApiDelete(`${API_URL.deleteallInfluencers}/${deleteData}`)
+            .then((response) => {
+                toast.success('Delete Successfully!')
+                if (getData) getData()
+                handleClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+                handleClose();
+            });
+    }
     return (
         <Dialog
             open={open}
@@ -24,7 +36,7 @@ const DeleteAllModel = ({ open, handleClose }) => {
                 <Button autoFocus onClick={handleClose}>
                     No
                 </Button>
-                <Button onClick={handleClose} autoFocus>
+                <Button onClick={handleDelete} autoFocus>
                     Yes
                 </Button>
             </DialogActions>

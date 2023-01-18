@@ -91,9 +91,9 @@ const ProductList = () => {
             )
         }
     ];
-
+    console.log("searchText", searchText)
     const getData = async () => {
-        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}`)
+        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
@@ -120,7 +120,7 @@ const ProductList = () => {
 
     React.useEffect(() => {
         getData();
-    }, [page, rowsPerPage])
+    }, [page, rowsPerPage, searchText])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -262,9 +262,20 @@ const ProductList = () => {
                                 />
                             </TableCell>
                             <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <img style={{ marginRight: '5px' }} src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
-                                    {row?.name}
+                                <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
+                                    <Box sx={{ width: "60px", height: "60px" }}>
+                                        <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
+                                    </Box>
+                                    <Typography sx={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'initial',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: '2',
+                                        WebkitBoxOrient: 'vertical',
+                                    }}>
+                                        {row?.name}
+                                    </Typography>
                                 </Box>
                             </TableCell>
                             <TableCell>{row?.design_num}</TableCell>

@@ -23,6 +23,7 @@ export const API_URL = {
     addInfluencer: "influencer/add",
     editInfluencer: "influencer/update",
     deleteInfluencers: "influencer/remove",
+    deleteallInfluencers: "influencer/remove",
 
     getCollections: "collection/getall",
     getCollection: "collection",

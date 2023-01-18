@@ -336,7 +336,11 @@ const ParentCategory = () => {
 
             <DeleteAllModel open={deleteAllOpen} handleClose={() => {
                 setDeleteAllOpen(false);
-            }} />
+                // handleDeleteAll()
+            }}
+                getData={getData}
+                deleteData={[1, 2, 3]}
+            />
         </Card>
     );
 }

@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Container, Fade, FormControl, FormControlLabel, FormLabel, Grid, Icon, IconButton, Menu, MenuItem, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
+import { Button, Card, Container, Fade, FormControl, FormControlLabel, FormLabel, Grid, Icon, IconButton, Menu, MenuItem, Radio, RadioGroup, Stack, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -22,6 +22,12 @@ import DeleteAttributesModel from 'app/views/product/model/deleteAttributesModel
 import { LoadingButton } from '@mui/lab';
 import DeleteAllModel from 'app/views/models/deleteModel';
 
+const TextField = styled(TextValidator)(() => ({
+    width: "100%",
+    marginBottom: "16px",
+}));
+
+
 const AttributeList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
@@ -34,6 +40,7 @@ const AttributeList = () => {
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [formData, setFormData] = useState({});
+    const [formError, setFormError] = useState({});
     const [loading, setLoading] = useState(false);
     const [deleteData, setDeleteData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
@@ -168,6 +175,7 @@ const AttributeList = () => {
     };
 
     const handleClick = (event, name) => {
+        console.log("namename", name)
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -235,12 +243,16 @@ const AttributeList = () => {
         fontWeight: '500',
         textTransform: 'capitalize',
     }));
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        setFormError(tempError)
+    }
 
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <Container>
                 <Stack spacing={3}>
-                    <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+                    <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                         <SimpleCard title="Add Attribute">
                             <Grid container spacing={12}>
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -351,7 +363,7 @@ const AttributeList = () => {
                             <TableCell padding="checkbox">
                                 <Checkbox
                                     color="primary"
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row._id)}
                                     checked={isItemSelected}
                                     inputProps={{
                                         'aria-labelledby': labelId,
