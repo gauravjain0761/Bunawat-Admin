@@ -1,6 +1,6 @@
 export const API_ROUTES = {
-    BASE_URL: 'http://3.110.107.244:5000',
-    // BASE_URL: 'https://dev.bunawat.com',
+    // BASE_URL: 'http://3.110.107.244:5000',
+    BASE_URL: 'https://dev.bunawat.com',
     API_VERSION: '/api'
 }
 
