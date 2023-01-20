@@ -16,6 +16,7 @@ import { API_URL } from 'app/constant/api';
 import { toast } from 'material-react-toastify';
 import { ApiGet, ApiPut } from 'app/service/api';
 import DeleteAllModel from 'app/views/models/deleteModel';
+import DeleteProductModel from 'app/views/category/model/deleteProductModel';
 
 const ProductList = () => {
     const navigate = useNavigate();
@@ -28,6 +29,7 @@ const ProductList = () => {
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [deleteData, setDeleteData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
     const columns = [
@@ -124,7 +126,7 @@ const ProductList = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n._id);
             setSelected(newSelected);
             return;
         }
@@ -240,7 +242,7 @@ const ProductList = () => {
                 totalCount={totalCount}
                 selected={selected}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                         <TableRow
@@ -248,13 +250,13 @@ const ProductList = () => {
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
-                            key={row.name}
+                            key={index}
                             selected={isItemSelected}
                         >
                             <TableCell padding="checkbox">
                                 <Checkbox
                                     color="primary"
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row._id)}
                                     checked={isItemSelected}
                                     inputProps={{
                                         'aria-labelledby': labelId,
@@ -314,6 +316,7 @@ const ProductList = () => {
                                     <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                                     <MenuItem onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
+                                        setDeleteData(row)
                                         setOpen(true);
                                         handleActionClose();
                                     }}>Delete</MenuItem>
@@ -329,11 +332,15 @@ const ProductList = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <DeleteModel open={open} handleClose={() => setOpen(false)} />
+            <DeleteProductModel deleteData={deleteData} open={open} getData={getData} handleClose={() => setOpen(false)} />
 
             <DeleteAllModel open={deleteAllOpen} handleClose={() => {
                 setDeleteAllOpen(false);
-            }} />
+            }}
+                getData={getData}
+                type="product"
+                deleteData={selected}
+            />
         </Card>
     );
 }

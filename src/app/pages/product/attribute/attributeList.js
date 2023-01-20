@@ -437,7 +437,11 @@ const AttributeList = () => {
 
             <DeleteAllModel open={deleteAllOpen} handleClose={() => {
                 setDeleteAllOpen(false);
-            }} />
+            }}
+                getData={getData}
+                type="attribute"
+                deleteData={selected}
+            />
         </Card>
     );
 }

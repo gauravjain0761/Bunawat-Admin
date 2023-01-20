@@ -131,7 +131,7 @@ const ParentCategory = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n?._id);
             setSelected(newSelected);
             return;
         }
@@ -140,6 +140,7 @@ const ParentCategory = () => {
 
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
+        console.log("namename", selectedIndex, selected)
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -254,7 +255,7 @@ const ParentCategory = () => {
                 selected={selected}
                 totalCount={totalCount}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                         <TableRow
@@ -262,13 +263,13 @@ const ParentCategory = () => {
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
-                            key={row.name}
+                            key={index}
                             selected={isItemSelected}
                         >
                             <TableCell padding="checkbox">
                                 <Checkbox
                                     color="primary"
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row?._id)}
                                     checked={isItemSelected}
                                     inputProps={{
                                         'aria-labelledby': labelId,
@@ -338,8 +339,9 @@ const ParentCategory = () => {
                 setDeleteAllOpen(false);
                 // handleDeleteAll()
             }}
+                type="parent_cateogry"
                 getData={getData}
-                deleteData={[1, 2, 3]}
+                deleteData={selected}
             />
         </Card>
     );

@@ -141,7 +141,7 @@ const SubCategoryAdd = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n?._id);
             setSelected(newSelected);
             return;
         }
@@ -257,7 +257,7 @@ const SubCategoryAdd = () => {
                 selected={selected}
                 totalCount={totalCount}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                         <TableRow
@@ -271,7 +271,7 @@ const SubCategoryAdd = () => {
                             <TableCell padding="checkbox">
                                 <Checkbox
                                     color="primary"
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row._id)}
                                     checked={isItemSelected}
                                     inputProps={{
                                         'aria-labelledby': labelId,
@@ -340,7 +340,12 @@ const SubCategoryAdd = () => {
 
             <DeleteAllModel open={deleteAllOpen} handleClose={() => {
                 setDeleteAllOpen(false);
-            }} />
+                // handleDeleteAll()
+            }}
+                type="sub_category"
+                getData={getData}
+                deleteData={selected}
+            />
         </Card>
     );
 }
