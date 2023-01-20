@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -17,12 +17,15 @@ import { toast } from 'material-react-toastify';
 import { ApiGet, ApiPut } from 'app/service/api';
 import DeleteAllModel from 'app/views/models/deleteModel';
 import DeleteProductModel from 'app/views/category/model/deleteProductModel';
+import DragTableComponent, { DragHandle } from 'app/components/table/dragTable';
+import { arrayMove, SortableElement } from 'react-sortable-hoc';
 
 const ProductList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
+    const [rowLoading, setRowLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
@@ -93,14 +96,17 @@ const ProductList = () => {
             )
         }
     ];
-    console.log("searchText", searchText)
+
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -161,6 +167,7 @@ const ProductList = () => {
             temp = temp.map(() => { return null })
         }
         temp[index] = event.currentTarget
+        console.log(index, "temp", temp)
         setActionOpen(temp)
     };
 
@@ -182,6 +189,101 @@ const ProductList = () => {
 
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
+
+    const onSortEnd = ({ oldIndex, newIndex }) => {
+        setRows(arrayMove(rows, oldIndex, newIndex));
+    }
+
+    const RowData = SortableElement(({ row, mainIndex, ...other }) => {
+        const isItemSelected = isSelected(row._id);
+        const labelId = `enhanced-table-checkbox-${mainIndex}`;
+        return (
+            <TableRow
+                hover
+                role="checkbox"
+                aria-checked={isItemSelected}
+                tabIndex={-1}
+                key={mainIndex}
+                selected={isItemSelected}
+            >
+                <TableCell sx={{ textAlign: 'center' }}>
+                    <DragHandle />
+                </TableCell>
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        color="primary"
+                        onClick={(event) => handleClick(event, row._id)}
+                        checked={isItemSelected}
+                        inputProps={{
+                            'aria-labelledby': labelId,
+                        }}
+                    />
+                </TableCell>
+                <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
+                        <Box sx={{ width: "60px", height: "60px" }}>
+                            <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
+                        </Box>
+                        <Typography sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'initial',
+                            display: '-webkit-box',
+                            WebkitLineClamp: '2',
+                            WebkitBoxOrient: 'vertical',
+                        }}>
+                            {row?.name}
+                        </Typography>
+                    </Box>
+                </TableCell>
+                <TableCell>{row?.design_num}</TableCell>
+                <TableCell align="center">{row?.variant_count}</TableCell>
+                <TableCell align="center">
+                    {row?.isActive ?? true ?
+                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                            Active
+                        </Typography>
+                        :
+                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                            InActive
+                        </Typography>
+                    }
+                </TableCell>
+                <TableCell align='right' sx={{ pr: "18px" }}>
+                    <Box position='relative'>
+                        <IconButton
+                            aria-label="more"
+                            id="long-button"
+                            aria-controls={Boolean(actionAllOpen) ? 'long-menu' : undefined}
+                            aria-expanded={Boolean(actionAllOpen) ? 'true' : undefined}
+                            aria-haspopup="true"
+                            onClick={(e) => handleActionClick(e, mainIndex)}>
+                            <MoreVertIcon />
+                        </IconButton>
+                        <ClickAwayListener onClickAway={handleActionClose}>
+                            <Box sx={{ width: '100px', zIndex: 999, boxShadow: 'rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px', borderRadius: '4px', height: 'auto', background: '#fff', position: 'absolute', bottom: '-12px', right: '15px', display: Boolean(actionOpen[mainIndex]) ? 'block' : 'none', padding: '8px 0px' }}>
+                                <MenuItem onTouchEnd={() => {
+                                    editStatusData(row?._id, !row?.isActive)
+                                }} onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
+                                <MenuItem onTouchEnd={() => {
+                                    navigate(`/product/add/${row?._id}`)
+                                }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
+                                <MenuItem onClick={() => {
+                                    setDeleteData(row)
+                                    setOpen(true);
+                                    handleActionClose();
+                                }} onTouchEnd={() => {
+                                    setDeleteData(row)
+                                    setOpen(true);
+                                    handleActionClose();
+                                }}>Delete</MenuItem>
+                            </Box>
+                        </ClickAwayListener>
+                    </Box>
+                </TableCell>
+            </TableRow>
+        );
+    })
 
     const CardHeader = styled(Box)(() => ({
         display: 'flex',
@@ -236,94 +338,21 @@ const ProductList = () => {
                     </Button>
                 </Box>
             </CardHeader>
-            <TableComponent
+            <DragTableComponent
                 rows={rows}
                 columns={columns}
+                onSortEnd={onSortEnd}
+                isLoading={rowLoading}
                 totalCount={totalCount}
                 selected={selected}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row._id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
                     return (
-                        <TableRow
-                            hover
-                            role="checkbox"
-                            aria-checked={isItemSelected}
-                            tabIndex={-1}
+                        <RowData
+                            mainIndex={index}
+                            index={index}
                             key={index}
-                            selected={isItemSelected}
-                        >
-                            <TableCell padding="checkbox">
-                                <Checkbox
-                                    color="primary"
-                                    onClick={(event) => handleClick(event, row._id)}
-                                    checked={isItemSelected}
-                                    inputProps={{
-                                        'aria-labelledby': labelId,
-                                    }}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
-                                    <Box sx={{ width: "60px", height: "60px" }}>
-                                        <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
-                                    </Box>
-                                    <Typography sx={{
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'initial',
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: '2',
-                                        WebkitBoxOrient: 'vertical',
-                                    }}>
-                                        {row?.name}
-                                    </Typography>
-                                </Box>
-                            </TableCell>
-                            <TableCell>{row?.design_num}</TableCell>
-                            <TableCell align="center">{row?.variant_count}</TableCell>
-                            <TableCell align="center">
-                                {row?.isActive ?? true ?
-                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
-                                        Active
-                                    </Typography>
-                                    :
-                                    <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
-                                        InActive
-                                    </Typography>
-                                }
-                            </TableCell>
-                            <TableCell align='right' sx={{ pr: "18px" }}>
-                                <IconButton
-                                    aria-label="more"
-                                    id="long-button"
-                                    aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
-                                    aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
-                                    aria-haspopup="true"
-                                    onClick={(e) => handleActionClick(e, index)}>
-                                    <MoreVertIcon />
-                                </IconButton>
-                                <Menu
-                                    id="fade-menu"
-                                    MenuListProps={{
-                                        'aria-labelledby': 'fade-button',
-                                    }}
-                                    anchorEl={actionOpen[index]}
-                                    open={Boolean(actionOpen[index])}
-                                    onClose={handleActionClose}
-                                    TransitionComponent={Fade}
-                                >
-                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                                    <MenuItem onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
-                                    <MenuItem onClick={() => {
-                                        setDeleteData(row)
-                                        setOpen(true);
-                                        handleActionClose();
-                                    }}>Delete</MenuItem>
-                                </Menu>
-                            </TableCell>
-                        </TableRow>
-                    );
+                            row={row} />
+                    )
                 }}
                 page={page}
                 rowsPerPage={rowsPerPage}

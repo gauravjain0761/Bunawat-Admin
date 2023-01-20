@@ -53,7 +53,6 @@ const DeleteAllModel = ({ open, deleteData, getData, handleClose, type }) => {
     return (
         <Dialog
             open={open}
-            onClose={handleClose}
             aria-labelledby="responsive-dialog-title"
         >
             <DialogTitle id="responsive-dialog-title">
