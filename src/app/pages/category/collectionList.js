@@ -247,7 +247,7 @@ const CollectionList = () => {
         selected={selected}
         totalCount={totalCount}
         renderRow={(row, index) => {
-          const isItemSelected = isSelected(row.name);
+          const isItemSelected = isSelected(row?._id);
           const labelId = `enhanced-table-checkbox-${index}`;
           return (
             <TableRow
@@ -330,7 +330,11 @@ const CollectionList = () => {
 
       <DeleteAllModel open={deleteAllOpen} handleClose={() => {
         setDeleteAllOpen(false);
-      }} />
+      }}
+        type="collection"
+        getData={getData}
+        deleteData={selected}
+      />
     </Card>
   );
 }

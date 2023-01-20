@@ -228,7 +228,7 @@ const UserList = ({ type }) => {
     textTransform: 'capitalize',
   }));
 
-
+  console.log("selected", selected)
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader className="searchBoxSeaprate">
@@ -352,9 +352,16 @@ const UserList = ({ type }) => {
         setDeleteData(null);
         setOpen(false);
       }} />
-      <DeleteAllModel open={deleteAllOpen} handleClose={() => {
-        setDeleteAllOpen(false);
-      }} />
+      <DeleteAllModel
+        open={deleteAllOpen}
+        deleteData={selected}
+        handleClose={() => {
+          setDeleteAllOpen(false);
+
+        }}
+        type={type}
+        getData={getData}
+      />
     </Card>
   );
 }

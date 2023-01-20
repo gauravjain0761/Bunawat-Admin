@@ -7,7 +7,9 @@ import React from 'react'
 const DeleteParentSubCategoryModel = ({ open, deleteData, getData, handleClose }) => {
 
     const handleDelete = async () => {
-        await ApiDelete(`${API_URL.deleteParentCategory}/${deleteData?._id}`)
+        await ApiDelete(`${API_URL.deleteParentCategory}`, {
+            ids: [deleteData?._id]
+        })
             .then((response) => {
                 toast.success('Delete Successfully!')
                 if (getData) getData()

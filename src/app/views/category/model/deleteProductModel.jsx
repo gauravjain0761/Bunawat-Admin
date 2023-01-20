@@ -4,27 +4,15 @@ import { ApiDelete } from 'app/service/api'
 import { toast } from 'material-react-toastify';
 import React from 'react'
 
-const DeleteModel = ({ open, deleteData, getData, type, handleClose }) => {
-
-    const getURL = (role) => {
-        if (role == 'Customer') {
-            return API_URL.deleteCustomers
-        }
-        if (role == 'influencer') {
-            return API_URL.deleteInfluencers
-        }
-        if (role == 'Reseller') {
-            return API_URL.deleteResllers
-        }
-    }
+const DeleteProductModel = ({ open, deleteData, getData, handleClose }) => {
 
     const handleDelete = async () => {
-        await ApiDelete(`${getURL(type)}`, {
+        await ApiDelete(`${API_URL.deleteProduct}`, {
             ids: [deleteData?._id]
         })
             .then((response) => {
                 toast.success('Delete Successfully!')
-                if (getData) getData(type)
+                if (getData) getData()
                 handleClose()
             })
             .catch((error) => {
@@ -59,4 +47,4 @@ const DeleteModel = ({ open, deleteData, getData, type, handleClose }) => {
     )
 }
 
-export default DeleteModel
+export default DeleteProductModel
