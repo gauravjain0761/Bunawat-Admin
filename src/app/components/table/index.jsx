@@ -4,7 +4,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Box, Checkbox, TableCell, TableContainer, TablePagination, TableSortLabel } from "@mui/material";
+import { Box, Checkbox, CircularProgress, TableCell, TableContainer, TablePagination, TableSortLabel } from "@mui/material";
 import Pagination from './pagination';
 import { useLocation } from "react-router";
 import { UIColor } from "app/utils/constant";
@@ -72,7 +72,7 @@ function EnhancedTableHead(props) {
 }
 
 const TableComponent = (props) => {
-  let { rows, columns, selected, renderRow, page, totalCount, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination, extraPaddingOnFirstColumn } = props;
+  let { rows, columns, selected, renderRow, page, totalCount, rowsPerPage, handleChangeRowsPerPage, handleChangePage, handleSelectAllClick, disableCheckBox, disableColumns, extraDisable, disablePagination, extraPaddingOnFirstColumn, isLoading } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -135,10 +135,32 @@ const TableComponent = (props) => {
               />
             }
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-               rows.sort(getComparator(order, orderBy)).slice() */}
-              {stableSort(rows, getComparator(order, orderBy))
-                .map(renderRow)}
+              {isLoading ?
+                <TableRow>
+                  <TableCell align='center' sx={{
+                    height: '400px'
+                  }} colSpan={columns?.length + 1}>
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+                :
+                <>
+                  {rows.length > 0 ?
+                    <>
+                      {stableSort(rows, getComparator(order, orderBy))
+                        .map(renderRow)}
+                    </>
+                    :
+                    <TableRow>
+                      <TableCell align='center' sx={{
+                        height: '400px'
+                      }} colSpan={columns?.length + 1}>
+                        No Data Found.
+                      </TableCell>
+                    </TableRow>
+                  }
+                </>
+              }
             </TableBody>
           </Table>
         </TableContainer>

@@ -13,6 +13,7 @@ import {
     RadioGroup,
     Select,
     styled,
+    Typography,
 } from "@mui/material";
 import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
@@ -174,6 +175,7 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                                 validators={["required", "isPassword"]}
                                 errorMessages={["this field is required", "Enter valid password"]}
                             />
+                            <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 400, fontSize: '0.75rem', m: '-10px 0px 15px 0px' }}>Password Should be Abc@1234 Format.</Typography>
 
                             <FormControl fullWidth >
                                 <InputLabel id="demo-simple-select-label">User Role</InputLabel>

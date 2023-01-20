@@ -25,6 +25,7 @@ import DeleteAllModel from 'app/views/models/deleteModel';
 const VarientList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
+    const [rowLoading, setRowLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
@@ -40,12 +41,15 @@ const VarientList = () => {
     const { id } = useParams();
 
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getVarients}/${id}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -312,6 +316,7 @@ const VarientList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                isLoading={rowLoading}
                 selected={selected}
                 totalCount={totalCount}
                 renderRow={(row, index) => {

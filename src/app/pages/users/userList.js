@@ -32,6 +32,7 @@ const UserList = ({ type }) => {
   const [searchText, setSearchText] = useState('');
   const [deleteData, setDeleteData] = useState(null);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
+  const [rowLoading, setRowLoading] = useState(false);
 
 
   const getURL = (role) => {
@@ -59,12 +60,15 @@ const UserList = ({ type }) => {
   }
 
   const getData = async (type) => {
+    setRowLoading(true)
     await ApiGet(`${getURL(type)}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
       .then((response) => {
+        setRowLoading(false)
         setRows(response?.data ?? []);
         setTotalCount(response?.totalCount);
       })
       .catch((error) => {
+        setRowLoading(false)
         console.log("Error", error);
       });
   }
@@ -270,6 +274,7 @@ const UserList = ({ type }) => {
       </CardHeader>
       <TableComponent
         rows={rows}
+        isLoading={rowLoading}
         columns={columns}
         selected={selected}
         renderRow={(row, index) => {

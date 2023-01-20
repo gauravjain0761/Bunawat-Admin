@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -40,6 +41,7 @@ const CollectionForm = ({ data = {}, id }) => {
     const [formData, setFormData] = useState(data);
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
+    const [mediaLoading, setMediaLoading] = useState(false);
     const [categoryList, setCategoryList] = useState([]);
     const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [collectionList, setCollectionList] = useState([]);
@@ -103,25 +105,32 @@ const CollectionForm = ({ data = {}, id }) => {
 
     const handleSubmit = async () => {
         let tempError = { ...formError }
+        let tempMediaType = formData?.mediaType ?? 'image'
         if (!description) {
             setIsErrorDescription(true)
         }
         if (link_with && !linkValue) {
             tempError = { ...tempError, linkValue: true }
         }
-        if (home_visibilty && !image) {
+        if (home_visibilty && (tempMediaType == 'image') && !image) {
             tempError = { ...tempError, image: true }
+        }
+        if (home_visibilty && (tempMediaType == 'video') && !video) {
+            tempError = { ...tempError, video: true }
         }
         if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
             if (id) {
                 await ApiPut(`${API_URL.editCollection}/${id}`, {
                     "name": formData?.name,
+                    title: formData?.title,
                     image: formData?.image ?? "",
+                    home_visibilty: formData?.home_visibilty,
+                    mediaType: tempMediaType,
                     link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
-                    "categories_list": link_with == 'COLLECTION' ? [] : [formData?.linkValue],
+                    "categories_list": link_with == 'CATEGORY' ? [formData?.linkValue] : [],
                     "product_list": [formData?.productId]
                 })
                     .then((response) => {
@@ -137,11 +146,14 @@ const CollectionForm = ({ data = {}, id }) => {
             } else {
                 await ApiPost(API_URL.addCollection, {
                     "name": formData?.name,
+                    title: formData?.title,
                     image: formData?.image ?? "",
+                    home_visibilty: formData?.home_visibilty,
+                    mediaType: tempMediaType,
                     link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
-                    "categories_list": link_with == 'COLLECTION' ? [] : [formData?.linkValue],
+                    "categories_list": link_with == 'CATEGORY' ? [formData?.linkValue] : [],
                     "product_list": [formData?.productId]
                 })
                     .then((response) => {
@@ -161,29 +173,54 @@ const CollectionForm = ({ data = {}, id }) => {
 
 
     const handleImageUpload = async (event) => {
+        setMediaLoading(true)
         let imageData = new FormData();
         imageData.append('file', event.target.files[0]);
         await ApiPost(API_URL.fileUploadCollection, imageData)
             .then((response) => {
                 if (response?.data) {
                     setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                    setMediaLoading(false)
                 }
             })
             .catch((error) => {
                 console.log("Error", error);
+                setMediaLoading(false)
             });
     }
 
     const handleDeleteImage = async (event) => {
+        setMediaLoading(true)
         await ApiPost(API_URL.fileRemove, {
             url: image
         })
             .then((response) => {
                 if (response?.data) {
                     setFormData({ ...formData, image: null });
+                    setMediaLoading(false)
                 }
             })
             .catch((error) => {
+                setMediaLoading(false)
+                console.log("Error", error);
+            });
+    }
+
+    const handleImageVideo = async (event) => {
+        setMediaLoading(true)
+        let videoData = new FormData();
+        videoData.append('video', event.target.files[0]);
+        await ApiPost(API_URL.videoFileUpload, videoData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({
+                        ...formData, video: response?.data?.Location
+                    });
+                    setMediaLoading(false)
+                }
+            })
+            .catch((error) => {
+                setMediaLoading(false)
                 console.log("Error", error);
             });
     }
@@ -194,7 +231,10 @@ const CollectionForm = ({ data = {}, id }) => {
             setFormError({ ...formError, image: false })
         } else if (event.target.name == "image") {
             handleImageUpload(event)
-            setFormError({ ...formError, image: false })
+            setFormError({ ...formError, image: false, video: false })
+        } else if (event.target.name == "video") {
+            handleImageVideo(event)
+            setFormError({ ...formError, image: false, video: false })
         } else if (event.target.name == "link_with") {
             setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
         } else if (event.target.name == "linkType") {
@@ -209,23 +249,30 @@ const CollectionForm = ({ data = {}, id }) => {
 
     const {
         name,
+        title,
         link_with,
         linkValue,
         home_visibilty,
         productId,
-        image
+        mediaType,
+        image,
+        video
     } = formData;
 
     const handleError = async (event) => {
         let tempError = { ...formError }
+        let tempMediaType = mediaType ?? 'image'
         if (!description) {
             setIsErrorDescription(true)
         }
         if (link_with && !linkValue) {
             tempError = { ...tempError, linkValue: true }
         }
-        if (home_visibilty && !image) {
+        if (home_visibilty && (tempMediaType == 'image') && !image) {
             tempError = { ...tempError, image: true }
+        }
+        if (home_visibilty && (tempMediaType == 'video') && !video) {
+            tempError = { ...tempError, video: true }
         }
         setFormError(tempError)
     }
@@ -243,6 +290,17 @@ const CollectionForm = ({ data = {}, id }) => {
                                 label="Name"
                                 onChange={handleChange}
                                 value={name || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
+                            />
+
+
+                            <TextField
+                                type="text"
+                                name="title"
+                                label="Title"
+                                onChange={handleChange}
+                                value={title || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -330,27 +388,27 @@ const CollectionForm = ({ data = {}, id }) => {
                                 <>
                                     <Box display="flex" flexDirection="column">
                                         <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                        <FormControl sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
+                                        }}>
+                                            <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Media Type </FormLabel>
+                                            <RadioGroup
+                                                row
+                                                value={mediaType ?? "image"}
+                                                onChange={handleChange}
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="mediaType">
+                                                <FormControlLabel value="image" control={<Radio />} label="Image" />
+                                                <FormControlLabel value="video" control={<Radio />} label="Video" />
+                                            </RadioGroup>
+                                        </FormControl>
                                         <Box sx={{
                                             display: "flex",
                                             flexWrap: "wrap",
                                         }}>
-                                            {image ?
-                                                <Box
-                                                    sx={{
-                                                        width: "150px",
-                                                        height: "170px",
-                                                        margin: "10px 10px 0 0",
-                                                        position: "relative"
-                                                    }}>
-                                                    <img src={image} width="100%" height="90%" />
-                                                    <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                        <Icon onClick={() => handleDeleteImage()} sx={{
-                                                            color: "red",
-                                                            cursor: "pointer",
-                                                        }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
-                                                    </Box>
-                                                </Box>
-                                                :
+                                            {mediaLoading ? <>
                                                 <Box>
                                                     <Button
                                                         variant="contained"
@@ -367,19 +425,110 @@ const CollectionForm = ({ data = {}, id }) => {
                                                                 background: "transparent",
                                                             }
                                                         }} >
-                                                        <Icon>add</Icon>
-                                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
-                                                        <input
-                                                            type="file"
-                                                            name="image"
-                                                            accept="image/png, image/gif, image/jpeg"
-                                                            hidden
-                                                            onClick={(event) => { event.target.value = '' }}
-                                                            onChange={handleChange} />
+                                                        <CircularProgress />
                                                     </Button>
-                                                    {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
                                                 </Box>
-                                            }
+                                            </> : <>
+                                                {mediaType == 'video' ? <>
+                                                    {video ?
+                                                        <Box
+                                                            sx={{
+                                                                width: "150px",
+                                                                height: "170px",
+                                                                margin: "10px 10px 0 0",
+                                                                position: "relative"
+                                                            }}>
+                                                            <video width="100%" height="90%" autoPlay={true} muted={true} loop={true} playsInline={true}
+                                                                style={{ objectFit: "fill", borderRadius: "10px" }}>
+                                                                <source src={video} type="video/mp4" />
+                                                            </video>
+                                                            <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
+                                                                <Icon onClick={() => handleDeleteImage()} sx={{
+                                                                    color: "red",
+                                                                    cursor: "pointer",
+                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                            </Box>
+                                                        </Box>
+                                                        :
+                                                        <Box>
+                                                            <Button
+                                                                variant="contained"
+                                                                component="label"
+                                                                sx={{
+                                                                    width: "150px",
+                                                                    height: "150px",
+                                                                    background: "transparent",
+                                                                    color: "#000",
+                                                                    border: "2px dashed",
+                                                                    margin: "10px 10px 0 0",
+
+                                                                    "&:hover": {
+                                                                        background: "transparent",
+                                                                    }
+                                                                }} >
+                                                                <Icon>add</Icon>
+                                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                                <input
+                                                                    type="file"
+                                                                    name="video"
+                                                                    accept="video/mp4,video/x-m4v,video/*"
+                                                                    hidden
+                                                                    onClick={(event) => { event.target.value = '' }}
+                                                                    onChange={handleChange} />
+                                                            </Button>
+                                                            {formError?.video && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select video</Typography>}
+                                                        </Box>
+                                                    }
+                                                </> : <>
+                                                    {image ?
+                                                        <Box
+                                                            sx={{
+                                                                width: "150px",
+                                                                height: "170px",
+                                                                margin: "10px 10px 0 0",
+                                                                position: "relative"
+                                                            }}>
+                                                            <img src={image} width="100%" height="90%" />
+                                                            <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
+                                                                <Icon onClick={() => handleDeleteImage()} sx={{
+                                                                    color: "red",
+                                                                    cursor: "pointer",
+                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                            </Box>
+                                                        </Box>
+                                                        :
+                                                        <Box>
+                                                            <Button
+                                                                variant="contained"
+                                                                component="label"
+                                                                sx={{
+                                                                    width: "150px",
+                                                                    height: "150px",
+                                                                    background: "transparent",
+                                                                    color: "#000",
+                                                                    border: "2px dashed",
+                                                                    margin: "10px 10px 0 0",
+
+                                                                    "&:hover": {
+                                                                        background: "transparent",
+                                                                    }
+                                                                }} >
+                                                                <Icon>add</Icon>
+                                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                                <input
+                                                                    type="file"
+                                                                    name="image"
+                                                                    accept="image/png, image/gif, image/jpeg"
+                                                                    hidden
+                                                                    onClick={(event) => { event.target.value = '' }}
+                                                                    onChange={handleChange} />
+                                                            </Button>
+                                                            {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
+                                                        </Box>
+                                                    }
+                                                </>}
+                                            </>}
+
                                         </Box>
                                     </Box>
 

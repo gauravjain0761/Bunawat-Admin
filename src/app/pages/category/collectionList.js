@@ -21,6 +21,7 @@ import DeleteAllModel from 'app/views/models/deleteModel';
 const CollectionList = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [rowLoading, setRowLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(1);
@@ -100,12 +101,15 @@ const CollectionList = () => {
   ];
 
   const getData = async () => {
+    setRowLoading(true)
     await ApiGet(`${API_URL.getCollections}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
       .then((response) => {
+        setRowLoading(false)
         setRows(response?.data ?? []);
         setTotalCount(response?.totalCount);
       })
       .catch((error) => {
+        setRowLoading(false)
         console.log("Error", error);
       });
   }
@@ -243,6 +247,7 @@ const CollectionList = () => {
       </CardHeader>
       <TableComponent
         rows={rows}
+        isLoading={rowLoading}
         columns={columns}
         selected={selected}
         totalCount={totalCount}

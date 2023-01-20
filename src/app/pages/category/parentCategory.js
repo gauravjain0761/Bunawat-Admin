@@ -21,6 +21,7 @@ const ParentCategory = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
+    const [rowLoading, setRowLoading] = useState(false);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -100,12 +101,15 @@ const ParentCategory = () => {
     ];
 
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getParentCategorys}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -251,6 +255,7 @@ const ParentCategory = () => {
             </Box>
             <TableComponent
                 rows={rows}
+                isLoading={rowLoading}
                 columns={columns}
                 selected={selected}
                 totalCount={totalCount}

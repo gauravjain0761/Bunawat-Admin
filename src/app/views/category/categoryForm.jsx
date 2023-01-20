@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -41,6 +42,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const [formData, setFormData] = useState(data);
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
+    const [mediaLoading, setMediaLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
     const [categoryList, setCategoryList] = useState([]);
@@ -177,8 +179,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
     }
 
     const handleSubmit = async (event) => {
-        const { link_with, linkValue, productId, image, ...payload } = formData
+        const { link_with, linkValue, productId, image, mediaType, ...payload } = formData
         let tempError = { ...formError }
+        let tempMediaType = formData?.mediaType ?? 'image'
         if (!description) {
             setIsErrorDescription(true)
         }
@@ -191,8 +194,11 @@ const CategoryForm = ({ data = {}, id, type }) => {
         if (link_with && !linkValue) {
             tempError = { ...tempError, linkValue: true }
         }
-        if (home_visibilty && !image) {
+        if (home_visibilty && (tempMediaType == 'image') && !image) {
             tempError = { ...tempError, image: true }
+        }
+        if (home_visibilty && (tempMediaType == 'video') && !video) {
+            tempError = { ...tempError, video: true }
         }
         if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true)
@@ -202,8 +208,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     description,
                     link_with: link_with ?? '',
                     image: image ?? "",
+                    mediaType: tempMediaType,
                     "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
-                    "categories_list": link_with == 'COLLECTION' ? [] : [linkValue],
+                    "categories_list": link_with == 'CATEGORY' ? [linkValue] : [],
                     "product_list": productId ? [productId] : []
                 })
                     .then((response) => {
@@ -226,8 +233,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     description,
                     link_with: link_with ?? '',
                     image: image ?? "",
+                    mediaType: tempMediaType,
                     "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
-                    "categories_list": linkValue ? (link_with == 'COLLECTION' ? [] : [linkValue]) : [],
+                    "categories_list": linkValue ? (link_with == 'CATEGORY' ? [linkValue] : []) : [],
                     "product_list": productId ? [productId] : []
                 })
                     .then((response) => {
@@ -250,29 +258,54 @@ const CategoryForm = ({ data = {}, id, type }) => {
     };
 
     const handleImageUpload = async (event) => {
+        setMediaLoading(true)
         let imageData = new FormData();
         imageData.append('file', event.target.files[0]);
         await ApiPost(API_URL.fileUploadCategory, imageData)
             .then((response) => {
                 if (response?.data) {
                     setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                    setMediaLoading(false)
                 }
             })
             .catch((error) => {
                 console.log("Error", error);
+                setMediaLoading(false)
             });
     }
 
     const handleDeleteImage = async (event) => {
+        setMediaLoading(true)
         await ApiPost(API_URL.fileRemove, {
             url: image
         })
             .then((response) => {
                 if (response?.data) {
                     setFormData({ ...formData, image: null });
+                    setMediaLoading(false)
                 }
             })
             .catch((error) => {
+                console.log("Error", error);
+                setMediaLoading(false)
+            });
+    }
+
+    const handleImageVideo = async (event) => {
+        setMediaLoading(true)
+        let videoData = new FormData();
+        videoData.append('video', event.target.files[0]);
+        await ApiPost(API_URL.videoFileUpload, videoData)
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({
+                        ...formData, video: response?.data?.Location
+                    });
+                    setMediaLoading(false)
+                }
+            })
+            .catch((error) => {
+                setMediaLoading(false)
                 console.log("Error", error);
             });
     }
@@ -292,7 +325,10 @@ const CategoryForm = ({ data = {}, id, type }) => {
             setFormData({ ...formData, [event.target.name]: onlyUpper?.toUpperCase() });
         } else if (event.target.name == "image") {
             handleImageUpload(event)
-            setFormError({ ...formError, image: false })
+            setFormError({ ...formError, image: false, video: false })
+        } else if (event.target.name == "video") {
+            handleImageVideo(event)
+            setFormError({ ...formError, image: false, video: false })
         } else if (event.target.name == "link_with") {
             setFormData({ ...formData, linkValue: '', [event.target.name]: event.target.value });
         } else if (event.target.name == "linkValue") {
@@ -313,7 +349,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
         parent_cateogry_id,
         home_visibilty,
         productId,
+        mediaType,
         image,
+        video,
         link_with,
         linkValue,
         code
@@ -333,6 +371,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
 
     const handleError = async (event) => {
         let tempError = { ...formError }
+        let tempMediaType = mediaType ?? 'image'
         if (!description) {
             setIsErrorDescription(true)
         }
@@ -342,11 +381,11 @@ const CategoryForm = ({ data = {}, id, type }) => {
         if ((type == 'list') && !sub_category_id) {
             tempError = { ...tempError, sub_category_id: true }
         }
-        if (link_with && !linkValue) {
-            tempError = { ...tempError, linkValue: true }
-        }
-        if (home_visibilty && !image) {
+        if (home_visibilty && (tempMediaType == 'image') && !image) {
             tempError = { ...tempError, image: true }
+        }
+        if (home_visibilty && (tempMediaType == 'video') && !video) {
+            tempError = { ...tempError, video: true }
         }
         setFormError(tempError)
     }
@@ -519,27 +558,27 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                 <>
                                     <Box display="flex" flexDirection="column">
                                         <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                        <FormControl sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
+                                        }}>
+                                            <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Media Type </FormLabel>
+                                            <RadioGroup
+                                                row
+                                                value={mediaType ?? "image"}
+                                                onChange={handleChange}
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="mediaType">
+                                                <FormControlLabel value="image" control={<Radio />} label="Image" />
+                                                <FormControlLabel value="video" control={<Radio />} label="Video" />
+                                            </RadioGroup>
+                                        </FormControl>
                                         <Box sx={{
                                             display: "flex",
                                             flexWrap: "wrap",
                                         }}>
-                                            {image ?
-                                                <Box
-                                                    sx={{
-                                                        width: "150px",
-                                                        height: "170px",
-                                                        margin: "10px 10px 0 0",
-                                                        position: "relative"
-                                                    }}>
-                                                    <img src={image} width="100%" height="90%" />
-                                                    <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                        <Icon onClick={() => handleDeleteImage()} sx={{
-                                                            color: "red",
-                                                            cursor: "pointer",
-                                                        }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
-                                                    </Box>
-                                                </Box>
-                                                :
+                                            {mediaLoading ? <>
                                                 <Box>
                                                     <Button
                                                         variant="contained"
@@ -556,19 +595,106 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                                 background: "transparent",
                                                             }
                                                         }} >
-                                                        <Icon>add</Icon>
-                                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
-                                                        <input
-                                                            type="file"
-                                                            name="image"
-                                                            accept="image/png, image/gif, image/jpeg"
-                                                            hidden
-                                                            onClick={(event) => { event.target.value = '' }}
-                                                            onChange={handleChange} />
+                                                        <CircularProgress />
                                                     </Button>
-                                                    {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
                                                 </Box>
-                                            }
+                                            </> : <>
+                                                {mediaType == 'video' ? <>
+                                                    {video ?
+                                                        <Box
+                                                            sx={{
+                                                                width: "150px",
+                                                                height: "170px",
+                                                                margin: "10px 10px 0 0",
+                                                                position: "relative"
+                                                            }}>
+                                                            <img src={image} width="100%" height="90%" />
+                                                            <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
+                                                                <Icon onClick={() => handleDeleteImage()} sx={{
+                                                                    color: "red",
+                                                                    cursor: "pointer",
+                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                            </Box>
+                                                        </Box>
+                                                        :
+                                                        <Box>
+                                                            <Button
+                                                                variant="contained"
+                                                                component="label"
+                                                                sx={{
+                                                                    width: "150px",
+                                                                    height: "150px",
+                                                                    background: "transparent",
+                                                                    color: "#000",
+                                                                    border: "2px dashed",
+                                                                    margin: "10px 10px 0 0",
+
+                                                                    "&:hover": {
+                                                                        background: "transparent",
+                                                                    }
+                                                                }} >
+                                                                <Icon>add</Icon>
+                                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                                <input
+                                                                    type="file"
+                                                                    name="video"
+                                                                    accept="video/mp4,video/x-m4v,video/*"
+                                                                    hidden
+                                                                    onClick={(event) => { event.target.value = '' }}
+                                                                    onChange={handleChange} />
+                                                            </Button>
+                                                            {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select video</Typography>}
+                                                        </Box>
+                                                    }
+                                                </> : <>
+                                                    {image ?
+                                                        <Box
+                                                            sx={{
+                                                                width: "150px",
+                                                                height: "170px",
+                                                                margin: "10px 10px 0 0",
+                                                                position: "relative"
+                                                            }}>
+                                                            <img src={image} width="100%" height="90%" />
+                                                            <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
+                                                                <Icon onClick={() => handleDeleteImage()} sx={{
+                                                                    color: "red",
+                                                                    cursor: "pointer",
+                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                            </Box>
+                                                        </Box>
+                                                        :
+                                                        <Box>
+                                                            <Button
+                                                                variant="contained"
+                                                                component="label"
+                                                                sx={{
+                                                                    width: "150px",
+                                                                    height: "150px",
+                                                                    background: "transparent",
+                                                                    color: "#000",
+                                                                    border: "2px dashed",
+                                                                    margin: "10px 10px 0 0",
+
+                                                                    "&:hover": {
+                                                                        background: "transparent",
+                                                                    }
+                                                                }} >
+                                                                <Icon>add</Icon>
+                                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                                <input
+                                                                    type="file"
+                                                                    name="image"
+                                                                    accept="image/png, image/gif, image/jpeg"
+                                                                    hidden
+                                                                    onClick={(event) => { event.target.value = '' }}
+                                                                    onChange={handleChange} />
+                                                            </Button>
+                                                            {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
+                                                        </Box>
+                                                    }
+                                                </>}
+                                            </>}
                                         </Box>
                                     </Box>
 

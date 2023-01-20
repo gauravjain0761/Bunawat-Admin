@@ -22,6 +22,7 @@ const SubCategoryAdd = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
+    const [rowLoading, setRowLoading] = useState(false);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -106,8 +107,10 @@ const SubCategoryAdd = () => {
     ];
 
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getParentSubCategorys}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data?.map(item => {
                     return {
                         ...item,
@@ -117,6 +120,7 @@ const SubCategoryAdd = () => {
                 setTotalCount(response?.totalCount);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -255,6 +259,7 @@ const SubCategoryAdd = () => {
                 rows={rows}
                 columns={columns}
                 selected={selected}
+                isLoading={rowLoading}
                 totalCount={totalCount}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row._id);

@@ -33,6 +33,7 @@ const AttributeList = () => {
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
+    const [rowLoading, setRowLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -46,12 +47,15 @@ const AttributeList = () => {
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getAttributes}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data ?? []);
                 setTotalCount(response?.totalCount);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -346,6 +350,7 @@ const AttributeList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                isLoading={rowLoading}
                 totalCount={totalCount}
                 selected={selected}
                 renderRow={(row, index) => {

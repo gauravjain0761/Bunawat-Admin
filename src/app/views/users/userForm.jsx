@@ -278,7 +278,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                             />
 
-                            <TextField
+                            {/* <TextField
                                 name="password"
                                 type="password"
                                 label="Password"
@@ -286,7 +286,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
-                            />
+                            /> */}
 
                             {(userType == "Reseller" || userType == "influencer") &&
                                 <TextField
