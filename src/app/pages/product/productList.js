@@ -190,8 +190,22 @@ const ProductList = () => {
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
-    const onSortEnd = ({ oldIndex, newIndex }) => {
+    const onSortEnd = async ({ oldIndex, newIndex }) => {
         setRows(arrayMove(rows, oldIndex, newIndex));
+        if (oldIndex != newIndex) {
+            await ApiPut(`${API_URL.editProductOrdering}`, {
+                item_id: rows[oldIndex]?._id,
+                order: newIndex
+            })
+                .then((response) => {
+                    toast.success('Drag Successfully!')
+                })
+                .catch((error) => {
+                    setRows(arrayMove(rows, newIndex, oldIndex - 1));
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
+        }
     }
 
     const RowData = SortableElement(({ row, mainIndex, ...other }) => {

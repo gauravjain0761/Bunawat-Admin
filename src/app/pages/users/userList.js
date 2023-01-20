@@ -92,8 +92,17 @@ const UserList = ({ type }) => {
     if (type) {
       getData(type);
     }
-  }, [type, page, rowsPerPage, searchText])
+  }, [type, page, rowsPerPage])
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (type) {
+        getData(type);
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [searchText])
 
   const columns = [
     {

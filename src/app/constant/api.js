@@ -60,6 +60,7 @@ export const API_URL = {
     deleteVarient: "variant/remove",
 
     getProducts: "product/getall",
+    editProductOrdering: "product_ordering",
     getCategoryList: "cateogry_list",
     getProduct: "product",
     addProduct: "product/add",
