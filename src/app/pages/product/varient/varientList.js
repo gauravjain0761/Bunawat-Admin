@@ -15,8 +15,8 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { SimpleCard } from 'app/components';
 import { isMdScreen, isMobile } from 'app/utils/utils';
 import { Span } from 'app/components/Typography';
-import { ApiGet, ApiPost } from 'app/service/api';
-import { API_URL } from 'app/constant/api';
+import { ApiGet, ApiPost, ApiPut } from 'app/service/api';
+import { API_URL, defaultError } from 'app/constant/api';
 import { toast } from 'material-react-toastify';
 import DeleteVariantModel from 'app/views/product/model/deleteVariantModel';
 import { LoadingButton } from '@mui/lab';
@@ -151,18 +151,18 @@ const VarientList = () => {
     ];
 
     const editStatusData = async (id, status) => {
-        // await ApiPut(`${API_URL.editCollect}/${id}`, {
-        //   isActive: status
-        // })
-        //   .then((response) => {
-        // toast.success('Edit Successfully!')
-        //     getData(type)
-        //     handleActionClose()
-        //   })
-        //   .catch((error) => {
-        // toast.error(error?.error)
-        //     console.log("Error", error);
-        //   });
+        await ApiPut(`${API_URL.editVarient}/${id}`, {
+            isActive: status
+        })
+            .then((response) => {
+                toast.success('Edit Successfully!')
+                getData()
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error ?? defaultError);
+                console.log("Error", error);
+            });
     }
 
     const handleSelectAllClick = (event) => {
@@ -373,7 +373,7 @@ const VarientList = () => {
                                     open={Boolean(actionOpen[index])}
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
-                                    {/* <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem> */}
+                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
                                         setOpen(true);

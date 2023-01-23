@@ -4,6 +4,8 @@ export const API_ROUTES = {
     API_VERSION: '/api'
 }
 
+export const defaultError = 'Error!'
+
 export const API_URL = {
     adminLogin: "admin_login",
 
@@ -54,10 +56,12 @@ export const API_URL = {
     getAttribute: "attribute",
     addAttribute: "attribute/add",
     deleteAttribute: "attribute/remove",
+    editAttribute: "attribute_status_update",
 
     getVarients: "variant/getall",
     addVarient: "variant/add",
     deleteVarient: "variant/remove",
+    editVarient: "varient_status_update",
 
     getProducts: "product/getall",
     editProductOrdering: "product_ordering",

@@ -19,7 +19,7 @@ const ProductRoutes = [
     { path: '/product/list', element: <ProductList /> },
     { path: '/product/add', element: <AddProduct /> },
     { path: '/product/media', element: <ProductMedia /> },
-    { path: '/product/media/:designNo', element: <ProductMediaSingleList /> },
+    { path: '/product/media/:id', element: <ProductMediaSingleList /> },
     { path: '/product/add/:id', element: <AddProduct /> },
     { path: '/product/attributes/:id', element: <VarientList /> },
     { path: '/product/color', element: <ColorList /> },

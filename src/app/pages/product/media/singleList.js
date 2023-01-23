@@ -6,17 +6,38 @@ import { Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { UIColor } from 'app/utils/constant';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ApiGet } from 'app/service/api';
+import { API_URL } from 'app/constant/api';
 
 const ProductMediaSingleList = () => {
     const navigate = useNavigate();
-    const { designNo } = useParams();
+    const { id } = useParams();
     const [dOpen, setDopen] = useState(false)
     const [dData, setDData] = useState(null)
     const [tab, setTab] = React.useState(0);
-    const [selectedImage, setImageSelected] = useState(mockDataProductMedia.filter(x => x.type == 'image').map(() => { return false }));
-    const [selectedVideo, setVideoSelected] = useState(mockDataProductMedia.filter(x => x.type == 'video').map(() => { return false }));
-    const [actionImageOpen, setActionImageOpen] = useState(mockDataProductMedia.filter(x => x.type == 'image').map(() => { return null }));
-    const [actionVideoOpen, setActionVideoOpen] = useState(mockDataProductMedia.filter(x => x.type == 'video').map(() => { return null }));
+    const [selectedImage, setImageSelected] = useState([]);
+    const [selectedVideo, setVideoSelected] = useState([]);
+    const [actionImageOpen, setActionImageOpen] = useState([]);
+    const [actionVideoOpen, setActionVideoOpen] = useState([]);
+    const [rows, setRows] = useState({});
+
+    const getData = async (id) => {
+        await ApiGet(`${API_URL.getProduct}/${id}`)
+            .then((response) => {
+                setRows(response?.data ?? {});
+                setImageSelected(response?.data?.image?.map(() => { return false }) ?? []);
+                setActionImageOpen(response?.data?.image?.map(() => { return null }) ?? []);
+                setVideoSelected(response?.data?.videos?.map(() => { return false }) ?? []);
+                setActionVideoOpen(response?.data?.videos?.map(() => { return null }) ?? []);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData(id);
+    }, [])
 
     const handleChange = (event, newValue) => {
         setTab(newValue);
@@ -45,30 +66,32 @@ const ProductMediaSingleList = () => {
                         <IconButton sx={{ color: "#000", p: 0, mr: 1 }} onClick={() => navigate(-1)}>
                             <Icon>arrow_back</Icon>
                         </IconButton>
-                        Media List ( ABCD1234 )
+                        Media List ( {rows?.design_num} )
                     </Stack>
                 </Title>
             </CardHeader>
-            <Box sx={{ width: { lg: '50%', md: '75%', sm: '100%' }, px: 3, mb: 2 }}>
-                <TableContainer component={Paper} sx={{ border: '1px solid #000' }}>
-                    <Table sx={{ minWidth: '100%' }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0, borderBottom: 'none' }} align="center">Size</TableCell>
-                                <TableCell align="center">M</TableCell>
-                                <TableCell align="center">L</TableCell>
-                                <TableCell align="center">XL</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0, borderBottom: 'none' }} align="center">Quantity</TableCell>
-                                <TableCell align="center">15</TableCell>
-                                <TableCell align="center">76</TableCell>
-                                <TableCell align="center">84</TableCell>
-                            </TableRow>
-                        </TableHead>
-                    </Table>
-                </TableContainer>
-            </Box>
+            {rows?.sku_data?.length > 0 &&
+                <Box sx={{ width: { lg: '50%', md: '75%', sm: '100%' }, px: 3, mb: 2 }}>
+                    <TableContainer component={Paper} sx={{ border: '1px solid #000' }}>
+                        <Table sx={{ minWidth: '100%' }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0, borderBottom: 'none' }} align="center">SKU</TableCell>
+                                    {rows?.sku_data?.map(data => (
+                                        <TableCell align="center">{data?.sku}</TableCell>
+                                    ))}
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ backgroundColor: UIColor, color: "#fff !important", fontWeight: 500, fontSize: "15px", pr: 0, borderBottom: 'none' }} align="center">Quantity</TableCell>
+                                    {rows?.sku_data?.map(data => (
+                                        <TableCell align="center">{data?.inStock_qty ?? 0}</TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                        </Table>
+                    </TableContainer>
+                </Box>
+            }
             <Box sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
@@ -118,9 +141,9 @@ const ProductMediaSingleList = () => {
                             }}>Share
                             </Box>
                         </Stack>}
-                        {mockDataProductMedia.filter(x => x.type == 'image').map((item, i) => {
+                        {rows?.image?.map((item, i) => {
                             return (
-                                <Box key={item.id} sx={{
+                                <Box key={item?._id} sx={{
                                     width: "200px",
                                     height: "200px",
                                     margin: "0px 10px 0 0",
@@ -130,7 +153,7 @@ const ProductMediaSingleList = () => {
                                     // setDopen(true)
                                     // setDData(item)
                                 }}>
-                                    <img src={item.url} width="100%" height="200px" />
+                                    <img src={item?.url} width="100%" height="200px" />
                                     <Checkbox sx={{
                                         position: 'absolute',
                                         top: '2px',
@@ -138,7 +161,7 @@ const ProductMediaSingleList = () => {
                                         color: '#000',
                                         background: '#fff'
                                     }}
-                                        checked={selectedImage[i]}
+                                        checked={selectedImage[i] ?? false}
                                         onChange={(e) => {
                                             let tempSelect = [...selectedImage]
                                             tempSelect[i] = !tempSelect[i]
@@ -184,7 +207,7 @@ const ProductMediaSingleList = () => {
                                         <MenuItem onClick={() => { }}>Share</MenuItem>
                                         <MenuItem onClick={() => {
                                             setDopen(true)
-                                            setDData(item)
+                                            setDData({ ...item, type: 'image' })
                                             let temp = [...actionImageOpen];
                                             temp = temp.map(() => { return null })
                                             setActionImageOpen(temp)
@@ -223,9 +246,9 @@ const ProductMediaSingleList = () => {
                             }}>Share
                             </Box>
                         </Stack>}
-                        {mockDataProductMedia.filter(x => x.type == 'video').map((item, i) => {
+                        {rows?.videos?.map((item, i) => {
                             return (
-                                <Box key={item.id} sx={{
+                                <Box key={item?._id} sx={{
                                     width: "200px",
                                     height: "200px",
                                     margin: "0px 10px 0 0",
@@ -237,7 +260,7 @@ const ProductMediaSingleList = () => {
                                 }}>
                                     <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
                                         style={{ objectFit: "fill" }}>
-                                        <source src={item.url} type="video/mp4" />
+                                        <source src={item?.url} type="video/mp4" />
                                     </video>
                                     <Checkbox sx={{
                                         position: 'absolute',
@@ -246,7 +269,7 @@ const ProductMediaSingleList = () => {
                                         color: '#000',
                                         background: '#fff'
                                     }}
-                                        value={selectedVideo[i]}
+                                        checked={selectedVideo[i] ?? false}
                                         onChange={(e) => {
                                             let tempSelect = [...selectedVideo]
                                             tempSelect[i] = !tempSelect[i]

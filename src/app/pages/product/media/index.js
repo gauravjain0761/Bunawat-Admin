@@ -5,13 +5,36 @@ import React, { useState } from 'react'
 import { UIColor } from 'app/utils/constant';
 import { useNavigate } from 'react-router-dom';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { API_URL } from 'app/constant/api';
+import { ApiGet } from 'app/service/api';
 
 const ProductMedia = () => {
     const navigate = useNavigate();
-    const [selectedImage, setImageSelected] = useState(mockDataProductMedia.filter(x => x.type == 'image').map(() => { return false }));
-    const [actionImageOpen, setActionImageOpen] = useState(mockDataProductMedia.filter(x => x.type == 'image').map(() => { return null }));
+    const [selectedImage, setImageSelected] = useState([]);
+    const [actionImageOpen, setActionImageOpen] = useState([]);
     const [dOpen, setDopen] = useState(false)
     const [dData, setDData] = useState(null)
+    const [rowLoading, setRowLoading] = useState(false);
+    const [rows, setRows] = useState([]);
+
+    const getData = async () => {
+        setRowLoading(true)
+        await ApiGet(`${API_URL.getProducts}`)
+            .then((response) => {
+                setRowLoading(false)
+                setRows(response?.data ?? []);
+                setImageSelected(response?.data?.map(() => { return false }) ?? []);
+                setActionImageOpen(response?.data?.map(() => { return null }) ?? []);
+            })
+            .catch((error) => {
+                setRowLoading(false)
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [])
 
     const CardHeader = styled(Box)(() => ({
         display: 'flex',
@@ -65,19 +88,19 @@ const ProductMedia = () => {
                 gap: '20px',
                 padding: '0 20px'
             }}>
-                {mockDataProductMedia.filter(x => x.type == 'image').map((item, i) => {
+                {rows.map((item, i) => {
                     return (
-                        <Box key={item.id} sx={{
+                        <Box key={item._id} sx={{
                             width: "200px",
                             height: "200px",
                             margin: "10px 10px 0 0",
                             position: "relative",
                             cursor: 'pointer'
                         }}>
-                            <img src={item.url} width="100%" height="200px" onClick={(e) => {
+                            <img src={item?.image} width="100%" height="200px" onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
-                                navigate(`/product/media/${item.id}`)
+                                navigate(`/product/media/${item._id}`)
                             }} />
                             <Box sx={{
                                 position: 'absolute',
@@ -90,7 +113,7 @@ const ProductMedia = () => {
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }}>
-                                ABCD1234
+                                {item?.design_num}
                             </Box>
                             <Checkbox sx={{
                                 position: 'absolute',
@@ -99,7 +122,7 @@ const ProductMedia = () => {
                                 color: '#000',
                                 background: '#fff'
                             }}
-                                checked={selectedImage[i]}
+                                checked={selectedImage[i] ?? false}
                                 onChange={(e) => {
                                     let tempSelect = [...selectedImage]
                                     tempSelect[i] = !tempSelect[i]
