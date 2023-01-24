@@ -192,9 +192,9 @@ const ProductList = () => {
 
     const getIndex = (newIndex) => {
         if (page == 1) {
-            return newIndex
+            return newIndex + 1
         }
-        return ((page - 1) * rowsPerPage) + newIndex
+        return ((page - 1) * rowsPerPage) + (newIndex + 1)
     }
 
     const onSortEnd = async ({ oldIndex, newIndex }) => {
