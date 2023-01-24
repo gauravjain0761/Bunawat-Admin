@@ -256,20 +256,26 @@ const CategoryForm = ({ data = {}, id, type }) => {
     };
 
     const handleImageUpload = async (event) => {
-        setMediaLoading(true)
-        let imageData = new FormData();
-        imageData.append('file', event.target.files[0]);
-        await ApiPost(API_URL.fileUploadCategory, imageData)
-            .then((response) => {
-                if (response?.data) {
-                    setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+        const MAX_FILE_SIZE = 30720 // 30MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, image: true })
+        } else {
+            setMediaLoading(true)
+            let imageData = new FormData();
+            imageData.append('file', event.target.files[0]);
+            await ApiPost(API_URL.fileUploadCategory, imageData)
+                .then((response) => {
+                    if (response?.data) {
+                        setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                        setMediaLoading(false)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
                     setMediaLoading(false)
-                }
-            })
-            .catch((error) => {
-                console.log("Error", error);
-                setMediaLoading(false)
-            });
+                });
+        }
     }
 
     const handleDeleteImage = async (event) => {
@@ -290,22 +296,28 @@ const CategoryForm = ({ data = {}, id, type }) => {
     }
 
     const handleImageVideo = async (event) => {
-        setMediaLoading(true)
-        let videoData = new FormData();
-        videoData.append('video', event.target.files[0]);
-        await ApiPost(API_URL.videoFileUpload, videoData)
-            .then((response) => {
-                if (response?.data) {
-                    setFormData({
-                        ...formData, video: response?.data?.Location
-                    });
+        const MAX_FILE_SIZE = 51200 // 50MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, video: true })
+        } else {
+            setMediaLoading(true)
+            let videoData = new FormData();
+            videoData.append('video', event.target.files[0]);
+            await ApiPost(API_URL.videoFileUpload, videoData)
+                .then((response) => {
+                    if (response?.data) {
+                        setFormData({
+                            ...formData, video: response?.data?.Location
+                        });
+                        setMediaLoading(false)
+                    }
+                })
+                .catch((error) => {
                     setMediaLoading(false)
-                }
-            })
-            .catch((error) => {
-                setMediaLoading(false)
-                console.log("Error", error);
-            });
+                    console.log("Error", error);
+                });
+        }
     }
 
     const handleChange = (event) => {
@@ -641,6 +653,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                                     onClick={(event) => { event.target.value = '' }}
                                                                     onChange={handleChange} />
                                                             </Button>
+                                                            <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px' }}>Upload video size is max 50MB only.</Typography>
                                                             {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select video</Typography>}
                                                         </Box>
                                                     }
@@ -688,6 +701,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                                     onClick={(event) => { event.target.value = '' }}
                                                                     onChange={handleChange} />
                                                             </Button>
+                                                            <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px' }}>Upload image size is max 30MB only.</Typography>
                                                             {formError?.image && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>please select image</Typography>}
                                                         </Box>
                                                     }

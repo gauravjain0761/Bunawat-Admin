@@ -190,18 +190,24 @@ const ProductList = () => {
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
+    const getIndex = (newIndex) => {
+        if (page == 1) {
+            return newIndex
+        }
+        return ((page - 1) * rowsPerPage) + newIndex
+    }
+
     const onSortEnd = async ({ oldIndex, newIndex }) => {
-        setRows(arrayMove(rows, oldIndex, newIndex));
         if (oldIndex != newIndex) {
             await ApiPut(`${API_URL.editProductOrdering}`, {
                 item_id: rows[oldIndex]?._id,
-                order: newIndex
+                order: getIndex(newIndex)
             })
                 .then((response) => {
+                    getData();
                     toast.success('Drag Successfully!')
                 })
                 .catch((error) => {
-                    setRows(arrayMove(rows, newIndex, oldIndex - 1));
                     toast.error(error?.error)
                     console.log("Error", error);
                 });

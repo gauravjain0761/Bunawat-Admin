@@ -179,7 +179,7 @@ const DragTableComponent = (props) => {
                 </TableContainer>
                 {!disablePagination &&
                     <TablePagination
-                        rowsPerPageOptions={[10, 25, 50, 100]}
+                        rowsPerPageOptions={[3, 10, 25, 50, 100]}
                         component="div"
                         count={totalCount ?? 0}
                         rowsPerPage={rowsPerPage}

@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     Container,
     Dialog,
     DialogActions,
@@ -62,6 +63,8 @@ const ProductEditForm = ({ data = {}, id }) => {
     const [categoryList, setCategoryList] = useState([])
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
+    const [imageLoading, setImageLoading] = useState(false);
+    const [videoLoading, setVideoLoading] = useState(false);
     const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [formData, setFormData] = useState(data ?? {})
     const [selectedSKU, setSelectedSKU] = useState({})
@@ -344,60 +347,116 @@ const ProductEditForm = ({ data = {}, id }) => {
     };
 
     const handleImageUpload = async (event) => {
-        let imageData = new FormData();
-        const images = formData?.image ?? []
-        imageData.append('file', event.target.files[0]);
-        await ApiPost(API_URL.fileUploadProduct, imageData)
-            .then((response) => {
-                if (response?.data) {
+        const MAX_FILE_SIZE = 30720 // 30MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, image: true })
+        } else {
+            setImageLoading(true)
+            let imageData = new FormData();
+            const images = formData?.image ?? []
+            imageData.append('file', event.target.files[0]);
+            await ApiPost(API_URL.fileUploadProduct, imageData)
+                .then((response) => {
+                    setImageLoading(false)
+                    if (response?.data) {
+                        setFormData({
+                            ...formData, image: [...images, {
+                                url: response?.data?.Location,
+                                isActive: false,
+                                type: 'IMAGE'
+                            }]
+                        });
+                    }
+                })
+                .catch((error) => {
                     setFormData({
                         ...formData, image: [...images, {
-                            url: response?.data?.Location,
+                            url: 'https://www.globaldesi.in/dw/image/v2/BGCX_PRD/on/demandware.static/-/Sites-masterCatalog_GD/default/dw3bfa7936/images/hires/FW21/global-desi-m.blue-kurta-fw21gh007kucd--_3_-copy.jpg?sw=562&sh=843&sm=fit',
                             isActive: false,
                             type: 'IMAGE'
                         }]
                     });
+                    setImageLoading(false)
+                    console.log("Error", error);
+                });
+        }
+    }
+
+    const handleDeleteImage = async (index) => {
+        setImageLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: formData?.image?.[index]?.url
+        })
+            .then((response) => {
+                setImageLoading(false)
+                if (response?.data) {
+                    let images = formData?.image ?? []
+                    images = images?.filter((img, i) => i != index)
+                    setFormData({ ...formData, image: images });
                 }
             })
             .catch((error) => {
+                setImageLoading(false)
                 console.log("Error", error);
             });
     }
 
-    // const handleDeleteImage = async (event) => {
-    //     await ApiPost(API_URL.fileRemove, {
-    //         url: image
-    //     })
-    //         .then((response) => {
-    //             if (response?.data) {
-    //                 setFormData({ ...formData, image: null });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.log("Error", error);
-    //         });
-    // }
-
     const handleImageVideo = async (event) => {
-        const videosList = formData?.videos ?? []
-        let videoData = new FormData();
-        videoData.append('video', event.target.files[0]);
-        await ApiPost(API_URL.videoFileUpload, videoData)
-            .then((response) => {
-                if (response?.data) {
+        const MAX_FILE_SIZE = 51200 // 50MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, video: true })
+        } else {
+            setVideoLoading(true)
+            const videosList = formData?.videos ?? []
+            let videoData = new FormData();
+            videoData.append('video', event.target.files[0]);
+            await ApiPost(API_URL.videoFileUpload, videoData)
+                .then((response) => {
+                    setVideoLoading(false)
+                    if (response?.data) {
+                        setFormData({
+                            ...formData, videos: [...videosList, {
+                                url: response?.data?.Location,
+                                isActive: false,
+                                type: 'VIDEO'
+                            }]
+                        });
+                    }
+                })
+                .catch((error) => {
                     setFormData({
                         ...formData, videos: [...videosList, {
-                            url: response?.data?.Location,
+                            url: 'https://assets.mixkit.co/videos/preview/mixkit-women-walking-through-fashion-mall-shopping-9060-large.mp4',
                             isActive: false,
                             type: 'VIDEO'
                         }]
                     });
+                    setVideoLoading(false)
+                    console.log("Error", error);
+                });
+        }
+    }
+
+    const handleDeleteVideo = async (index) => {
+        setVideoLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: formData?.videos?.[index]?.url
+        })
+            .then((response) => {
+                setVideoLoading(false)
+                if (response?.data) {
+                    let videos = formData?.videos ?? []
+                    videos = videos?.filter((img, i) => i != index)
+                    setFormData({ ...formData, videos: videos });
                 }
             })
             .catch((error) => {
+                setVideoLoading(false)
                 console.log("Error", error);
             });
-    }
+    };
 
     const handleChange = (event) => {
         if (event.target.name == "home") {
@@ -491,12 +550,6 @@ const ProductEditForm = ({ data = {}, id }) => {
         // setFormData({ ...formData, attributeData: attributess });
     }
 
-    const handleDeleteImage = (index) => {
-        let images = formData?.image ?? []
-        images = images?.filter((img, i) => i != index)
-        setFormData({ ...formData, image: images });
-    };
-
     const handleSwitchImage = (index, max = 5) => {
         let images = formData?.image ?? []
         if (images?.filter((img) => img?.isActive).length < max) {
@@ -508,12 +561,6 @@ const ProductEditForm = ({ data = {}, id }) => {
                 setFormData({ ...formData, image: images });
             }
         }
-    };
-
-    const handleDeleteVideo = (index) => {
-        let videos = formData?.videos ?? []
-        videos = videos?.filter((img, i) => i != index)
-        setFormData({ ...formData, videos: videos });
     };
 
     const handleSwitchVideo = (index, max = 4) => {
@@ -875,9 +922,25 @@ const ProductEditForm = ({ data = {}, id }) => {
                                         <Box className="list-group">
                                             <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
                                         </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            mt: 1
+                                        }}>
+                                            {imageLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
+                                            <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
+                                        </Box>
 
                                         <Box className="list-group">
                                             <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
+                                        </Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            mt: 1
+                                        }}>
+                                            {videoLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
+                                            <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
                                         </Box>
                                     </Box>
                                 </Box>

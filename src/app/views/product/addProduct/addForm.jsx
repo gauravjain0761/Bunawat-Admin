@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -53,6 +54,8 @@ const ProductForm = ({ data = {} }) => {
     const [categoryList, setCategoryList] = useState([])
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
+    const [imageLoading, setImageLoading] = useState(false);
+    const [videoLoading, setVideoLoading] = useState(false);
     const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [formError, setFormError] = useState({});
     const [formData, setFormData] = useState({
@@ -203,60 +206,102 @@ const ProductForm = ({ data = {} }) => {
     };
 
     const handleImageUpload = async (event) => {
-        let imageData = new FormData();
-        const images = formData?.image ?? []
-        imageData.append('file', event.target.files[0]);
-        await ApiPost(API_URL.fileUploadProduct, imageData)
+        const MAX_FILE_SIZE = 30720 // 30MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, image: true })
+        } else {
+            setImageLoading(true)
+            let imageData = new FormData();
+            const images = formData?.image ?? []
+            imageData.append('file', event.target.files[0]);
+            await ApiPost(API_URL.fileUploadProduct, imageData)
+                .then((response) => {
+                    if (response?.data) {
+                        setFormData({
+                            ...formData, image: [...images, {
+                                url: response?.data?.Location,
+                                isActive: false,
+                                type: 'IMAGE'
+                            }]
+                        });
+                    }
+                    setImageLoading(false)
+                })
+                .catch((error) => {
+                    setImageLoading(false)
+                    console.log("Error", error);
+                });
+        }
+    }
+
+    const handleDeleteImage = async (index) => {
+        setImageLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: formData?.image?.[index]?.url
+        })
             .then((response) => {
+                setImageLoading(false)
                 if (response?.data) {
-                    setFormData({
-                        ...formData, image: [...images, {
-                            url: response?.data?.Location,
-                            isActive: false,
-                            type: 'IMAGE'
-                        }]
-                    });
+                    let images = formData?.image ?? []
+                    images = images?.filter((img, i) => i != index)
+                    setFormData({ ...formData, image: images });
                 }
             })
             .catch((error) => {
+                setImageLoading(false)
                 console.log("Error", error);
             });
     }
-
-    // const handleDeleteImage = async (event) => {
-    //     await ApiPost(API_URL.fileRemove, {
-    //         url: image
-    //     })
-    //         .then((response) => {
-    //             if (response?.data) {
-    //                 setFormData({ ...formData, image: null });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.log("Error", error);
-    //         });
-    // }
 
     const handleImageVideo = async (event) => {
-        const videosList = formData?.videos ?? []
-        let videoData = new FormData();
-        videoData.append('video', event.target.files[0]);
-        await ApiPost(API_URL.videoFileUpload, videoData)
+        const MAX_FILE_SIZE = 51200 // 50MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, video: true })
+        } else {
+            setVideoLoading(true)
+            const videosList = formData?.videos ?? []
+            let videoData = new FormData();
+            videoData.append('video', event.target.files[0]);
+            await ApiPost(API_URL.videoFileUpload, videoData)
+                .then((response) => {
+                    if (response?.data) {
+                        setFormData({
+                            ...formData, videos: [...videosList, {
+                                url: response?.data?.Location,
+                                isActive: false,
+                                type: 'VIDEO'
+                            }]
+                        });
+                    }
+                    setVideoLoading(false)
+                })
+                .catch((error) => {
+                    setVideoLoading(false)
+                    console.log("Error", error);
+                });
+        }
+    }
+
+    const handleDeleteVideo = async (index) => {
+        setVideoLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: formData?.videos?.[index]?.url
+        })
             .then((response) => {
+                setVideoLoading(false)
                 if (response?.data) {
-                    setFormData({
-                        ...formData, videos: [...videosList, {
-                            url: response?.data?.Location,
-                            isActive: false,
-                            type: 'VIDEO'
-                        }]
-                    });
+                    let videos = formData?.videos ?? []
+                    videos = videos?.filter((img, i) => i != index)
+                    setFormData({ ...formData, videos: videos });
                 }
             })
             .catch((error) => {
+                setVideoLoading(false)
                 console.log("Error", error);
             });
-    }
+    };
 
     const handleChange = (event) => {
         if (event.target.name == "home") {
@@ -335,12 +380,6 @@ const ProductForm = ({ data = {} }) => {
         setFormData({ ...formData, attributeData: attributes });
     }
 
-    const handleDeleteImage = (index) => {
-        let images = formData?.image ?? []
-        images = images?.filter((img, i) => i != index)
-        setFormData({ ...formData, image: images });
-    };
-
     const handleSwitchImage = (index, max = 5) => {
         let images = formData?.image ?? []
         if (images?.filter((img) => img?.isActive).length < max) {
@@ -352,12 +391,6 @@ const ProductForm = ({ data = {} }) => {
                 setFormData({ ...formData, image: images });
             }
         }
-    };
-
-    const handleDeleteVideo = (index) => {
-        let videos = formData?.videos ?? []
-        videos = videos?.filter((img, i) => i != index)
-        setFormData({ ...formData, videos: videos });
     };
 
     const handleSwitchVideo = (index, max = 4) => {
@@ -714,9 +747,25 @@ const ProductForm = ({ data = {} }) => {
                                 <Box className="list-group">
                                     <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
                                 </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    mt: 1
+                                }}>
+                                    {imageLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
+                                    <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
+                                </Box>
 
                                 <Box className="list-group">
                                     <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    mt: 1
+                                }}>
+                                    {videoLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
+                                    <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
                                 </Box>
                             </Box>
                         </Grid>
