@@ -311,7 +311,7 @@ const OrderForm = ({ data = {} }) => {
                                                                                             border: 'none',
                                                                                         },
                                                                                     }}
-                                                                                    type="number"
+                                                                                    type="text"
                                                                                     defaultValue={data?.qty}
                                                                                     name="qty"
                                                                                 />
@@ -352,7 +352,7 @@ const OrderForm = ({ data = {} }) => {
                                                                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', whiteSpace: 'nowrap' }}>
                                                                                 <Typography sx={{ fontWeight: 700 }}>QTY&nbsp; :&nbsp;</Typography>
                                                                                 <Typography sx={{ fontWeight: 700 }}>
-                                                                                    <input defaultValue={data?.qty} type="number" name="qty" style={{ width: '100%' }} />
+                                                                                    <input defaultValue={data?.qty} type="text" name="qty" style={{ width: '100%' }} />
                                                                                 </Typography>
                                                                             </Box>
                                                                         </Box>

@@ -77,22 +77,20 @@ const CollectionForm = ({ data = {}, id }) => {
     }
 
     const getCollection = async () => {
-        if (data?.name) {
-            await ApiGet(`${API_URL.getCollections}`)
-                .then((response) => {
-                    if (response?.data?.length > 0) {
-                        setCollectionList(response?.data?.filter(filter => filter?.name != data?.name)?.map(item => {
-                            return {
-                                value: item?._id,
-                                label: item?.name
-                            }
-                        }) ?? []);
-                    }
-                })
-                .catch((error) => {
-                    console.log("Error", error);
-                });
-        }
+        await ApiGet(`${API_URL.getCollections}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionList(response?.data?.filter(filter => filter?.name != data?.name)?.map(item => {
+                        return {
+                            value: item?._id,
+                            label: item?.name
+                        }
+                    }) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
     }
 
     useEffect(() => {
@@ -313,66 +311,7 @@ const CollectionForm = ({ data = {}, id }) => {
                                 {isErrorDescription && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </Box>
 
-                            <FormControl sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center'
-                            }}>
-                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel>
-                                <RadioGroup
-                                    row
-                                    value={link_with ?? "category"}
-                                    onChange={handleChange}
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="link_with">
-                                    <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" />
-                                    <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" />
-                                </RadioGroup>
-                            </FormControl>
-
-                            {link_with == 'COLLECTION' &&
-                                <FormControl fullWidth sx={{ mb: 2 }}>
-                                    <InputLabel id="demo-simple-select-label">Link with collection</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={linkValue ?? ''}
-                                        name="linkValue"
-                                        label="Link with collection"
-                                        sx={{
-                                            border: formError?.linkValue ? '1px solid #FF3D57' : ''
-                                        }}
-                                        onChange={handleChange}>
-                                        {collectionList?.map((item) => (
-                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
-                                        ))}
-                                    </Select>
-                                    {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                                </FormControl>
-                            }
-                            {link_with == 'CATEGORY' &&
-                                <FormControl fullWidth sx={{ mb: 2 }}>
-                                    <InputLabel id="demo-simple-select-label">Link with category</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={linkValue ?? ''}
-                                        name="linkValue"
-                                        sx={{
-                                            border: formError?.linkValue ? '1px solid #FF3D57' : ''
-                                        }}
-                                        label="Link with category"
-                                        onChange={handleChange}>
-                                        {categoryList?.map((item) => (
-                                            <MenuItem value={item?.value}>{item?.label}</MenuItem>
-                                        ))}
-                                    </Select>
-                                    {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                                </FormControl>
-                            }
-
-
-                            <FormControl sx={{ mb: 1, flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
+                            <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
                                 {/* <FormLabel component="legend">Visibility</FormLabel> */}
                                 <FormGroup>
                                     <FormControlLabel
@@ -386,6 +325,64 @@ const CollectionForm = ({ data = {}, id }) => {
 
                             {home_visibilty &&
                                 <>
+                                    <FormControl sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center'
+                                    }}>
+                                        <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel>
+                                        <RadioGroup
+                                            row
+                                            value={link_with ?? "category"}
+                                            onChange={handleChange}
+                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                            name="link_with">
+                                            <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" />
+                                            <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" />
+                                        </RadioGroup>
+                                    </FormControl>
+
+                                    {link_with == 'COLLECTION' &&
+                                        <FormControl fullWidth sx={{ mb: 2 }}>
+                                            <InputLabel id="demo-simple-select-label">Link with collection</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={linkValue ?? ''}
+                                                name="linkValue"
+                                                label="Link with collection"
+                                                sx={{
+                                                    border: formError?.linkValue ? '1px solid #FF3D57' : ''
+                                                }}
+                                                onChange={handleChange}>
+                                                {collectionList?.map((item) => (
+                                                    <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                                ))}
+                                            </Select>
+                                            {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                        </FormControl>
+                                    }
+                                    {link_with == 'CATEGORY' &&
+                                        <FormControl fullWidth sx={{ mb: 2 }}>
+                                            <InputLabel id="demo-simple-select-label">Link with category</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={linkValue ?? ''}
+                                                name="linkValue"
+                                                sx={{
+                                                    border: formError?.linkValue ? '1px solid #FF3D57' : ''
+                                                }}
+                                                label="Link with category"
+                                                onChange={handleChange}>
+                                                {categoryList?.map((item) => (
+                                                    <MenuItem value={item?.value}>{item?.label}</MenuItem>
+                                                ))}
+                                            </Select>
+                                            {formError?.linkValue && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                        </FormControl>
+                                    }
+
                                     <Box display="flex" flexDirection="column">
                                         <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
                                         <FormControl sx={{

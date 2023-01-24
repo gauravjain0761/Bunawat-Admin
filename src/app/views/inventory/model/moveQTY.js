@@ -1,15 +1,57 @@
 import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
-import React from 'react'
+import { API_URL } from 'app/constant/api';
+import { ApiPut } from 'app/service/api';
+import React, { useEffect, useState } from 'react'
+import { toast } from 'material-react-toastify';
+import { LoadingButton } from '@mui/lab';
 
-const MoveQTYModel = ({ open, handleClose, data }) => {
+const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
+    const [formData, setFormData] = useState(data ?? {});
+    const [loading, setLoading] = useState(false);
+    const [SKUData, setSKUData] = useState(selectedSKU);
+
+    useEffect(() => {
+        setFormData(data ?? {})
+    }, [data])
+    useEffect(() => {
+        setSKUData(selectedSKU?.map(x => x?.sku) ?? {})
+    }, [selectedSKU])
+
+    const handleSubmit = async () => {
+        setLoading(true)
+        await ApiPut(`${API_URL.editSKU}`, [{
+            "inStock_lead": formData?.inStock_lead,
+            "inStock_qty": formData?.inStock_qty,
+            "mapVariant": formData?.mapVariant,
+            "preOrder_lead": formData?.preOrder_lead,
+            "preOrder_qty": formData?.preOrder_qty,
+            "threshold": formData?.threshold,
+            "_id": formData?._id,
+        }])
+            .then((response) => {
+                setLoading(false)
+                getData()
+                toast.success('Edit Successfully!')
+            })
+            .catch((error) => {
+                setLoading(false)
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
+
+    const handleChange = (event) => {
+        const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+        setFormData({ ...formData, [event.target.name]: onlyNums });
+    };
+
     return (
         <Dialog
             open={open}
             fullWidth
             maxWidth="sm"
             onClose={handleClose}
-            aria-labelledby="responsive-dialog-title"
-        >
+            aria-labelledby="responsive-dialog-title" >
             <DialogTitle id="responsive-dialog-title">
                 Edit
             </DialogTitle>
@@ -19,62 +61,58 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     <Typography>{data?.name}</Typography>
                 </Box> */}
                 <TextField
-                    type="number"
+                    type="text"
                     fullWidth
                     sx={{ mt: 2, }}
-                    name="instock"
+                    name="inStock_qty"
                     label="In Stock QTY"
-                    // onChange={handleChange}
+                    onChange={handleChange}
                     // value={row.instock || ""}
-                    defaultValue={data.instock || ""}
+                    value={formData?.inStock_qty || ""}
                     validators={["required"]}
                     errorMessages={["this field is required"]}
                 />
                 <TextField
-                    type="number"
+                    type="text"
                     fullWidth
                     sx={{ mt: 2, }}
                     name="threshold"
                     label="Threshold QTY"
-                    // onChange={handleChange}
-                    // value={row.instock || ""}
-                    defaultValue={data.threshold || ""}
+                    onChange={handleChange}
+                    value={formData?.threshold || ""}
                     validators={["required"]}
                     errorMessages={["this field is required"]}
                 />
                 <TextField
-                    type="number"
+                    type="text"
                     fullWidth
                     sx={{ mt: 2, }}
-                    name="instock_leadtime"
+                    name="inStock_lead"
                     label="In Stock Lead Time"
-                    // onChange={handleChange}
-                    // value={row.instock || ""}
-                    defaultValue={""}
+                    onChange={handleChange}
+                    value={formData?.inStock_lead || ""}
                     validators={["required"]}
                     errorMessages={["this field is required"]}
                 />
                 <TextField
-                    type="number"
+                    type="text"
                     fullWidth
                     sx={{ mt: 2, }}
-                    name="preorder"
+                    name="preOrder_qty"
                     label="Preorder QTY"
-                    // onChange={handleChange}
-                    // value={row.instock || ""}
-                    defaultValue={data.preorder || ""}
+                    onChange={handleChange}
+                    value={formData.preOrder_qty || ""}
                     validators={["required"]}
                     errorMessages={["this field is required"]}
                 />
                 <TextField
-                    type="number"
+                    type="text"
                     fullWidth
                     sx={{ mt: 2, }}
-                    name="preorder_leadtime"
+                    name="preOrder_lead"
                     label="Preorder Lead Time"
-                    // onChange={handleChange}
-                    // value={row.instock || ""}
-                    defaultValue={""}
+                    onChange={handleChange}
+                    value={formData?.preOrder_lead || ""}
                     validators={["required"]}
                     errorMessages={["this field is required"]}
                 />
@@ -82,7 +120,11 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                     multiple={true}
                     id="tags-outlined"
                     sx={{ mt: 2, }}
-                    options={['ABCD12', 'XYZ67']}
+                    value={formData?.mapVariant ?? []}
+                    onChange={(e, newValue) => {
+                        setFormData({ ...formData, mapVariant: newValue });
+                    }}
+                    options={SKUData?.filter(x => x != data?.sku) ?? []}
                     getOptionLabel={(option) => option}
                     filterSelectedOptions
                     renderInput={(params) => (
@@ -97,9 +139,19 @@ const MoveQTYModel = ({ open, handleClose, data }) => {
                 <Button autoFocus onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button onClick={handleClose} autoFocus>
+                <LoadingButton
+                    loading={loading}
+                    loadingPosition="center"
+                    onClick={handleSubmit}
+                    // sx={{
+                    //     background: '#1976d2', ml: 2, color: '#fff',
+                    //     "&:hover": {
+                    //         background: '#1976d2', color: '#fff'
+                    //     }
+                    // }}
+                    variant="contained">
                     Save
-                </Button>
+                </LoadingButton>
             </DialogActions>
         </Dialog>
     )

@@ -109,7 +109,7 @@ const SimpleForm = () => {
 
             <TextField
               sx={{ mb: 4 }}
-              type="number"
+              type="text"
               name="creditCard"
               label="Credit Card"
               onChange={handleChange}

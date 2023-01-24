@@ -9,34 +9,42 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
+import { toast } from 'material-react-toastify';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { mockDataInventoryManagement } from 'fake-db/data/inventory/inventoryData';
 import MoveQTYModel from 'app/views/inventory/model/moveQTY';
+import { API_URL } from 'app/constant/api';
+import { ApiGet, ApiPut } from 'app/service/api';
+import { LoadingButton } from '@mui/lab';
 
 const InventoryList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [moveQTYPopUP, setMoveQTYPopUP] = useState(false);
     const [saveChanges, setSaveChanges] = useState(false);
-    const [rows, setRows] = useState(mockDataInventoryManagement);
+    const [changeData, setChangeData] = useState([]);
+    const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
     const [singleMoveQTY, setSingleMoveQTY] = useState({});
+    const [selectedSKU, setSelectedSKU] = useState([]);
     const [page, setPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
-    const [actionCollapseOpen, setActionCollapseOpen] = useState(rows.map((x) => { return x.data.map(() => { return null }) }));
-    const [collapseOpen, setCollapseOpen] = useState(rows.map(() => { return false }));
+    const [actionOpen, setActionOpen] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [actionCollapseOpen, setActionCollapseOpen] = useState([]);
+    const [collapseOpen, setCollapseOpen] = useState([]);
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
     const columns = [
         {
-            id: "dnumber",
+            id: "design_num",
             label: `Design \nNo/SKU`,
             width: 120
         },
         {
-            id: "p_name",
+            id: "name",
             label: "Product \nName",
             width: 100
         },
@@ -47,25 +55,25 @@ const InventoryList = () => {
             width: 80
         },
         {
-            id: "in_stock",
+            id: "total_inStock_qty",
             label: "InStock \nQTY",
             align: "center",
             width: 100
         },
         {
-            id: "preorder_qty",
+            id: "total_preOrder_qty",
             label: "PreOrder \nQTY",
             align: "center",
             width: 100
         },
         {
-            id: "total_qty",
+            id: "total_product_qty",
             label: "Total \nQTY",
             align: "center",
             width: 80
         },
         {
-            id: "threshold_qty",
+            id: "total_threshold_qty",
             label: "Threshold \nQTY",
             align: "center",
             width: 100
@@ -115,9 +123,33 @@ const InventoryList = () => {
         }
     ];
 
+
+    const getData = async () => {
+        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
+            .then((response) => {
+                // setRows(response?.data ?? []);
+                // setActionOpen(response?.data?.map(() => { return null }))
+                // setActionCollapseOpen(response?.data?.map((x) => { return x?.sku_data?.map(() => { return null }) }))
+                // setCollapseOpen(response?.data?.map(() => { return false }))
+                // setTotalCount(response?.totalCount);
+                setRows(mockDataInventoryManagement);
+                setActionOpen(mockDataInventoryManagement.map(() => { return null }))
+                setActionCollapseOpen(mockDataInventoryManagement.map((x) => { return x?.sku_data?.map(() => { return null }) }))
+                setCollapseOpen(mockDataInventoryManagement.map(() => { return false }))
+                setTotalCount(1);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage, searchText])
+
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n?._id);
             setSelected(newSelected);
             return;
         }
@@ -196,9 +228,46 @@ const InventoryList = () => {
         setPage(0);
     };
 
-    const handleChange = (event) => {
+    const handleChange = (event, main, child) => {
+        const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+        let tempData = [...rows]
+        let tempSKUData = [...tempData?.[main]?.sku_data]
+        let tempChangeData = [...changeData]
+        tempSKUData[child] = { ...tempSKUData[child], [event.target.name]: onlyNums }
+        tempData[main] = { ...tempData[main], sku_data: tempSKUData }
+        if (tempChangeData?.filter(x => x?._id == tempSKUData?.[child]?._id)?.length > 0) {
+            let findIndex = tempChangeData?.findIndex(x => x?._id == tempSKUData?.[child]?._id)
+            tempChangeData[findIndex] = {
+                ...tempChangeData[findIndex],
+                [event.target.name]: onlyNums
+            }
+        } else {
+            tempChangeData = [...tempChangeData, {
+                "inStock_qty": tempSKUData?.[child]?.inStock_qty,
+                "preOrder_qty": tempSKUData?.[child]?.preOrder_qty,
+                "_id": tempSKUData?.[child]?._id,
+            }]
+        }
+        setChangeData(tempChangeData)
+        // setRows(tempData);
         setSaveChanges(true);
     };
+
+    const handleSubmitData = async () => {
+        setLoading(true)
+        await ApiPut(`${API_URL.editSKU}`, changeData)
+            .then((response) => {
+                setLoading(false)
+                setSaveChanges(false)
+                setChangeData([])
+                toast.success('Edit Successfully!')
+            })
+            .catch((error) => {
+                setLoading(false)
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -236,7 +305,7 @@ const InventoryList = () => {
                             height: '36px',
                             background: "transparent",
                             color: "#000",
-                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                        }} type="text" value={searchText} onChange={(e) => {
                             setSearchText(e.target.value)
                         }} placeholder="Search here..." />
                         <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
@@ -262,7 +331,7 @@ const InventoryList = () => {
                 disableCheckBox={true}
                 selected={selected}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                         <>
@@ -271,21 +340,22 @@ const InventoryList = () => {
                                 role="checkbox"
                                 aria-checked={isItemSelected}
                                 tabIndex={-1}
-                                key={row.name}
+                                key={row?._id}
                                 selected={isItemSelected}
                             >
-                                <TableCell sx={{ pl: '15px' }}>{row.dnumber}</TableCell>
+                                <TableCell sx={{ pl: '15px' }}>{row?.design_num}</TableCell>
                                 <TableCell>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <img style={{ marginRight: '5px' }} src="https://www.thoughtco.com/thmb/ctxxtfGGeK5f_-S3f8J-jbY-Gp8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/close-up-of-clothes-hanging-in-row-739240657-5a78b11f8e1b6e003715c0ec.jpg" width='50px' height='50px' />
-                                        {row.name}
+                                        {row?.image && <img style={{ marginRight: '5px' }} src={row?.image} width='50px' height='50px' />
+                                        }
+                                        {row?.name}
                                     </Box>
                                 </TableCell>
-                                <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row.count}</TableCell>
-                                <TableCell align="center">{row.instock}</TableCell>
-                                <TableCell align="center">{row.preorder}</TableCell>
-                                <TableCell align="center">{row.total}</TableCell>
-                                <TableCell align="center">{row.threshold}</TableCell>
+                                <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row?.variant_count}</TableCell>
+                                <TableCell align="center">{row?.total_inStock_qty}</TableCell>
+                                <TableCell align="center">{row?.total_preOrder_qty}</TableCell>
+                                <TableCell align="center">{row?.total_product_qty}</TableCell>
+                                <TableCell align="center">{row?.total_threshold_qty}</TableCell>
                                 <TableCell align="center"></TableCell>
                                 <TableCell align='right' sx={{ pr: "18px" }}>
                                     <IconButton
@@ -319,57 +389,52 @@ const InventoryList = () => {
                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0, padding: 0 }} colSpan={9}>
                                     <Collapse in={collapseOpen[index]} timeout="auto" unmountOnExit>
                                         <TableComponent
-                                            rows={row.data}
+                                            rows={row?.sku_data ?? []}
                                             columns={columns}
                                             disableColumns={true}
                                             disableCheckBox={true}
                                             extraDisable={true}
                                             disablePagination={true}
-                                            renderRow={(row, c_index) => {
-                                                const isItemSelected = isSelected(row.name);
-                                                const labelId = `enhanced-table-checkbox-${c_index}`;
+                                            renderRow={(sku_row, c_index) => {
                                                 return (
                                                     <TableRow
                                                         hover
                                                         role="checkbox"
                                                         tabIndex={-1}
-                                                        key={row.name}
+                                                        key={sku_row?._id}
                                                     >
-                                                        <TableCell align="center" width={120 ?? "100%"}>↳ {row.dnumber}</TableCell>
+                                                        <TableCell align="center" width={120 ?? "100%"}>↳ {sku_row?.sku}</TableCell>
                                                         <TableCell width={100 ?? "100%"}>
                                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                <img style={{ marginRight: '5px' }} src="https://content.jdmagicbox.com/comp/bhawanipatna/t9/9999p6670.6670.181223085624.h8t9/catalogue/india-fashion-cloth-store-bazarpada-bhawanipatna-zh5wdnprwx.jpg?clr=5c470a" width='50px' height='50px' />
-                                                                {row.name}
+                                                                {sku_row?.product_name}
                                                             </Box>
                                                         </TableCell>
                                                         <TableCell width={80 ?? "100%"} align="center">Variation</TableCell>
                                                         <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
-                                                                type="number"
-                                                                name="instock"
+                                                                type="text"
+                                                                name="inStock_qty"
                                                                 label="In Stock"
-                                                                onChange={handleChange}
-                                                                // value={row.instock || ""}
-                                                                defaultValue={row.instock || ""}
+                                                                onChange={(e) => handleChange(e, index, c_index)}
+                                                                value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.inStock_qty : sku_row?.inStock_qty || "") : sku_row?.inStock_qty || ""}
                                                                 validators={["required"]}
                                                                 errorMessages={["this field is required"]}
                                                             />
                                                         </TableCell>
                                                         <TableCell width={100 ?? "100%"} align="center">
                                                             <TextField
-                                                                type="number"
-                                                                name="preorder"
+                                                                type="text"
+                                                                name="preOrder_qty"
                                                                 label="Preorder"
-                                                                onChange={handleChange}
-                                                                // value={row.instock || ""}
-                                                                defaultValue={row.preorder || ""}
+                                                                onChange={(e) => handleChange(e, index, c_index)}
+                                                                value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.preOrder_qty : sku_row?.preOrder_qty || "") : sku_row?.preOrder_qty || ""}
                                                                 validators={["required"]}
                                                                 errorMessages={["this field is required"]}
                                                             />
                                                         </TableCell>
-                                                        <TableCell width={80 ?? "100%"} align="center">{row.total}</TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">{row.threshold}</TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">{row.mapvariant}</TableCell>
+                                                        <TableCell width={80 ?? "100%"} align="center">{sku_row?.total_qty}</TableCell>
+                                                        <TableCell width={100 ?? "100%"} align="center">{sku_row?.threshold}</TableCell>
+                                                        <TableCell width={100 ?? "100%"} align="center">{sku_row?.mapVariant?.join(", ")}</TableCell>
                                                         <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
                                                             <IconButton
                                                                 aria-label="more"
@@ -388,11 +453,11 @@ const InventoryList = () => {
                                                                 anchorEl={actionCollapseOpen[index][c_index]}
                                                                 open={Boolean(actionCollapseOpen[index][c_index])}
                                                                 onClose={handleActionCollapseClose}
-                                                                TransitionComponent={Fade}
-                                                            >
+                                                                TransitionComponent={Fade}>
                                                                 <MenuItem onClick={() => {
                                                                     setMoveQTYPopUP(true);
-                                                                    setSingleMoveQTY(row)
+                                                                    setSingleMoveQTY(sku_row)
+                                                                    setSelectedSKU(row?.sku_data ?? [])
                                                                     handleActionCollapseClose();
                                                                 }}>Edit</MenuItem>
                                                             </Menu>
@@ -423,7 +488,7 @@ const InventoryList = () => {
             <MoveQTYModel open={moveQTYPopUP} handleClose={() => {
                 setMoveQTYPopUP(false)
                 setSingleMoveQTY({})
-            }} data={singleMoveQTY} />
+            }} data={singleMoveQTY} selectedSKU={selectedSKU} getData={getData} />
 
             {saveChanges &&
                 <Box sx={{
@@ -442,17 +507,25 @@ const InventoryList = () => {
                         <Box sx={{
                             mr: 3
                         }}>
-                            <Button onClick={() => setSaveChanges(false)} sx={{ border: '1px solid #232a45', color: '#232a45' }}>
+                            <Button onClick={() => {
+                                setChangeData([])
+                                setSaveChanges(false)
+                            }} sx={{ border: '1px solid #232a45', color: '#232a45' }}>
                                 Discard changes
                             </Button>
-                            <Button onClick={() => setSaveChanges(false)} sx={{
-                                background: '#232a45', ml: 2, color: '#fff',
-                                "&:hover": {
-                                    background: '#232a45', color: '#fff'
-                                }
-                            }}>
+                            <LoadingButton
+                                loading={loading}
+                                loadingPosition="center"
+                                onClick={handleSubmitData}
+                                sx={{
+                                    background: '#232a45', ml: 2, color: '#fff',
+                                    "&:hover": {
+                                        background: '#232a45', color: '#fff'
+                                    }
+                                }}
+                                variant="contained">
                                 Save all changes
-                            </Button>
+                            </LoadingButton>
                         </Box>
                     </Box>
                 </Box>

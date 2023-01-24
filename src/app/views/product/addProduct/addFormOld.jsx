@@ -752,7 +752,7 @@ const ProductForm = ({ data = {} }) => {
                             <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>InStock</Span>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
                                 <TextField
-                                    type="number"
+                                    type="text"
                                     name="instock_qty"
                                     sx={{ width: "400px" }}
                                     label="In Stock QTY"
@@ -763,7 +763,7 @@ const ProductForm = ({ data = {} }) => {
                                 />
 
                                 <TextField
-                                    type="number"
+                                    type="text"
                                     fullWidth
                                     sx={{ minWidth: "400px" }}
                                     name="threshold_qty"
@@ -775,7 +775,7 @@ const ProductForm = ({ data = {} }) => {
                                 />
 
                                 <TextField
-                                    type="number"
+                                    type="text"
                                     name="instock_lead_time"
                                     sx={{ width: "400px" }}
                                     label="Lead Time"
@@ -789,7 +789,7 @@ const ProductForm = ({ data = {} }) => {
                             <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "14px" }}>Preorder</Span>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 1 }}>
                                 <TextField
-                                    type="number"
+                                    type="text"
                                     name="preorder_qty"
                                     fullWidth
                                     label="Preorder QTY"
@@ -801,7 +801,7 @@ const ProductForm = ({ data = {} }) => {
                                 />
 
                                 <TextField
-                                    type="number"
+                                    type="text"
                                     name="preorder_lead_time"
                                     label="Lead Time"
                                     sx={{ width: "400px" }}

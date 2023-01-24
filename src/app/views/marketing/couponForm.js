@@ -108,7 +108,7 @@ const CouponForm = ({ data = {} }) => {
                             </Box>
 
                             <TextField
-                                type="number"
+                                type="text"
                                 name="limit"
                                 label="Limit"
                                 onChange={handleChange}

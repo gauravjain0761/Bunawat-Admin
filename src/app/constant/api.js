@@ -66,6 +66,7 @@ export const API_URL = {
     getProducts: "product/getall",
     editProductOrdering: "product_ordering",
     getCategoryList: "cateogry_list",
+    getCollectionList: "collection_list",
     getProduct: "product",
     addProduct: "product/add",
     editProduct: "product/update",
@@ -73,6 +74,7 @@ export const API_URL = {
 
     getSKUS: "sku/getall",
     addSKU: "sku/add",
+    editSKU: "sku/update",
 
     fileUpload: "fileUpload/profile",
     videoFileUpload: "uploadVideo",

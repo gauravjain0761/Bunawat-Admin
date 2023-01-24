@@ -154,7 +154,7 @@ const TableComponent = (props) => {
                     <TableRow>
                       <TableCell align='center' sx={{
                         height: '400px'
-                      }} colSpan={columns?.length + 1}>
+                      }} colSpan={disableCheckBox ? columns?.length : columns?.length + 1}>
                         No Data Found.
                       </TableCell>
                     </TableRow>

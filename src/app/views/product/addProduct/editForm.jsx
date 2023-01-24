@@ -292,7 +292,7 @@ const ProductEditForm = ({ data = {}, id }) => {
     }
 
     const getCollectionList = async () => {
-        await ApiGet(`${API_URL.getCollections}`)
+        await ApiGet(`${API_URL.getCollectionList}`)
             .then((response) => {
                 if (response?.data?.length > 0) {
                     setCollectionList(response?.data?.map(item => ({
