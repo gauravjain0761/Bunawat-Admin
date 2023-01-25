@@ -51,3 +51,10 @@
 .error .ck-editor__editable {
     border-color: red !important;
 }
+
+.carousel .carousel-status {
+    display: none;
+}
+.carousel .control-dots .dot {
+    opacity: .9;
+}

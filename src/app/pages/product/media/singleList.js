@@ -21,6 +21,16 @@ const ProductMediaSingleList = () => {
     const [actionVideoOpen, setActionVideoOpen] = useState([]);
     const [rows, setRows] = useState({});
 
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+
     const getData = async (id) => {
         await ApiGet(`${API_URL.getProduct}/${id}`)
             .then((response) => {
@@ -96,27 +106,100 @@ const ProductMediaSingleList = () => {
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: '20px',
-                padding: '0 20px'
+                padding: '0',
+                border: "1px solid #232a45",
+                margin: "0 20px"
             }}>
                 <Box sx={{ width: '100%' }}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs sx={{
-                            ".MuiTabs-scroller .Mui-selected": {
-                                color: UIColor
-                            },
-                            ".MuiTabs-scroller .MuiTabs-indicator ": {
-                                background: UIColor
-                            }
-                        }}
-                            value={tab} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Images" />
-                            <Tab label="Videos" />
-                        </Tabs>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', background: "#232a45" }}>
+                        <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                            width: '100%',
+                        }}><Box component='span' sx={{
+                            fontWeight: 700,
+                            fontSize: '16px'
+                        }}>
+                                {tab == 0 && <Checkbox sx={{
+                                    color: '#fff',
+                                    float: 'left',
+                                }}
+                                    checked={selectedImage.filter(x => x).length == selectedImage.length}
+                                    indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
+                                    onChange={(e) => {
+                                        let tempSelect = [...selectedImage]
+                                        tempSelect = tempSelect.map(x => e.target.checked)
+                                        setImageSelected(tempSelect)
+                                    }}
+                                />}
+                                {tab == 1 && <Checkbox sx={{
+                                    color: '#fff',
+                                    float: 'left',
+                                }}
+                                    checked={selectedVideo.filter(x => x).length == selectedVideo.length}
+                                    indeterminate={selectedVideo.filter(x => x).length != selectedVideo.length}
+                                    onChange={(e) => {
+                                        let tempSelect = [...selectedVideo]
+                                        tempSelect = tempSelect.map(x => e.target.checked)
+                                        setVideoSelected(tempSelect)
+                                    }}
+                                />}
+                                <Tabs sx={{
+                                    float: 'left',
+                                    color: '#fff',
+                                    ".MuiTabs-scroller .Mui-selected": {
+                                        // color: UIColor
+                                        color: '#fff'
+                                    },
+                                    ".MuiTabs-scroller .MuiTabs-indicator ": {
+                                        background: '#fff'
+                                    }
+                                }}
+                                    value={tab} onChange={handleChange} aria-label="basic tabs example">
+                                    <Tab label="Images" style={{color: "#fff"}} />
+                                    <Tab label="Videos" style={{color: "#fff"}} />
+                                </Tabs>
+                            </Box>
+                            <Box component='span' sx={{
+                                fontWeight: 700,
+                                fontSize: '16px',
+                                cursor: 'pointer'
+                            }}>
+                            <IconButton
+                                id="menu-appbar"
+                                color="inherit"
+                                size="large"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={handleMenu}
+                                sx={{ color: "#fff" }}
+                                >
+                            <MoreVertIcon  />
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                                }}
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={handleClose}>Share</MenuItem>
+                                <MenuItem onClick={handleClose}>View</MenuItem>
+                            </Menu>
+                            </Box>
+                        </Stack>
                     </Box>
                 </Box>
                 {tab == 0 &&
                     <>
-                        {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                        {/* {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
                             width: '100%',
                         }}><Box component='span' sx={{
                             fontWeight: 700,
@@ -140,13 +223,13 @@ const ProductMediaSingleList = () => {
                                 cursor: 'pointer'
                             }}>Share
                             </Box>
-                        </Stack>}
+                        </Stack>} */}
                         {rows?.image?.map((item, i) => {
                             return (
                                 <Box key={item?._id} sx={{
                                     width: "200px",
                                     height: "200px",
-                                    margin: "0px 10px 0 0",
+                                    margin: "0px 10px 20px 20px",
                                     position: "relative",
                                     cursor: 'pointer'
                                 }} onClick={(e) => {
@@ -221,7 +304,7 @@ const ProductMediaSingleList = () => {
 
                 {tab == 1 &&
                     <>
-                        {selectedVideo.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                        {/* {selectedVideo.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
                             width: '100%',
                         }}><Box component='span' sx={{
                             fontWeight: 700,
@@ -245,7 +328,7 @@ const ProductMediaSingleList = () => {
                                 cursor: 'pointer'
                             }}>Share
                             </Box>
-                        </Stack>}
+                        </Stack>} */}
                         {rows?.videos?.map((item, i) => {
                             return (
                                 <Box key={item?._id} sx={{
