@@ -209,8 +209,9 @@ const ProductForm = ({ data = {} }) => {
         const MAX_FILE_SIZE = 30720 // 30MB
         const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
         if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-            // setFormError({ ...formError, image: true })
+            setFormError({ ...formError, image: true })
         } else {
+            setFormError({ ...formError, image: false })
             setImageLoading(true)
             let imageData = new FormData();
             const images = formData?.image ?? []
@@ -258,8 +259,9 @@ const ProductForm = ({ data = {} }) => {
         const MAX_FILE_SIZE = 51200 // 50MB
         const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
         if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-            // setFormError({ ...formError, video: true })
+            setFormError({ ...formError, videos: true })
         } else {
+            setFormError({ ...formError, videos: false })
             setVideoLoading(true)
             const videosList = formData?.videos ?? []
             let videoData = new FormData();
@@ -544,14 +546,16 @@ const ProductForm = ({ data = {} }) => {
                     }} >
                     <Icon>add</Icon>
                     <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Image</Span>
-                    <input
-                        type="file"
-                        name="image"
-                        multiple={false}
-                        accept="image/png, image/gif, image/jpeg"
-                        hidden
-                        onClick={(event) => { event.target.value = '' }}
-                        onChange={handleChange} />
+                    {!imageLoading &&
+                        <input
+                            type="file"
+                            name="image"
+                            multiple={false}
+                            accept="image/png, image/gif, image/jpeg"
+                            hidden
+                            onClick={(event) => { event.target.value = '' }}
+                            onChange={handleChange} />
+                    }
                 </Button>
             </Box>
         );
@@ -582,14 +586,16 @@ const ProductForm = ({ data = {} }) => {
                     }} >
                     <Icon>add</Icon>
                     <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Video</Span>
-                    <input
-                        type="file"
-                        name="videos"
-                        multiple={false}
-                        accept="video/mp4,video/x-m4v,video/*"
-                        hidden
-                        onClick={(event) => { event.target.value = '' }}
-                        onChange={handleChange} />
+                    {!videoLoading &&
+                        <input
+                            type="file"
+                            name="videos"
+                            multiple={false}
+                            accept="video/mp4,video/x-m4v,video/*"
+                            hidden
+                            onClick={(event) => { event.target.value = '' }}
+                            onChange={handleChange} />
+                    }
                 </Button>
             </Box>
         );
@@ -747,13 +753,14 @@ const ProductForm = ({ data = {} }) => {
                                 <Box className="list-group">
                                     <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
                                 </Box>
+                                {console.log(" formError?.image", formError?.image)}
                                 <Box sx={{
                                     display: 'flex',
                                     alignItems: 'center',
                                     mt: 1
                                 }}>
                                     {imageLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
-                                    <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
+                                    <Typography sx={{ color: formError?.image ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
                                 </Box>
 
                                 <Box className="list-group">
@@ -765,7 +772,7 @@ const ProductForm = ({ data = {} }) => {
                                     mt: 1
                                 }}>
                                     {videoLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
-                                    <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
+                                    <Typography sx={{ color: formError?.videos ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
                                 </Box>
                             </Box>
                         </Grid>
