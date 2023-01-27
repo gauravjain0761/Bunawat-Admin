@@ -50,6 +50,9 @@ import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import { LoadingButton } from "@mui/lab";
 import MappedVariantModel from "../model/mappedVariant";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
+
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -76,6 +79,16 @@ const ProductEditForm = ({ data = {}, id }) => {
     const [attributes, setAttributes] = useState([]);
     const [SKUData, setSKUData] = useState([]);
     const [formError, setFormError] = useState({});
+
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 2,
+        slidesToScroll: 3,
+        initialSlide: 0,
+        arrows: false,
+      };
 
     useEffect(() => {
         setDescription(data?.description ?? '')
@@ -1115,16 +1128,31 @@ const ProductEditForm = ({ data = {}, id }) => {
 
                                     <Dialog
                                         open={dOpen}
-                                        aria-labelledby="responsive-dialog-title">
+                                        aria-labelledby="responsive-dialog-title"
+                                        >
                                         <DialogTitle id="responsive-dialog-title">
                                             Pick Color
                                         </DialogTitle>
                                         <DialogContent>
-                                            {image?.[0]?.url ?
-                                                <img src={image?.[0]?.url} width="100%" height="160px" />
-                                                :
-                                                <>Please Select Image First.</>
-                                            }
+                                            <Carousel showThumbs={false}>
+                                                <div>
+                                                {image?.[0]?.url ?
+                                                    <img src={image?.[0]?.url} width="100%" height="360px" />
+                                                    :
+                                                    <>Please Select Image First.</>
+                                                }
+                                                </div>
+                                                <div>
+                                                {image?.[0]?.url ?
+                                                    <img src={image?.[0]?.url} width="100%" height="360px" />
+                                                    :
+                                                    <>Please Select Image First.</>
+                                                }
+                                                </div>
+                                            </Carousel>
+                                            
+                                                
+                                        
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={() => setDopen(false)} type='button'>

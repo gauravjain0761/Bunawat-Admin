@@ -16,6 +16,15 @@ const ProductMedia = () => {
     const [dData, setDData] = useState(null)
     const [rowLoading, setRowLoading] = useState(false);
     const [rows, setRows] = useState([]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
 
     const getData = async () => {
         setRowLoading(true)
@@ -52,41 +61,129 @@ const ProductMedia = () => {
     }));
 
     return (
-        <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader >
-                <Title>Media List</Title>
-            </CardHeader>
-            {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
-                width: '100%',
-            }}><Box component='span' sx={{
-                fontWeight: 700,
-                fontSize: '16px',
-                padding: '0 20px'
-            }}>Select All
-                    <Checkbox sx={{
-                        color: '#000',
-                    }}
-                        checked={selectedImage.filter(x => x).length == selectedImage.length}
-                        indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
-                        onChange={(e) => {
-                            let tempSelect = [...selectedImage]
-                            tempSelect = tempSelect.map(x => e.target.checked)
-                            setImageSelected(tempSelect)
-                        }}
-                    />
-                </Box>
-                <Box component='span' sx={{
+        <Card elevation={3} sx={{border: "1px solid #232a45", margin: "20px", paddingBottom: "20px"}}>
+            <CardHeader sx={{ background: "#232a45", padding: "1.4rem 2rem", color: "#fff", fontSize: '16px', fontWeight: '700', }}>
+                {/* <Title>Media List</Title> */}
+                <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                    width: '100%',
+                    height: '20px',
+                }}><Box component='span' sx={{
                     fontWeight: 700,
                     fontSize: '16px',
-                    cursor: 'pointer'
-                }}>Share
-                </Box>
-            </Stack>}
+                    padding: '0'
+                }}>
+                        <Checkbox sx={{
+                            color: '#000',
+                        }}
+                            checked={selectedImage.filter(x => x).length == selectedImage.length}
+                            indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
+                            onChange={(e) => {
+                                let tempSelect = [...selectedImage]
+                                tempSelect = tempSelect.map(x => e.target.checked)
+                                setImageSelected(tempSelect)
+                            }}
+                        />
+                        Media List
+                    </Box>
+                    <Box component='span' sx={{
+                        fontWeight: 700,
+                        fontSize: '16px',
+                        cursor: 'pointer'
+                    }}>
+                    <IconButton
+                        id="menu-appbar"
+                        color="inherit"
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                        }}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleClose}>Share Image</MenuItem>
+                        <MenuItem onClick={handleClose}>Share Image With Description</MenuItem>
+                    </Menu>
+                    </Box>
+                </Stack>
+                {/* {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
+                    width: '100%',
+                    height: '20px',
+                }}><Box component='span' sx={{
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    padding: '0 20px'
+                }}>
+                        <Checkbox sx={{
+                            color: '#000',
+                        }}
+                            checked={selectedImage.filter(x => x).length == selectedImage.length}
+                            indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
+                            onChange={(e) => {
+                                let tempSelect = [...selectedImage]
+                                tempSelect = tempSelect.map(x => e.target.checked)
+                                setImageSelected(tempSelect)
+                            }}
+                        />
+                        Media List
+                    </Box>
+                    <Box component='span' sx={{
+                        fontWeight: 700,
+                        fontSize: '16px',
+                        cursor: 'pointer'
+                    }}>
+                    <IconButton
+                        id="menu-appbar"
+                        color="inherit"
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                        }}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                    </Menu>
+                    </Box>
+                </Stack>} */}
+            </CardHeader>
             <Box sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: '20px',
-                padding: '0 20px'
+                padding: '0 30px'
             }}>
                 {rows.map((item, i) => {
                     return (
