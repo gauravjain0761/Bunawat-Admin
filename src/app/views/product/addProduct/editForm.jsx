@@ -88,7 +88,7 @@ const ProductEditForm = ({ data = {}, id }) => {
         slidesToScroll: 3,
         initialSlide: 0,
         arrows: false,
-      };
+    };
 
     useEffect(() => {
         setDescription(data?.description ?? '')
@@ -1129,30 +1129,25 @@ const ProductEditForm = ({ data = {}, id }) => {
                                     <Dialog
                                         open={dOpen}
                                         aria-labelledby="responsive-dialog-title"
-                                        >
+                                    >
                                         <DialogTitle id="responsive-dialog-title">
                                             Pick Color
                                         </DialogTitle>
                                         <DialogContent>
                                             <Carousel showThumbs={false}>
-                                                <div>
-                                                {image?.[0]?.url ?
-                                                    <img src={image?.[0]?.url} width="100%" height="360px" />
+                                                {image?.length > 0 ? image?.map(list => (
+                                                    <div>
+                                                        <img src={list?.url} width="100%" height="360px" />
+                                                    </div>
+                                                ))
                                                     :
                                                     <>Please Select Image First.</>
                                                 }
-                                                </div>
-                                                <div>
-                                                {image?.[0]?.url ?
-                                                    <img src={image?.[0]?.url} width="100%" height="360px" />
-                                                    :
-                                                    <>Please Select Image First.</>
-                                                }
-                                                </div>
+
                                             </Carousel>
-                                            
-                                                
-                                        
+
+
+
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={() => setDopen(false)} type='button'>
