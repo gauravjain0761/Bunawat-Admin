@@ -75,7 +75,7 @@ const CouponForm = ({ data = {} }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-                <SimpleCard title="Notification" backArrow={true}>
+                <SimpleCard title="Add Coupon" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} >
 

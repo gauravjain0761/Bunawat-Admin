@@ -71,12 +71,12 @@ const ProductMedia = () => {
                     fontWeight: 700,
                     fontSize: '16px',
                     padding: '0'
-                }}>
+                }}>     
                         <Checkbox sx={{
-                            color: '#000',
+                            color: '#fff !important',
                         }}
                             checked={selectedImage.filter(x => x).length == selectedImage.length}
-                            indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
+                            // indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
                             onChange={(e) => {
                                 let tempSelect = [...selectedImage]
                                 tempSelect = tempSelect.map(x => e.target.checked)
@@ -108,7 +108,7 @@ const ProductMedia = () => {
                         vertical: 'top',
                         horizontal: 'right',
                         }}
-                        keepMounted
+                        // keepMounted
                         transformOrigin={{
                         vertical: 'top',
                         horizontal: 'right',

@@ -123,7 +123,7 @@ const ProductMediaSingleList = () => {
                                     float: 'left',
                                 }}
                                     checked={selectedImage.filter(x => x).length == selectedImage.length}
-                                    indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
+                                    // indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
                                     onChange={(e) => {
                                         let tempSelect = [...selectedImage]
                                         tempSelect = tempSelect.map(x => e.target.checked)
@@ -135,7 +135,7 @@ const ProductMediaSingleList = () => {
                                     float: 'left',
                                 }}
                                     checked={selectedVideo.filter(x => x).length == selectedVideo.length}
-                                    indeterminate={selectedVideo.filter(x => x).length != selectedVideo.length}
+                                    // indeterminate={selectedVideo.filter(x => x).length != selectedVideo.length}
                                     onChange={(e) => {
                                         let tempSelect = [...selectedVideo]
                                         tempSelect = tempSelect.map(x => e.target.checked)
