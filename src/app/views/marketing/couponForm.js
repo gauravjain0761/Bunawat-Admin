@@ -86,14 +86,15 @@ const CouponForm = ({ data = {} }) => {
                 <SimpleCard title="Add Coupon" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} >
-                        
-                                <FormControl>
-                                <FormLabel id="demo-row-radio-buttons-group-label">Discount Type</FormLabel>
+                              
+                                <FormControl fullWidth>
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="row-radio-buttons-group"
+                                    defaultValue="percentage"
                                 >
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "10px", marginRight: "10px"}} >Discount Type</FormLabel>
                                     <FormControlLabel value="percentage" control={<Radio />} label="Percentage" onClick={() => setShowDiscountType(true)} />
                                     <FormControlLabel value="fixed_price" control={<Radio />} label="Fixed Price" onClick={() => setShowDiscountType(true)} />
                                 </RadioGroup>
@@ -108,36 +109,20 @@ const CouponForm = ({ data = {} }) => {
                             />
                             }
                             
-                            <TextField
-                                type="text"
-                                name="code"
-                                label="Coupon Code"
-                                onChange={handleChange}
-                                value={code || ""}
-                            />
-
                             
-                                <FormControl>
-                                <FormLabel id="demo-row-radio-buttons-group-label">Apply On</FormLabel>
+                                <FormControl fullWidth>
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="row-radio-buttons-group"
+                                    defaultValue="all"
                                 >
-                                    <FormControlLabel value="all" control={<Radio />} label="All" onClick={() => setShowApplyOn('all')} />
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "10px", marginRight: "10px"}}>Apply On</FormLabel>
+                                    <FormControlLabel value="all" control={<Radio />} label="All" />
                                     <FormControlLabel value="category" control={<Radio />} label="Category" onClick={() => setShowApplyOn('category')} />
                                     <FormControlLabel value="collection" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('collection')} />
                                 </RadioGroup>
                                 </FormControl>
-                            {showApplyOn === 'all' &&
-                              <TextField
-                                type="text"
-                                name="applyOn"
-                                label="Apply On"
-                                onChange={handleChange}
-                                value={applyOnValue || ""}
-                            />
-                            }
                             {showApplyOn === 'category' && 
                              <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">Category</InputLabel>
@@ -170,8 +155,23 @@ const CouponForm = ({ data = {} }) => {
                                 </Select>
                             </FormControl>
                             }
+                            
+                            <Box sx={{mt: 1}} >
+                                <TextField
+                                    type="text"
+                                    name="code"
+                                    label="Coupon Code"
+                                    onChange={handleChange}
+                                    value={code || ""}
+                                />
+                            </Box>
 
-                            <Grid container spacing={1} mt={1}>
+
+                            <Box sx={{ mb: 2 }}>
+                                <TextEditor />
+                            </Box>
+
+                            <Grid container spacing={1}>
                                 <Grid item lg={6} md={6} sm={12} xs={12}>
                                     <TextField
                                         type="text"
@@ -191,11 +191,6 @@ const CouponForm = ({ data = {} }) => {
                                     />
                                 </Grid>
                             </Grid>
-                           
-
-                            <Box sx={{ mb: 2 }}>
-                                <TextEditor />
-                            </Box>
 
                             <TextField
                                 type="text"
