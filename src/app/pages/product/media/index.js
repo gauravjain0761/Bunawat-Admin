@@ -17,6 +17,7 @@ const ProductMedia = () => {
     const [rowLoading, setRowLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [searchText, setSearchText] = useState('');
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -61,6 +62,7 @@ const ProductMedia = () => {
     }));
 
     return (
+        <>
         <Card elevation={3} sx={{border: "1px solid #232a45", margin: "20px", paddingBottom: "20px"}}>
             <CardHeader sx={{ background: "#232a45", padding: "1.4rem 2rem", color: "#fff", fontSize: '16px', fontWeight: '700', }}>
                 {/* <Title>Media List</Title> */}
@@ -85,6 +87,31 @@ const ProductMedia = () => {
                         />
                         Media List
                     </Box>
+                     
+                    <Box display="flex" alignItems="center">
+                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                        border: "1px solid #fff",
+                        borderRadius: "6px",
+                        mr: "20px",
+                    }}>
+                        <Box component="input" sx={{
+                            width: '100%',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1rem',
+                            p: 0,
+                            paddingLeft: '20px',
+                            height: '36px',
+                            background: "transparent",
+                            color: "#fff",
+                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                            setSearchText(e.target.value)
+                        }} placeholder="Search here..." />
+                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                            <Icon sx={{ color: "#fff" }}>{!searchText ? 'search' : 'close'}</Icon>
+                        </IconButton>
+                    </Box>
+
                     <Box component='span' sx={{
                         fontWeight: 700,
                         fontSize: '16px',
@@ -119,6 +146,7 @@ const ProductMedia = () => {
                         <MenuItem onClick={handleClose}>Share Image</MenuItem>
                         <MenuItem onClick={handleClose}>Share Image With Description</MenuItem>
                     </Menu>
+                    </Box>
                     </Box>
                 </Stack>
                 {/* {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
@@ -271,6 +299,7 @@ const ProductMedia = () => {
 
             </Box>
         </Card>
+        </>
     )
 }
 

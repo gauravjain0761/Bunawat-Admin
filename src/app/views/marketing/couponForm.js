@@ -37,8 +37,13 @@ const TextField = styled(TextValidator)(() => ({
 
 const CouponForm = ({ data = {} }) => {
     const [formData, setFormData] = useState(data);
+    // for input box show state
+    const [showDiscountType, setShowDiscountType] = useState(false);
+    const [showApplyOn, setShowApplyOn] = useState('');
+
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
+
 
     useEffect(() => {
         setFormData(data)
@@ -64,8 +69,11 @@ const CouponForm = ({ data = {} }) => {
     };
 
     const {
+        discountTypeValue,
         code,
-        type,
+        applyOnValue,
+        minimumOrderAmount,
+        maximumOrderAmount,
         limit,
         value,
         startDate,
@@ -78,30 +86,112 @@ const CouponForm = ({ data = {} }) => {
                 <SimpleCard title="Add Coupon" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} >
-
+                        
+                                <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Discount Type</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="row-radio-buttons-group"
+                                >
+                                    <FormControlLabel value="percentage" control={<Radio />} label="Percentage" onClick={() => setShowDiscountType(true)} />
+                                    <FormControlLabel value="fixed_price" control={<Radio />} label="Fixed Price" onClick={() => setShowDiscountType(true)} />
+                                </RadioGroup>
+                                </FormControl>
+                            {showDiscountType && 
+                              <TextField
+                                type="number"
+                                name="discountTypeValue"
+                                label="Discount Type Value"
+                                onChange={handleChange}
+                                value={discountTypeValue || ""}
+                            />
+                            }
+                            
                             <TextField
                                 type="text"
                                 name="code"
-                                label="Code"
+                                label="Coupon Code"
                                 onChange={handleChange}
                                 value={code || ""}
                             />
 
-                            <TextField
+                            
+                                <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Apply On</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="row-radio-buttons-group"
+                                >
+                                    <FormControlLabel value="all" control={<Radio />} label="All" onClick={() => setShowApplyOn('all')} />
+                                    <FormControlLabel value="category" control={<Radio />} label="Category" onClick={() => setShowApplyOn('category')} />
+                                    <FormControlLabel value="collection" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('collection')} />
+                                </RadioGroup>
+                                </FormControl>
+                            {showApplyOn === 'all' &&
+                              <TextField
                                 type="text"
-                                name="type"
-                                label="Type"
+                                name="applyOn"
+                                label="Apply On"
                                 onChange={handleChange}
-                                value={type || ""}
+                                value={applyOnValue || ""}
                             />
+                            }
+                            {showApplyOn === 'category' && 
+                             <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={applyOnValue}
+                                label="Category"
+                                onChange={handleChange}
+                                >
+                                <MenuItem value={10}>Category 1</MenuItem>
+                                <MenuItem value={20}>Category 2</MenuItem>
+                                <MenuItem value={30}>Category 3</MenuItem>
+                                </Select>
+                            </FormControl>
+                            }
+                            {showApplyOn === 'collection' && 
+                             <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={applyOnValue}
+                                label="Category"
+                                onChange={handleChange}
+                                >
+                                <MenuItem value={10}>Collection 1</MenuItem>
+                                <MenuItem value={20}>Collection 2</MenuItem>
+                                <MenuItem value={30}>Collection 3</MenuItem>
+                                </Select>
+                            </FormControl>
+                            }
 
-                            <TextField
-                                type="text"
-                                name="value"
-                                label="Value"
-                                onChange={handleChange}
-                                value={value || ""}
-                            />
+                            <Grid container spacing={1} mt={1}>
+                                <Grid item lg={6} md={6} sm={12} xs={12}>
+                                    <TextField
+                                        type="text"
+                                        name="minimumOrderAmount"
+                                        label="Minimum Order Amount"
+                                        onChange={handleChange}
+                                        value={minimumOrderAmount || ""}
+                                    />
+                                </Grid>
+                                <Grid item lg={6} md={6} sm={12} xs={12}>
+                                    <TextField
+                                        type="text"
+                                        name="maximumOrderAmount"
+                                        label="Maximum Order Amount"
+                                        onChange={handleChange}
+                                        value={maximumOrderAmount || ""}
+                                    />
+                                </Grid>
+                            </Grid>
+                           
 
                             <Box sx={{ mb: 2 }}>
                                 <TextEditor />
@@ -110,7 +200,7 @@ const CouponForm = ({ data = {} }) => {
                             <TextField
                                 type="text"
                                 name="limit"
-                                label="Limit"
+                                label="Number of Uses"
                                 onChange={handleChange}
                                 value={limit || ""}
                             />

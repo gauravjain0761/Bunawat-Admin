@@ -32,6 +32,11 @@ const CouponList = () => {
             width: 120
         },
         {
+            id: "Description",
+            label: "Description",
+            width: 120
+        },
+        {
             id: "Discount Type",
             label: "Discount Type",
             width: 130
@@ -40,11 +45,6 @@ const CouponList = () => {
             id: "Value",
             label: "Value",
             width: 100
-        },
-        {
-            id: "Description",
-            label: "Description",
-            width: 120
         },
         {
             id: "uses_limit",
