@@ -38,7 +38,6 @@ const TextField = styled(TextValidator)(() => ({
 const CouponForm = ({ data = {} }) => {
     const [formData, setFormData] = useState(data);
     // for input box show state
-    const [showDiscountType, setShowDiscountType] = useState(false);
     const [showApplyOn, setShowApplyOn] = useState('');
 
     const navigate = useNavigate();
@@ -73,7 +72,7 @@ const CouponForm = ({ data = {} }) => {
         code,
         applyOnValue,
         minimumOrderAmount,
-        maximumOrderAmount,
+        maximumDiscountAmount,
         limit,
         value,
         startDate,
@@ -94,37 +93,40 @@ const CouponForm = ({ data = {} }) => {
                                     name="row-radio-buttons-group"
                                     defaultValue="percentage"
                                 >
-                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "10px", marginRight: "10px"}} >Discount Type</FormLabel>
-                                    <FormControlLabel value="percentage" control={<Radio />} label="Percentage" onClick={() => setShowDiscountType(true)} />
-                                    <FormControlLabel value="fixed_price" control={<Radio />} label="Fixed Price" onClick={() => setShowDiscountType(true)} />
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "12px", marginRight: "10px"}} >Discount Type</FormLabel>
+                                    <FormControlLabel value="percentage" control={<Radio />} label="Percentage" />
+                                    <FormControlLabel value="fixed_price" control={<Radio />} label="Fixed Price" />
                                 </RadioGroup>
                                 </FormControl>
-                            {showDiscountType && 
-                              <TextField
-                                type="number"
-                                name="discountTypeValue"
-                                label="Discount Type Value"
-                                onChange={handleChange}
-                                value={discountTypeValue || ""}
-                            />
-                            }
+                                <Box sx={{mt: 1}}>
+                                    <TextField
+                                        type="text"
+                                        name="discountTypeValue"
+                                        label="Discount Type Value"
+                                        onChange={handleChange}
+                                        value={discountTypeValue || ""}
+                                        sx={{
+                                            marginBottom: '7px',
+                                        }}
+                                    />
+                                </Box>
                             
                             
-                                <FormControl fullWidth>
+                                <FormControl fullWidth sx={{mt: 0}}>
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="row-radio-buttons-group"
                                     defaultValue="all"
                                 >
-                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "10px", marginRight: "10px"}}>Apply On</FormLabel>
-                                    <FormControlLabel value="all" control={<Radio />} label="All" />
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "12px", marginRight: "10px"}}>Apply On</FormLabel>
+                                    <FormControlLabel value="all" control={<Radio />} label="All" onClick={() => setShowApplyOn('all')} />
                                     <FormControlLabel value="category" control={<Radio />} label="Category" onClick={() => setShowApplyOn('category')} />
                                     <FormControlLabel value="collection" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('collection')} />
                                 </RadioGroup>
                                 </FormControl>
                             {showApplyOn === 'category' && 
-                             <FormControl fullWidth>
+                             <FormControl fullWidth sx={{mt: 1, mb: 1}}>
                                 <InputLabel id="demo-simple-select-label">Category</InputLabel>
                                 <Select
                                 labelId="demo-simple-select-label"
@@ -140,7 +142,7 @@ const CouponForm = ({ data = {} }) => {
                             </FormControl>
                             }
                             {showApplyOn === 'collection' && 
-                             <FormControl fullWidth>
+                             <FormControl fullWidth sx={{mt: 1, mb: 1}}>
                                 <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                 <Select
                                 labelId="demo-simple-select-label"
@@ -184,10 +186,10 @@ const CouponForm = ({ data = {} }) => {
                                 <Grid item lg={6} md={6} sm={12} xs={12}>
                                     <TextField
                                         type="text"
-                                        name="maximumOrderAmount"
-                                        label="Maximum Order Amount"
+                                        name="maximumDiscountAmount"
+                                        label="Maximum Discount Amount"
                                         onChange={handleChange}
-                                        value={maximumOrderAmount || ""}
+                                        value={maximumDiscountAmount || ""}
                                     />
                                 </Grid>
                             </Grid>
