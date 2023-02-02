@@ -2,7 +2,7 @@ export const navigations = [
   { name: 'Dashboard', path: '/dashboard', icon: 'dashboard' },
   {
     name: 'User Management',
-    icon: 'dashboard',
+    icon: 'person_icon',
     children: [
       { name: 'Customers', iconText: 'SI', path: '/customer' },
       { name: 'Resellers', iconText: 'SI', path: '/reseller' },
@@ -12,7 +12,7 @@ export const navigations = [
   },
   {
     name: 'Category Management',
-    icon: 'dashboard',
+    icon: 'category_icon',
     children: [
       { name: 'Parent Category', iconText: 'SI', path: '/category/parent' },
       { name: 'Parent Sub Category', iconText: 'SI', path: '/category/sub' },
@@ -24,7 +24,7 @@ export const navigations = [
   },
   {
     name: 'Product Management',
-    icon: 'dashboard',
+    icon: 'shopping_basket_icon',
     children: [
       { name: 'Attributes', iconText: 'SI', path: '/product/attributes' },
       { name: 'Product', iconText: 'SI', path: '/product/list' },
@@ -33,21 +33,21 @@ export const navigations = [
   },
   {
     name: 'Inventory Management',
-    icon: 'dashboard',
+    icon: 'inventory_2_icon',
     children: [
       { name: 'Inventory', iconText: 'SI', path: '/inventory/list' },
     ],
   },
   {
     name: 'Order Management',
-    icon: 'dashboard',
+    icon: 'add_shopping_cart_icon',
     children: [
       { name: 'Order', iconText: 'SI', path: '/order/list' },
     ],
   },
   {
     name: 'Marketing Management',
-    icon: 'dashboard',
+    icon: 'store_front_icon',
     children: [
       { name: 'Notifications', iconText: 'SI', path: '/notifications/list' },
       { name: 'Coupons', iconText: 'SI', path: '/coupons/list' },

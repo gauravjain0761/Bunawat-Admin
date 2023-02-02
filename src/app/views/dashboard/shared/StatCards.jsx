@@ -31,16 +31,18 @@ const Heading = styled('h6')(({ theme }) => ({
 const StatCards = () => {
   const cardList = [
     { name: 'Total Customer', amount: 3050, icon: 'group' },
+    { name: 'Total Resellers', amount: 1000, icon: 'group' },
+    { name: 'Total Influncers', amount: 2340, icon: 'group' },
     { name: 'This week Sales', amount: '80,500', icon: 'currency_rupee_Icon' },
-    { name: 'Inventory Status', amount: '8.5% Stock Surplus', icon: 'store' },
-    { name: 'Orders to deliver', amount: '305 Orders', icon: 'shopping_cart' },
+    { name: 'Inventory', amount: '8.5% Stock Surplus', icon: 'store' },
+    { name: 'Orders', amount: '305 Orders', icon: 'shopping_cart' },
   ];
 
   return (
     <Grid container spacing={3} sx={{ mb: '24px' }}>
       {cardList.map((item, index) => (
-        <Grid item xs={12} md={6} key={index}>
-          <StyledCard elevation={6}>
+        <Grid item xs={12} md={4} key={index}>
+          <StyledCard elevation={4}>
             <ContentBox>
               <Icon className="icon">{item.icon}</Icon>
               <Box ml="12px">
