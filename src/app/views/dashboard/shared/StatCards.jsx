@@ -1,5 +1,6 @@
 import { Box, Card, Grid, Icon, IconButton, styled, Tooltip } from '@mui/material';
 import { Small } from 'app/components/Typography';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -29,8 +30,8 @@ const Heading = styled('h6')(({ theme }) => ({
 
 const StatCards = () => {
   const cardList = [
-    { name: 'New Leads', amount: 3050, icon: 'group' },
-    { name: 'This week Sales', amount: '$80,500', icon: 'attach_money' },
+    { name: 'Total Customer', amount: 3050, icon: 'group' },
+    { name: 'This week Sales', amount: '80,500', icon: 'currency_rupee_Icon' },
     { name: 'Inventory Status', amount: '8.5% Stock Surplus', icon: 'store' },
     { name: 'Orders to deliver', amount: '305 Orders', icon: 'shopping_cart' },
   ];

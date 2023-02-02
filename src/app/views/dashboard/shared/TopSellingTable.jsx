@@ -80,10 +80,11 @@ const TopSellingTable = () => {
   const bgSecondary = palette.secondary.main;
 
   const columns = [
-    { field: 'id', headerName: 'id', sortable: true, minWidth: 70 },
+    { field: 'id', headerName: 'id', sortable: true, minWidth: 20 },
     {
       field: 'name', headerName: 'Name',
       flex: 1,
+      minWidth: 200,
       renderCell: ({ row: { imgUrl, name } }) => {
         return (
           <Box display="flex" alignItems="center">
@@ -166,38 +167,24 @@ const TopSellingTable = () => {
 const productList = [
   {
     id: 1,
-    imgUrl: '/assets/images/products/headphone-2.jpg',
-    name: 'earphone',
-    price: 100,
+    imgUrl: '/assets/images/dashboard/product-1.png',
+    name: 'Product-1',
+    price: 1100,
     available: 15,
   },
   {
     id: 2,
-    imgUrl: '/assets/images/products/headphone-3.jpg',
-    name: 'earphone',
+    imgUrl: '/assets/images/dashboard/product-2.png',
+    name: 'Product-2',
     price: 1500,
     available: 30,
   },
   {
     id: 3,
-    imgUrl: '/assets/images/products/iphone-2.jpg',
-    name: 'iPhone x',
-    price: 1900,
-    available: 35,
-  },
-  {
-    id: 4,
-    imgUrl: '/assets/images/products/iphone-1.jpg',
-    name: 'iPhone x',
-    price: 100,
-    available: 0,
-  },
-  {
-    id: 5,
-    imgUrl: '/assets/images/products/headphone-3.jpg',
-    name: 'Head phone',
-    price: 1190,
-    available: 5,
+    imgUrl: '/assets/images/dashboard/product-3.png',
+    name: 'Product-3',
+    price: 2500,
+    available: 30,
   },
 ];
 

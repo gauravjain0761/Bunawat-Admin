@@ -44,9 +44,6 @@ const Analytics = () => {
             <StatCards />
             <TopSellingTable />
             <StatCards2 />
-
-            <H4>Ongoing Projects</H4>
-            <RowCards />
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
@@ -60,8 +57,6 @@ const Analytics = () => {
               />
             </Card>
 
-            <UpgradeCard />
-            <Campaigns />
           </Grid>
         </Grid>
       </ContentBox>

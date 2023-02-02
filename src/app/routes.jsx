@@ -23,7 +23,7 @@ const routes = [
     children: [...dashboardRoutes, ...chartsRoute, ...materialRoutes, ...userRoute, ...categoryRoutes, ...productRoutes, ...inventoryRoutes, ...orderRoutes, ...marketingRoutes],
   },
   ...sessionRoutes,
-  { path: '/', element: <Navigate to="customer" /> },
+  { path: '/', element: <Navigate to="dashboard" /> },
   { path: '*', element: <NotFound /> },
 ];
 
