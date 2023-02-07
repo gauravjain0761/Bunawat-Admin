@@ -1,11 +1,8 @@
-import { CheckBox } from "@mui/icons-material";
 import {
     Autocomplete,
     Box,
     Button,
-    Checkbox,
     CircularProgress,
-    Container,
     Dialog,
     DialogActions,
     DialogContent,
@@ -13,8 +10,6 @@ import {
     Fade,
     FormControl,
     FormControlLabel,
-    FormGroup,
-    FormLabel,
     Grid,
     Icon,
     IconButton,
@@ -24,7 +19,6 @@ import {
     Radio,
     RadioGroup,
     Select,
-    Stack,
     styled,
     Switch,
     TableCell,
@@ -34,11 +28,7 @@ import {
 import { SimpleCard } from "app/components";
 import useEyeDropper from 'use-eye-dropper'
 import { Span } from "app/components/Typography";
-import { isMdScreen, isMobile } from "app/utils/utils";
-import { mockDataProductColor } from "fake-db/data/product/color/colorList";
-import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import React, { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
@@ -145,12 +135,12 @@ const ProductEditForm = ({ data = {}, id }) => {
             align: "center",
             width: 100
         },
-        {
-            id: "inStock_lead",
-            label: "InStock \nLead Time",
-            align: "center",
-            width: 100
-        },
+        // {
+        //     id: "inStock_lead",
+        //     label: "InStock \nLead Time",
+        //     align: "center",
+        //     width: 100
+        // },
         {
             id: "preOrder_qty",
             label: "PreOrder \nQTY",
@@ -338,23 +328,28 @@ const ProductEditForm = ({ data = {}, id }) => {
         if (!tax) {
             tempError = { ...tempError, tax: true }
         }
+        console.log("formData90", formData)
         if (!!description && Object.values(tempError).every(x => !x)) {
-            setLoading(true)
-            await ApiPut(`${API_URL.editProduct}/${id}`, {
-                ...formData,
-                description,
-                sku_data: formData?.sku_data ?? []
-            })
-                .then((response) => {
-                    setLoading(false)
-                    toast.success('Edit Successfully!')
-                    navigate("/product/list")
+            if (formData?.image && formData?.image.length > 0 && formData?.videos && formData?.videos.length > 0 && formData?.sku_data && formData?.sku_data.length > 0) {
+                setLoading(true)
+                await ApiPut(`${API_URL.editProduct}/${id}`, {
+                    ...formData,
+                    description,
+                    sku_data: formData?.sku_data ?? []
                 })
-                .catch((error) => {
-                    setLoading(false)
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+                    .then((response) => {
+                        setLoading(false)
+                        toast.success('Edit Successfully!')
+                        navigate("/product/list")
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            } else {
+                toast.error("Please upload 4 images, 3 videos and atleast one sku data")
+            }
         }
         setFormError(tempError)
     };
@@ -634,13 +629,8 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const SortableImageItem = SortableElement(({ item, i }) => {
         return (
-            <Box key={i} sx={{
-                width: "160px",
-                height: "200px",
-                margin: "10px 10px 0 0",
-                position: "relative"
-            }}>
-                <img src={item.url} width="100%" height="160px" />
+            <Box>
+                <img src={item.url} width="100%" height="200px" />
                 <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
                     <Switch
                         sx={{
@@ -662,14 +652,8 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const SortableVideoItem = SortableElement(({ item, i }) => {
         return (
-            <Box key={i}
-                sx={{
-                    width: "160px",
-                    height: "200px",
-                    margin: "20px 10px 0 0",
-                    position: "relative"
-                }}>
-                <video width="100%" height="160px" autoPlay={true} muted={true} loop={true} playsInline={true}
+            <Box>
+                <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
                     style={{ objectFit: "fill", borderRadius: "10px" }}>
                     <source src={item.url} type="video/mp4" />
                 </video>
@@ -697,11 +681,15 @@ const ProductEditForm = ({ data = {}, id }) => {
     const SortableList = SortableContainer(({ items }) => {
         return (
             <Box className="list-group">
-                {items?.map((item, index) => {
-                    return (
-                        <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
-                    );
-                })}
+                <Grid container spacing={2}>
+                    {items?.map((item, index) => {
+                        return (
+                            <Grid key={`List-Image${index}`} item lg={3} md={3} sm={6} xs={6}>
+                                <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
                 <Button
                     variant="contained"
                     component="label"
@@ -735,11 +723,15 @@ const ProductEditForm = ({ data = {}, id }) => {
     const SortableVideoList = SortableContainer(({ items }) => {
         return (
             <Box className="list-group">
-                {items?.map((item, index) => {
-                    return (
-                        <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
-                    );
-                })}
+                <Grid container spacing={2}>
+                    {items?.map((item, index) => {
+                        return (
+                            <Grid key={`List-Video-${index}`} item lg={3} md={3} sm={6} xs={6}>
+                                <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
                 <Button
                     variant="contained"
                     component="label"
@@ -1009,7 +1001,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell align="center">
+                                                                {/* <TableCell align="center">
                                                                     <TextField
                                                                         type="text"
                                                                         label="InStock Lead Time"
@@ -1022,7 +1014,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                                                             }
                                                                         }}
                                                                     />
-                                                                </TableCell>
+                                                                </TableCell> */}
                                                                 <TableCell align="center">
                                                                     <TextField
                                                                         type="text"

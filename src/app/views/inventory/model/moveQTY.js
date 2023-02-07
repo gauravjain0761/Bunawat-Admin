@@ -20,7 +20,7 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
     const handleSubmit = async () => {
         setLoading(true)
         await ApiPut(`${API_URL.editSKU}`, [{
-            "inStock_lead": formData?.inStock_lead,
+            "inStock_lead": 0,
             "inStock_qty": formData?.inStock_qty,
             "mapVariant": formData?.mapVariant,
             "preOrder_lead": formData?.preOrder_lead,
@@ -83,7 +83,7 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
                     validators={["required"]}
                     errorMessages={["this field is required"]}
                 />
-                <TextField
+                {/* <TextField
                     type="text"
                     fullWidth
                     sx={{ mt: 2, }}
@@ -93,7 +93,7 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
                     value={formData?.inStock_lead || ""}
                     validators={["required"]}
                     errorMessages={["this field is required"]}
-                />
+                /> */}
                 <TextField
                     type="text"
                     fullWidth
