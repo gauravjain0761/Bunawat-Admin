@@ -1,24 +1,12 @@
-import { CheckBox } from "@mui/icons-material";
 import {
-    Autocomplete,
     Box,
     Button,
-    Checkbox,
     CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormLabel,
     Grid,
     Icon,
     InputLabel,
     MenuItem,
-    Radio,
-    RadioGroup,
     Select,
     styled,
     Switch,
@@ -29,10 +17,7 @@ import useEyeDropper from 'use-eye-dropper'
 import { toast } from 'material-react-toastify';
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
-import { mockDataProductColor } from "fake-db/data/product/color/colorList";
-import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
@@ -59,7 +44,13 @@ const ProductForm = ({ data = {} }) => {
     const [isErrorDescription, setIsErrorDescription] = useState(false);
     const [formError, setFormError] = useState({});
     const [formData, setFormData] = useState({
-        ...data, pCategory: "None", color: '#000', attributeData: [{
+        ...data,
+        image: [],
+        pCategory: "None",
+
+        color: '#000',
+
+        attributeData: [{
             type: 'single',
             name: 'color',
             value: null
@@ -185,7 +176,8 @@ const ProductForm = ({ data = {} }) => {
             tempError = { ...tempError, tax: true }
         }
         if (!!description && Object.values(tempError).every(x => !x)) {
-            setLoading(true)
+            setLoading(true);
+            console.log("formDataformData", formData)
             await ApiPost(API_URL.addProduct, {
                 ...formData,
                 description,
@@ -207,35 +199,52 @@ const ProductForm = ({ data = {} }) => {
 
     const handleImageUpload = async (event) => {
         const MAX_FILE_SIZE = 30720 // 30MB
-        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
-        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-            setFormError({ ...formError, image: true })
-        } else {
-            setFormError({ ...formError, image: false })
-            setImageLoading(true)
-            let imageData = new FormData();
-            const images = formData?.image ?? []
-            imageData.append('file', event.target.files[0]);
-            await ApiPost(API_URL.fileUploadProduct, imageData)
-                .then((response) => {
-                    if (response?.data) {
-                        setFormData({
-                            ...formData, image: [...images, {
-                                url: response?.data?.Location,
-                                isActive: false,
-                                type: 'IMAGE'
-                            }]
-                        });
-                    }
-                    setImageLoading(false)
-                })
-                .catch((error) => {
-                    setImageLoading(false)
-                    console.log("Error", error);
-                });
-        }
-    }
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024;
 
+        console.log("eventevent", event?.target?.files)
+        const filesData = new FormData();
+        Object.values(event?.target?.files).forEach((value) => {
+            filesData.append(`file`, value);
+        });
+
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
+
+        // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+        //     setFormError({ ...formError, image: true })
+        // } else {
+        setFormError({ ...formError, image: false })
+        setImageLoading(true);
+        // let imageData = new FormData();
+        const images = formData?.image ?? []
+        // imageData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUploadProduct, filesData, config)
+            .then((response) => {
+                if (response?.data) {
+                    let ImagesData = [];
+                    console.log("response?.data", response?.data)
+                    response?.data && response?.data?.forEach((element) => {
+                        ImagesData.push({
+                            url: element?.Location,
+                            isActive: false,
+                            type: 'IMAGE'
+                        })
+                    })
+                    setFormData({
+                        ...formData, image: [...images, ...ImagesData]
+                    });
+                }
+                setImageLoading(false)
+            })
+            .catch((error) => {
+                setImageLoading(false)
+                console.log("Error", error);
+            });
+        // }
+    }
     const handleDeleteImage = async (index) => {
         setImageLoading(true)
         await ApiPost(API_URL.fileRemove, {
@@ -257,33 +266,52 @@ const ProductForm = ({ data = {} }) => {
 
     const handleImageVideo = async (event) => {
         const MAX_FILE_SIZE = 51200 // 50MB
-        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
-        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-            setFormError({ ...formError, videos: true })
-        } else {
-            setFormError({ ...formError, videos: false })
-            setVideoLoading(true)
-            const videosList = formData?.videos ?? []
-            let videoData = new FormData();
-            videoData.append('video', event.target.files[0]);
-            await ApiPost(API_URL.videoFileUpload, videoData)
-                .then((response) => {
-                    if (response?.data) {
-                        setFormData({
-                            ...formData, videos: [...videosList, {
-                                url: response?.data?.Location,
-                                isActive: false,
-                                type: 'VIDEO'
-                            }]
-                        });
-                    }
-                    setVideoLoading(false)
-                })
-                .catch((error) => {
-                    setVideoLoading(false)
-                    console.log("Error", error);
-                });
-        }
+
+        console.log("eventevent", event?.target?.files)
+        const filesData = new FormData();
+        Object.values(event?.target?.files).forEach((value) => {
+            filesData.append(`video`, value);
+        });
+
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
+
+        // const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        console.log("eventevent", event?.target?.files)
+        // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+        //     setFormError({ ...formError, videos: true })
+        // } else {
+        setFormError({ ...formError, videos: false })
+        setVideoLoading(true)
+        const videosList = formData?.videos ?? []
+        // let videoData = new FormData();
+        // videoData.append('video', event.target.files[0]);
+        await ApiPost(API_URL.videoFileUpload, filesData, config)
+            .then((response) => {
+                if (response?.data) {
+                    let VideosData = [];
+                    console.log("response?.data", response?.data)
+                    response?.data && response?.data?.forEach((element) => {
+                        VideosData.push({
+                            url: element?.Location,
+                            isActive: false,
+                            type: 'IMAGE'
+                        })
+                    })
+                    setFormData({
+                        ...formData, videos: [...videosList, ...VideosData]
+                    });
+                }
+                setVideoLoading(false)
+            })
+            .catch((error) => {
+                setVideoLoading(false)
+                console.log("Error", error);
+            });
+        // }
     }
 
     const handleDeleteVideo = async (index) => {
@@ -434,6 +462,9 @@ const ProductForm = ({ data = {} }) => {
     } = formData;
 
 
+    console.log("formDataformData", formData?.image);
+
+
     const handleError = async (event) => {
         let tempError = { ...formError }
         if (!description) {
@@ -550,10 +581,10 @@ const ProductForm = ({ data = {} }) => {
                         <input
                             type="file"
                             name="image"
-                            multiple={false}
+                            multiple={true}
                             accept="image/png, image/gif, image/jpeg"
                             hidden
-                            onClick={(event) => { event.target.value = '' }}
+                            // onClick={(event) => { event.target.value = '' }}
                             onChange={handleChange} />
                     }
                 </Button>
@@ -590,7 +621,7 @@ const ProductForm = ({ data = {} }) => {
                         <input
                             type="file"
                             name="videos"
-                            multiple={false}
+                            multiple={true}
                             accept="video/mp4,video/x-m4v,video/*"
                             hidden
                             onClick={(event) => { event.target.value = '' }}
@@ -742,7 +773,7 @@ const ProductForm = ({ data = {} }) => {
                                     label="Tax Type"
                                     onChange={handleChange}>
                                     <MenuItem value={10}>Standard</MenuItem>
-                                    <MenuItem value={6}>6% CGST/IGST</MenuItem>
+                                    <MenuItem value={2.5}>2.5% CGST/IGST</MenuItem>
                                 </Select>
                                 {formError?.tax && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </FormControl>
