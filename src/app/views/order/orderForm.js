@@ -325,7 +325,7 @@ const OrderForm = ({ data = {} }) => {
             if (response.status) {
                 console.log("handleSubmit", response.data);
                 toast.success('Add Successfully!')
-                navigate(`/notifications/list`)
+                navigate(`/order/list`)
             }
         }).catch((error) => {
             console.log("Error", error);
