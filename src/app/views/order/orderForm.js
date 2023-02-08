@@ -234,7 +234,8 @@ const OrderForm = ({ data = {} }) => {
 
     const getCustomerNumber = async () => {
         await ApiPost(`${API_URL.getUserNumber}`, {
-            phone: customerNumber
+            phone: customerNumber,
+            user_type: user_type
         }).then((response) => {
             if (response.status) {
                 const { data } = response;
@@ -393,7 +394,7 @@ const OrderForm = ({ data = {} }) => {
         if (customerNumber && customerNumber.length === 10) {
             getCustomerNumber(customerNumber)
         }
-    }, [customerNumber])
+    }, [customerNumber, user_type])
 
     console.log("customerPhoneformData", items)
 
