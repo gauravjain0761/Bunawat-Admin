@@ -34,6 +34,13 @@ export const API_URL = {
     addCollection: "collection/add",
     editCollection: "collection/update",
 
+    getOrders: "order/getall",
+    getUserNumber: "getuserbyphone",
+    getOrder: "order",
+    deleteOrder: "order/remove",
+    addOrder: "order/add",
+    editOrder: "order/update_order",
+
     getParentCategorys: "parent_cateogry/getall",
     getParentCategory: "parent_cateogry",
     addParentCategory: "parent_cateogry/add",
@@ -75,6 +82,7 @@ export const API_URL = {
     getSKUS: "sku/getall",
     addSKU: "sku/add",
     editSKU: "sku/update",
+    SKUGetProductID: "sku_get_by_product",
 
     fileUpload: "fileUpload/profile",
     videoFileUpload: "uploadVideo",
@@ -83,4 +91,6 @@ export const API_URL = {
     fileUploadCategory: "fileUpload/category",
     fileUploadCollection: "fileUpload/collection",
     fileRemove: "fileRmove",
+
+    getTeams: "team_member/getAll"
 }
