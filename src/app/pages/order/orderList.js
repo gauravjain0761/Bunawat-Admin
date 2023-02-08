@@ -16,6 +16,8 @@ import { Span } from 'app/components/Typography';
 import StatusModel from 'app/views/order/models/statusModel';
 import PaymentModel from 'app/views/order/models/paymentModel';
 import TrackingModel from 'app/views/order/models/trackingModel';
+import { ApiGet } from 'app/service/api';
+import { API_URL } from 'app/constant/api';
 
 const OrderList = () => {
     const navigate = useNavigate();
@@ -24,8 +26,10 @@ const OrderList = () => {
     const [trackingPopup, setTrackingPopup] = useState(false);
     const [paymentPopup, setPaymentPopup] = useState(false);
     const [rows, setRows] = useState(mockDataOrderManagement);
+    const [rowLoading, setRowLoading] = useState(false);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
@@ -119,6 +123,25 @@ const OrderList = () => {
             )
         }
     ];
+
+
+    const getData = async () => {
+        setRowLoading(true)
+        await ApiGet(`${API_URL.getOrders}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
+            .then((response) => {
+                setRowLoading(false)
+                setRows(response?.data ?? []);
+                setTotalCount(response?.totalCount);
+            })
+            .catch((error) => {
+                setRowLoading(false)
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage, searchText])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {

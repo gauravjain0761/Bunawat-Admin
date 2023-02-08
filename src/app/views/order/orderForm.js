@@ -30,11 +30,15 @@ import TableComponent from "app/components/table";
 import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { UIColor } from "app/utils/constant";
+import { toast } from 'material-react-toastify';
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
+import React from 'react';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ApiGet, ApiPost } from "app/service/api";
+import { API_URL } from "app/constant/api";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -42,13 +46,217 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const OrderForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState({ ...data, userType: 'customer' });
+    const [formData, setFormData] = useState({
+        ...data,
+        user_type: 'CUSTOMER',
+        billing_address: {
+            fname: "",
+            lname: "",
+            email: "",
+            phone: "",
+            phone_secondary: "",
+            address_1: "",
+            address_2: "",
+            city: "",
+            district: "",
+            pincode: "",
+            state: ""
+        },
+        shipping_address: {
+            fname: "",
+            lname: "",
+            email: "",
+            phone: "",
+            phone_secondary: "",
+            address_1: "",
+            address_2: "",
+            city: "",
+            district: "",
+            pincode: "",
+            state: ""
+        },
+        teamMember: "",
+        reseller: "",
+        product: null,
+        qty: "",
+        items: [],
+        isSame: false,
+        fname: "",
+        lname: "",
+        phone: "",
+        phone_secondary: "",
+        email: "",
+        state: "",
+        district: "",
+        city: "",
+        address_1: "",
+        address_2: "",
+        pincode: "",
+        payment_mode: "cod",
+        transactionId: "",
+        image: ""
+
+    });
     const navigate = useNavigate();
+    const [customerNumber, setCustomerNumber] = React.useState([]);
+    const [products, setProducts] = React.useState([]);
     let [searchParams, setSearchParams] = useSearchParams();
+    const [ProductName, setProductName] = React.useState(null);
+    const [skuData, setSKUData] = React.useState(null);
+    const [skuName, setSKUName] = React.useState(null);
+    const [TeamData, setTeamData] = React.useState(null);
+    const [TeamName, setTeamName] = React.useState(null);
+    const [ResellerData, setResellerData] = React.useState(null);
+    const [ResellerName, setResellerName] = React.useState(null);
+    const [paymentMode, setPaymentMode] = React.useState("cod")
+
+    const {
+        user_type,
+        teamMember,
+        reseller,
+        product,
+        qty,
+        items,
+        billing_address,
+        shipping_address,
+        isSame,
+        fname,
+        lname,
+        phone,
+        phone_secondary,
+        email,
+        state,
+        sku,
+        district,
+        city,
+        address_1,
+        address_2,
+        pincode,
+        payment_mode,
+        transactionId,
+        image
+    } = formData;
+
+
+    const getProductData = async (customerPhone) => {
+        await ApiGet(`${API_URL.getProducts}`).then((response) => {
+            if (response.status) {
+                const { data } = response;
+                console.log("productdata", data);
+                let productData = [];
+                data && data.forEach((element) => {
+                    if (element.isActive) {
+                        productData.push({
+                            id: element?._id,
+                            name: element?.name
+                        })
+                    }
+                })
+                setProducts(productData)
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    React.useEffect(() => {
+        getProductData();
+    }, []);
+
+    const getTeamData = async () => {
+        await ApiGet(`${API_URL.getTeams}`).then((response) => {
+            if (response.status) {
+                const { data } = response;
+                console.log("teamData", data);
+                let teamData = [];
+                data && data.forEach((element) => {
+                    teamData.push({
+                        id: element?._id,
+                        name: element?.name
+                    })
+                })
+                setTeamData(teamData)
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    React.useEffect(() => {
+        getTeamData();
+    }, []);
+
+    const getResellerData = async () => {
+        await ApiGet(`${API_URL.getResllers}`).then((response) => {
+            if (response.status) {
+                const { data } = response;
+                console.log("resellerData", data);
+                let resellerData = [];
+                data && data.forEach((element) => {
+                    resellerData.push({
+                        id: element?._id,
+                        name: `${element?.fname} ${element?.lname}`
+                    })
+                })
+                setResellerData(resellerData)
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    React.useEffect(() => {
+        getResellerData();
+    }, []);
+
+    const getSKUData = async (id) => {
+        await ApiGet(`${API_URL.SKUGetProductID}/${id}`).then((response) => {
+            if (response.status) {
+                const { data } = response;
+                console.log("skudata", data);
+                let SKUData = [];
+                data && data.forEach((element) => {
+                    if (element.isActive) {
+                        SKUData.push({
+                            ...element,
+                            id: element?._id,
+                            name: element?.sku
+                        })
+                    }
+                });
+                setSKUData(SKUData)
+                // setProducts(productData)
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    const getCustomerNumber = async () => {
+        await ApiPost(`${API_URL.getUserNumber}`, {
+            phone: customerNumber
+        }).then((response) => {
+            if (response.status) {
+                const { data } = response;
+                console.log("datadata", data)
+                for (const [key] of Object.entries(formData)) {
+                    if (key === "pincode") {
+                        console.log("keykey", key, data?.pincode)
+                        setFormData({ ...data, pincode: data?.pincode })
+                    } else {
+                        setFormData({ ...data, [key]: data[key] })
+                    }
+                }
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+    console.log("keykey12", formData?.pincode)
 
     const columns = [
         {
-            id: "pName",
+            id: "product",
             label: "Product Name",
             sortDisable: true,
             width: 100
@@ -76,19 +284,57 @@ const OrderForm = ({ data = {} }) => {
             width: 80
         },
     ];
-    useEffect(() => {
-        setFormData({ ...data, userType: 'customer' })
-    }, [data])
+    // useEffect(() => {
+    //     setFormData({ ...data, user_type: 'CUSTOMER' })
+    // }, [data])
+
+    console.log("datadataformData", formData)
 
 
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
-        navigate(`/notifications/list`)
+    const handleSubmit = async (event) => {
+        const Address = {
+            "fname": formData?.fname,
+            "lname": formData?.lname,
+            "email": formData?.email,
+            "phone": formData?.phone,
+            "phone_secondary": formData?.phone_secondary,
+            "address_1": formData?.address_1,
+            "address_2": formData?.address_2,
+            "city": formData?.city,
+            "district": formData?.district,
+            "pincode": formData?.pincode,
+            "state": formData?.state
+        }
+        const formDatas = {
+            "member": formData?.teamMember,
+            "user_type": formData?.user_type,
+            "user": "63d12454d25d498f72165513",
+            "billing_address": Address,
+            "shipping_address": formData?.isSame ? Address : {},
+            "isSame": formData?.isSame || false,
+            "payment_mode": paymentMode.toUpperCase(),
+            "total_items": formData?.items?.length,
+            "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
+            "total_amount": formData?.items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0,
+            "items": formData?.items,
+            "gst_amount": 0,
+            "discount_amount": 0,
+            "discount_coupon": null
+        }
+        await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
+            if (response.status) {
+                console.log("handleSubmit", response.data);
+                toast.success('Add Successfully!')
+                navigate(`/order/list`)
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+            toast.error(error?.error)
+        });
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "same") {
+        if (event.target.name == "isSame") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
         } else if (event.target.name == "phone" || event.target.name == "qty") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
@@ -113,45 +359,48 @@ const OrderForm = ({ data = {} }) => {
     };
 
     const addProductToCart = () => {
-        let temp = formData?.productList ?? [];
-        temp = [...temp, { qty, pName }]
-        setFormData({ ...formData, productList: temp, pName: '', qty: '' });
+        if (Number(qty) <= Number(skuName?.inStock_qty)) {
+            let temp = formData?.items ?? [];
+            let sku = skuName?.name;
+            let sku_id = skuName?.id;
+            let price = Number(skuName?.sale_price);
+            let productname = ProductName?.name;
+            let qtys = Number(qty) || 1;
+            let amount = Number(qtys) * Number(skuName?.sale_price);
+            temp = [...temp, {
+                productname: productname,
+                qty: qtys,
+                price: price,
+                product: product,
+                sku_id: sku_id,
+                sku: sku,
+                amount: amount
+            }]
+            setFormData({ ...formData, items: temp, product: '', qty: '' });
+            setSKUName(null)
+        } else {
+            toast.error("Please add valid quantity")
+        }
     }
 
     const handleDeleteProduct = (index) => {
-        let temp = formData?.productList ?? [];
+        let temp = formData?.items ?? [];
         temp = temp.filter((data, i) => i != index)
-        setFormData({ ...formData, productList: temp, pName: '', qty: '' });
+        setFormData({ ...formData, items: temp, product: '', qty: '' });
     }
 
-    const {
-        userType,
-        teamMember,
-        reseller,
-        pName,
-        qty,
-        productList,
-        same,
-        fname,
-        lname,
-        phone,
-        aPhone,
-        email,
-        state,
-        district,
-        city,
-        address_one,
-        address_two,
-        post_code,
-        paymentType,
-        transactionId,
-        image
-    } = formData;
+    React.useEffect(() => {
+        if (customerNumber && customerNumber.length === 10) {
+            getCustomerNumber(customerNumber)
+        }
+    }, [customerNumber])
+
+    console.log("customerPhoneformData", items)
 
     return (
         <Box>
-            <Box sx={{ m: '30px', mt: 0 }}>
-                <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+            <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+                <Box sx={{ m: '30px', mt: 0 }}>
                     <Grid container spacing={2}>
                         <Grid item lg={6} md={12} sm={12} xs={12} >
                             <SimpleCard title="Order" backArrow={false}>
@@ -165,43 +414,85 @@ const OrderForm = ({ data = {} }) => {
                                             <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>User Type</FormLabel>
                                             <RadioGroup
                                                 row
-                                                value={userType ?? "customer"}
+                                                value={user_type ?? "CUSTOMER"}
                                                 onChange={handleChange}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
-                                                name="userType">
-                                                <FormControlLabel value="customer" control={<Radio />} label="Customer" />
-                                                <FormControlLabel value="reseller" control={<Radio />} label="Reseller" />
+                                                name="user_type">
+                                                <FormControlLabel value="CUSTOMER" control={<Radio />} label="Customer" />
+                                                <FormControlLabel value="RESELLER" control={<Radio />} label="Reseller" />
                                             </RadioGroup>
                                         </FormControl>
 
-                                        {userType == 'customer' && <FormControl fullWidth sx={{ mt: 2 }}>
-                                            <InputLabel id="demo-simple-select-label">Team Member</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={teamMember}
+                                        <Box sx={{ mt: 1 }}>
+                                            <TextField
+                                                fullWidth
+                                                type="text"
+                                                label="Customer Phone"
+                                                onChange={(event) => {
+                                                    console.log("event.target", event.target)
+                                                    if (/^\d+$/.test(event.target.value)) {
+                                                        setCustomerNumber(event.target.value);
+                                                    } else {
+                                                        setCustomerNumber("");
+                                                    }
+                                                }}
+                                                inputProps={{ maxLength: 10 }}
+                                                value={customerNumber || ""}
+                                                validators={["required"]}
+                                                errorMessages={["this field is required"]}
+                                            />
+                                        </Box>
+
+                                        {user_type === 'CUSTOMER' &&
+                                            <Autocomplete
+                                                fullWidth
+                                                sx={{ mt: 2 }}
+                                                multiple={false}
+                                                id="tags-outlined"
+                                                value={TeamName}
                                                 name="teamMember"
-                                                label="Team Member"
-                                                onChange={handleChange}>
-                                                <MenuItem value="test">test</MenuItem>
-                                                <MenuItem value="demo">demo</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                                onChange={(event, newValue) => {
+                                                    setTeamName(newValue);
+                                                    setFormData({ ...formData, teamMember: newValue.id });
+                                                }}
+                                                options={TeamData}
+                                                getOptionLabel={(option) => option.name}
+                                                getOptionValue={(option) => option.id}
+                                                filterSelectedOptions
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="Team Member"
+                                                        placeholder="Select Team Member"
+                                                    />
+                                                )}
+                                            />
                                         }
 
-                                        {userType == 'reseller' && <FormControl fullWidth sx={{ mt: 2 }}>
-                                            <InputLabel id="demo-simple-select-label">Reseller</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={reseller}
+                                        {user_type === 'RESELLER' &&
+                                            <Autocomplete
+                                                fullWidth
+                                                sx={{ mt: 2 }}
+                                                multiple={false}
+                                                id="tags-outlined"
+                                                value={ResellerName}
                                                 name="reseller"
-                                                label="Reseller"
-                                                onChange={handleChange}>
-                                                <MenuItem value="test">test</MenuItem>
-                                                <MenuItem value="demo">demo</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                                onChange={(event, newValue) => {
+                                                    setResellerName(newValue);
+                                                    setFormData({ ...formData, reseller: newValue.id });
+                                                }}
+                                                options={ResellerData}
+                                                getOptionLabel={(option) => option.name}
+                                                getOptionValue={(option) => option.id}
+                                                filterSelectedOptions
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="Reseller"
+                                                        placeholder="Select Reseller"
+                                                    />
+                                                )}
+                                            />
                                         }
 
                                         <Autocomplete
@@ -209,31 +500,60 @@ const OrderForm = ({ data = {} }) => {
                                             sx={{ mt: 2 }}
                                             multiple={false}
                                             id="tags-outlined"
-                                            value={pName ?? ''}
-                                            onChange={(event, newValue) => setFormData({ ...formData, pName: newValue })}
-                                            options={['P_01', 'P_02', 'P_03']}
-                                            getOptionLabel={(option) => option}
+                                            value={ProductName}
+                                            onChange={(event, newValue) => {
+                                                setProductName(newValue);
+                                                setFormData({ ...formData, product: newValue.id });
+                                                getSKUData(newValue.id);
+                                            }}
+                                            options={products}
+                                            getOptionLabel={(option) => option.name}
+                                            getOptionValue={(option) => option.id}
                                             filterSelectedOptions
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
-                                                    label="Select Product"
+                                                    label="Product"
+                                                    placeholder="Select Product"
                                                 />
                                             )}
                                         />
 
-                                        {/* {pName && 
+                                        {product && <Autocomplete
+                                            fullWidth
+                                            sx={{ mt: 2 }}
+                                            multiple={false}
+                                            id="tags-outlined"
+                                            value={skuName}
+                                            onChange={(event, newValue) => {
+                                                setSKUName(newValue);
+                                                setFormData({ ...formData, sku: newValue.id });
+                                            }}
+                                            options={skuData}
+                                            getOptionLabel={(option) => option.name}
+                                            getOptionValue={(option) => option.id}
+                                            filterSelectedOptions
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="SKU"
+                                                    placeholder="Select SKU"
+                                                />
+                                            )}
+                                        />}
+
+                                        {/* {product && 
                                     <Box>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography sx={{ fontWeight: 700 }}>Product Name: &nbsp;</Typography>
-                                    <Typography>{pName}</Typography>
+                                    <Typography>{product}</Typography>
                                     </Box>
                                     
                                     </Box>
                                 } */}
 
 
-                                        {pName &&
+                                        {skuName &&
                                             <Box>
                                                 <TableContainer component={Paper}>
                                                     <Table sx={{ minWidth: '100%' }} aria-label="simple table">
@@ -245,8 +565,8 @@ const OrderForm = ({ data = {} }) => {
                                                         </TableHead>
                                                         <TableBody>
                                                             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                                <TableCell align="center" component="th" scope="row">{pName == 'P_02' ? 1000 : 1500}</TableCell>
-                                                                <TableCell align="center" component="th" scope="row">{pName == 'P_02' ? 75 : 44}</TableCell>
+                                                                <TableCell align="center" component="th" scope="row">{skuName?.sale_price}</TableCell>
+                                                                <TableCell align="center" component="th" scope="row">{skuName?.inStock_qty}</TableCell>
                                                             </TableRow>
                                                         </TableBody>
                                                     </Table>
@@ -270,13 +590,15 @@ const OrderForm = ({ data = {} }) => {
                                             </Box>
                                         }
 
-                                        {productList?.length > 0 &&
-                                            productList?.map((data, index) => {
+
+
+                                        {items?.length > 0 &&
+                                            items?.map((data, index) => {
                                                 return (
                                                     <Box>
                                                         <Box sx={{ mt: 1, background: UIColor, color: '#fff', p: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                            <Typography sx={{ fontWeight: 700 }}>{data?.pName}</Typography>
-                                                            <Icon onClick={() => handleDeleteProduct(0)} sx={{
+                                                            <Typography sx={{ fontWeight: 700 }}>{data?.productname}</Typography>
+                                                            <Icon onClick={() => handleDeleteProduct(index)} sx={{
                                                                 color: "#fff",
                                                                 cursor: "pointer",
                                                             }}>delete</Icon>
@@ -287,7 +609,7 @@ const OrderForm = ({ data = {} }) => {
                                                                     <TableCell sx={{ border: '1px solid' }} align="left">
                                                                         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
                                                                             <Typography sx={{ fontWeight: 700 }}>DesignNo/SKU</Typography>
-                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>ABCD1234</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>{data?.sku}</Typography>
                                                                         </Box>
                                                                     </TableCell>
                                                                     <TableCell sx={{ border: '1px solid' }} align="left">
@@ -313,7 +635,7 @@ const OrderForm = ({ data = {} }) => {
                                                                                     }}
                                                                                     type="text"
                                                                                     defaultValue={data?.qty}
-                                                                                    name="qty"
+                                                                                    name={`qty`}
                                                                                 />
                                                                             </Typography>
                                                                         </Box>
@@ -323,13 +645,13 @@ const OrderForm = ({ data = {} }) => {
                                                                     <TableCell sx={{ border: '1px solid' }} align="left">
                                                                         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
                                                                             <Typography sx={{ fontWeight: 700 }}>Price</Typography>
-                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>1000</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>{data?.price}</Typography>
                                                                         </Box>
                                                                     </TableCell>
                                                                     <TableCell sx={{ border: '1px solid' }} align="left">
                                                                         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
                                                                             <Typography sx={{ fontWeight: 700 }}>Total Amount</Typography>
-                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>5000</Typography>
+                                                                            <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>{data?.amount}</Typography>
                                                                         </Box>
                                                                     </TableCell>
                                                                 </TableRow>
@@ -411,20 +733,20 @@ const OrderForm = ({ data = {} }) => {
                                         />
 
                                         <TextField
-                                            name="text"
-                                            type="post_code"
+                                            name="pincode"
+                                            type="pincode"
                                             label="Post Code"
-                                            value={post_code || ""}
+                                            value={pincode || ""}
                                             onChange={handleChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
                                             type="text"
-                                            name="aPhone"
+                                            name="phone_secondary"
                                             label="Alternate Phone Nubmer"
                                             onChange={handleChange}
-                                            value={aPhone || ""}
+                                            value={phone_secondary || ""}
                                             validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                             errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
@@ -460,18 +782,18 @@ const OrderForm = ({ data = {} }) => {
                                         />
                                         <TextField
                                             name="text"
-                                            type="address_one"
+                                            type="address_1"
                                             label="Address - 1"
-                                            value={address_one || ""}
+                                            value={address_1 || ""}
                                             onChange={handleChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
                                             name="text"
-                                            type="address_two"
+                                            type="address_2"
                                             label="Address - 2"
-                                            value={address_two || ""}
+                                            value={address_2 || ""}
                                             onChange={handleChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
@@ -485,7 +807,7 @@ const OrderForm = ({ data = {} }) => {
                                         <FormGroup>
                                             <FormControlLabel
                                                 control={
-                                                    <Checkbox checked={same} onChange={handleChange} name="same" />
+                                                    <Checkbox checked={isSame} onChange={handleChange} name="isSame" />
                                                 }
                                                 label="Same as Above"
                                             />
@@ -536,9 +858,9 @@ const OrderForm = ({ data = {} }) => {
 
                                         <TextField
                                             name="text"
-                                            type="post_code"
+                                            type="pincode"
                                             label="Post Code"
-                                            value={post_code || ""}
+                                            value={pincode || ""}
                                             onChange={handleChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
@@ -546,10 +868,10 @@ const OrderForm = ({ data = {} }) => {
 
                                         <TextField
                                             type="text"
-                                            name="aPhone"
+                                            name="phone_secondary"
                                             label="Alternate Phone Nubmer"
                                             onChange={handleChange}
-                                            value={aPhone || ""}
+                                            value={phone_secondary || ""}
                                             validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                             errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
@@ -585,18 +907,18 @@ const OrderForm = ({ data = {} }) => {
                                         />
                                         <TextField
                                             name="text"
-                                            type="address_one"
+                                            type="address_1"
                                             label="Address - 1"
-                                            value={address_one || ""}
+                                            value={address_1 || ""}
                                             onChange={handleChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
                                             name="text"
-                                            type="address_two"
+                                            type="address_2"
                                             label="Address - 2"
-                                            value={address_two || ""}
+                                            value={address_2 || ""}
                                             onChange={handleChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
@@ -613,17 +935,18 @@ const OrderForm = ({ data = {} }) => {
                                     <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Payment Type</FormLabel>
                                     <RadioGroup
                                         row
-                                        value={paymentType ?? "cod"}
-                                        onChange={handleChange}
+                                        value={paymentMode ?? "cod"}
+                                        onChange={(e) => setPaymentMode(e.target.value)}
                                         aria-labelledby="demo-row-radio-buttons-group-label"
-                                        name="paymentType">
+                                    // name="paymentMode"
+                                    >
                                         <FormControlLabel value="cod" control={<Radio />} label="COD" />
                                         <FormControlLabel value="online" control={<Radio />} label="Online" />
                                         <FormControlLabel value="credits" control={<Radio />} label="Credits" />
                                         <FormControlLabel value="partialCredits" control={<Radio />} label="Partial Credits" />
                                     </RadioGroup>
                                 </FormControl>
-                                {paymentType == 'online' &&
+                                {payment_mode == 'online' &&
                                     <>
                                         <TextField
                                             type="text"
@@ -682,54 +1005,56 @@ const OrderForm = ({ data = {} }) => {
                             </SimpleCard>
                         </Grid>
                     </Grid>
-                </ValidatorForm>
-            </Box >
-            {productList?.length > 0 && <Box sx={{
-                width: '100%', height: '80px', background: '#fff',
-                position: 'sticky',
-                zIndex: 999,
-                bottom: 0,
-                boxShadow: '0 -8px 16px 0 rgb(85 93 102 / 30%)'
-            }}>
-                <Box sx={{
-                    display: 'flex',
-                    width: '100%',
-                    height: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
+                </Box >
+                {items?.length > 0 && <Box sx={{
+                    width: '100%', height: '80px', background: '#fff',
+                    position: 'sticky',
+                    zIndex: 999,
+                    bottom: 0,
+                    boxShadow: '0 -8px 16px 0 rgb(85 93 102 / 30%)'
                 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { sm: 'row', xs: 'column' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                            <Typography sx={{ fontWeight: 700 }}>Total Items</Typography>
-                            <Typography sx={{ fontWeight: 500 }}>:&nbsp; {productList?.length ?? 0}</Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                            <Typography sx={{ fontWeight: 700 }}>Total QTY</Typography>
-                            <Typography sx={{ fontWeight: 500 }}>:&nbsp; {productList?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0}</Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                            <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
-                            <Typography sx={{ fontWeight: 500, color: 'red' }}>: {1000 * (productList?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0)}</Typography>
-                        </Box>
-                    </Box>
                     <Box sx={{
-                        mr: 3
+                        display: 'flex',
+                        width: '100%',
+                        height: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
                     }}>
-                        <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #232a45', color: '#232a45', display: { sm: 'initial', xs: 'none' } }}>
-                            Back
-                        </Button>
-                        <Button sx={{
-                            background: '#232a45', ml: 2, color: '#fff',
-                            "&:hover": {
-                                background: '#232a45', color: '#fff'
-                            }
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { sm: 'row', xs: 'column' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Typography sx={{ fontWeight: 700 }}>Total Items</Typography>
+                                <Typography sx={{ fontWeight: 500 }}>:&nbsp; {items?.length ?? 0}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Typography sx={{ fontWeight: 700 }}>Total QTY</Typography>
+                                <Typography sx={{ fontWeight: 500 }}>:&nbsp; {items?.length > 0 && <> {items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0}</>}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
+                                <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                    {items?.length > 0 && <> {items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0}</>}
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Box sx={{
+                            mr: 3
                         }}>
-                            Save
-                        </Button>
+                            <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #232a45', color: '#232a45', display: { sm: 'initial', xs: 'none' } }}>
+                                Back
+                            </Button>
+                            <Button type="submit" sx={{
+                                background: '#232a45', ml: 2, color: '#fff',
+                                "&:hover": {
+                                    background: '#232a45', color: '#fff'
+                                }
+                            }}>
+                                Save
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-            }
+                }
+            </ValidatorForm>
         </Box >
     );
 };
