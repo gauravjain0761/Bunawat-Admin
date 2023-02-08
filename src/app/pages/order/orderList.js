@@ -316,7 +316,7 @@ const OrderList = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{index + 1}</TableCell>
+                            <TableCell></TableCell>
                             <TableCell>{row?.createdAt?.split("T")[0]}</TableCell>
                             <TableCell >{row.order_type}</TableCell>
                             <TableCell >{row.user_type}</TableCell>
@@ -327,8 +327,8 @@ const OrderList = () => {
                                 borderRadius: '4px'
                             }}>{row.order_status}</Box></TableCell>
                             <TableCell align="center">{row.total_amount}</TableCell>
-                            <TableCell align="center">Direct</TableCell>
-                            <TableCell align="center">20</TableCell>
+                            <TableCell align="center"></TableCell>
+                            <TableCell align="center"></TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"

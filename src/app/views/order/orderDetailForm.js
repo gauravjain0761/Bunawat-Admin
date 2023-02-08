@@ -180,7 +180,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                 <Typography sx={{ ml: 1 }}>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
                                             </Stack> */}
                                             <Typography sx={{ color: '#777' }}>Order No:</Typography>
-                                            <Typography>{viewOrder?._id}</Typography>
+                                            <Typography></Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Date created:</Typography>
                                             <Typography>{moment(viewOrder?.createdAt?.split("T")[0]).format("DD/MM/YYYY")}</Typography>
@@ -204,19 +204,19 @@ const OrderDetailForm = ({ data = {} }) => {
                                             <Typography>Direct</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Customer</Typography>
-                                            <Typography>Juhi Bagaria (#4331 &ndash; bagaria.namrata@gmail.com)</Typography>
+                                            <Typography></Typography>
                                         </Stack>
                                     </Grid>
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
                                         <Stack>
                                             <Typography variant="h6">Billing</Typography>
                                             <Typography sx={{ color: '#777' }}>Name:</Typography>
-                                            <Typography>Juhi Bagaria</Typography>
+                                            <Typography></Typography>
                                             <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
                                             <Typography>{viewOrder?.billing_address?.address_1}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Email address:</Typography>
-                                            <Typography>bagaria.namrata@gmail.com</Typography>
+                                            <Typography></Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Phone:</Typography>
                                             <Typography>{viewOrder?.billing_address?.phone}</Typography>
@@ -226,7 +226,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <Stack>
                                             <Typography variant="h6">Shipping</Typography>
                                             <Typography sx={{ color: '#777' }}>Name:</Typography>
-                                            <Typography>Juhi Bagaria</Typography>
+                                            <Typography></Typography>
                                             <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
                                             <Typography>{viewOrder?.shipping_address?.address_1}</Typography>
                                             {/* <Typography>Rourkela 769004</Typography>
@@ -262,14 +262,14 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             <Stack sx={{
                                                                 ml: 2
                                                             }}>
-                                                                <Typography>Alluring Mustard Chiffon Crop Top And Skirt - S, Mustard</Typography>
+                                                                <Typography></Typography>
                                                                 <Box sx={{ display: 'flex', }}>
                                                                     <Typography sx={{ color: '#777' }}>Size: </Typography>
-                                                                    <Typography >S</Typography>
+                                                                    <Typography ></Typography>
                                                                 </Box>
                                                                 <Box sx={{ display: 'flex', }}>
                                                                     <Typography sx={{ color: '#777' }}>Color: </Typography>
-                                                                    <Typography >Mustard</Typography>
+                                                                    <Typography ></Typography>
                                                                 </Box>
                                                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                                     <Typography sx={{ color: '#777' }}>Tracking number: </Typography>
@@ -286,7 +286,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                             }}
                                                                             type="text"
                                                                             name="trackingNumber"
-                                                                            defaultValue='8994570947'
+                                                                            defaultValue=''
                                                                         />
                                                                     </Typography>
                                                                 </Box>
@@ -311,7 +311,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                         />
                                                     </TableCell>
                                                     <TableCell align="center">{row?.amount}</TableCell>
-                                                    <TableCell align="center">20</TableCell>
+                                                    <TableCell align="center"></TableCell>
                                                 </TableRow>
 
                                             </>
@@ -331,11 +331,11 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Fees</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹3,302.68</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>12% IGST:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹3,302.68</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
