@@ -8,7 +8,7 @@ const OrderDetail = Loadable(lazy(() => import('./orderDetail')));
 const OrderRoutes = [
     { path: '/order/list', element: <OrderList /> },
     { path: '/order/add', element: <AddOrder /> },
-    { path: '/order/detail', element: <OrderDetail /> },
+    { path: '/order/detail/:id', element: <OrderDetail /> },
 ];
 
 export default OrderRoutes;

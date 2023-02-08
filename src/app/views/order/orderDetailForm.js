@@ -30,6 +30,8 @@ import { SimpleCard } from "app/components";
 import TableComponent from "app/components/table";
 import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
+import { API_URL } from "app/constant/api";
+import { ApiGet } from "app/service/api";
 import { UIColor } from "app/utils/constant";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import moment from "moment";
@@ -37,7 +39,7 @@ import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import ReactDatePicker from "react-datepicker";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PaymentModel from "./models/paymentModel";
 import StatusModel from "./models/statusModel";
 import TrackingModel from "./models/trackingModel";
@@ -48,13 +50,34 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const OrderDetailForm = ({ data = {} }) => {
+    const { id } = useParams();
     const [formData, setFormData] = useState({ ...data, userType: 'customer' });
     const navigate = useNavigate();
-    const [rows, setRows] = useState([{}, {}, {}]);
     const [statusPopup, setStatusPopup] = useState(false);
     const [trackingPopup, setTrackingPopup] = useState(false);
     const [paymentPopup, setPaymentPopup] = useState(false);
     let [searchParams, setSearchParams] = useSearchParams();
+    const [viewOrder, setViewOrder] = React.useState({});
+    const [rows, setRows] = useState([]);
+
+
+    const getViewOrderData = async (customerPhone) => {
+        await ApiGet(`${API_URL.getOrder}/${id}`).then((response) => {
+            if (response.status) {
+                const { data } = response;
+                setViewOrder(data);
+                setRows(data?.items)
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    React.useEffect(() => {
+        if (id) {
+            getViewOrderData();
+        }
+    }, [id]);
 
     const columns = [
         {
@@ -157,25 +180,25 @@ const OrderDetailForm = ({ data = {} }) => {
                                                 <Typography sx={{ ml: 1 }}>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
                                             </Stack> */}
                                             <Typography sx={{ color: '#777' }}>Order No:</Typography>
-                                            <Typography>ABCD1234</Typography>
+                                            <Typography>{viewOrder?._id}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Date created:</Typography>
-                                            <Typography>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
+                                            <Typography>{moment(viewOrder?.createdAt?.split("T")[0]).format("DD/MM/YYYY")}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Order Type:</Typography>
-                                            <Typography>New</Typography>
+                                            <Typography>{viewOrder?.order_type}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Order User Type:</Typography>
-                                            <Typography>Customer</Typography>
+                                            <Typography>{viewOrder?.user_type}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Order Status:</Typography>
-                                            <Typography>Confirmed</Typography>
+                                            <Typography>{viewOrder?.order_status}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Amount:</Typography>
-                                            <Typography>5000</Typography>
+                                            <Typography>{viewOrder?.amount}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Payment Mode:</Typography>
-                                            <Typography >COD</Typography>
+                                            <Typography >{viewOrder?.total_amount}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Source:</Typography>
                                             <Typography>Direct</Typography>
@@ -190,15 +213,13 @@ const OrderDetailForm = ({ data = {} }) => {
                                             <Typography sx={{ color: '#777' }}>Name:</Typography>
                                             <Typography>Juhi Bagaria</Typography>
                                             <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
-                                            <Typography>M-19,Civil Town ship</Typography>
-                                            <Typography>Rourkela 769004</Typography>
-                                            <Typography>Odisha</Typography>
+                                            <Typography>{viewOrder?.billing_address?.address_1}</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Email address:</Typography>
                                             <Typography>bagaria.namrata@gmail.com</Typography>
 
                                             <Typography sx={{ mt: 1, color: '#777' }}>Phone:</Typography>
-                                            <Typography>9348046722</Typography>
+                                            <Typography>{viewOrder?.billing_address?.phone}</Typography>
                                         </Stack>
                                     </Grid>
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -207,9 +228,9 @@ const OrderDetailForm = ({ data = {} }) => {
                                             <Typography sx={{ color: '#777' }}>Name:</Typography>
                                             <Typography>Juhi Bagaria</Typography>
                                             <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
-                                            <Typography>M-19,Civil Town ship</Typography>
-                                            <Typography>Rourkela 769004</Typography>
-                                            <Typography>Odisha</Typography>
+                                            <Typography>{viewOrder?.shipping_address?.address_1}</Typography>
+                                            {/* <Typography>Rourkela 769004</Typography>
+                                            <Typography>Odisha</Typography> */}
                                         </Stack>
                                     </Grid>
                                 </Grid>
@@ -272,7 +293,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             </Stack>
                                                         </Box>
                                                     </TableCell>
-                                                    <TableCell align="center">20</TableCell>
+                                                    <TableCell align="center">{row?.price}</TableCell>
                                                     <TableCell align="center">
                                                         <TextField
                                                             sx={{
@@ -286,10 +307,10 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             }}
                                                             type="text"
                                                             name="qty"
-                                                            defaultValue='12'
+                                                            defaultValue={row?.qty}
                                                         />
                                                     </TableCell>
-                                                    <TableCell align="center">20</TableCell>
+                                                    <TableCell align="center">{row?.amount}</TableCell>
                                                     <TableCell align="center">20</TableCell>
                                                 </TableRow>
 
@@ -306,7 +327,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹3,302.68</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.total_amount}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Fees</TableCell>
@@ -318,7 +339,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹3,302.68</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.total_amount}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>

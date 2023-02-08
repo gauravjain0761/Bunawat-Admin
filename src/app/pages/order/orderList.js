@@ -361,7 +361,7 @@ const OrderList = () => {
                                         handleActionClose();
                                     }}>Update Payment Info</MenuItem>
                                     <MenuItem onClick={() => {
-                                        navigate('/order/detail');
+                                        navigate(`/order/detail/${row?._id}`);
                                         handleActionClose();
                                     }}>View Order</MenuItem>
                                 </Menu>
