@@ -25,7 +25,7 @@ const OrderList = () => {
     const [statusPopup, setStatusPopup] = useState(false);
     const [trackingPopup, setTrackingPopup] = useState(false);
     const [paymentPopup, setPaymentPopup] = useState(false);
-    const [rows, setRows] = useState(mockDataOrderManagement);
+    const [rows, setRows] = useState([]);
     const [rowLoading, setRowLoading] = useState(false);
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
@@ -316,17 +316,17 @@ const OrderList = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell>{row.no}</TableCell>
-                            <TableCell>{row.date}</TableCell>
-                            <TableCell >{row.ordertype}</TableCell>
-                            <TableCell >{row.orderusertype}</TableCell>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{row?.createdAt?.split("T")[0]}</TableCell>
+                            <TableCell >{row.order_type}</TableCell>
+                            <TableCell >{row.user_type}</TableCell>
                             <TableCell>{row.username}</TableCell>
                             <TableCell align="center"><Box component='span' sx={{
-                                ...getColor(row.status),
+                                ...getColor(row.order_status),
                                 padding: '10px',
                                 borderRadius: '4px'
-                            }}>{row.status}</Box></TableCell>
-                            <TableCell align="center">{row.amount}</TableCell>
+                            }}>{row.order_status}</Box></TableCell>
+                            <TableCell align="center">{row.total_amount}</TableCell>
                             <TableCell align="center">Direct</TableCell>
                             <TableCell align="center">20</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
@@ -361,7 +361,7 @@ const OrderList = () => {
                                         handleActionClose();
                                     }}>Update Payment Info</MenuItem>
                                     <MenuItem onClick={() => {
-                                        navigate('/order/detail');
+                                        navigate(`/order/detail/${row?._id}`);
                                         handleActionClose();
                                     }}>View Order</MenuItem>
                                 </Menu>
