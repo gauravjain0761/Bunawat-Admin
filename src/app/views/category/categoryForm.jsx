@@ -206,7 +206,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     description,
                     link_with: link_with ?? '',
                     image: image ?? "",
-                    mediaType: tempMediaType.toUpperCase(),
+                    mediaType: tempMediaType,
                     "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
                     "categories_list": link_with == 'CATEGORY' ? [linkValue] : [],
                     "product_list": productId ? [productId] : []
@@ -267,7 +267,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
             await ApiPost(API_URL.fileUploadCategory, imageData)
                 .then((response) => {
                     if (response?.data) {
-                        setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                        setFormData({ ...formData, [event.target.name]: response?.data && response?.data[0]?.Location });
                         setMediaLoading(false)
                     }
                 })
@@ -308,7 +308,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                 .then((response) => {
                     if (response?.data) {
                         setFormData({
-                            ...formData, video: response?.data?.Location
+                            ...formData, video: response?.data && response?.data[0]?.Location
                         });
                         setMediaLoading(false)
                     }
@@ -402,7 +402,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
         }
         setFormError(tempError)
     }
-   
+
 
     return (
         <div>
@@ -580,7 +580,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                             <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Media Type </FormLabel>
                                             <RadioGroup
                                                 row
-                                                value={mediaType.toUpperCase() ?? "IMAGE"}
+                                                value={mediaType ?? "IMAGE"}
                                                 onChange={handleChange}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                                 name="mediaType">
@@ -613,7 +613,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                     </Button>
                                                 </Box>
                                             </> : <>
-                                                {mediaType == 'video' ? <>
+                                                {mediaType == 'VIDEO' ? <>
                                                     {video ?
                                                         <Box
                                                             sx={{

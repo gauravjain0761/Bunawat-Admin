@@ -126,7 +126,7 @@ const CollectionForm = ({ data = {}, id }) => {
                     title: formData?.title,
                     image: formData?.image ?? "",
                     home_visibilty: formData?.home_visibilty,
-                    mediaType: tempMediaType.toUpperCase(),
+                    mediaType: tempMediaType,
                     link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
@@ -149,7 +149,7 @@ const CollectionForm = ({ data = {}, id }) => {
                     title: formData?.title,
                     image: formData?.image ?? "",
                     home_visibilty: formData?.home_visibilty,
-                    mediaType: tempMediaType.toUpperCase(),
+                    mediaType: tempMediaType,
                     link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
@@ -184,7 +184,7 @@ const CollectionForm = ({ data = {}, id }) => {
             await ApiPost(API_URL.fileUploadCollection, imageData)
                 .then((response) => {
                     if (response?.data) {
-                        setFormData({ ...formData, [event.target.name]: response?.data?.Location });
+                        setFormData({ ...formData, [event.target.name]: response?.data && response?.data[0]?.Location });
                         setMediaLoading(false)
                     }
                 })
@@ -225,7 +225,7 @@ const CollectionForm = ({ data = {}, id }) => {
                 .then((response) => {
                     if (response?.data) {
                         setFormData({
-                            ...formData, video: response?.data?.Location
+                            ...formData, video: response?.data && response?.data[0]?.Location
                         });
                         setMediaLoading(false)
                     }
@@ -270,6 +270,9 @@ const CollectionForm = ({ data = {}, id }) => {
         image,
         video
     } = formData;
+
+
+    console.log("image", image)
 
     const handleError = async (event) => {
         let tempError = { ...formError }
@@ -410,7 +413,7 @@ const CollectionForm = ({ data = {}, id }) => {
                                             <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Media Type </FormLabel>
                                             <RadioGroup
                                                 row
-                                                value={mediaType.toUpperCase() ?? "IMAGE"}
+                                                value={mediaType ?? "IMAGE"}
                                                 onChange={handleChange}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                                 name="mediaType">
@@ -443,7 +446,7 @@ const CollectionForm = ({ data = {}, id }) => {
                                                     </Button>
                                                 </Box>
                                             </> : <>
-                                                {mediaType == 'video' ? <>
+                                                {mediaType == 'VIDEO' ? <>
                                                     {video ?
                                                         <Box
                                                             sx={{
