@@ -764,8 +764,8 @@ const OrderForm = ({ data = {} }) => {
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="district"
+                                            name="district"
+                                            type="text"
                                             label="District"
                                             value={district || ""}
                                             onChange={handleChange}
@@ -773,8 +773,8 @@ const OrderForm = ({ data = {} }) => {
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="city"
+                                            name="city"
+                                            type="text"
                                             label="City"
                                             value={city || ""}
                                             onChange={handleChange}
@@ -782,8 +782,8 @@ const OrderForm = ({ data = {} }) => {
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="address_1"
+                                            name="address_1"
+                                            type="text"
                                             label="Address - 1"
                                             value={address_1 || ""}
                                             onChange={handleChange}
@@ -791,8 +791,8 @@ const OrderForm = ({ data = {} }) => {
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="address_2"
+                                            name="address_2"
+                                            type="text"
                                             label="Address - 2"
                                             value={address_2 || ""}
                                             onChange={handleChange}

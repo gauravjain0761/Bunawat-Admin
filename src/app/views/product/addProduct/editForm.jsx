@@ -19,6 +19,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Stack,
     styled,
     Switch,
     TableCell,
@@ -330,7 +331,7 @@ const ProductEditForm = ({ data = {}, id }) => {
         }
         console.log("formData90", formData)
         if (!!description && Object.values(tempError).every(x => !x)) {
-            if (formData?.image && formData?.image.length > 0 && formData?.videos && formData?.videos.length > 0 && formData?.sku_data && formData?.sku_data.length > 0) {
+            if (formData?.image && formData?.image.length > 3 && formData?.videos && formData?.videos.length > 2 && formData?.sku_data && formData?.sku_data.length > 0) {
                 setLoading(true)
                 await ApiPut(`${API_URL.editProduct}/${id}`, {
                     ...formData,
@@ -629,22 +630,32 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const SortableImageItem = SortableElement(({ item, i }) => {
         return (
-            <Box>
+            <Box sx={{ width: "100%" }}>
                 <img src={item.url} width="100%" height="200px" />
-                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
-                    <Switch
-                        sx={{
-                            color: "red",
-                            cursor: "pointer"
-                        }}
-                        checked={item?.isActive}
-                        onChange={() => handleSwitchImage(i)}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                    <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
-                        color: "red",
-                        cursor: "pointer",
-                    }}>delete</Icon> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
+                    <div>
+                        <Stack direction="row" alignItems="center">
+                            <Switch
+                                sx={{
+                                    color: "red",
+                                    cursor: "pointer"
+                                }}
+                                checked={item?.isActive}
+                                onChange={() => handleSwitchImage(i)}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                        </Stack>
+                    </div>
+                    <div>
+                        <Stack direction="row" alignItems="center">
+                            <IconButton>
+                                <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                                    color: "red",
+                                    cursor: "pointer",
+                                }}>delete</Icon>
+                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                        </Stack>
+                    </div>
                 </Box>
             </Box>
         )
@@ -652,27 +663,33 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const SortableVideoItem = SortableElement(({ item, i }) => {
         return (
-            <Box>
+            <Box sx={{ width: "100%" }}>
                 <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
                     style={{ objectFit: "fill", borderRadius: "10px" }}>
                     <source src={item.url} type="video/mp4" />
                 </video>
-                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
-                    <Switch
-                        sx={{
-                            color: "red",
-                            cursor: "pointer",
-                            zIndex: "999"
-                        }}
-                        checked={item?.isActive}
-                        onChange={() => handleSwitchVideo(i, 4)}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                    <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
-                        color: "red",
-                        cursor: "pointer",
-                        zIndex: "999"
-                    }}>delete</Icon> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="space-between">
+                    <Stack direction="row" alignItems="center">
+                        <Switch
+                            sx={{
+                                color: "red",
+                                cursor: "pointer",
+                                zIndex: "999"
+                            }}
+                            checked={item?.isActive}
+                            onChange={() => handleSwitchVideo(i, 4)}
+                            inputProps={{ 'aria-label': 'controlled' }}
+                        /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                    </Stack>
+                    <Stack direction="row" alignItems="center">
+                        <IconButton>
+                            <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
+                                color: "red",
+                                cursor: "pointer",
+                                zIndex: "999"
+                            }}>delete</Icon>
+                        </IconButton> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                    </Stack>
                 </Box>
             </Box>
         )
@@ -680,7 +697,7 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const SortableList = SortableContainer(({ items }) => {
         return (
-            <Box className="list-group">
+            <Box className="list-group" sx={{ width: "100%" }}>
                 <Grid container spacing={2}>
                     {items?.map((item, index) => {
                         return (
@@ -722,7 +739,7 @@ const ProductEditForm = ({ data = {}, id }) => {
 
     const SortableVideoList = SortableContainer(({ items }) => {
         return (
-            <Box className="list-group">
+            <Box className="list-group" sx={{ width: "100%" }}>
                 <Grid container spacing={2}>
                     {items?.map((item, index) => {
                         return (
