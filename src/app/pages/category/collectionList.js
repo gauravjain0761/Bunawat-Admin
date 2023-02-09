@@ -6,7 +6,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
 import { Button, Card, Fade, Icon, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import { toast } from 'material-react-toastify';
@@ -99,7 +99,6 @@ const CollectionList = () => {
       )
     }
   ];
-
   const getData = async () => {
     setRowLoading(true)
     await ApiGet(`${API_URL.getCollections}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
@@ -276,7 +275,10 @@ const CollectionList = () => {
               <TableCell > {row?.name} </TableCell>
               <TableCell >{row?.description?.replace(/<[^>]+>/g, '')}</TableCell>
               {/* <TableCell>-</TableCell> */}
-              <TableCell align="center">{row?.product_count}</TableCell>
+              <TableCell onClick={() => navigate({
+                pathname: '/product/list',
+                search: `?collection=${row?._id}`,
+              })} align="center">{row?.product_count}</TableCell>
               <TableCell align="center">
                 {row?.isActive ?
                   <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>

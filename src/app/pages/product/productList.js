@@ -6,7 +6,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
 import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
@@ -22,6 +22,8 @@ import { arrayMove, SortableElement } from 'react-sortable-hoc';
 
 const ProductList = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const getSearchQuery = searchParams.get("collection")
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
@@ -34,6 +36,10 @@ const ProductList = () => {
     const [searchText, setSearchText] = useState('');
     const [deleteData, setDeleteData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
+
+
+    console.log("collectioncollection", getSearchQuery)
+
 
     const columns = [
         {
@@ -99,7 +105,7 @@ const ProductList = () => {
 
     const getData = async () => {
         setRowLoading(true)
-        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
+        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}&id=${getSearchQuery ? getSearchQuery : ""}`)
             .then((response) => {
                 setRowLoading(false)
                 setRows(response?.data ?? []);
@@ -128,7 +134,7 @@ const ProductList = () => {
 
     React.useEffect(() => {
         getData();
-    }, [page, rowsPerPage, searchText])
+    }, [page, rowsPerPage, searchText, getSearchQuery])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {

@@ -287,7 +287,10 @@ const CategoryList = () => {
               <TableCell>{row?.sName}</TableCell>
               <TableCell > {row.name} </TableCell>
               <TableCell>{row.code}</TableCell>
-              <TableCell align="center">{row?.product_count}</TableCell>
+              <TableCell onClick={() => navigate({
+                pathname: '/product/list',
+                search: `?collection=${row?._id}`,
+              })} align="center">{row?.product_count}</TableCell>
               <TableCell align="center">
                 {row?.isActive ?
                   <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
