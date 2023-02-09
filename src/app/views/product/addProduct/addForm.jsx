@@ -5,9 +5,11 @@ import {
     FormControl,
     Grid,
     Icon,
+    IconButton,
     InputLabel,
     MenuItem,
     Select,
+    Stack,
     styled,
     Switch,
     Typography,
@@ -181,7 +183,7 @@ const ProductForm = ({ data = {} }) => {
             await ApiPost(API_URL.addProduct, {
                 ...formData,
                 description,
-                isActive: true
+                isActive: false
             })
                 .then((response) => {
                     setLoading(false)
@@ -493,26 +495,36 @@ const ProductForm = ({ data = {} }) => {
     const SortableImageItem = SortableElement(({ item, i }) => {
         return (
             <Box key={i} sx={{
-                width: "160px",
+                width: "100%",
                 height: "200px",
                 margin: "10px 10px 0 0",
                 position: "relative"
             }}>
                 <img src={item.url} width="100%" height="160px" />
-                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
-                    <Switch
-                        sx={{
-                            color: "red",
-                            cursor: "pointer"
-                        }}
-                        checked={item?.isActive}
-                        onChange={() => handleSwitchImage(i)}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                    <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
-                        color: "red",
-                        cursor: "pointer",
-                    }}>delete</Icon> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
+                    <div>
+                        <Stack direction="row" alignItems="center">
+                            <Switch
+                                sx={{
+                                    color: "red",
+                                    cursor: "pointer"
+                                }}
+                                checked={item?.isActive}
+                                onChange={() => handleSwitchImage(i)}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                        </Stack>
+                    </div>
+                    <div>
+                        <Stack direction="row" alignItems="center">
+                            <IconButton>
+                                <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                                    color: "red",
+                                    cursor: "pointer",
+                                }}>delete</Icon>
+                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                        </Stack>
+                    </div>
                 </Box>
             </Box>
         )
@@ -522,7 +534,7 @@ const ProductForm = ({ data = {} }) => {
         return (
             <Box key={i}
                 sx={{
-                    width: "160px",
+                    width: "100%",
                     height: "200px",
                     margin: "20px 10px 0 0",
                     position: "relative"
@@ -531,22 +543,26 @@ const ProductForm = ({ data = {} }) => {
                     style={{ objectFit: "fill", borderRadius: "10px" }}>
                     <source src={item.url} type="video/mp4" />
                 </video>
-                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="end">
-                    <Switch
-                        sx={{
+                <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
+                    <Stack direction="row" alignItems="center">
+                        <Switch
+                            sx={{
+                                color: "red",
+                                cursor: "pointer",
+                                zIndex: "999"
+                            }}
+                            checked={item?.isActive}
+                            onChange={() => handleSwitchVideo(i, 4)}
+                            inputProps={{ 'aria-label': 'controlled' }}
+                        /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                    </Stack>
+                    <Stack direction="row" alignItems="center">
+                        <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
                             color: "red",
                             cursor: "pointer",
                             zIndex: "999"
-                        }}
-                        checked={item?.isActive}
-                        onChange={() => handleSwitchVideo(i, 4)}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                    /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                    <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
-                        color: "red",
-                        cursor: "pointer",
-                        zIndex: "999"
-                    }}>delete</Icon> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                        }}>delete</Icon> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                    </Stack>
                 </Box>
             </Box>
         )
@@ -594,7 +610,7 @@ const ProductForm = ({ data = {} }) => {
 
     const SortableVideoList = SortableContainer(({ items }) => {
         return (
-            <Box className="list-group">
+            <Box className="list-group"  sx={{ width: "100%" }}>
                 {items?.map((item, index) => {
                     return (
                         <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
