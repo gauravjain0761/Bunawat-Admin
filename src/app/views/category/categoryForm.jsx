@@ -39,7 +39,7 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const CategoryForm = ({ data = {}, id, type }) => {
-    const [formData, setFormData] = useState(data);
+    const [formData, setFormData] = useState(data ? data : {});
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
     const [mediaLoading, setMediaLoading] = useState(false);
@@ -206,7 +206,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     description,
                     link_with: link_with ?? '',
                     image: image ?? "",
-                    mediaType: tempMediaType,
+                    mediaType: tempMediaType.toUpperCase(),
                     "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
                     "categories_list": link_with == 'CATEGORY' ? [linkValue] : [],
                     "product_list": productId ? [productId] : []
@@ -367,6 +367,9 @@ const CategoryForm = ({ data = {}, id, type }) => {
         code
     } = formData;
 
+
+
+
     const getTitle = () => {
         if (type == "parent") {
             return "Parent Category"
@@ -399,6 +402,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
         }
         setFormError(tempError)
     }
+   
 
     return (
         <div>
@@ -576,12 +580,12 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                             <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Media Type </FormLabel>
                                             <RadioGroup
                                                 row
-                                                value={mediaType ?? "image"}
+                                                value={mediaType.toUpperCase() ?? "IMAGE"}
                                                 onChange={handleChange}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                                 name="mediaType">
-                                                <FormControlLabel value="image" control={<Radio />} label="Image" />
-                                                <FormControlLabel value="video" control={<Radio />} label="Video" />
+                                                <FormControlLabel value="IMAGE" control={<Radio />} label="Image" />
+                                                <FormControlLabel value="VIDEO" control={<Radio />} label="Video" />
                                             </RadioGroup>
                                         </FormControl>
                                         <Box sx={{
