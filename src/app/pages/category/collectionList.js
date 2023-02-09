@@ -275,10 +275,14 @@ const CollectionList = () => {
               <TableCell > {row?.name} </TableCell>
               <TableCell >{row?.description?.replace(/<[^>]+>/g, '')}</TableCell>
               {/* <TableCell>-</TableCell> */}
-              <TableCell onClick={() => navigate({
-                pathname: '/product/list',
-                search: `?collection=${row?._id}`,
-              })} align="center">{row?.product_count}</TableCell>
+              <TableCell onClick={() => {
+                if (row?.product_count > 0) {
+                  navigate({
+                    pathname: '/product/list',
+                    search: `?collection=${row?._id}`,
+                  })
+                }
+              }} align="center" sx={{ cursor: "pointer" }}>{row?.product_count}</TableCell>
               <TableCell align="center">
                 {row?.isActive ?
                   <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
