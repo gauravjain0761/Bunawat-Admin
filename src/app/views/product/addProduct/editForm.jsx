@@ -331,7 +331,7 @@ const ProductEditForm = ({ data = {}, id }) => {
         }
         console.log("formData90", formData)
         if (!!description && Object.values(tempError).every(x => !x)) {
-            if (formData?.image && formData?.image.length > 3 && formData?.videos && formData?.videos.length > 2 && formData?.sku_data && formData?.sku_data.length > 0) {
+            if (formData?.image && formData?.image.length >= 3 && formData?.videos && formData?.videos.length >= 2 && formData?.sku_data && formData?.sku_data.length > 0) {
                 setLoading(true)
                 await ApiPut(`${API_URL.editProduct}/${id}`, {
                     ...formData,
