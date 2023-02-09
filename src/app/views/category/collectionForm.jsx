@@ -48,6 +48,8 @@ const CollectionForm = ({ data = {}, id }) => {
     const [formError, setFormError] = useState({});
     const navigate = useNavigate();
 
+
+
     useEffect(() => {
         let temp = { ...data }
         if (temp?.link_with == 'COLLECTION') {
@@ -124,7 +126,7 @@ const CollectionForm = ({ data = {}, id }) => {
                     title: formData?.title,
                     image: formData?.image ?? "",
                     home_visibilty: formData?.home_visibilty,
-                    mediaType: tempMediaType,
+                    mediaType: tempMediaType.toUpperCase(),
                     link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
@@ -147,7 +149,7 @@ const CollectionForm = ({ data = {}, id }) => {
                     title: formData?.title,
                     image: formData?.image ?? "",
                     home_visibilty: formData?.home_visibilty,
-                    mediaType: tempMediaType,
+                    mediaType: tempMediaType.toUpperCase(),
                     link_with: formData?.link_with ?? '',
                     "description": description,
                     "colleciton_list": link_with == 'COLLECTION' ? [formData?.linkValue] : [],
@@ -287,6 +289,9 @@ const CollectionForm = ({ data = {}, id }) => {
         setFormError(tempError)
     }
 
+    console.log("mediaType", mediaType, "hi");
+
+
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
@@ -405,12 +410,12 @@ const CollectionForm = ({ data = {}, id }) => {
                                             <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Media Type </FormLabel>
                                             <RadioGroup
                                                 row
-                                                value={mediaType ?? "image"}
+                                                value={mediaType.toUpperCase() ?? "IMAGE"}
                                                 onChange={handleChange}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                                 name="mediaType">
-                                                <FormControlLabel value="image" control={<Radio />} label="Image" />
-                                                <FormControlLabel value="video" control={<Radio />} label="Video" />
+                                                <FormControlLabel value="IMAGE" control={<Radio />} label="Image" />
+                                                <FormControlLabel value="VIDEO" control={<Radio />} label="Video" />
                                             </RadioGroup>
                                         </FormControl>
                                         <Box sx={{
