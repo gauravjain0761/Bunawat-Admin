@@ -46,9 +46,22 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const OrderForm = ({ data = {} }) => {
+    const [formShippingData, setFormShippingData] = React.useState({
+        fname: "",
+        lname: "",
+        email: "",
+        phone: "",
+        phone_secondary: "",
+        address_1: "",
+        address_2: "",
+        city: "",
+        district: "",
+        pincode: "",
+        state: ""
+    });
     const [formData, setFormData] = useState({
         ...data,
-        user_type: 'CUSTOMER',
+        // user_type: 'CUSTOMER',
         billing_address: {
             fname: "",
             lname: "",
@@ -108,10 +121,11 @@ const OrderForm = ({ data = {} }) => {
     const [TeamName, setTeamName] = React.useState(null);
     const [ResellerData, setResellerData] = React.useState(null);
     const [ResellerName, setResellerName] = React.useState(null);
-    const [paymentMode, setPaymentMode] = React.useState("cod")
+    const [paymentMode, setPaymentMode] = React.useState("cod");
+    const [user_type, setUserType] = React.useState("CUSTOMER")
 
     const {
-        user_type,
+        // user_type,
         teamMember,
         reseller,
         product,
@@ -209,6 +223,8 @@ const OrderForm = ({ data = {} }) => {
         getResellerData();
     }, []);
 
+    // React.useEffect(())
+
     const getSKUData = async (id) => {
         await ApiGet(`${API_URL.SKUGetProductID}/${id}`).then((response) => {
             if (response.status) {
@@ -242,10 +258,16 @@ const OrderForm = ({ data = {} }) => {
                 console.log("datadata", data)
                 for (const [key] of Object.entries(formData)) {
                     if (key === "pincode") {
-                        console.log("keykey", key, data?.pincode)
                         setFormData({ ...data, pincode: data?.pincode })
                     } else {
                         setFormData({ ...data, [key]: data[key] })
+                    }
+                }
+                for (const [key] of Object.entries(formShippingData)) {
+                    if (key === "pincode") {
+                        setFormShippingData({ ...data, pincode: data?.pincode })
+                    } else {
+                        setFormShippingData({ ...data, [key]: data[key] })
                     }
                 }
             }
@@ -253,7 +275,7 @@ const OrderForm = ({ data = {} }) => {
             console.log("Error", error);
         });
     }
-    console.log("keykey12", formData?.pincode)
+    console.log("keykey12", formData)
 
     const columns = [
         {
@@ -289,7 +311,7 @@ const OrderForm = ({ data = {} }) => {
     //     setFormData({ ...data, user_type: 'CUSTOMER' })
     // }, [data])
 
-    console.log("datadataformData", formData)
+
 
 
     const handleSubmit = async (event) => {
@@ -308,10 +330,10 @@ const OrderForm = ({ data = {} }) => {
         }
         const formDatas = {
             "member": formData?.teamMember,
-            "user_type": formData?.user_type,
+            "user_type": user_type,
             "user": "63d12454d25d498f72165513",
             "billing_address": Address,
-            "shipping_address": formData?.isSame ? Address : {},
+            "shipping_address": formShippingData,
             "isSame": formData?.isSame || false,
             "payment_mode": paymentMode.toUpperCase(),
             "total_items": formData?.items?.length,
@@ -355,6 +377,29 @@ const OrderForm = ({ data = {} }) => {
         }
     };
 
+    const handleShippingChange = (event) => {
+        if (event.target.name == "isSame") {
+            setFormShippingData({ ...formShippingData, [event.target.name]: event.target.checked });
+        } else if (event.target.name == "phone" || event.target.name == "qty") {
+            const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+            if (onlyNums.length < 10) {
+                setFormShippingData({ ...formShippingData, [event.target.name]: onlyNums });
+            } else if (onlyNums.length === 10) {
+                const number = onlyNums.replace(
+                    /(\d{3})(\d{3})(\d{4})/,
+                    '($1) $2-$3'
+                );
+                setFormShippingData({ ...formShippingData, [event.target.name]: onlyNums });
+            }
+        } else if (event.target.name == "image") {
+            setFormShippingData({ ...formShippingData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+        } else {
+            setFormShippingData({ ...formShippingData, [event.target.name]: event.target.value });
+        }
+    };
+
+
+
     const handleDeleteImage = () => {
         setFormData({ ...formData, image: null });
     };
@@ -394,7 +439,43 @@ const OrderForm = ({ data = {} }) => {
         if (customerNumber && customerNumber.length === 10) {
             getCustomerNumber(customerNumber)
         }
-    }, [customerNumber, user_type])
+    }, [customerNumber, user_type]);
+
+
+    // React.useEffect(() => {
+    //     if (formData?.isSame) {
+    //         setFormShippingData({
+    //             fname: fname,
+    //             lname: lname,
+    //             email: email,
+    //             phone: phone,
+    //             phone_secondary: phone_secondary,
+    //             address_1: address_1,
+    //             address_2: address_2,
+    //             city: city,
+    //             district: district,
+    //             pincode: pincode,
+    //             state: state
+    //         })
+    //     } else {
+    //         setFormShippingData({
+    //             fname: "",
+    //             lname: "",
+    //             email: "",
+    //             phone: "",
+    //             phone_secondary: "",
+    //             address_1: "",
+    //             address_2: "",
+    //             city: "",
+    //             district: "",
+    //             pincode: "",
+    //             state: ""
+    //         })
+    //     }
+    // }, [formData?.isSame]);
+
+    console.log("datadataformData", formShippingData)
+
 
     console.log("customerPhoneformData", items)
 
@@ -416,7 +497,7 @@ const OrderForm = ({ data = {} }) => {
                                             <RadioGroup
                                                 row
                                                 value={user_type ?? "CUSTOMER"}
-                                                onChange={handleChange}
+                                                onChange={(e) => setUserType(e.target.value)}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                                 name="user_type">
                                                 <FormControlLabel value="CUSTOMER" control={<Radio />} label="Customer" />
@@ -747,6 +828,7 @@ const OrderForm = ({ data = {} }) => {
                                             name="phone_secondary"
                                             label="Alternate Phone Nubmer"
                                             onChange={handleChange}
+                                            inputProps={{ maxLength: 10 }}
                                             value={phone_secondary || ""}
                                             validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                             errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
@@ -815,14 +897,14 @@ const OrderForm = ({ data = {} }) => {
                                         </FormGroup>
                                     </FormControl>
                                 </Box>
-                                <Grid container spacing={1}>
+                                {!formData?.isSame && <Grid container spacing={1}>
                                     <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                                         <TextField
                                             type="text"
                                             name="fname"
                                             label="First Name"
-                                            onChange={handleChange}
-                                            value={fname || ""}
+                                            onChange={handleShippingChange}
+                                            value={formShippingData.fname || ""}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
@@ -831,8 +913,8 @@ const OrderForm = ({ data = {} }) => {
                                             type="text"
                                             name="lname"
                                             label="Last Name"
-                                            onChange={handleChange}
-                                            value={lname || ""}
+                                            onChange={handleShippingChange}
+                                            value={formShippingData.lname || ""}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
@@ -841,8 +923,8 @@ const OrderForm = ({ data = {} }) => {
                                             type="email"
                                             name="email"
                                             label="Email"
-                                            value={email || ""}
-                                            onChange={handleChange}
+                                            value={formShippingData.email || ""}
+                                            onChange={handleShippingChange}
                                             validators={["required", "isEmail"]}
                                             errorMessages={["this field is required", "email is not valid"]}
                                         />
@@ -851,8 +933,8 @@ const OrderForm = ({ data = {} }) => {
                                             type="text"
                                             name="phone"
                                             label="Phone Nubmer"
-                                            onChange={handleChange}
-                                            value={phone || ""}
+                                            onChange={handleShippingChange}
+                                            value={formShippingData.phone || ""}
                                             validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                             errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
@@ -861,8 +943,8 @@ const OrderForm = ({ data = {} }) => {
                                             name="text"
                                             type="pincode"
                                             label="Post Code"
-                                            value={pincode || ""}
-                                            onChange={handleChange}
+                                            value={formShippingData.pincode || ""}
+                                            onChange={handleShippingChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
@@ -871,8 +953,9 @@ const OrderForm = ({ data = {} }) => {
                                             type="text"
                                             name="phone_secondary"
                                             label="Alternate Phone Nubmer"
-                                            onChange={handleChange}
-                                            value={phone_secondary || ""}
+                                            inputProps={{ maxLength: 10 }}
+                                            onChange={handleShippingChange}
+                                            value={formShippingData.phone_secondary || ""}
                                             validators={["required", "minStringLength:10", "maxStringLength: 10"]}
                                             errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
@@ -882,36 +965,36 @@ const OrderForm = ({ data = {} }) => {
                                         <TextField
                                             type="text"
                                             name="state"
-                                            value={state || ""}
+                                            value={formShippingData.state || ""}
                                             label="State"
-                                            onChange={handleChange}
+                                            onChange={handleShippingChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="district"
+                                            name="district"
+                                            type="text"
                                             label="District"
-                                            value={district || ""}
-                                            onChange={handleChange}
+                                            value={formShippingData.district || ""}
+                                            onChange={handleShippingChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="city"
+                                            name="city"
+                                            type="text"
                                             label="City"
-                                            value={city || ""}
-                                            onChange={handleChange}
+                                            value={formShippingData.city || ""}
+                                            onChange={handleShippingChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="address_1"
+                                            name="address_1"
+                                            type="text"
                                             label="Address - 1"
-                                            value={address_1 || ""}
-                                            onChange={handleChange}
+                                            value={formShippingData.address_1 || ""}
+                                            onChange={handleShippingChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
@@ -919,13 +1002,13 @@ const OrderForm = ({ data = {} }) => {
                                             name="text"
                                             type="address_2"
                                             label="Address - 2"
-                                            value={address_2 || ""}
-                                            onChange={handleChange}
+                                            value={formShippingData.address_2 || ""}
+                                            onChange={handleShippingChange}
                                             validators={["required"]}
                                             errorMessages={["this field is required"]}
                                         />
                                     </Grid>
-                                </Grid>
+                                </Grid>}
 
                                 <Typography variant="h6">Payment Info</Typography>
                                 <FormControl sx={{
