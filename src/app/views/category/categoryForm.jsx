@@ -307,6 +307,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
             await ApiPost(API_URL.videoFileUpload, videoData)
                 .then((response) => {
                     if (response?.data) {
+                        console.log("response?.data", response?.data[0]?.Location)
                         setFormData({
                             ...formData, video: response?.data && response?.data[0]?.Location
                         });
@@ -318,6 +319,23 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     console.log("Error", error);
                 });
         }
+    }
+
+    const handleDeleteVideo = async (event) => {
+        setMediaLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: video
+        })
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({ ...formData, video: null });
+                    setMediaLoading(false)
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                setMediaLoading(false)
+            });
     }
 
     const handleChange = (event) => {
@@ -622,12 +640,15 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                                 margin: "10px 10px 0 0",
                                                                 position: "relative"
                                                             }}>
-                                                            <img src={image} width="100%" height="90%" />
+                                                            <video width="100%" height="90%" autoPlay={true} muted={true} loop={true} playsInline={true}
+                                                                style={{ objectFit: "fill", borderRadius: "10px" }}>
+                                                                <source src={video} type="video/mp4" />
+                                                            </video>
                                                             <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                                <Icon onClick={() => handleDeleteImage()} sx={{
+                                                                <Icon onClick={() => handleDeleteVideo()} sx={{
                                                                     color: "red",
                                                                     cursor: "pointer",
-                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                                }}>delete</Icon> <Span onClick={() => handleDeleteVideo()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
                                                             </Box>
                                                         </Box>
                                                         :
