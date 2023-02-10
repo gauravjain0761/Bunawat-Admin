@@ -91,6 +91,7 @@ export const API_URL = {
     fileUploadCategory: "fileUpload/category",
     fileUploadCollection: "fileUpload/collection",
     fileRemove: "fileRmove",
+    fileStatus: "fileStatus/update",
 
     getTeams: "team_member/getAll"
 }

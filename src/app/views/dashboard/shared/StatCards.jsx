@@ -1,6 +1,7 @@
 import { Box, Card, Grid, Icon, IconButton, styled, Tooltip } from '@mui/material';
 import { Small } from 'app/components/Typography';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import { useNavigate } from 'react-router-dom';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -29,13 +30,14 @@ const Heading = styled('h6')(({ theme }) => ({
 }));
 
 const StatCards = () => {
+  const navigate = useNavigate();
   const cardList = [
-    { name: 'Total Customer', amount: 3050, icon: 'group' },
-    { name: 'Total Resellers', amount: 1000, icon: 'group' },
-    { name: 'Total Influncers', amount: 2340, icon: 'group' },
-    { name: 'This week Sales', amount: '80,500', icon: 'currency_rupee_Icon' },
-    { name: 'Inventory', amount: '8.5% Stock Surplus', icon: 'store' },
-    { name: 'Orders', amount: '305 Orders', icon: 'shopping_cart' },
+    { name: 'Total Customer', amount: 3050, icon: 'group', link: "/customer" },
+    { name: 'Total Resellers', amount: 1000, icon: 'group', link: "/reseller" },
+    { name: 'Total Influncers', amount: 2340, icon: 'group', link: "/influncer" },
+    { name: 'This week Sales', amount: '80,500', icon: 'currency_rupee_Icon', link: "#" },
+    { name: 'Inventory', amount: '8.5% Stock Surplus', icon: 'store', link: "/inventory/list" },
+    { name: 'Orders', amount: '305 Orders', icon: 'shopping_cart', link: "/order/list" },
   ];
 
   return (
@@ -52,7 +54,7 @@ const StatCards = () => {
             </ContentBox>
 
             <Tooltip title="View Details" placement="top">
-              <IconButton>
+              <IconButton onClick={() => navigate(item?.link)}>
                 <Icon>arrow_right_alt</Icon>
               </IconButton>
             </Tooltip>

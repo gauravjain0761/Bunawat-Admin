@@ -41,7 +41,7 @@ const AddProduct = () => {
     return (
         <>
             {id ?
-                <ProductEditForm data={data} id={id} />
+                <ProductEditForm getIDData={getData} data={data} id={id} />
                 :
                 <ProductForm data={{}} />
             }
