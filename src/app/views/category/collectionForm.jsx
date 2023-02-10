@@ -214,6 +214,23 @@ const CollectionForm = ({ data = {}, id }) => {
             });
     }
 
+    const handleDeleteVideo = async (event) => {
+        setMediaLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: video
+        })
+            .then((response) => {
+                if (response?.data) {
+                    setFormData({ ...formData, video: null });
+                    setMediaLoading(false)
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                setMediaLoading(false)
+            });
+    }
+
     const handleImageVideo = async (event) => {
         const MAX_FILE_SIZE = 51200 // 50MB
         const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
@@ -462,10 +479,10 @@ const CollectionForm = ({ data = {}, id }) => {
                                                                 <source src={video} type="video/mp4" />
                                                             </video>
                                                             <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                                <Icon onClick={() => handleDeleteImage()} sx={{
+                                                                <Icon onClick={() => handleDeleteVideo()} sx={{
                                                                     color: "red",
                                                                     cursor: "pointer",
-                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                                }}>delete</Icon> <Span onClick={() => handleDeleteVideo()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
                                                             </Box>
                                                         </Box>
                                                         :
