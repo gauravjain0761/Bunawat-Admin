@@ -50,7 +50,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const ProductEditForm = ({ data = {}, id }) => {
+const ProductEditForm = ({ getIDData, data = {}, id }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [mOpen, setMOpen] = useState(false);
     const [dOpen, setDopen] = useState(false)
@@ -584,28 +584,72 @@ const ProductEditForm = ({ data = {}, id }) => {
         // setFormData({ ...formData, attributeData: attributess });
     }
 
-    const handleSwitchImage = (index, max = 5) => {
-        let images = formData?.image ?? []
+    const handleSwitchImage = async (index, item, max = 5) => {
+        let images = formData?.image ?? [];
         if (images?.filter((img) => img?.isActive).length < max) {
             images[index] = { ...images[index], isActive: !images[index]?.isActive }
             setFormData({ ...formData, image: images });
+            await ApiPut(`${API_URL.fileStatus}/${item?._id}`, {
+                isActive: true
+            }).then((response) => {
+                if (response?.data) {
+                    toast.success(response?.data?.message)
+                    getIDData(id)
+                }
+            }).catch((error) => {
+                toast.error(error.error)
+                console.log("Error", error);
+            });
         } else {
             if (images[index]?.isActive) {
                 images[index] = { ...images[index], isActive: !images[index]?.isActive }
                 setFormData({ ...formData, image: images });
+                await ApiPut(`${API_URL.fileStatus}/${item?._id}`, {
+                    isActive: false
+                }).then((response) => {
+                    if (response?.data) {
+                        toast.success(response?.data?.message)
+                        getIDData(id)
+                    }
+                }).catch((error) => {
+                    toast.error(error.error)
+                    console.log("Error", error);
+                });
             }
         }
     };
 
-    const handleSwitchVideo = (index, max = 4) => {
+    const handleSwitchVideo = async (index, item, max = 4) => {
         let videos = formData?.videos ?? []
         if (videos?.filter((video) => video?.isActive).length < max) {
             videos[index] = { ...videos[index], isActive: !videos[index]?.isActive }
             setFormData({ ...formData, videos: videos });
+            await ApiPut(`${API_URL.fileStatus}/${item?._id}`, {
+                isActive: true
+            }).then((response) => {
+                if (response?.data) {
+                    toast.success(response?.data?.message)
+                    getIDData(id)
+                }
+            }).catch((error) => {
+                toast.error(error.error)
+                console.log("Error", error);
+            });
         } else {
             if (videos[index]?.isActive) {
                 videos[index] = { ...videos[index], isActive: !videos[index]?.isActive }
                 setFormData({ ...formData, videos: videos });
+                await ApiPut(`${API_URL.fileStatus}/${item?._id}`, {
+                    isActive: false
+                }).then((response) => {
+                    if (response?.data) {
+                        toast.success(response?.data?.message)
+                        getIDData(id)
+                    }
+                }).catch((error) => {
+                    toast.error(error.error)
+                    console.log("Error", error);
+                });
             }
         }
     };
@@ -678,7 +722,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                     cursor: "pointer"
                                 }}
                                 checked={item?.isActive}
-                                onChange={() => handleSwitchImage(i)}
+                                onChange={(e) => handleSwitchImage(i, item)}
                                 inputProps={{ 'aria-label': 'controlled' }}
                             /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                         </Stack>
@@ -714,7 +758,7 @@ const ProductEditForm = ({ data = {}, id }) => {
                                 zIndex: "999"
                             }}
                             checked={item?.isActive}
-                            onChange={() => handleSwitchVideo(i, 4)}
+                            onChange={() => handleSwitchVideo(i, item, 4)}
                             inputProps={{ 'aria-label': 'controlled' }}
                         /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                     </Stack>
