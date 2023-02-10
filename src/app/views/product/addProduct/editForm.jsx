@@ -1003,7 +1003,7 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                                             label="Tax Type"
                                             onChange={handleChange}>
                                             <MenuItem value={10}>Standard</MenuItem>
-                                            <MenuItem value={6}>6% CGST/IGST</MenuItem>
+                                            <MenuItem value={2.5}>2.5% CGST/IGST</MenuItem>
                                         </Select>
                                         {formError?.tax && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </FormControl>
