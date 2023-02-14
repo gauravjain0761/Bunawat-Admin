@@ -117,8 +117,6 @@ const ProductMedia = () => {
                             />
                             Media List
                         </Box>
-
-
                         <Box component='span' sx={{
                             fontWeight: 700,
                             fontSize: '16px',
@@ -146,6 +144,13 @@ const ProductMedia = () => {
                                 transformOrigin={{
                                     vertical: 'top',
                                     horizontal: 'right',
+                                }}
+                                sx={{
+                                    '& .MuiPopover-paper': {
+                                        top: "210px !important",
+                                        right: "30px !important",
+                                        left: "unset !important"
+                                    }
                                 }}
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
