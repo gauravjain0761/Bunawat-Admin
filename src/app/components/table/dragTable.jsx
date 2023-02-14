@@ -12,7 +12,7 @@ import { UIColor } from "app/utils/constant";
 import { visuallyHidden } from '@mui/utils';
 
 export const DragHandle = SortableHandle(({ style }) => (
-    <span style={{ ...style, ...{ cursor: 'move' } }}> {'::::'} </span>)
+    <span style={{ ...style, ...{ cursor: 'move', display: "flex", alignSelf: "center", paddingLeft: "10px", paddingRight: "20px" } }}> {'::::'} </span>)
 )
 
 const TableBodySortable = SortableContainer(({ children }) => (

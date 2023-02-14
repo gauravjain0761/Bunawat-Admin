@@ -15,6 +15,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Stack,
     styled,
     Typography,
 } from "@mui/material";
@@ -85,80 +86,80 @@ const CouponForm = ({ data = {} }) => {
                 <SimpleCard title="Add Coupon" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} >
-                              
-                                <FormControl fullWidth>
+
+                            <FormControl fullWidth>
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="row-radio-buttons-group"
                                     defaultValue="percentage"
                                 >
-                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "12px", marginRight: "10px"}} >Discount Type</FormLabel>
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{ marginTop: "12px", marginRight: "10px" }} >Discount Type</FormLabel>
                                     <FormControlLabel value="percentage" control={<Radio />} label="Percentage" />
                                     <FormControlLabel value="fixed_price" control={<Radio />} label="Fixed Price" />
                                 </RadioGroup>
-                                </FormControl>
-                                <Box sx={{mt: 1}}>
-                                    <TextField
-                                        type="text"
-                                        name="discountTypeValue"
-                                        label="Discount Type Value"
-                                        onChange={handleChange}
-                                        value={discountTypeValue || ""}
-                                        sx={{
-                                            marginBottom: '7px',
-                                        }}
-                                    />
-                                </Box>
-                            
-                            
-                                <FormControl fullWidth sx={{mt: 0}}>
+                            </FormControl>
+                            <Box sx={{ mt: 1 }}>
+                                <TextField
+                                    type="text"
+                                    name="discountTypeValue"
+                                    label="Discount Type Value"
+                                    onChange={handleChange}
+                                    value={discountTypeValue || ""}
+                                    sx={{
+                                        marginBottom: '7px',
+                                    }}
+                                />
+                            </Box>
+
+
+                            <FormControl fullWidth sx={{ mt: 0 }}>
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="row-radio-buttons-group"
                                     defaultValue="all"
                                 >
-                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{marginTop: "12px", marginRight: "10px"}}>Apply On</FormLabel>
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{ marginTop: "12px", marginRight: "10px" }}>Apply On</FormLabel>
                                     <FormControlLabel value="all" control={<Radio />} label="All" onClick={() => setShowApplyOn('all')} />
                                     <FormControlLabel value="category" control={<Radio />} label="Category" onClick={() => setShowApplyOn('category')} />
                                     <FormControlLabel value="collection" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('collection')} />
                                 </RadioGroup>
+                            </FormControl>
+                            {showApplyOn === 'category' &&
+                                <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
+                                    <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={applyOnValue}
+                                        label="Category"
+                                        onChange={handleChange}
+                                    >
+                                        <MenuItem value={10}>Category 1</MenuItem>
+                                        <MenuItem value={20}>Category 2</MenuItem>
+                                        <MenuItem value={30}>Category 3</MenuItem>
+                                    </Select>
                                 </FormControl>
-                            {showApplyOn === 'category' && 
-                             <FormControl fullWidth sx={{mt: 1, mb: 1}}>
-                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                                <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={applyOnValue}
-                                label="Category"
-                                onChange={handleChange}
-                                >
-                                <MenuItem value={10}>Category 1</MenuItem>
-                                <MenuItem value={20}>Category 2</MenuItem>
-                                <MenuItem value={30}>Category 3</MenuItem>
-                                </Select>
-                            </FormControl>
                             }
-                            {showApplyOn === 'collection' && 
-                             <FormControl fullWidth sx={{mt: 1, mb: 1}}>
-                                <InputLabel id="demo-simple-select-label">Collection</InputLabel>
-                                <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={applyOnValue}
-                                label="Category"
-                                onChange={handleChange}
-                                >
-                                <MenuItem value={10}>Collection 1</MenuItem>
-                                <MenuItem value={20}>Collection 2</MenuItem>
-                                <MenuItem value={30}>Collection 3</MenuItem>
-                                </Select>
-                            </FormControl>
+                            {showApplyOn === 'collection' &&
+                                <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
+                                    <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={applyOnValue}
+                                        label="Category"
+                                        onChange={handleChange}
+                                    >
+                                        <MenuItem value={10}>Collection 1</MenuItem>
+                                        <MenuItem value={20}>Collection 2</MenuItem>
+                                        <MenuItem value={30}>Collection 3</MenuItem>
+                                    </Select>
+                                </FormControl>
                             }
-                            
-                            <Box sx={{mt: 1}} >
+
+                            <Box sx={{ mt: 1 }} >
                                 <TextField
                                     type="text"
                                     name="code"
@@ -233,14 +234,20 @@ const CouponForm = ({ data = {} }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="outlined" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }}>
-                                <Icon>send</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                            </Button>
+                            <Stack direction="row" spacing={2}>
+                                <Box>
+                                    <Button color="primary" variant="outlined" type="button" sx={{ mr: 0, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Icon>arrow_back</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                    </Button>
+                                </Box>
+                                <Box>
+                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 0, mt: 2 }}>
+                                        <Icon>send</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                                    </Button>
+                                </Box>
+                            </Stack>
                             {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
                                 <Icon>delete</Icon>
                                 <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>
