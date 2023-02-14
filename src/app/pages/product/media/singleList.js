@@ -70,8 +70,8 @@ const ProductMediaSingleList = () => {
 
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader >
-                <Title >
+            <CardHeader>
+                <Title>
                     <Stack flexDirection='row' alignItems='center' justifyContent='center'>
                         <IconButton sx={{ color: "#000", p: 0, mr: 1 }} onClick={() => navigate(-1)}>
                             <Icon>arrow_back</Icon>

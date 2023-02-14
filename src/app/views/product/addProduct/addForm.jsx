@@ -505,24 +505,29 @@ const ProductForm = ({ data = {} }) => {
                     <div>
                         <Stack direction="row" alignItems="center">
                             <Switch
+                                size="small"
                                 sx={{
                                     color: "red",
-                                    cursor: "pointer"
+                                    cursor: "pointer",
+                                    fontSize: "10px !impoprtant",
+                                    '& .MuiSwitch-input': {
+                                        width: "100% !important"
+                                    }
                                 }}
                                 checked={item?.isActive}
                                 onChange={() => handleSwitchImage(i)}
                                 inputProps={{ 'aria-label': 'controlled' }}
-                            /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                            /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                         </Stack>
                     </div>
                     <div>
                         <Stack direction="row" alignItems="center">
-                            <IconButton>
-                                <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                            <IconButton size="small">
+                                <Icon fontSize="small" onMouseDown={(e) => handleDeleteImage(i)} sx={{
                                     color: "red",
                                     cursor: "pointer",
                                 }}>delete</Icon>
-                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
                         </Stack>
                     </div>
                 </Box>
@@ -546,22 +551,27 @@ const ProductForm = ({ data = {} }) => {
                 <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" alignItems="center">
                         <Switch
+                            size="small"
                             sx={{
                                 color: "red",
                                 cursor: "pointer",
-                                zIndex: "999"
+                                zIndex: "999",
+                                fontSize: "10px !impoprtant",
+                                '& .MuiSwitch-input': {
+                                    width: "100% !important"
+                                }
                             }}
                             checked={item?.isActive}
                             onChange={() => handleSwitchVideo(i, 4)}
                             inputProps={{ 'aria-label': 'controlled' }}
-                        /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                        /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                     </Stack>
                     <Stack direction="row" alignItems="center">
-                        <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
+                        <Icon fontSize="small" onMouseDown={() => handleDeleteVideo(i)} sx={{
                             color: "red",
                             cursor: "pointer",
                             zIndex: "999"
-                        }}>delete</Icon> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                        }}>delete</Icon> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
                     </Stack>
                 </Box>
             </Box>
@@ -610,7 +620,7 @@ const ProductForm = ({ data = {} }) => {
 
     const SortableVideoList = SortableContainer(({ items }) => {
         return (
-            <Box className="list-group"  sx={{ width: "100%" }}>
+            <Box className="list-group" sx={{ width: "100%" }}>
                 {items?.map((item, index) => {
                     return (
                         <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />

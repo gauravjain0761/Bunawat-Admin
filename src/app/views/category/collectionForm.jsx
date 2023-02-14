@@ -11,6 +11,7 @@ import {
     FormLabel,
     Grid,
     Icon,
+    IconButton,
     InputLabel,
     MenuItem,
     Radio,
@@ -479,10 +480,12 @@ const CollectionForm = ({ data = {}, id }) => {
                                                                 <source src={video} type="video/mp4" />
                                                             </video>
                                                             <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                                <Icon onClick={() => handleDeleteVideo()} sx={{
-                                                                    color: "red",
-                                                                    cursor: "pointer",
-                                                                }}>delete</Icon> <Span onClick={() => handleDeleteVideo()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                                <IconButton size="small">
+                                                                    <Icon fontSize="small" onClick={() => handleDeleteVideo()} sx={{
+                                                                        color: "red",
+                                                                        cursor: "pointer",
+                                                                    }}>delete</Icon>
+                                                                </IconButton> <Span onClick={() => handleDeleteVideo()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
                                                             </Box>
                                                         </Box>
                                                         :
@@ -527,10 +530,11 @@ const CollectionForm = ({ data = {}, id }) => {
                                                             }}>
                                                             <img src={image} width="100%" height="90%" />
                                                             <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                                <Icon onClick={() => handleDeleteImage()} sx={{
-                                                                    color: "red",
-                                                                    cursor: "pointer",
-                                                                }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                                <IconButton size="small">
+                                                                    <Icon fontSize="small" onClick={() => handleDeleteImage()} sx={{
+                                                                        color: "red",
+                                                                        cursor: "pointer",
+                                                                    }}>delete</Icon></IconButton> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
                                                             </Box>
                                                         </Box>
                                                         :
