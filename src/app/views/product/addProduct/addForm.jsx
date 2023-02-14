@@ -836,19 +836,25 @@ const ProductForm = ({ data = {} }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <LoadingButton
-                                loading={loading}
-                                loadingPosition="start"
-                                type="submit"
-                                sx={{ mr: 2, mt: 2 }}
-                                startIcon={<Icon>send</Icon>}
-                                variant="contained">
-                                Save
-                            </LoadingButton>
+                            <Stack direction="row" spacong={2}>
+                                <Box>
+                                    <Button color="primary" variant="outlined" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Icon>arrow_back</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                    </Button>
+                                </Box>
+                                <Box>
+                                    <LoadingButton
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        type="submit"
+                                        sx={{ mr: 0, mt: 2 }}
+                                        startIcon={<Icon>send</Icon>}
+                                        variant="contained">
+                                        Save
+                                    </LoadingButton>
+                                </Box>
+                            </Stack>
                         </Box>
                     </Box>
                 </SimpleCard>

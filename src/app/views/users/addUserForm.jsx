@@ -12,6 +12,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Stack,
     styled,
     Typography,
 } from "@mui/material";
@@ -212,19 +213,25 @@ const AddUserForm = ({ data = {}, disableRole = false }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <LoadingButton
-                                loading={loading}
-                                loadingPosition="start"
-                                type="submit"
-                                sx={{ mr: 2, mt: 2 }}
-                                startIcon={<Icon>send</Icon>}
-                                variant="contained">
-                                Save
-                            </LoadingButton>
+                            <Stack direction="row" spacing={{ md: 2, sm: 2, xs: 2 }}>
+                                <Box>
+                                    <Button color="primary" variant="outlined" type="button" sx={{ mr: 0, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Icon>arrow_back</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                    </Button>
+                                </Box>
+                                <Box>
+                                    <LoadingButton
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        type="submit"
+                                        sx={{ mr: 0, mt: 2 }}
+                                        startIcon={<Icon>send</Icon>}
+                                        variant="contained">
+                                        Save
+                                    </LoadingButton>
+                                </Box>
+                            </Stack>
                         </Box>
                     </Box>
                 </SimpleCard>

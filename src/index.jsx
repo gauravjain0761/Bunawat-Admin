@@ -1,5 +1,6 @@
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import { StyledEngineProvider } from '@mui/styled-engine';
+import theme from 'app/components/theme';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
@@ -8,10 +9,12 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <StyledEngineProvider injectFirst>
-    <BrowserRouter>
-      <CssBaseline />
-      <App />
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <CssBaseline />
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
   </StyledEngineProvider>,
   document.getElementById('root')
 );

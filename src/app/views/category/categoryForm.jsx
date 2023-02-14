@@ -17,6 +17,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Stack,
     styled,
     Typography,
 } from "@mui/material";
@@ -448,7 +449,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         ))}
                                     </Select>
                                     {formError?.parent_cateogry_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                                    <Typography onClick={() => navigate(`/category/details/parent?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
+                                    <Typography onClick={() => navigate(`/category/details/parent?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "#232a45", fontWeight: 500, textTransform: "capitalize" }}>
                                         Add Parent Category
                                     </Typography>
                                 </FormControl>
@@ -473,7 +474,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                         ))}
                                     </Select>
                                     {formError?.sub_category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                                    <Typography onClick={() => navigate(`/category/details/sub?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "blue", fontWeight: 500, textTransform: "capitalize" }}>
+                                    <Typography onClick={() => navigate(`/category/details/sub?redirect=${type}`)} sx={{ width: "fit-content", mt: 1, flexShrink: 0, cursor: "pointer", fontSize: "14px", color: "#232a45", fontWeight: 500, textTransform: "capitalize" }}>
                                         Add Parent Sub Category
                                     </Typography>
                                 </FormControl>
@@ -759,19 +760,25 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     </Grid>
                     <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                         <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Button color="primary" variant="contained" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                <Icon>arrow_back</Icon>
-                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                            </Button>
-                            <LoadingButton
-                                loading={loading}
-                                loadingPosition="start"
-                                type="submit"
-                                sx={{ mr: 2, mt: 2 }}
-                                startIcon={<Icon>send</Icon>}
-                                variant="contained">
-                                Save
-                            </LoadingButton>
+                            <Stack direction="row" spacing={2}>
+                                <Box>
+                                    <Button color="primary" variant="outlined" type="button" sx={{ mr: 0, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Icon>arrow_back</Icon>
+                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                    </Button>
+                                </Box>
+                                <Box>
+                                    <LoadingButton
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        type="submit"
+                                        sx={{ mr: 0, mt: 2 }}
+                                        startIcon={<Icon>send</Icon>}
+                                        variant="contained">
+                                        Save
+                                    </LoadingButton>
+                                </Box>
+                            </Stack>
                         </Box>
                     </Box>
                 </SimpleCard>

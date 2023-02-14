@@ -1048,7 +1048,7 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                                 <SimpleCard title="Add Attributes" backArrow={false} borderRadiusZero={true}>
                                     <Grid container spacing={12}>
                                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}> 
                                                 {attributes?.map((data, index) => {
                                                     return (
                                                         <Autocomplete
@@ -1070,11 +1070,12 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                                                         />
                                                     )
                                                 })}
-
-                                                <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
-                                                    <Icon>add</Icon>
-                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
-                                                </Button>
+                                                <Box sx={{ width: "100%", textAlign: "end" }}>
+                                                    <Button color="primary" variant="contained" type="button" sx={{ width: "150px", height: '53px' }} onClick={() => handleAddAttribute()}>
+                                                        <Icon>add</Icon>
+                                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add</Span>
+                                                    </Button>
+                                                </Box>
                                             </Box>
 
                                             {sku_data?.length > 0 && <Box sx={{ mt: 1 }}>
@@ -1299,23 +1300,24 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                         <Box sx={{
                             ml: 3
                         }}>
-                            <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #1976d2', color: '#1976d2' }}>
-                                Back
-                            </Button>
-                            <LoadingButton
-                                loading={loading}
-                                loadingPosition="start"
-                                type="submit"
-                                sx={{
-                                    background: '#1976d2', ml: 2, color: '#fff',
-                                    "&:hover": {
-                                        background: '#1976d2', color: '#fff'
-                                    }
-                                }}
-                                startIcon={<Icon>send</Icon>}
-                                variant="contained">
-                                Save
-                            </LoadingButton>
+                            <Stack direction="row" spacing={2}>
+                                <Box>
+                                    <Button startIcon={<Icon>arrow_back</Icon>} variant="outlined" color="primary" onClick={() => navigate(-1)} >
+                                        Back
+                                    </Button>
+                                </Box>
+                                <Box>
+                                    <LoadingButton
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        type="submit"
+                                        startIcon={<Icon>send</Icon>}
+                                        color="primary"
+                                        variant="contained">
+                                        Save
+                                    </LoadingButton>
+                                </Box>
+                            </Stack>
                         </Box>
                     </Box>
                 </Box>
