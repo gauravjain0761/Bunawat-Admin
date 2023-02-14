@@ -63,37 +63,38 @@ const ProductMedia = () => {
 
     return (
         <>
-            <Box display="flex" justifyContent='space-between'>
-                <Box></Box>
-                <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
-                    border: "1px solid #000",
-                    borderRadius: "6px",
-                    mr: "20px",
-                    width: '300px',
-                    marginTop: '20px',
-                    // marginLeft: '26rem',
-                }}>
-                    <Box component="input" sx={{
-                        width: '100%',
-                        border: 'none',
-                        outline: 'none',
-                        fontSize: '1rem',
-                        p: 0,
-                        paddingLeft: '20px',
-                        height: '36px',
-                        background: "transparent",
-                        color: "#000",
-                    }} type="text" autoFocus value={searchText} onChange={(e) => {
-                        setSearchText(e.target.value)
-                    }} placeholder="Search here..." />
-                    <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-                        <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
-                    </IconButton>
+            <CardHeader sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
+                <Box display="flex" justifyContent='space-between' width="100%">
+                    <Box></Box>
+                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                        border: "1px solid #000",
+                        borderRadius: "6px",
+                        mr: "0px",
+                        width: '300px',
+                        marginTop: '20px',
+                        // marginLeft: '26rem',
+                    }}>
+                        <Box component="input" sx={{
+                            width: '100%',
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: '1rem',
+                            p: 0,
+                            paddingLeft: '20px',
+                            height: '36px',
+                            background: "transparent",
+                            color: "#000",
+                        }} type="text" autoFocus value={searchText} onChange={(e) => {
+                            setSearchText(e.target.value)
+                        }} placeholder="Search here..." />
+                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                            <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
+                        </IconButton>
+                    </Box>
                 </Box>
-            </Box>
-
-            <Card elevation={3} sx={{ border: "1px solid #232a45", margin: "20px", paddingBottom: "20px" }}>
-                <CardHeader sx={{ background: "#232a45", padding: "1.4rem 2rem", color: "#fff", fontSize: '16px', fontWeight: '700', }}>
+            </CardHeader>
+            <Card elevation={3} sx={{ border: "1px solid #232a45", margin: "10px", paddingBottom: "20px" }}>
+                <CardHeader sx={{ background: "#232a45", padding: "1.4rem 2rem", color: "#fff", fontSize: '16px', fontWeight: '700', paddingLeft: "10px !important", paddingRight: "10px !important" }}>
                     {/* <Title>Media List</Title> */}
                     <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
                         width: '100%',

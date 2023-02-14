@@ -287,7 +287,7 @@ const InventoryList = () => {
     }));
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader className="searchBoxSeaprate">
+            <CardHeader className="searchBoxSeaprate" sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
                 <Title>Inventory List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{

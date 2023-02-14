@@ -717,24 +717,29 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                     <div>
                         <Stack direction="row" alignItems="center">
                             <Switch
+                                size="small"
                                 sx={{
                                     color: "red",
-                                    cursor: "pointer"
+                                    cursor: "pointer",
+                                    fontSize: "10px !impoprtant",
+                                    '& .MuiSwitch-input': {
+                                        width: "100% !important"
+                                    }
                                 }}
                                 checked={item?.isActive}
                                 onChange={(e) => handleSwitchImage(i, item)}
                                 inputProps={{ 'aria-label': 'controlled' }}
-                            /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                            /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                         </Stack>
                     </div>
                     <div>
                         <Stack direction="row" alignItems="center">
-                            <IconButton>
-                                <Icon onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                            <IconButton size="small">
+                                <Icon fontSize="small" onMouseDown={(e) => handleDeleteImage(i)} sx={{
                                     color: "red",
                                     cursor: "pointer",
                                 }}>delete</Icon>
-                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
                         </Stack>
                     </div>
                 </Box>
@@ -752,24 +757,29 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                 <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" alignItems="center">
                         <Switch
+                            size="small"
                             sx={{
                                 color: "red",
                                 cursor: "pointer",
-                                zIndex: "999"
+                                zIndex: "999",
+                                fontSize: "10px !impoprtant",
+                                '& .MuiSwitch-input': {
+                                    width: "100% !important"
+                                }
                             }}
                             checked={item?.isActive}
                             onChange={() => handleSwitchVideo(i, item, 4)}
                             inputProps={{ 'aria-label': 'controlled' }}
-                        /> <Span sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                        /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                     </Stack>
                     <Stack direction="row" alignItems="center">
-                        <IconButton>
-                            <Icon onMouseDown={() => handleDeleteVideo(i)} sx={{
+                        <IconButton size="small">
+                            <Icon fontSize="small" onMouseDown={() => handleDeleteVideo(i)} sx={{
                                 color: "red",
                                 cursor: "pointer",
                                 zIndex: "999"
                             }}>delete</Icon>
-                        </IconButton> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                        </IconButton> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
                     </Stack>
                 </Box>
             </Box>

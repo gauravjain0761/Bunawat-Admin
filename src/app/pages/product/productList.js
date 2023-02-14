@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -327,41 +327,43 @@ const ProductList = () => {
     }));
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader className="searchBoxSeaprate">
+            <CardHeader className="searchBoxSeaprate" sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
                 <Title>Product List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
-                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
-                        border: "1px solid #000",
-                        borderRadius: "6px",
-                        mr: "20px",
-                    }}>
-                        <Box component="input" sx={{
-                            width: '100%',
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: '1rem',
-                            p: 0,
-                            paddingLeft: '20px',
-                            height: '36px',
-                            background: "transparent",
-                            color: "#000",
-                        }} type="text" value={searchText} onChange={(e) => {
-                            setSearchText(e.target.value)
-                        }} placeholder="Search here..." />
-                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-                            <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
-                        </IconButton>
-                    </Box>
+                    <Stack direction="row" spacing={{ md: 3, sm: 1, xs: 1 }}>
+                        <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                            border: "1px solid #000",
+                            borderRadius: "6px",
+                            mr: "0px",
+                        }}>
+                            <Box component="input" sx={{
+                                width: '100%',
+                                border: 'none',
+                                outline: 'none',
+                                fontSize: '1rem',
+                                p: 0,
+                                paddingLeft: '20px',
+                                height: '36px',
+                                background: "transparent",
+                                color: "#000",
+                            }} type="text" value={searchText} onChange={(e) => {
+                                setSearchText(e.target.value)
+                            }} placeholder="Search here..." />
+                            <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                                <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
+                            </IconButton>
+                        </Box>
 
-                    <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/product/add`)} sx={{
-                        backgroundColor: UIColor, color: "#fff",
-                        "&:hover": {
-                            backgroundColor: UIColor, color: "#fff"
-                        }
-                    }}>
-                        <Icon>add</Icon>
-                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Product</Span>
-                    </Button>
+                        <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/product/add`)} sx={{
+                            backgroundColor: UIColor, color: "#fff",
+                            "&:hover": {
+                                backgroundColor: UIColor, color: "#fff"
+                            }
+                        }}>
+                            <Icon>add</Icon>
+                            <Span sx={{ pl: 1, textTransform: "capitalize", width: { md: "auto", sm: "200px", xs: "200px" } }}>Add Product</Span>
+                        </Button>
+                    </Stack>
                 </Box>
             </CardHeader>
             <DragTableComponent
