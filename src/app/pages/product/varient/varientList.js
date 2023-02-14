@@ -240,13 +240,12 @@ const VarientList = () => {
 
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <Container>
+            <Container maxWidth sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
                 <Stack spacing={3}>
                     <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
                         <SimpleCard title="Varient" >
                             <Grid container spacing={12}>
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-
                                     <TextField
                                         sx={{
                                             width: "100%",
@@ -262,23 +261,28 @@ const VarientList = () => {
                                     />
 
                                 </Grid>
-
                             </Grid>
                             <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
                                 <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                                    <Button color="primary" variant="contained" type="button" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                        <Icon>arrow_back</Icon>
-                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                                    </Button>
-                                    <LoadingButton
-                                        loading={loading}
-                                        loadingPosition="start"
-                                        type="submit"
-                                        sx={{ mr: 2, mt: 2 }}
-                                        startIcon={<Icon>send</Icon>}
-                                        variant="contained">
-                                        Save
-                                    </LoadingButton>
+                                    <Stack direction="row" spacing={2}>
+                                        <Box>
+                                            <Button color="primary" variant="outlined" type="button" sx={{ mr: 0, mt: 2 }} onClick={() => navigate(-1)}>
+                                                <Icon>arrow_back</Icon>
+                                                <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                            </Button>
+                                        </Box>
+                                        <Box>
+                                            <LoadingButton
+                                                loading={loading}
+                                                loadingPosition="start"
+                                                type="submit"
+                                                sx={{ mr: 0, mt: 2 }}
+                                                startIcon={<Icon>send</Icon>}
+                                                variant="contained">
+                                                Save
+                                            </LoadingButton>
+                                        </Box>
+                                    </Stack>
                                 </Box>
                             </Box>
                         </SimpleCard>
@@ -286,7 +290,7 @@ const VarientList = () => {
                     </ValidatorForm>
                 </Stack>
             </Container>
-            <CardHeader sx={{ mt: 2 }} className="searchBoxSeaprate">
+            <CardHeader sx={{ mt: 2, paddingLeft: "10px !important", paddingRight: "10px !important" }} className="searchBoxSeaprate">
                 <Title>Varient List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{

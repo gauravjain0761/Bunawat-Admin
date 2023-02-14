@@ -856,7 +856,7 @@ const UserForm = ({ data = {}, userType, id }) => {
 
                 <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexWrap: 'wrap' }}>
                     <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexWrap='wrap'>
-                        <Button color="primary" variant="contained" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                        <Button color="primary" variant="outlined" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                             <Icon>arrow_back</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                         </Button>
