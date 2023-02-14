@@ -2,6 +2,7 @@ import {
     Box,
     Button,
     CircularProgress,
+    Container,
     FormControl,
     Grid,
     Icon,
@@ -661,109 +662,110 @@ const ProductForm = ({ data = {} }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
-                <SimpleCard title="Product" backArrow={true}>
-                    <Grid container spacing={12}>
-                        <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
-                                <Select id="grouped-native-select" label="Category"
-                                    value={category_id}
-                                    name="category_id"
-                                    sx={{
-                                        border: formError?.category_id ? '1px solid #FF3D57' : ''
-                                    }}
-                                    onChange={handleChange}>
-                                    {categoryList?.map(item => (
-                                        <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
-                                            fontWeight: item?.fontWeight,
-                                            color: "#000",
-                                            opacity: "1 !important"
-                                        }}>{item?.type == "sub" ?
-                                            <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
-                                    ))}
-                                </Select>
-                                {formError?.category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                            </FormControl>
+                <Container maxWidth>
+                    <SimpleCard title="Product" backArrow={true}>
+                        <Grid container spacing={12}>
+                            <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
+                                    <Select id="grouped-native-select" label="Category"
+                                        value={category_id}
+                                        name="category_id"
+                                        sx={{
+                                            border: formError?.category_id ? '1px solid #FF3D57' : ''
+                                        }}
+                                        onChange={handleChange}>
+                                        {categoryList?.map(item => (
+                                            <MenuItem key={item?.value} value={item?.value} disabled={item?.disabled} sx={{
+                                                fontWeight: item?.fontWeight,
+                                                color: "#000",
+                                                opacity: "1 !important"
+                                            }}>{item?.type == "sub" ?
+                                                <>&nbsp;&nbsp;&nbsp;{item?.label}</> : (item?.type == "category" ? <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item?.label}</> : item?.label)}</MenuItem>
+                                        ))}
+                                    </Select>
+                                    {formError?.category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                </FormControl>
 
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Collection</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={collection_id}
-                                    name="collection_id"
-                                    sx={{
-                                        border: formError?.collection_id ? '1px solid #FF3D57' : ''
-                                    }}
-                                    label="Collection"
-                                    onChange={handleChange}>
-                                    {collectionList?.map(item => (
-                                        <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
-                                    ))}
-                                </Select>
-                                {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                            </FormControl>
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Collection</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={collection_id}
+                                        name="collection_id"
+                                        sx={{
+                                            border: formError?.collection_id ? '1px solid #FF3D57' : ''
+                                        }}
+                                        label="Collection"
+                                        onChange={handleChange}>
+                                        {collectionList?.map(item => (
+                                            <MenuItem key={item?.value} value={item?.value}>{item?.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                    {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                </FormControl>
 
-                            <TextField
-                                type="text"
-                                name="name"
-                                label="Name"
-                                onChange={handleChange}
-                                value={name || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+                                <TextField
+                                    type="text"
+                                    name="name"
+                                    label="Name"
+                                    onChange={handleChange}
+                                    value={name || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
 
-                            <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
-                                <TextEditor data={description} setData={(d) => {
-                                    setIsErrorDescription(false)
-                                    setDescription(d)
-                                }} />
-                                {isErrorDescription && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                            </Box>
+                                <Box sx={{ mb: 2 }} className={isErrorDescription ? "error" : ''}>
+                                    <TextEditor data={description} setData={(d) => {
+                                        setIsErrorDescription(false)
+                                        setDescription(d)
+                                    }} />
+                                    {isErrorDescription && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                </Box>
 
-                            <TextField
-                                type="text"
-                                name="cost_price"
-                                label="Cost Price"
-                                sx={{ mt: 1 }}
-                                onChange={handleChange}
-                                value={cost_price || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+                                <TextField
+                                    type="text"
+                                    name="cost_price"
+                                    label="Cost Price"
+                                    sx={{ mt: 1 }}
+                                    onChange={handleChange}
+                                    value={cost_price || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
 
-                            <TextField
-                                type="text"
-                                name="mrp"
-                                label="MRP"
-                                onChange={handleChange}
-                                value={mrp || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+                                <TextField
+                                    type="text"
+                                    name="mrp"
+                                    label="MRP"
+                                    onChange={handleChange}
+                                    value={mrp || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
 
-                            <TextField
-                                type="text"
-                                name="sale_price"
-                                label="Sale Price"
-                                onChange={handleChange}
-                                value={sale_price || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+                                <TextField
+                                    type="text"
+                                    name="sale_price"
+                                    label="Sale Price"
+                                    onChange={handleChange}
+                                    value={sale_price || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
 
-                            <TextField
-                                type="text"
-                                name="reseller_price"
-                                label="ReSeller Price"
-                                onChange={handleChange}
-                                value={reseller_price || ""}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
-                            />
+                                <TextField
+                                    type="text"
+                                    name="reseller_price"
+                                    label="ReSeller Price"
+                                    onChange={handleChange}
+                                    value={reseller_price || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
 
-                            {/* <FormControl>
+                                {/* <FormControl>
                                 <FormLabel id="demo-row-radio-buttons-group-label">Influncer Commission Type</FormLabel>
                                 <RadioGroup
                                     row
@@ -786,79 +788,79 @@ const ProductForm = ({ data = {} }) => {
                                 errorMessages={["this field is required"]}
                             /> */}
 
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel id="demo-simple-select-label">Tax Type</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={tax}
-                                    name="tax"
-                                    sx={{
-                                        border: formError?.tax ? '1px solid #FF3D57' : ''
-                                    }}
-                                    label="Tax Type"
-                                    onChange={handleChange}>
-                                    <MenuItem value={10}>Standard</MenuItem>
-                                    <MenuItem value={2.5}>2.5% CGST/IGST</MenuItem>
-                                </Select>
-                                {formError?.tax && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                            </FormControl>
+                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel id="demo-simple-select-label">Tax Type</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={tax}
+                                        name="tax"
+                                        sx={{
+                                            border: formError?.tax ? '1px solid #FF3D57' : ''
+                                        }}
+                                        label="Tax Type"
+                                        onChange={handleChange}>
+                                        <MenuItem value={10}>Standard</MenuItem>
+                                        <MenuItem value={2.5}>2.5% CGST/IGST</MenuItem>
+                                    </Select>
+                                    {formError?.tax && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
+                                </FormControl>
 
 
-                            <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
-                                <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
-                                <Box className="list-group">
-                                    <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
-                                </Box>
-                                {console.log(" formError?.image", formError?.image)}
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    mt: 1
-                                }}>
-                                    {imageLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
-                                    <Typography sx={{ color: formError?.image ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
-                                </Box>
+                                <Box display="flex" flexDirection="column" sx={{ mb: 2 }}>
+                                    <Span sx={{ textTransform: "capitalize", fontWeight: 500, fontSize: "18px" }}>Media</Span>
+                                    <Box className="list-group">
+                                        <SortableList axis={"xy"} items={image} onSortEnd={onSortEnd} />
+                                    </Box>
+                                    {console.log(" formError?.image", formError?.image)}
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        mt: 1
+                                    }}>
+                                        {imageLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
+                                        <Typography sx={{ color: formError?.image ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
+                                    </Box>
 
-                                <Box className="list-group">
-                                    <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
+                                    <Box className="list-group">
+                                        <SortableVideoList axis={"xy"} items={videos} onSortEnd={onSortVideoEnd} />
+                                    </Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        mt: 1
+                                    }}>
+                                        {videoLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
+                                        <Typography sx={{ color: formError?.videos ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
+                                    </Box>
                                 </Box>
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    mt: 1
-                                }}>
-                                    {videoLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
-                                    <Typography sx={{ color: formError?.videos ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
-                                </Box>
-                            </Box>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
-                        <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
-                            <Stack direction="row" spacong={2}>
-                                <Box>
-                                    <Button color="primary" variant="outlined" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
-                                        <Icon>arrow_back</Icon>
-                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
-                                    </Button>
-                                </Box>
-                                <Box>
-                                    <LoadingButton
-                                        loading={loading}
-                                        loadingPosition="start"
-                                        type="submit"
-                                        sx={{ mr: 0, mt: 2 }}
-                                        startIcon={<Icon>send</Icon>}
-                                        variant="contained">
-                                        Save
-                                    </LoadingButton>
-                                </Box>
-                            </Stack>
+                        <Box display="flex" sx={{ alignItems: isMdScreen() ? "flex-start" : "center", flexDirection: isMdScreen() ? "column" : "row" }}>
+                            <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
+                                <Stack direction="row" spacong={2}>
+                                    <Box>
+                                        <Button color="primary" variant="outlined" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                            <Icon>arrow_back</Icon>
+                                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
+                                        </Button>
+                                    </Box>
+                                    <Box>
+                                        <LoadingButton
+                                            loading={loading}
+                                            loadingPosition="start"
+                                            type="submit"
+                                            sx={{ mr: 0, mt: 2 }}
+                                            startIcon={<Icon>send</Icon>}
+                                            variant="contained">
+                                            Save
+                                        </LoadingButton>
+                                    </Box>
+                                </Stack>
+                            </Box>
                         </Box>
-                    </Box>
-                </SimpleCard>
-
+                    </SimpleCard>
+                </Container>
             </ValidatorForm>
         </div >
     );

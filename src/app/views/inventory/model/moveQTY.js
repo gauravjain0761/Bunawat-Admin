@@ -144,9 +144,9 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
                     loadingPosition="center"
                     onClick={handleSubmit}
                     // sx={{
-                    //     background: '#1976d2', ml: 2, color: '#fff',
+                    //     background: '#232a45', ml: 2, color: '#fff',
                     //     "&:hover": {
-                    //         background: '#1976d2', color: '#fff'
+                    //         background: '#232a45', color: '#fff'
                     //     }
                     // }}
                     variant="contained">

@@ -229,7 +229,7 @@ const UserForm = ({ data = {}, userType, id }) => {
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
                 <SimpleCard title={`${userType} Details`} backArrow={true}>
-                    <Grid container spacing={6}>
+                    <Grid container spacing={{ md: 6, sm: 0, xs: 0 }}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                             {/* <Box sx={{ mb: 3.5 }} display="flex" alignItems="center">
                                 <Avatar name={fname} round={true} size="50" />
@@ -444,7 +444,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails sx={{ border: `2px solid ${UIColor}`, borderRadius: "0 0 8px 8px" }}>
-                        <Grid container spacing={6}>
+                        <Grid container spacing={{ md: 6, sm: 0, xs: 0 }}>
                             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                                 <TextField
                                     type="text"
@@ -570,7 +570,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails sx={{ border: `2px solid ${UIColor}`, borderRadius: "0 0 8px 8px" }}>
-                        <Grid container spacing={6}>
+                        <Grid container spacing={{ md: 6, sm: 0, xs: 0 }}>
                             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                                 <TextField
                                     type="text"

@@ -173,62 +173,82 @@ const OrderDetailForm = ({ data = {} }) => {
                             <SimpleCard title="Order Details" backArrow={false}>
                                 <Grid container spacing={2}>
                                     <Grid item lg={4} md={12} sm={12} xs={12}>
-                                        <Stack>
+                                        <Stack spacing={1}>
                                             <Typography variant="h6">General</Typography>
                                             {/* <Stack flexDirection='row' alignItems='center'>
                                                 <Typography sx={{ color: '#777' }}>Date created:</Typography>
                                                 <Typography sx={{ ml: 1 }}>{moment(new Date()).format("DD/MM/YYYY")}</Typography>
                                             </Stack> */}
-                                            <Typography sx={{ color: '#777' }}>Order No:</Typography>
-                                            <Typography></Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Date created:</Typography>
-                                            <Typography>{moment(viewOrder?.createdAt?.split("T")[0]).format("DD/MM/YYYY")}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Order Type:</Typography>
-                                            <Typography>{viewOrder?.order_type}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Order User Type:</Typography>
-                                            <Typography>{viewOrder?.user_type}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Order Status:</Typography>
-                                            <Typography>{viewOrder?.order_status}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Amount:</Typography>
-                                            <Typography>{viewOrder?.amount}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Payment Mode:</Typography>
-                                            <Typography >{viewOrder?.total_amount}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Source:</Typography>
-                                            <Typography>Direct</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Customer</Typography>
-                                            <Typography></Typography>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Order No:</Typography>
+                                                <Typography></Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Date created:</Typography>
+                                                <Typography>{moment(viewOrder?.createdAt?.split("T")[0]).format("DD/MM/YYYY")}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Order Type:</Typography>
+                                                <Typography>{viewOrder?.order_type}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Order User Type:</Typography>
+                                                <Typography>{viewOrder?.user_type}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Order Status:</Typography>
+                                                <Typography>{viewOrder?.order_status}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Amount:</Typography>
+                                                <Typography>{viewOrder?.amount}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Payment Mode:</Typography>
+                                                <Typography >{viewOrder?.total_amount}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Source:</Typography>
+                                                <Typography>Direct</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Customer</Typography>
+                                                <Typography></Typography>
+                                            </Stack>
                                         </Stack>
                                     </Grid>
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
-                                        <Stack>
+                                        <Stack spacing={1}>
                                             <Typography variant="h6">Billing</Typography>
-                                            <Typography sx={{ color: '#777' }}>Name:</Typography>
-                                            <Typography></Typography>
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
-                                            <Typography>{viewOrder?.billing_address?.address_1}</Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Email address:</Typography>
-                                            <Typography></Typography>
-
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Phone:</Typography>
-                                            <Typography>{viewOrder?.billing_address?.phone}</Typography>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Name:</Typography>
+                                                <Typography></Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Address:</Typography>
+                                                <Typography>{viewOrder?.billing_address?.address_1}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Email address:</Typography>
+                                                <Typography></Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Phone:</Typography>
+                                                <Typography>{viewOrder?.billing_address?.phone}</Typography>
+                                            </Stack>
                                         </Stack>
                                     </Grid>
                                     <Grid item lg={4} md={6} sm={6} xs={12}>
-                                        <Stack>
+                                        <Stack spacing={1}>
                                             <Typography variant="h6">Shipping</Typography>
-                                            <Typography sx={{ color: '#777' }}>Name:</Typography>
-                                            <Typography></Typography>
-                                            <Typography sx={{ mt: 1, color: '#777' }}>Address:</Typography>
-                                            <Typography>{viewOrder?.shipping_address?.address_1}</Typography>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Name:</Typography>
+                                                <Typography></Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Address:</Typography>
+                                                <Typography>{viewOrder?.shipping_address?.address_1}</Typography>
+                                            </Stack>
                                             {/* <Typography>Rourkela 769004</Typography>
                                             <Typography>Odisha</Typography> */}
                                         </Stack>

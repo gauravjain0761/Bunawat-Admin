@@ -772,8 +772,8 @@ const OrderForm = ({ data = {} }) => {
                         <Grid item lg={6} md={12} sm={12} xs={12} >
                             <SimpleCard title="Order Detail" backArrow={false}>
                                 <Typography variant="h6">Billing Address</Typography>
-                                <Grid container spacing={1}>
-                                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                                <Grid container spacing={{ md: 1, sm: 0, xs: 0 }} sx={{ mt: 2 }}>
+                                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 0 }}>
                                         <TextField
                                             type="text"
                                             name="fname"
@@ -835,7 +835,7 @@ const OrderForm = ({ data = {} }) => {
                                         />
                                     </Grid>
 
-                                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 0 }}>
                                         <TextField
                                             type="text"
                                             name="state"
@@ -897,8 +897,8 @@ const OrderForm = ({ data = {} }) => {
                                         </FormGroup>
                                     </FormControl>
                                 </Box>
-                                {!formData?.isSame && <Grid container spacing={1}>
-                                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                                {!formData?.isSame && <Grid container spacing={{ md: 1, sm: 0, xs: 0 }} sx={{ mt: 2 }}>
+                                    <Grid item lg={6} md={6} sm={12} xs={12}>
                                         <TextField
                                             type="text"
                                             name="fname"
@@ -961,7 +961,7 @@ const OrderForm = ({ data = {} }) => {
                                         />
                                     </Grid>
 
-                                    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                                    <Grid item lg={6} md={6} sm={12} xs={12}>
                                         <TextField
                                             type="text"
                                             name="state"

@@ -59,7 +59,7 @@ const SimpleForm = () => {
   return (
     <div>
       <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
-        <Grid container spacing={6}>
+        <Grid container spacing={{ md: 6, sm: 0, xs: 0 }}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
               type="text"
