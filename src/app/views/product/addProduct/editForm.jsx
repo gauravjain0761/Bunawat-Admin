@@ -588,7 +588,8 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
 
     const handleSwitchImage = async (index, item, max = 5) => {
         let images = formData?.image ?? [];
-        if (images?.filter((img) => img?.isActive).length < max) {
+        console.log("images[index]?.isActive", images[index]?.isActive)
+        if (images?.filter((img) => img?.isActive).length < max && !images[index]?.isActive) {
             images[index] = { ...images[index], isActive: !images[index]?.isActive }
             setFormData({ ...formData, image: images });
             await ApiPut(`${API_URL.fileStatus}/${item?._id}`, {
@@ -622,8 +623,9 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     };
 
     const handleSwitchVideo = async (index, item, max = 4) => {
-        let videos = formData?.videos ?? []
-        if (videos?.filter((video) => video?.isActive).length < max) {
+        let videos = formData?.videos ?? [];
+        console.log("videos[index]?.isActive", videos[index]?.isActive)
+        if (videos?.filter((video) => video?.isActive).length < max && !videos[index]?.isActive) {
             videos[index] = { ...videos[index], isActive: !videos[index]?.isActive }
             setFormData({ ...formData, videos: videos });
             await ApiPut(`${API_URL.fileStatus}/${item?._id}`, {
@@ -724,9 +726,9 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                     color: "red",
                                     cursor: "pointer",
                                     fontSize: "10px !impoprtant",
-                                    '& .MuiSwitch-input': {
-                                        width: "100% !important"
-                                    }
+                                    // '& .MuiSwitch-input': {
+                                    //     width: "100% !important"
+                                    // }
                                 }}
                                 checked={item?.isActive}
                                 onChange={(e) => handleSwitchImage(i, item)}
@@ -765,9 +767,9 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                 cursor: "pointer",
                                 zIndex: "999",
                                 fontSize: "10px !impoprtant",
-                                '& .MuiSwitch-input': {
-                                    width: "100% !important"
-                                }
+                                // '& .MuiSwitch-input': {
+                                //     width: "100% !important"
+                                // }
                             }}
                             checked={item?.isActive}
                             onChange={() => handleSwitchVideo(i, item, 4)}
