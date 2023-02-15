@@ -17,6 +17,7 @@ import {
     Radio,
     RadioGroup,
     Select,
+    Stack,
     styled,
     Table,
     TableBody,
@@ -112,8 +113,7 @@ const OrderForm = ({ data = {} }) => {
         transactionId: "",
         image: "",
         user: "",
-        discount_coupon: ""
-
+        discount_coupon: "",
     });
     const navigate = useNavigate();
     const [customerNumber, setCustomerNumber] = React.useState([]);
@@ -129,7 +129,8 @@ const OrderForm = ({ data = {} }) => {
     const [paymentMode, setPaymentMode] = React.useState("cod");
     const [user_type, setUserType] = React.useState("CUSTOMER");
     const [userID, setUserID] = React.useState("")
-    const [discountType, setDiscountType] = React.useState("COUPON")
+    const [discountType, setDiscountType] = React.useState("COUPON");
+    const [discountApply, setDiscountApply] = React.useState("");
     const {
         // user_type,
         teamMember,
@@ -998,6 +999,8 @@ const OrderForm = ({ data = {} }) => {
                                     formData={formData}
                                     setFormData={setFormData}
                                     discount_coupon={discount_coupon}
+                                    discountApply={discountApply}
+                                    setDiscountApply={setDiscountApply}
                                 />
 
                                 <Divider sx={{ my: 2 }} />
@@ -1006,9 +1009,10 @@ const OrderForm = ({ data = {} }) => {
                                 <FormControl sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    alignItems: 'center'
+                                    alignItems: 'start',
+                                    gap: 2
                                 }}>
-                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Payment Type</FormLabel>
+                                    <FormLabel id="demo-row-radio-buttons-group-label" sx={{ width: "120px", mt: 1.6 }}>Payment Type</FormLabel>
                                     <RadioGroup
                                         row
                                         value={paymentMode ?? "cod"}
@@ -1016,10 +1020,18 @@ const OrderForm = ({ data = {} }) => {
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                     // name="paymentMode"
                                     >
-                                        <FormControlLabel value="cod" control={<Radio />} label="COD" />
-                                        <FormControlLabel value="online" control={<Radio />} label="Online" />
-                                        <FormControlLabel value="credits" control={<Radio />} label="Credits" />
-                                        <FormControlLabel value="partialCredits" control={<Radio />} label="Partial Credits" />
+                                        <Grid container>
+                                            <Grid item lg={12}>
+                                                <Stack direction="row" spacing={1}>
+                                                    <FormControlLabel value="cod" control={<Radio />} label="COD" />
+                                                    <FormControlLabel value="online" control={<Radio />} label="Online" />
+                                                </Stack>
+                                            </Grid>
+                                            <Grid item lg={12}>
+                                                <FormControlLabel value="credits" control={<Radio />} label="Credits" />
+                                                <FormControlLabel value="partialCredits" control={<Radio />} label="Partial Credits" />
+                                            </Grid>
+                                        </Grid>
                                     </RadioGroup>
                                 </FormControl>
                                 {payment_mode == 'online' &&
