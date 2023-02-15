@@ -8,18 +8,24 @@ import FormLabel from '@mui/material/FormLabel';
 import DiscountInput from './discountInput';
 
 const DiscountType = (props) => {
-    const { title, radioTitle, discountType, setDiscountType, formData, setFormData, discount_coupon } = props;
+    const { title, radioTitle, discountType, setDiscountType, formData, setFormData, discount_coupon, setDiscountApply, discountApply } = props;
 
     const handleChange = (event) => {
         setDiscountType(event.target.value);
         setFormData({ ...formData, discount_amount: "" });
+        setDiscountApply("")
     };
     console.log("discountsetFormData", formData)
     return (
         <React.Fragment>
             <Stack spacing={1} width="100%">
                 <Typography variant="h6">{title}</Typography>
-                <FormControl>
+                <FormControl sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 2
+                }}>
                     <FormLabel id="demo-row-radio-buttons-group-label">{radioTitle}</FormLabel>
                     <RadioGroup
                         row
@@ -33,6 +39,8 @@ const DiscountType = (props) => {
                     </RadioGroup>
                 </FormControl>
                 <DiscountInput
+                    discountApply={discountApply}
+                    setDiscountApply={setDiscountApply}
                     formData={formData}
                     setFormData={setFormData}
                     discountType={discountType}
