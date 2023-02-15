@@ -16,7 +16,7 @@ const Container = styled("div")(({ theme }) => ({
     },
 }));
 
-const AddProduct = () => {
+const AddProduct = ({ ProductType }) => {
     const { id } = useParams();
     const [data, setData] = useState({});
 
@@ -41,9 +41,9 @@ const AddProduct = () => {
     return (
         <>
             {id ?
-                <ProductEditForm getIDData={getData} data={data} id={id} />
+                <ProductEditForm ProductType={ProductType} getIDData={getData} data={data} id={id} />
                 :
-                <ProductForm data={{}} />
+                <ProductForm ProductType={ProductType} data={{}} />
             }
         </>
     );

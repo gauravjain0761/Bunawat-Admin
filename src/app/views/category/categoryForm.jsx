@@ -283,7 +283,8 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const handleDeleteImage = async (event) => {
         setMediaLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: image
+            url: image,
+            type: type
         })
             .then((response) => {
                 if (response?.data) {
@@ -326,7 +327,8 @@ const CategoryForm = ({ data = {}, id, type }) => {
     const handleDeleteVideo = async (event) => {
         setMediaLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: video
+            url: video,
+            type: type
         })
             .then((response) => {
                 if (response?.data) {

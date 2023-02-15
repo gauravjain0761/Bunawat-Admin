@@ -245,7 +245,7 @@ const CategoryList = () => {
               </IconButton>
             </Box>
 
-            <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/list`)} sx={{
+            <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/category`)} sx={{
               backgroundColor: UIColor, color: "#fff",
               "&:hover": {
                 backgroundColor: UIColor, color: "#fff"
@@ -329,7 +329,7 @@ const CategoryList = () => {
                   TransitionComponent={Fade}
                 >
                   <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                  <MenuItem onClick={() => navigate(`/category/details/list/${row?._id}`)}>Edit</MenuItem>
+                  <MenuItem onClick={() => navigate(`/category/details/category/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
                     setDeleteData(row)
                     setOpen(true);

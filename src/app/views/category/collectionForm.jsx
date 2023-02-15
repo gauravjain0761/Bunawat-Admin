@@ -39,7 +39,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const CollectionForm = ({ data = {}, id }) => {
+const CollectionForm = ({ data = {}, id, type }) => {
     const [formData, setFormData] = useState(data);
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
@@ -202,7 +202,8 @@ const CollectionForm = ({ data = {}, id }) => {
     const handleDeleteImage = async (event) => {
         setMediaLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: image
+            url: image,
+            type: type
         })
             .then((response) => {
                 if (response?.data) {
@@ -219,7 +220,8 @@ const CollectionForm = ({ data = {}, id }) => {
     const handleDeleteVideo = async (event) => {
         setMediaLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: video
+            url: video,
+            type: type
         })
             .then((response) => {
                 if (response?.data) {

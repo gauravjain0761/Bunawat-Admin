@@ -35,7 +35,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const ProductForm = ({ data = {} }) => {
+const ProductForm = ({ data = {}, ProductType }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [dOpen, setDopen] = useState(false)
     const [description, setDescription] = useState("");
@@ -251,7 +251,8 @@ const ProductForm = ({ data = {} }) => {
     const handleDeleteImage = async (index) => {
         setImageLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: formData?.image?.[index]?.url
+            url: formData?.image?.[index]?.url,
+            type: ProductType
         })
             .then((response) => {
                 setImageLoading(false)
@@ -320,7 +321,8 @@ const ProductForm = ({ data = {} }) => {
     const handleDeleteVideo = async (index) => {
         setVideoLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: formData?.videos?.[index]?.url
+            url: formData?.videos?.[index]?.url,
+            type: ProductType
         })
             .then((response) => {
                 setVideoLoading(false)

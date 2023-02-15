@@ -243,7 +243,7 @@ const ParentCategory = () => {
                             </IconButton>
                         </Box>
 
-                        <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/parent`)} sx={{
+                        <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/parentCategory`)} sx={{
                             backgroundColor: UIColor, color: "#fff",
                             "&:hover": {
                                 backgroundColor: UIColor, color: "#fff"
@@ -319,7 +319,7 @@ const ParentCategory = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
                                     <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                                    <MenuItem onClick={() => navigate(`/category/details/parent/${row?._id}`)}>Edit</MenuItem>
+                                    <MenuItem onClick={() => navigate(`/category/details/parentCategory/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
                                         setOpen(true);
