@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    Divider,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -39,6 +40,8 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApiGet, ApiPost } from "app/service/api";
 import { API_URL } from "app/constant/api";
+import DiscountType from "./discountType";
+import { sumBy } from "lodash";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -107,7 +110,9 @@ const OrderForm = ({ data = {} }) => {
         pincode: "",
         payment_mode: "cod",
         transactionId: "",
-        image: ""
+        image: "",
+        user: "",
+        discount_coupon: ""
 
     });
     const navigate = useNavigate();
@@ -122,8 +127,9 @@ const OrderForm = ({ data = {} }) => {
     const [ResellerData, setResellerData] = React.useState(null);
     const [ResellerName, setResellerName] = React.useState(null);
     const [paymentMode, setPaymentMode] = React.useState("cod");
-    const [user_type, setUserType] = React.useState("CUSTOMER")
-
+    const [user_type, setUserType] = React.useState("CUSTOMER");
+    const [userID, setUserID] = React.useState("")
+    const [discountType, setDiscountType] = React.useState("COUPON")
     const {
         // user_type,
         teamMember,
@@ -148,7 +154,10 @@ const OrderForm = ({ data = {} }) => {
         pincode,
         payment_mode,
         transactionId,
-        image
+        discount_amount,
+        image,
+        discount_coupon,
+        user
     } = formData;
 
 
@@ -256,6 +265,7 @@ const OrderForm = ({ data = {} }) => {
             if (response.status) {
                 const { data } = response;
                 console.log("datadata", data)
+                setUserID(data?._id)
                 for (const [key] of Object.entries(formData)) {
                     if (key === "pincode") {
                         setFormData({ ...data, pincode: data?.pincode })
@@ -277,43 +287,6 @@ const OrderForm = ({ data = {} }) => {
     }
     console.log("keykey12", formData)
 
-    const columns = [
-        {
-            id: "product",
-            label: "Product Name",
-            sortDisable: true,
-            width: 100
-        },
-        {
-            id: "In Stoke QTY",
-            label: "In Stoke QTY",
-            align: 'center',
-            sortDisable: true,
-            width: 100
-        },
-        {
-            id: "qty",
-            label: "QTY",
-            align: 'center',
-            sortDisable: true,
-            width: 100
-        },
-        {
-            id: "Action",
-            label: "Action",
-            action: true,
-            sortDisable: true,
-            align: 'right',
-            width: 80
-        },
-    ];
-    // useEffect(() => {
-    //     setFormData({ ...data, user_type: 'CUSTOMER' })
-    // }, [data])
-
-
-
-
     const handleSubmit = async (event) => {
         const Address = {
             "fname": formData?.fname,
@@ -331,18 +304,23 @@ const OrderForm = ({ data = {} }) => {
         const formDatas = {
             "member": formData?.teamMember,
             "user_type": user_type,
-            "user": "63d12454d25d498f72165513",
+            "user": userID,
             "billing_address": Address,
             "shipping_address": formShippingData,
             "isSame": formData?.isSame || false,
             "payment_mode": paymentMode.toUpperCase(),
             "total_items": formData?.items?.length,
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
-            "total_amount": formData?.items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0,
+            "total_amount": sumBy(items, function (o) {
+                return (
+                    Number(o.amount) - Number(discount_amount ?? 0)
+                );
+            })
+            ,
             "items": formData?.items,
             "gst_amount": 0,
-            "discount_amount": 0,
-            "discount_coupon": null
+            "discount_amount": discount_amount,
+            "discount_coupon": discount_coupon
         }
         await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
             if (response.status) {
@@ -999,8 +977,8 @@ const OrderForm = ({ data = {} }) => {
                                             errorMessages={["this field is required"]}
                                         />
                                         <TextField
-                                            name="text"
-                                            type="address_2"
+                                            name="address_2"
+                                            type="text"
                                             label="Address - 2"
                                             value={formShippingData.address_2 || ""}
                                             onChange={handleShippingChange}
@@ -1009,6 +987,20 @@ const OrderForm = ({ data = {} }) => {
                                         />
                                     </Grid>
                                 </Grid>}
+
+                                <Divider sx={{ my: 2 }} />
+
+                                <DiscountType
+                                    title="Discount Info"
+                                    radioTitle="Discount Type"
+                                    setDiscountType={setDiscountType}
+                                    discountType={discountType}
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                    discount_coupon={discount_coupon}
+                                />
+
+                                <Divider sx={{ my: 2 }} />
 
                                 <Typography variant="h6">Payment Info</Typography>
                                 <FormControl sx={{
@@ -1114,9 +1106,35 @@ const OrderForm = ({ data = {} }) => {
                                 <Typography sx={{ fontWeight: 500 }}>:&nbsp; {items?.length > 0 && <> {items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0}</>}</Typography>
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
+                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Sub Amount</Typography>
                                 <Typography sx={{ fontWeight: 500, color: 'red' }}>:
                                     {items?.length > 0 && <> {items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0}</>}
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Discount Amount</Typography>
+                                <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                    {items?.length > 0 && <> {items?.reduce((t, x) => t + Number(discount_amount ?? 0), 0) ?? 0}</>}
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
+                                <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                    {items?.length > 0 && <>
+
+
+                                        {sumBy(items, function (o) {
+                                            return (
+                                                Number(o.amount) - Number(discount_amount ?? 0)
+                                            );
+                                        })}
+
+                                        {/* {items?.reduce((t, x) => t + (Number(x?.amount) - Number(x?.discount_amount)), 0) ?? 0} */}
+
+
+                                    </>}
                                 </Typography>
                             </Box>
                         </Box>
