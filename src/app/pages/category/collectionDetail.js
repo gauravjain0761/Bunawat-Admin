@@ -16,7 +16,7 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const CategoryDetail = () => {
-    const { id } = useParams();
+    const { id, type } = useParams();
     const [data, setData] = useState({});
 
     const getData = async (id) => {
@@ -38,7 +38,7 @@ const CategoryDetail = () => {
     return (
         <Container>
             <Stack spacing={3}>
-                <CollectionForm data={data} id={id} />
+                <CollectionForm type={type} data={data} id={id} />
             </Stack>
         </Container>
     );

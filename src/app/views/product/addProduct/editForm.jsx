@@ -50,7 +50,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const ProductEditForm = ({ getIDData, data = {}, id }) => {
+const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [mOpen, setMOpen] = useState(false);
     const [dOpen, setDopen] = useState(false)
@@ -407,7 +407,8 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
     const handleDeleteImage = async (index) => {
         setImageLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: formData?.image?.[index]?.url
+            url: formData?.image?.[index]?.url,
+            type: ProductType
         })
             .then((response) => {
                 setImageLoading(false)
@@ -476,7 +477,8 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
     const handleDeleteVideo = async (index) => {
         setVideoLoading(true)
         await ApiPost(API_URL.fileRemove, {
-            url: formData?.videos?.[index]?.url
+            url: formData?.videos?.[index]?.url,
+            type: ProductType
         })
             .then((response) => {
                 setVideoLoading(false)
@@ -1048,7 +1050,7 @@ const ProductEditForm = ({ getIDData, data = {}, id }) => {
                                 <SimpleCard title="Add Attributes" backArrow={false} borderRadiusZero={true}>
                                     <Grid container spacing={12}>
                                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
-                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}> 
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
                                                 {attributes?.map((data, index) => {
                                                     return (
                                                         <Autocomplete

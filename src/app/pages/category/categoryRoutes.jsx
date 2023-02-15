@@ -16,8 +16,8 @@ const CategoryRoutes = [
     { path: '/category/details/:type', element: <CategoryDetail /> },
     { path: '/category/details/:type/:id', element: <CategoryDetail /> },
     { path: '/collection/list', element: <CollectionList /> },
-    { path: '/collection/details', element: <CollectionDetail /> },
-    { path: '/collection/details/:id', element: <CollectionDetail /> },
+    { path: '/collection/details/:type', element: <CollectionDetail /> },
+    { path: '/collection/details/:type/:id', element: <CollectionDetail /> },
 ];
 
 export default CategoryRoutes;

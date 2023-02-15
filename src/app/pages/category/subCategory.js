@@ -237,7 +237,7 @@ const SubCategoryAdd = () => {
                                 height: '36px',
                                 background: "transparent",
                                 color: "#000",
-                            }} type="text" autoFocus value={searchText} onChange={(e) => {
+                            }} type="text" value={searchText} onChange={(e) => {
                                 setSearchText(e.target.value)
                             }} placeholder="Search here..." />
                             <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
@@ -245,7 +245,7 @@ const SubCategoryAdd = () => {
                             </IconButton>
                         </Box>
 
-                        <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/sub`)} sx={{
+                        <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/category/details/parentSubCategory`)} sx={{
                             backgroundColor: UIColor, color: "#fff",
                             "&:hover": {
                                 backgroundColor: UIColor, color: "#fff"
@@ -322,7 +322,7 @@ const SubCategoryAdd = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}>
                                     <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                                    <MenuItem onClick={() => navigate(`/category/details/sub/${row?._id}`)}>Edit</MenuItem>
+                                    <MenuItem onClick={() => navigate(`/category/details/parentSubCategory/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
                                         setOpen(true);

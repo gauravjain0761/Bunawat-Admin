@@ -17,10 +17,10 @@ const TagDetail = Loadable(lazy(() => import('./tag/tagDetails')));
 const ProductRoutes = [
     { path: '/product/attributes', element: <AttributeList /> },
     { path: '/product/list', element: <ProductList /> },
-    { path: '/product/add', element: <AddProduct /> },
+    { path: '/product/add', element: <AddProduct ProductType="Product" /> },
     { path: '/product/media', element: <ProductMedia /> },
     { path: '/product/media/:id', element: <ProductMediaSingleList /> },
-    { path: '/product/add/:id', element: <AddProduct /> },
+    { path: '/product/add/:id', element: <AddProduct ProductType="Product" /> },
     { path: '/product/attributes/:id', element: <VarientList /> },
     { path: '/product/color', element: <ColorList /> },
     { path: '/product/color/detail', element: <ColorDetail /> },

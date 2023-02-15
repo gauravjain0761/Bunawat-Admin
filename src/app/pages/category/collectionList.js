@@ -234,7 +234,7 @@ const CollectionList = () => {
               </IconButton>
             </Box>
 
-            <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/collection/details`)} sx={{
+            <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/collection/details/collection`)} sx={{
               backgroundColor: UIColor, color: "#fff",
               "&:hover": {
                 backgroundColor: UIColor, color: "#fff"
@@ -317,7 +317,7 @@ const CollectionList = () => {
                   TransitionComponent={Fade}
                 >
                   <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
-                  <MenuItem onClick={() => navigate(`/collection/details/${row?._id}`)}>Edit</MenuItem>
+                  <MenuItem onClick={() => navigate(`/collection/details/collection/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
                     setDeleteData(row)
                     setOpen(true);
