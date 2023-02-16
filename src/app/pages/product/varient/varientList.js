@@ -48,7 +48,7 @@ const VarientList = () => {
 
     const getData = async () => {
         setRowLoading(true)
-        await ApiGet(`${API_URL.getVarients}/${id}`)
+        await ApiGet(`${API_URL.getVarients}/${id}?q=${searchText}`)
             .then((response) => {
                 setRowLoading(false)
                 setRows(response?.data ?? []);
@@ -62,7 +62,7 @@ const VarientList = () => {
 
     React.useEffect(() => {
         getData();
-    }, [page, rowsPerPage])
+    }, [page, rowsPerPage, searchText])
 
     const handleSubmit = async (event) => {
         setLoading(true)
@@ -301,7 +301,16 @@ const VarientList = () => {
                     </ValidatorForm>
                 </Stack>
             </Container>
-            <CardHeader sx={{ mt: 2, paddingLeft: "10px !important", paddingRight: "10px !important" }} className="searchBoxSeaprate">
+            <Box className="searchBoxSeaprate"
+                sx={{
+                    paddingLeft: "10px !important",
+                    paddingRight: "10px !important",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mt: 2
+                }}
+            >
                 <Title>Varient List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
@@ -327,7 +336,7 @@ const VarientList = () => {
                         </IconButton>
                     </Box>
                 </Box>
-            </CardHeader>
+            </Box>
             <TableComponent
                 rows={rows}
                 columns={columns}

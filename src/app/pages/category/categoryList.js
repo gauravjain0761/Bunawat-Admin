@@ -218,7 +218,15 @@ const CategoryList = () => {
   }));
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-      <CardHeader className="searchBoxSeaprate" sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
+      <Box className="searchBoxSeaprate"
+        sx={{
+          paddingLeft: "10px !important",
+          paddingRight: "10px !important",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
         <Title>Category List</Title>
         <Box display="flex" className="searchBoxSeaprate">
           <Stack direction="row" spacing={{ md: 3, sm: 1, xs: 1 }}>
@@ -256,7 +264,7 @@ const CategoryList = () => {
             </Button>
           </Stack>
         </Box>
-      </CardHeader>
+      </Box>
       <TableComponent
         rows={rows}
         isLoading={rowLoading}

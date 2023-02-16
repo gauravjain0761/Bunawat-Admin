@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -357,9 +357,18 @@ const ProductList = () => {
         fontWeight: '500',
         textTransform: 'capitalize',
     }));
+    
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <CardHeader className="searchBoxSeaprate" sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
+            <Box className="searchBoxSeaprate"
+                sx={{
+                    paddingLeft: "10px !important",
+                    paddingRight: "10px !important",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                }}
+            >
                 <Title>Product List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Stack direction="row" spacing={{ md: 3, sm: 1, xs: 1 }}>
@@ -369,7 +378,7 @@ const ProductList = () => {
                             mr: "0px",
                         }}>
                             <Box
-                                component={TextField}
+                                component="input"
                                 sx={{
                                     width: '100%',
                                     border: 'none',
@@ -403,7 +412,7 @@ const ProductList = () => {
                         </Button>
                     </Stack>
                 </Box>
-            </CardHeader>
+            </Box>
             <DragTableComponent
                 rows={rows}
                 columns={columns}
