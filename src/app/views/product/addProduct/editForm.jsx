@@ -348,6 +348,23 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                         toast.error(error?.error)
                         console.log("Error", error);
                     });
+            } else if (formData?.status === "INQUALITY") {
+                setLoading(true)
+                await ApiPut(`${API_URL.editProduct}/${id}`, {
+                    ...formData,
+                    description,
+                    sku_data: formData?.sku_data ?? []
+                })
+                    .then((response) => {
+                        setLoading(false)
+                        toast.success('Edit Successfully!')
+                        navigate("/product/list")
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
             } else {
                 toast.error("Please upload 4 images, 3 videos and atleast one sku data")
             }

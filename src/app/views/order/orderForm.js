@@ -169,7 +169,7 @@ const OrderForm = ({ data = {} }) => {
                 console.log("productdata", data);
                 let productData = [];
                 data && data.forEach((element) => {
-                    if (element.isActive) {
+                    if (element.status === "ACTIVE") {
                         productData.push({
                             id: element?._id,
                             name: element?.name
