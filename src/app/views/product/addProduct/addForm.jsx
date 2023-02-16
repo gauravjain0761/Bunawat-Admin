@@ -184,7 +184,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
             await ApiPost(API_URL.addProduct, {
                 ...formData,
                 description,
-                status: "InActive"
+                status: "INACTIVE"
             })
                 .then((response) => {
                     setLoading(false)
