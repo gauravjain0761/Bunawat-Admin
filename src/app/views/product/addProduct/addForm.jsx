@@ -302,7 +302,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
                         VideosData.push({
                             url: element?.Location,
                             isActive: false,
-                            type: 'IMAGE'
+                            type: 'VIDEO'
                         })
                     })
                     setFormData({
