@@ -28,7 +28,7 @@ const InventoryList = () => {
     const [selected, setSelected] = useState([]);
     const [singleMoveQTY, setSingleMoveQTY] = useState({});
     const [selectedSKU, setSelectedSKU] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState([]);
@@ -37,6 +37,7 @@ const InventoryList = () => {
     const [collapseOpen, setCollapseOpen] = useState([]);
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [rowLoading, setRowLoading] = useState(false);
     const columns = [
         {
             id: "design_num",
@@ -125,8 +126,10 @@ const InventoryList = () => {
 
 
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data ?? []);
                 setActionOpen(response?.data?.map(() => { return null }))
                 setActionCollapseOpen(response?.data?.map((x) => { return x?.sku_data?.map(() => { return null }) }))
@@ -139,6 +142,7 @@ const InventoryList = () => {
                 // setTotalCount(1);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -225,7 +229,7 @@ const InventoryList = () => {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setPage(1);
     };
 
     const handleChange = (event, main, child) => {
@@ -336,9 +340,11 @@ const InventoryList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                isLoading={rowLoading}
                 extraPaddingOnFirstColumn={true}
                 disableCheckBox={true}
                 selected={selected}
+                totalCount={totalCount}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;

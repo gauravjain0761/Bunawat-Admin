@@ -184,7 +184,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
             await ApiPost(API_URL.addProduct, {
                 ...formData,
                 description,
-                status: "InActive"
+                status: "INACTIVE"
             })
                 .then((response) => {
                     setLoading(false)
@@ -840,7 +840,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
                             <Box display="flex" alignItems={isMobile() ? "flex-start" : "center"} flexDirection={isMobile() ? "column" : "row"}>
                                 <Stack direction="row" spacong={2}>
                                     <Box>
-                                        <Button color="primary" variant="outlined" type="submit" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
+                                        <Button color="primary" variant="outlined" sx={{ mr: 2, mt: 2 }} onClick={() => navigate(-1)}>
                                             <Icon>arrow_back</Icon>
                                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                                         </Button>
