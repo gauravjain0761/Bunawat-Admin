@@ -458,7 +458,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                         VideosData.push({
                             url: element?.Location,
                             isActive: false,
-                            type: 'IMAGE'
+                            type: 'VIDEO'
                         })
                     })
                     setFormData({
@@ -874,6 +874,8 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         );
     });
 
+
+    console.log("productformData", formData)
     return (
         <Box sx={{ position: 'relative' }}>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
