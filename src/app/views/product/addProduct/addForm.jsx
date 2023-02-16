@@ -497,13 +497,8 @@ const ProductForm = ({ data = {}, ProductType }) => {
 
     const SortableImageItem = SortableElement(({ item, i }) => {
         return (
-            <Box key={i} sx={{
-                width: "100%",
-                height: "200px",
-                margin: "10px 10px 0 0",
-                position: "relative"
-            }}>
-                <img src={item.url} width="100%" height="160px" />
+            <Box key={i} sx={{ width: "100%" }}>
+                <img src={item.url} width="100%" height="200px" />
                 <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                     <div>
                         <Stack direction="row" alignItems="center">
@@ -541,13 +536,8 @@ const ProductForm = ({ data = {}, ProductType }) => {
     const SortableVideoItem = SortableElement(({ item, i }) => {
         return (
             <Box key={i}
-                sx={{
-                    width: "100%",
-                    height: "200px",
-                    margin: "20px 10px 0 0",
-                    position: "relative"
-                }}>
-                <video width="100%" height="160px" autoPlay={true} muted={true} loop={true} playsInline={true}
+                sx={{ width: "100%" }}>
+                <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
                     style={{ objectFit: "fill", borderRadius: "10px" }}>
                     <source src={item.url} type="video/mp4" />
                 </video>
@@ -560,9 +550,9 @@ const ProductForm = ({ data = {}, ProductType }) => {
                                 cursor: "pointer",
                                 zIndex: "999",
                                 fontSize: "10px !impoprtant",
-                                '& .MuiSwitch-input': {
-                                    width: "100% !important"
-                                }
+                                // '& .MuiSwitch-input': {
+                                //     width: "100% !important"
+                                // }
                             }}
                             checked={item?.isActive}
                             onChange={() => handleSwitchVideo(i, 4)}
@@ -583,12 +573,16 @@ const ProductForm = ({ data = {}, ProductType }) => {
 
     const SortableList = SortableContainer(({ items }) => {
         return (
-            <Box className="list-group">
-                {items?.map((item, index) => {
-                    return (
-                        <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
-                    );
-                })}
+            <Box className="list-group"  sx={{ width: "100%" }}>
+                <Grid container spacing={2}>
+                    {items?.map((item, index) => {
+                        return (
+                            <Grid key={`List-Image${index}`} item lg={3} md={3} sm={6} xs={6}>
+                                <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
                 <Button
                     variant="contained"
                     component="label"
@@ -624,11 +618,15 @@ const ProductForm = ({ data = {}, ProductType }) => {
     const SortableVideoList = SortableContainer(({ items }) => {
         return (
             <Box className="list-group" sx={{ width: "100%" }}>
-                {items?.map((item, index) => {
-                    return (
-                        <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
-                    );
-                })}
+                <Grid container spacing={2}>
+                    {items?.map((item, index) => {
+                        return (
+                            <Grid key={`List-Video-${index}`} item lg={3} md={3} sm={6} xs={6}>
+                                <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
                 <Button
                     variant="contained"
                     component="label"
