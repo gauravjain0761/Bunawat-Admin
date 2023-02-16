@@ -1,7 +1,8 @@
-import { Box, ButtonBase, Icon, styled } from '@mui/material';
+import { Box, ButtonBase, Icon, styled, useMediaQuery } from '@mui/material';
 import useSettings from 'app/hooks/useSettings';
 import React, { Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
+import theme from '../theme';
 import { Paragraph, Span } from '../Typography';
 import MatxVerticalNavExpansionPanel from './MatxVerticalNavExpansionPanel';
 
@@ -74,8 +75,27 @@ const BadgeValue = styled('div')(() => ({
 }));
 
 const MatxVerticalNav = ({ items }) => {
-  const { settings } = useSettings();
+  const { settings, updateSettings } = useSettings();
   const { mode } = settings.layout1Settings.leftSidebar;
+  const isMdScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const updateSidebarMode = (sidebarSettings) => {
+    updateSettings({
+      layout1Settings: { leftSidebar: { ...sidebarSettings } },
+    });
+  };
+
+  const handleSidebarToggle = () => {
+    let { layout1Settings } = settings;
+    let mode;
+    if (isMdScreen) {
+      mode = layout1Settings.leftSidebar.mode === 'close' ? 'mobile' : 'close';
+    } else {
+      mode = layout1Settings.leftSidebar.mode === 'full' ? 'close' : 'full';
+    }
+    updateSidebarMode({ mode });
+  };
+
 
   const renderLevels = (data) => {
     return data.map((item, index) => {
@@ -128,7 +148,7 @@ const MatxVerticalNav = ({ items }) => {
                   : `${mode === 'compact' && 'compactNavItem'}`
               }
             >
-              <ButtonBase key={item.name} name="child" sx={{ width: '100%' }}>
+              <ButtonBase onClick={isMdScreen && handleSidebarToggle} key={item.name} name="child" sx={{ width: '100%' }}>
                 {item?.icon ? (
                   <Icon className="icon" sx={{ width: 36 }}>
                     {item.icon}
