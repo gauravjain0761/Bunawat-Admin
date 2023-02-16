@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, Container, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Button, Card, Container, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -22,6 +22,11 @@ import DeleteVariantModel from 'app/views/product/model/deleteVariantModel';
 import { LoadingButton } from '@mui/lab';
 import DeleteAllModel from 'app/views/models/deleteModel';
 
+const TextField = styled(TextValidator)(() => ({
+    width: "100%",
+    marginBottom: "16px",
+}));
+
 const VarientList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
@@ -38,6 +43,7 @@ const VarientList = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [deleteData, setDeleteData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
+    const [formError, setFormError] = useState({});
     const { id } = useParams();
 
     const getData = async () => {
@@ -238,11 +244,16 @@ const VarientList = () => {
         textTransform: 'capitalize',
     }));
 
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        setFormError(tempError)
+    }
+
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <Container maxWidth sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
                 <Stack spacing={3}>
-                    <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+                    <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                         <SimpleCard title="Varient" >
                             <Grid container spacing={12}>
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>

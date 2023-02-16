@@ -700,7 +700,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                             <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
 
                                 <Box display="flex" alignItems="center" sx={{
-                                    width: "50%",
+                                    width: "100%",
 
                                     "& .react-datepicker-popper": {
                                         zIndex: "999"
@@ -720,6 +720,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                         customInput={<DateCustomInput label="Start Date" className="startDate" />}
                                         startDate={commission?.start_date ? new Date(commission?.start_date) : new Date()}
                                         endDate={commission?.end_date ? new Date(commission?.end_date) : new Date()}
+                                        disabledKeyboardNavigation
                                     />
                                     <ReactDatePicker
                                         selected={commission?.end_date ? new Date(commission?.end_date) : new Date()}
@@ -730,6 +731,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                         startDate={commission?.start_date ? commission?.start_date : new Date()}
                                         endDate={commission?.end_date ? commission?.end_date : new Date()}
                                         minDate={commission?.start_date ? commission?.start_date : new Date()}
+                                        disabledKeyboardNavigation
                                     />
                                 </Box>
 
