@@ -28,7 +28,7 @@ const InventoryList = () => {
     const [selected, setSelected] = useState([]);
     const [singleMoveQTY, setSingleMoveQTY] = useState({});
     const [selectedSKU, setSelectedSKU] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState([]);
@@ -225,7 +225,7 @@ const InventoryList = () => {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setPage(1);
     };
 
     const handleChange = (event, main, child) => {
@@ -339,6 +339,7 @@ const InventoryList = () => {
                 extraPaddingOnFirstColumn={true}
                 disableCheckBox={true}
                 selected={selected}
+                totalCount={totalCount}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
