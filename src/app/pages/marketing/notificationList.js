@@ -179,7 +179,7 @@ const NotificationList = () => {
                                 height: '36px',
                                 background: "transparent",
                                 color: "#000",
-                            }} type="text" autoFocus value={searchText} onChange={(e) => {
+                            }} type="text" value={searchText} onChange={(e) => {
                                 setSearchText(e.target.value)
                             }} placeholder="Search here..." />
                             <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>

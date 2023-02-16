@@ -513,9 +513,9 @@ const ProductForm = ({ data = {}, ProductType }) => {
                                     color: "red",
                                     cursor: "pointer",
                                     fontSize: "10px !impoprtant",
-                                    '& .MuiSwitch-input': {
-                                        width: "100% !important"
-                                    }
+                                    // '& .MuiSwitch-input': {
+                                    //     width: "100% !important"
+                                    // }
                                 }}
                                 checked={item?.isActive}
                                 onChange={() => handleSwitchImage(i)}
