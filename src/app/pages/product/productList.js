@@ -4,7 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableComponent from 'app/components/table';
-import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material';
+import { Button, Card, ClickAwayListener, Fade, Icon, IconButton, Menu, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { UIColor } from 'app/utils/constant';
@@ -117,9 +117,24 @@ const ProductList = () => {
             });
     }
 
-    const editStatusData = async (id, status) => {
+    const editInActiveStatusData = async (id, status) => {
         await ApiPut(`${API_URL.editProduct}/${id}`, {
-            isActive: status
+            status: "INACTIVE"
+        })
+            .then((response) => {
+                toast.success('Edit Successfully!')
+                getData()
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
+
+    const editActiveStatusData = async (id, status) => {
+        await ApiPut(`${API_URL.editProduct}/${id}`, {
+            status: "ACTIVE"
         })
             .then((response) => {
                 toast.success('Edit Successfully!')
@@ -265,15 +280,20 @@ const ProductList = () => {
                 <TableCell>{row?.design_num}</TableCell>
                 <TableCell align="center">{row?.variant_count}</TableCell>
                 <TableCell align="center">
-                    {row?.isActive ?? true ?
-                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
-                            Active
-                        </Typography>
-                        :
-                        <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
-                            InActive
-                        </Typography>
-                    }
+                    <Typography sx={{
+                        flexShrink: 0, fontSize: "14px", color: (theme) =>
+                            row?.status === "ACTIVE" ?
+                                theme.palette.success.main
+                                :
+                                row?.status === "INACTIVE" ?
+                                    theme.palette.error.main
+                                    :
+                                    theme.palette.success.light
+                        , textTransform: "capitalize"
+                    }}>
+                        {row?.status}
+                    </Typography>
+
                 </TableCell>
                 <TableCell align='right' sx={{ pr: "18px" }}>
                     <Box position='relative'>
@@ -289,8 +309,20 @@ const ProductList = () => {
                         <ClickAwayListener onClickAway={handleActionClose}>
                             <Box sx={{ width: '100px', zIndex: 999, boxShadow: 'rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px', borderRadius: '4px', height: 'auto', background: '#fff', position: 'absolute', bottom: '-12px', right: '15px', display: Boolean(actionOpen[mainIndex]) ? 'block' : 'none', padding: '8px 0px' }}>
                                 <MenuItem onTouchEnd={() => {
-                                    editStatusData(row?._id, !row?.isActive)
-                                }} onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
+                                    if (row?.status === "ACTIVE") {
+                                        editInActiveStatusData(row?._id, !row?.status)
+                                    } else if (row?.status === "INQUALITY" || row?.status === "INACTIVE") {
+                                        editActiveStatusData(row?._id, !row?.status)
+                                    }
+
+                                }} onClick={() => {
+                                    if (row?.status === "ACTIVE") {
+                                        editInActiveStatusData(row?._id, !row?.status)
+                                    } else if (row?.status === "INQUALITY" || row?.status === "INACTIVE") {
+                                        editActiveStatusData(row?._id, !row?.status)
+                                    }
+
+                                }}>{row?.status === "ACTIVE" ? "InActive" : "Active"}  </MenuItem>
                                 <MenuItem onTouchEnd={() => {
                                     navigate(`/product/add/${row?._id}`)
                                 }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
@@ -336,19 +368,25 @@ const ProductList = () => {
                             borderRadius: "6px",
                             mr: "0px",
                         }}>
-                            <Box component="input" sx={{
-                                width: '100%',
-                                border: 'none',
-                                outline: 'none',
-                                fontSize: '1rem',
-                                p: 0,
-                                paddingLeft: '20px',
-                                height: '36px',
-                                background: "transparent",
-                                color: "#000",
-                            }} type="text" value={searchText} onChange={(e) => {
-                                setSearchText(e.target.value)
-                            }} placeholder="Search here..." />
+                            <Box
+                                component={TextField}
+                                sx={{
+                                    width: '100%',
+                                    border: 'none',
+                                    outline: 'none',
+                                    fontSize: '1rem',
+                                    p: 0,
+                                    paddingLeft: '20px',
+                                    height: '36px',
+                                    background: "transparent",
+                                    color: "#000",
+                                }}
+                                type="text"
+                                value={searchText}
+                                onChange={(e) => {
+                                    setSearchText(e.target.value)
+                                }}
+                                placeholder="Search here..." />
                             <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
                                 <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
                             </IconButton>
