@@ -37,6 +37,7 @@ const InventoryList = () => {
     const [collapseOpen, setCollapseOpen] = useState([]);
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [rowLoading, setRowLoading] = useState(false);
     const columns = [
         {
             id: "design_num",
@@ -125,8 +126,10 @@ const InventoryList = () => {
 
 
     const getData = async () => {
+        setRowLoading(true)
         await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
+                setRowLoading(false)
                 setRows(response?.data ?? []);
                 setActionOpen(response?.data?.map(() => { return null }))
                 setActionCollapseOpen(response?.data?.map((x) => { return x?.sku_data?.map(() => { return null }) }))
@@ -139,6 +142,7 @@ const InventoryList = () => {
                 // setTotalCount(1);
             })
             .catch((error) => {
+                setRowLoading(false)
                 console.log("Error", error);
             });
     }
@@ -336,6 +340,7 @@ const InventoryList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                isLoading={rowLoading}
                 extraPaddingOnFirstColumn={true}
                 disableCheckBox={true}
                 selected={selected}
