@@ -686,6 +686,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         tax,
         attributeList,
         isActive,
+        status,
         sku_data
     } = formData;
 
@@ -1270,10 +1271,10 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                     <FormControl>
                                         <RadioGroup
                                             row
-                                            value={isActive ?? "ACTIVE"}
+                                            value={status ?? "ACTIVE"}
                                             onChange={handleChange}
                                             aria-labelledby="demo-row-radio-buttons-group-label"
-                                            name="isActive">
+                                            name="status">
                                             <FormControlLabel value={"ACTIVE"} control={<Radio />} label="Active" />
                                             <FormControlLabel value={"INACTIVE"} control={<Radio />} label="InActive" />
                                             <FormControlLabel value={"INQUALITY"} control={<Radio />} label="InQuality" />

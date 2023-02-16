@@ -127,16 +127,16 @@ const InventoryList = () => {
     const getData = async () => {
         await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
             .then((response) => {
-                // setRows(response?.data ?? []);
-                // setActionOpen(response?.data?.map(() => { return null }))
-                // setActionCollapseOpen(response?.data?.map((x) => { return x?.sku_data?.map(() => { return null }) }))
-                // setCollapseOpen(response?.data?.map(() => { return false }))
-                // setTotalCount(response?.totalCount);
-                setRows(mockDataInventoryManagement);
-                setActionOpen(mockDataInventoryManagement.map(() => { return null }))
-                setActionCollapseOpen(mockDataInventoryManagement.map((x) => { return x?.sku_data?.map(() => { return null }) }))
-                setCollapseOpen(mockDataInventoryManagement.map(() => { return false }))
-                setTotalCount(1);
+                setRows(response?.data ?? []);
+                setActionOpen(response?.data?.map(() => { return null }))
+                setActionCollapseOpen(response?.data?.map((x) => { return x?.sku_data?.map(() => { return null }) }))
+                setCollapseOpen(response?.data?.map(() => { return false }))
+                setTotalCount(response?.totalCount);
+                // setRows(mockDataInventoryManagement);
+                // setActionOpen(mockDataInventoryManagement.map(() => { return null }))
+                // setActionCollapseOpen(mockDataInventoryManagement.map((x) => { return x?.sku_data?.map(() => { return null }) }))
+                // setCollapseOpen(mockDataInventoryManagement.map(() => { return false }))
+                // setTotalCount(1);
             })
             .catch((error) => {
                 console.log("Error", error);
@@ -261,6 +261,7 @@ const InventoryList = () => {
                 setSaveChanges(false)
                 setChangeData([])
                 toast.success('Edit Successfully!')
+                getData();
             })
             .catch((error) => {
                 setLoading(false)
