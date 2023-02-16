@@ -4,7 +4,7 @@ import { SimpleCard } from "app/components";
 import { API_URL } from "app/constant/api";
 import { ApiGet } from "app/service/api";
 import CategoryForm from "app/views/category/categoryForm";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Container = styled("div")(({ theme }) => ({
@@ -19,6 +19,33 @@ const Container = styled("div")(({ theme }) => ({
 const CategoryDetail = () => {
     const { id, type } = useParams();
     const [data, setData] = useState({});
+    const [newTypes, setNewTypes] = useState("list")
+
+    const setTypes = () => {
+        switch (type) {
+            case "parentCategory":
+                setNewTypes("parent")
+                break;
+            case "parentSubCategory":
+                setNewTypes("sub")
+                break;
+            case "category":
+                setNewTypes("list")
+                break;
+            default:
+                setNewTypes("list")
+                break;
+        }
+    }
+
+    React.useEffect(() => {
+        if (type) {
+            setTypes()
+        }
+    }, [type])
+
+
+    console.log("newTypesnewTypes", newTypes, type)
 
     const getURL = (role) => {
         if (role == 'parent') {
@@ -32,8 +59,8 @@ const CategoryDetail = () => {
         }
     }
 
-    const getData = async (id, type) => {
-        await ApiGet(`${getURL(type)}/${id}`)
+    const getData = async (id, types) => {
+        await ApiGet(`${getURL(types)}/${id}`)
             .then((response) => {
                 setData(response?.data ?? {});
             })
@@ -43,17 +70,18 @@ const CategoryDetail = () => {
     }
 
     useEffect(() => {
-        if (id && type) {
-            getData(id, type)
+        if (id && newTypes) {
+            getData(id, newTypes)
         } else {
             setData([])
         }
-    }, [id, type])
+    }, [id, newTypes]);
+
 
     return (
         <Container>
             <Stack spacing={3}>
-                <CategoryForm data={data} id={id} type={type} />
+                <CategoryForm data={data} id={id} type={newTypes} />
             </Stack>
         </Container>
     );
