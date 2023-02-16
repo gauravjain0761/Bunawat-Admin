@@ -135,7 +135,15 @@ const UserWishlist = () => {
   }));
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-      <CardHeader className="searchBoxSeaprate">
+      <Box className="searchBoxSeaprate"
+        sx={{
+          paddingLeft: "10px !important",
+          paddingRight: "10px !important",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
         <Title>User Wishlist</Title>
         <Box display="flex" className="searchBoxSeaprate">
           <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
@@ -173,7 +181,7 @@ const UserWishlist = () => {
                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Order</Span>
                     </Button> */}
         </Box>
-      </CardHeader>
+      </Box>
       <TableComponent
         rows={rows}
         columns={columns}

@@ -63,7 +63,15 @@ const ProductMedia = () => {
 
     return (
         <>
-            <CardHeader sx={{ paddingLeft: "10px !important", paddingRight: "10px !important" }}>
+            <Box
+                sx={{
+                    paddingLeft: "10px !important",
+                    paddingRight: "10px !important",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                }}
+            >
                 <Box display="flex" justifyContent='space-between' width="100%">
                     <Box></Box>
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
@@ -92,7 +100,7 @@ const ProductMedia = () => {
                         </IconButton>
                     </Box>
                 </Box>
-            </CardHeader>
+            </Box>
             <Card elevation={3} sx={{ border: "1px solid #232a45", margin: "10px", paddingBottom: "20px" }}>
                 <CardHeader sx={{ background: "#232a45", padding: "1.4rem 2rem", color: "#fff", fontSize: '16px', fontWeight: '700', paddingLeft: "10px !important", paddingRight: "10px !important" }}>
                     {/* <Title>Media List</Title> */}

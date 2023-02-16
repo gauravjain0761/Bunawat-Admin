@@ -265,7 +265,14 @@ const ColorList = () => {
                     </ValidatorForm>
                 </Stack>
             </Container>
-            <CardHeader sx={{ mt: 2 }} className="searchBoxSeaprate">
+            <Box className="searchBoxSeaprate"
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mt: 2
+                }}
+            >
                 <Title>Varient List</Title>
                 <Box display="flex" className="searchBoxSeaprate">
                     <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
@@ -291,7 +298,7 @@ const ColorList = () => {
                         </IconButton>
                     </Box>
                 </Box>
-            </CardHeader>
+            </Box>
             <TableComponent
                 rows={rows}
                 columns={columns}
