@@ -425,7 +425,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
         setFormError(tempError)
     }
 
-
+    console.log("idid", id)
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
@@ -507,6 +507,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                 name="code"
                                 label="Code"
                                 onChange={handleChange}
+                                disabled={!id ? false : true}
                                 value={code || ""}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
