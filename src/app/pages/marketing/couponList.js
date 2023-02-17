@@ -13,17 +13,59 @@ import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
 import { Span } from 'app/components/Typography';
 import { mockDataCouponManagement } from 'fake-db/data/marketing/couponData';
+import { ApiGet, ApiPut } from 'app/service/api';
+import { API_URL } from 'app/constant/api';
+import { toast } from 'material-react-toastify';
 
 const CouponList = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [rows, setRows] = useState(mockDataCouponManagement);
+    const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [rowLoading, setRowLoading] = useState(false);
+    const [totalCount, setTotalCount] = useState(0);
+    const [deleteData, setDeleteData] = useState(null);
+
+
+    const getData = async () => {
+        setRowLoading(true)
+        await ApiGet(`${API_URL.getCoupons}?page=${page}&limit=${rowsPerPage}&q=${searchText}`)
+            .then((response) => {
+                setRowLoading(false)
+                setRows(response?.data ?? []);
+                setTotalCount(response?.totalCount);
+            })
+            .catch((error) => {
+                setRowLoading(false)
+                console.log("Error", error);
+            });
+    }
+
+    React.useEffect(() => {
+        getData();
+    }, [page, rowsPerPage, searchText]);
+
+
+    const editStatusData = async (id, status) => {
+        await ApiPut(`${API_URL.editCoupon}/${id}`, {
+            isActive: status
+        })
+            .then((response) => {
+                toast.success('Edit Successfully!')
+                getData()
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
+
 
     const columns = [
         {
@@ -31,11 +73,11 @@ const CouponList = () => {
             label: "Coupon Code",
             width: 120
         },
-        {
-            id: "Description",
-            label: "Description",
-            width: 120
-        },
+        // {
+        //     id: "Description",
+        //     label: "Description",
+        //     width: 120
+        // },
         {
             id: "Discount Type",
             label: "Discount Type",
@@ -52,8 +94,18 @@ const CouponList = () => {
             width: 110
         },
         {
+            id: "start_date",
+            label: "Start Date",
+            width: 110
+        },
+        {
             id: "expiry_date",
             label: "Expiry Date",
+            width: 110
+        },
+        {
+            id: "isActive",
+            label: "isActive",
             width: 110
         },
         {
@@ -63,7 +115,7 @@ const CouponList = () => {
             align: 'right',
             width: 80,
             sortDisable: true,
-            renderCell: (
+            renderCell: ({ row }) => (
                 <>
                     <IconButton
                         aria-label="more"
@@ -85,6 +137,7 @@ const CouponList = () => {
                         onClose={() => setActionAllOpen(null)}
                         TransitionComponent={Fade}
                     >
+                        <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                         <MenuItem onClick={() => {
                             setOpen(true);
                             setActionAllOpen(null)
@@ -148,7 +201,7 @@ const CouponList = () => {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setPage(1);
     };
 
 
@@ -246,11 +299,21 @@ const CouponList = () => {
                                 />
                             </TableCell>
                             <TableCell>{row.code}</TableCell>
-                            <TableCell>{row.discounttype}</TableCell>
-                            <TableCell >{row.value}</TableCell>
-                            <TableCell >{row.description}</TableCell>
-                            <TableCell>{row.uses}/{row.limit}</TableCell>
-                            <TableCell >{row.expirydate}</TableCell>
+                            <TableCell>{row.discount_type}</TableCell>
+                            <TableCell >{row.discount_value}</TableCell>
+                            {/* <TableCell >{row.description}</TableCell> */}
+                            <TableCell>{row.use_count}/{row.max_limit}</TableCell>
+                            <TableCell >{row?.start_date && row?.start_date.split("T")[0]}</TableCell>
+                            <TableCell >{row?.end_date && row?.end_date.split("T")[0]}</TableCell>
+                            <TableCell >{row?.isActive ?
+                                <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
+                                    Active
+                                </Typography>
+                                :
+                                <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "red", fontWeight: 500, textTransform: "capitalize" }}>
+                                    InActive
+                                </Typography>
+                            }</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
@@ -278,6 +341,7 @@ const CouponList = () => {
                                     <MenuItem onClick={() => {
                                         setOpen(true);
                                         handleActionClose();
+                                        setDeleteData(row)
                                     }}>Delete</MenuItem>
                                 </Menu>
                             </TableCell>
@@ -285,13 +349,18 @@ const CouponList = () => {
                     );
                 }}
                 page={page}
+                totalCount={totalCount}
                 rowsPerPage={rowsPerPage}
+                isLoading={rowLoading}
                 handleChangeRowsPerPage={handleChangeRowsPerPage}
                 handleChangePage={handleChangePage}
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <DeleteModel open={open} handleClose={() => setOpen(false)} />
+            <DeleteModel deleteData={deleteData?._id} getData={getData} type="coupon" open={open} handleClose={() => {
+                setOpen(false)
+                setDeleteData(null);
+            }} />
         </Card>
     );
 }

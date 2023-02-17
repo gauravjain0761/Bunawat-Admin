@@ -33,6 +33,9 @@ const DeleteAllModel = ({ open, deleteData, getData, handleClose, type }) => {
         if (role == 'product') {
             return API_URL.deleteProduct
         }
+        if (role == 'coupon') {
+            return API_URL.deleteCoupon
+        }
     }
 
     const handleDelete = async () => {

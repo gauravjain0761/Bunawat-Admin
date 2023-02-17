@@ -27,7 +27,7 @@ const CouponDetail = () => {
     return (
         <Container>
             <Stack spacing={3}>
-                <CouponForm data={data} />
+                <CouponForm data={data} id={id} />
             </Stack>
         </Container>
     );

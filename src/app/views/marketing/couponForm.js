@@ -1,12 +1,8 @@
-import { CheckBox } from "@mui/icons-material";
 import {
-    Autocomplete,
     Box,
     Button,
-    Checkbox,
     FormControl,
     FormControlLabel,
-    FormGroup,
     FormLabel,
     Grid,
     Icon,
@@ -24,36 +20,104 @@ import TextEditor from "app/components/textEditor";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import { DatePicker } from '@mui/lab'
+import { ApiPost, ApiPut } from "app/service/api";
+import { API_URL } from "app/constant/api";
+import { toast } from "material-react-toastify";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
     marginBottom: "16px",
 }));
 
-const CouponForm = ({ data = {} }) => {
-    const [formData, setFormData] = useState(data);
+const CouponForm = ({ data = {}, id }) => {
+    const [formData, setFormData] = useState({
+        // ...data,
+        discount_type: "PERCENTAGE",
+        code: "",
+        min_order_amount: "",
+        max_discount_amount: "",
+        max_limit: "",
+        discount_value: "",
+        start_date: "",
+        end_date: "",
+    });
+    const [description, setDescription] = useState("");
+    const [formError, setFormError] = useState({});
+    const [isErrorDescription, setIsErrorDescription] = useState(false);
+    const [isErrorStartDate, setIsErrorStartDate] = useState(false);
+    const [isErrorEndDate, setIsErrorEndDate] = useState(false);
     // for input box show state
-    const [showApplyOn, setShowApplyOn] = useState('');
+    const [showApplyOn, setShowApplyOn] = useState('ALL');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
 
 
     useEffect(() => {
-        setFormData(data)
-    }, [data])
+        if (id && data) {
+            setFormData(data);
+            setDescription(data?.description)
+        }
+    }, [data, id])
 
 
-    const handleSubmit = (event) => {
-        console.log("submitted");
-        console.log(event);
-        navigate(`/coupons/list`)
+    const handleSubmit = async (event) => {
+        const { link_with, linkValue, productId, image, mediaType, ...payload } = formData
+        let tempError = { ...formError }
+        let tempMediaType = formData?.mediaType ?? 'image'
+        if (!description) {
+            setIsErrorDescription(true)
+        }
+        if (!start_date) {
+            setIsErrorStartDate(true)
+        }
+        if (!end_date) {
+            setIsErrorEndDate(true)
+        }
+
+        if (!!description && Object.values(tempError).every(x => !x)) {
+            setLoading(true)
+            if (id) {
+                await ApiPut(`${API_URL.editCoupon}/${id}`, {
+                    ...payload,
+                    description,
+                    apply_on: showApplyOn
+                })
+                    .then((response) => {
+                        toast.success('Edit Successfully!')
+                        setLoading(false)
+                        navigate(`/coupons/list`);
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            } else {
+                await ApiPost(`${API_URL.addCoupon}`, {
+                    ...payload,
+                    description,
+                    apply_on: showApplyOn
+                })
+                    .then((response) => {
+                        toast.success('Add Successfully!')
+                        setLoading(false)
+                        navigate(`/coupons/list`);
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            }
+        }
+        setFormError(tempError)
     };
 
     const handleChange = (event) => {
@@ -69,46 +133,64 @@ const CouponForm = ({ data = {} }) => {
     };
 
     const {
-        discountTypeValue,
+        discount_type,
         code,
-        applyOnValue,
-        minimumOrderAmount,
-        maximumDiscountAmount,
-        limit,
-        value,
-        startDate,
-        endDate
+        min_order_amount,
+        max_discount_amount,
+        max_limit,
+        discount_value,
+        start_date,
+        end_date,
     } = formData;
+
+    const handleError = async (event) => {
+        let tempError = { ...formError }
+        if (!description) {
+            setIsErrorDescription(true)
+        }
+        if (!start_date) {
+            setIsErrorStartDate(true)
+        }
+        if (!end_date) {
+            setIsErrorEndDate(true)
+        }
+
+        setFormError(tempError)
+    }
+
+    console.log("formDataformData", formData)
 
     return (
         <div>
-            <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+            <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
                 <SimpleCard title="Add Coupon" backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} >
-
                             <FormControl fullWidth>
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="row-radio-buttons-group"
-                                    defaultValue="percentage"
+                                    name="discount_type"
+                                    value={discount_type}
+                                    onChange={handleChange}
                                 >
                                     <FormLabel id="demo-row-radio-buttons-group-label" sx={{ marginTop: "12px", marginRight: "10px" }} >Discount Type</FormLabel>
-                                    <FormControlLabel value="percentage" control={<Radio />} label="Percentage" />
-                                    <FormControlLabel value="fixed_price" control={<Radio />} label="Fixed Price" />
+                                    <FormControlLabel value="PERCENTAGE" control={<Radio />} label="Percentage" />
+                                    <FormControlLabel value="FIXED" control={<Radio />} label="Fixed Price" />
                                 </RadioGroup>
                             </FormControl>
                             <Box sx={{ mt: 1 }}>
                                 <TextField
                                     type="text"
-                                    name="discountTypeValue"
+                                    name="discount_value"
                                     label="Discount Type Value"
                                     onChange={handleChange}
-                                    value={discountTypeValue || ""}
+                                    value={discount_value || ""}
                                     sx={{
                                         marginBottom: '7px',
                                     }}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
                                 />
                             </Box>
 
@@ -118,21 +200,22 @@ const CouponForm = ({ data = {} }) => {
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="row-radio-buttons-group"
-                                    defaultValue="all"
+                                    defaultValue={showApplyOn}
+                                    value={showApplyOn}
                                 >
                                     <FormLabel id="demo-row-radio-buttons-group-label" sx={{ marginTop: "12px", marginRight: "10px" }}>Apply On</FormLabel>
-                                    <FormControlLabel value="all" control={<Radio />} label="All" onClick={() => setShowApplyOn('all')} />
-                                    <FormControlLabel value="category" control={<Radio />} label="Category" onClick={() => setShowApplyOn('category')} />
-                                    <FormControlLabel value="collection" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('collection')} />
+                                    <FormControlLabel value="ALL" control={<Radio />} label="All" onClick={() => setShowApplyOn('ALL')} />
+                                    <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" onClick={() => setShowApplyOn('CATEGORY')} />
+                                    <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('COLLECTION')} />
                                 </RadioGroup>
                             </FormControl>
-                            {showApplyOn === 'category' &&
+                            {showApplyOn === 'CATEGORY' &&
                                 <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
                                     <InputLabel id="demo-simple-select-label">Category</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={applyOnValue}
+                                        value={""}
                                         label="Category"
                                         onChange={handleChange}
                                     >
@@ -142,13 +225,13 @@ const CouponForm = ({ data = {} }) => {
                                     </Select>
                                 </FormControl>
                             }
-                            {showApplyOn === 'collection' &&
+                            {showApplyOn === 'COLLECTION' &&
                                 <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
                                     <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={applyOnValue}
+                                        value={""}
                                         label="Category"
                                         onChange={handleChange}
                                     >
@@ -166,66 +249,92 @@ const CouponForm = ({ data = {} }) => {
                                     label="Coupon Code"
                                     onChange={handleChange}
                                     value={code || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
                                 />
                             </Box>
 
 
                             <Box sx={{ mb: 2 }}>
-                                <TextEditor />
+                                <TextEditor
+                                    data={description} setData={(d) => {
+                                        setIsErrorDescription(false)
+                                        setDescription(d)
+                                    }}
+                                />
+                                {isErrorDescription && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </Box>
 
                             <Grid container spacing={1}>
                                 <Grid item lg={6} md={6} sm={12} xs={12}>
                                     <TextField
                                         type="text"
-                                        name="minimumOrderAmount"
+                                        name="min_order_amount"
                                         label="Minimum Order Amount"
                                         onChange={handleChange}
-                                        value={minimumOrderAmount || ""}
+                                        value={min_order_amount || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
                                     />
                                 </Grid>
                                 <Grid item lg={6} md={6} sm={12} xs={12}>
                                     <TextField
                                         type="text"
-                                        name="maximumDiscountAmount"
+                                        name="max_discount_amount"
                                         label="Maximum Discount Amount"
                                         onChange={handleChange}
-                                        value={maximumDiscountAmount || ""}
+                                        value={max_discount_amount || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
                                     />
                                 </Grid>
                             </Grid>
 
                             <TextField
                                 type="text"
-                                name="limit"
+                                name="max_limit"
                                 label="Number of Uses"
                                 onChange={handleChange}
-                                value={limit || ""}
+                                value={max_limit || ""}
+                                validators={["required"]}
+                                errorMessages={["this field is required"]}
                             />
 
                             <Grid container spacing={1}>
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <Grid item lg={6} md={6} sm={12} xs={12}>
                                         <DatePicker
-                                            value={startDate}
-                                            onChange={(date) => setFormData({ ...formData, startDate: date })}
+                                            name="start_date"
+                                            value={start_date || null}
+                                            onChange={(date) => {
+                                                setIsErrorStartDate(false)
+                                                setFormData({ ...formData, start_date: date })
+                                            }}
                                             renderInput={(props) => (
                                                 <TextField
                                                     {...props}
                                                     label="Start Date"
                                                 />
-                                            )} />
+                                            )}
+                                        />
+                                        {isErrorStartDate && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </Grid>
                                     <Grid item lg={6} md={6} sm={12} xs={12}>
                                         <DatePicker
-                                            value={endDate}
-                                            onChange={(date) => setFormData({ ...formData, endDate: date })}
+                                            name="end_date"
+                                            value={end_date || null}
+                                            onChange={(date) => {
+                                                setIsErrorEndDate(false)
+                                                setFormData({ ...formData, end_date: date })
+                                            }}
                                             renderInput={(props) => (
                                                 <TextField
                                                     {...props}
                                                     label="End Date"
                                                 />
-                                            )} />
+                                            )}
+                                        />
+                                        {isErrorEndDate && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </Grid>
                                 </LocalizationProvider>
                             </Grid>
