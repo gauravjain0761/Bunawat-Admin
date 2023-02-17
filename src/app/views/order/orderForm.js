@@ -809,8 +809,8 @@ const OrderForm = ({ data = {} }) => {
                                             onChange={handleChange}
                                             inputProps={{ maxLength: 10 }}
                                             value={phone_secondary || ""}
-                                            validators={["required", "minStringLength:10", "maxStringLength: 10"]}
-                                            errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
+                                        // validators={["required", "minStringLength:10", "maxStringLength: 10"]}
+                                        // errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
                                     </Grid>
 
@@ -935,8 +935,8 @@ const OrderForm = ({ data = {} }) => {
                                             inputProps={{ maxLength: 10 }}
                                             onChange={handleShippingChange}
                                             value={formShippingData.phone_secondary || ""}
-                                            validators={["required", "minStringLength:10", "maxStringLength: 10"]}
-                                            errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
+                                            // validators={["minStringLength:10", "maxStringLength: 10"]}
+                                        // errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
                                     </Grid>
 
