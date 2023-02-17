@@ -93,5 +93,11 @@ export const API_URL = {
     fileRemove: "fileRmove",
     fileStatus: "fileStatus/update",
 
-    getTeams: "team_member/getAll"
+    getTeams: "team_member/getAll",
+
+    getCoupons: "coupon/getall",
+    getCoupon: "coupon",
+    addCoupon: "coupon/add",
+    editCoupon: "category/update",
+    deleteCoupon: "coupon/remove",
 }
