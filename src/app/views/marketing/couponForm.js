@@ -1,4 +1,5 @@
 import {
+    Autocomplete,
     Box,
     Button,
     FormControl,
@@ -25,7 +26,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import { DatePicker } from '@mui/lab'
-import { ApiPost, ApiPut } from "app/service/api";
+import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import { toast } from "material-react-toastify";
 
@@ -34,9 +35,8 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const CouponForm = ({ data = {}, id }) => {
+const CouponForm = ({ data = {}, id, disabled }) => {
     const [formData, setFormData] = useState({
-        // ...data,
         discount_type: "PERCENTAGE",
         code: "",
         min_order_amount: "",
@@ -45,7 +45,10 @@ const CouponForm = ({ data = {}, id }) => {
         discount_value: "",
         start_date: "",
         end_date: "",
+        ids: []
     });
+    const [categoryList, setCategoryList] = useState([])
+    const [collectionList, setCollectionList] = useState([])
     const [description, setDescription] = useState("");
     const [formError, setFormError] = useState({});
     const [isErrorDescription, setIsErrorDescription] = useState(false);
@@ -62,10 +65,68 @@ const CouponForm = ({ data = {}, id }) => {
     useEffect(() => {
         if (id && data) {
             setFormData(data);
+            setShowApplyOn(data?.apply_on)
             setDescription(data?.description)
         }
     }, [data, id])
 
+    const getCategoryList = async () => {
+        await ApiGet(`${API_URL.getCategoryList}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    let temp = [...response?.data]
+                    let categoryList = [];
+                    temp = temp?.map(level1 => {
+                        if (level1?.sub_categories?.length == 0) {
+                            categoryList.push({
+                                label: level1?.name,
+                                value: level1?._id,
+                            })
+                        } else {
+                            level1?.sub_categories?.map(level2 => {
+                                if (level2?.categories?.length == 0) {
+                                    categoryList.push({
+                                        label: level2?.name,
+                                        value: level2?._id,
+                                    })
+                                } else {
+                                    level2?.categories?.map(level3 => {
+                                        categoryList.push({
+                                            label: level3?.name,
+                                            value: level3?._id,
+                                        })
+                                    })
+                                }
+                            })
+                        }
+                    }) ?? [];
+                    setCategoryList(categoryList);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getCollectionList = async () => {
+        await ApiGet(`${API_URL.getCollectionList}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionList(response?.data?.map(item => ({
+                        label: item?.name,
+                        value: item?._id
+                    })) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    useEffect(() => {
+        getCategoryList();
+        getCollectionList();
+    }, [])
 
     const handleSubmit = async (event) => {
         const { link_with, linkValue, productId, image, mediaType, ...payload } = formData
@@ -121,15 +182,34 @@ const CouponForm = ({ data = {}, id }) => {
     };
 
     const handleChange = (event) => {
-        if (event.target.name == "image") {
-            setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
-        } else {
-            setFormData({ ...formData, [event.target.name]: event.target.value });
+        if (!disabled) {
+            if (event.target.name == "image") {
+                setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+            } else if (event.target.name == "discount_type") {
+                setFormData({ ...formData, [event.target.name]: event.target.value, discount_value: "" });
+            } else if (event.target.name == "discount_value") {
+                const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+                if (formData?.discount_type == "PERCENTAGE") {
+                    if (onlyNums <= 100) {
+                        setFormData({ ...formData, [event.target.name]: onlyNums });
+                    }
+                } else {
+                    setFormData({ ...formData, [event.target.name]: onlyNums });
+                }
+            } else if (event.target.name == "min_order_amount" || event.target.name == "max_discount_amount" || event.target.name == "max_limit") {
+                const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+                setFormData({ ...formData, [event.target.name]: onlyNums });
+            } else {
+                setFormData({ ...formData, [event.target.name]: event.target.value });
+            }
         }
     };
 
-    const handleDeleteImage = () => {
-        setFormData({ ...formData, image: null });
+    const handleChangeApply = (type) => {
+        if (!disabled) {
+            setShowApplyOn(type)
+            setFormData({ ...formData, ids: [] })
+        }
     };
 
     const {
@@ -163,7 +243,7 @@ const CouponForm = ({ data = {}, id }) => {
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
-                <SimpleCard title="Add Coupon" backArrow={true}>
+                <SimpleCard title={`${disabled ? 'View' : 'Add'} Coupon`} backArrow={true}>
                     <Grid container spacing={12}>
                         <Grid item lg={12} md={12} sm={12} xs={12} >
                             <FormControl fullWidth>
@@ -204,41 +284,66 @@ const CouponForm = ({ data = {}, id }) => {
                                     value={showApplyOn}
                                 >
                                     <FormLabel id="demo-row-radio-buttons-group-label" sx={{ marginTop: "12px", marginRight: "10px" }}>Apply On</FormLabel>
-                                    <FormControlLabel value="ALL" control={<Radio />} label="All" onClick={() => setShowApplyOn('ALL')} />
-                                    <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" onClick={() => setShowApplyOn('CATEGORY')} />
-                                    <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" onClick={() => setShowApplyOn('COLLECTION')} />
+                                    <FormControlLabel value="ALL" control={<Radio />} label="All" onClick={() => handleChangeApply('ALL')} />
+                                    <FormControlLabel value="CATEGORY" control={<Radio />} label="Category" onClick={() => handleChangeApply('CATEGORY')} />
+                                    <FormControlLabel value="COLLECTION" control={<Radio />} label="Collection" onClick={() => handleChangeApply('COLLECTION')} />
                                 </RadioGroup>
                             </FormControl>
                             {showApplyOn === 'CATEGORY' &&
                                 <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
-                                    <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={""}
-                                        label="Category"
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value={10}>Category 1</MenuItem>
-                                        <MenuItem value={20}>Category 2</MenuItem>
-                                        <MenuItem value={30}>Category 3</MenuItem>
-                                    </Select>
+                                    <Autocomplete
+                                        fullWidth
+                                        sx={{
+                                            '.MuiFormControl-root': {
+                                                mb: 0
+                                            },
+                                        }}
+                                        readOnly={disabled}
+                                        multiple
+                                        id="tags-outlined"
+                                        value={formData?.ids?.map(list => categoryList?.find(item => item?.value == list))}
+                                        onChange={(event, newValue) => {
+                                            setFormData({ ...formData, ids: newValue?.map(list => list?.value) })
+                                        }}
+                                        options={categoryList}
+                                        getOptionLabel={(option) => option?.label}
+                                        filterSelectedOptions
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Select Category"
+                                            />
+                                        )}
+                                    />
                                 </FormControl>
                             }
+
                             {showApplyOn === 'COLLECTION' &&
                                 <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
-                                    <InputLabel id="demo-simple-select-label">Collection</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={""}
-                                        label="Category"
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value={10}>Collection 1</MenuItem>
-                                        <MenuItem value={20}>Collection 2</MenuItem>
-                                        <MenuItem value={30}>Collection 3</MenuItem>
-                                    </Select>
+                                    <Autocomplete
+                                        fullWidth
+                                        sx={{
+                                            '.MuiFormControl-root': {
+                                                mb: 0
+                                            },
+                                        }}
+                                        multiple
+                                        readOnly={disabled}
+                                        id="tags-outlined"
+                                        value={formData?.ids?.map(list => collectionList?.find(item => item?.value == list))}
+                                        onChange={(event, newValue) => {
+                                            setFormData({ ...formData, ids: newValue?.map(list => list?.value) })
+                                        }}
+                                        options={collectionList}
+                                        getOptionLabel={(option) => option?.label}
+                                        filterSelectedOptions
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Select Collection"
+                                            />
+                                        )}
+                                    />
                                 </FormControl>
                             }
 
@@ -257,7 +362,7 @@ const CouponForm = ({ data = {}, id }) => {
 
                             <Box sx={{ mb: 2 }}>
                                 <TextEditor
-                                    data={description} setData={(d) => {
+                                    data={description} disabled={disabled} setData={(d) => {
                                         setIsErrorDescription(false)
                                         setDescription(d)
                                     }}
@@ -306,6 +411,7 @@ const CouponForm = ({ data = {}, id }) => {
                                         <DatePicker
                                             name="start_date"
                                             value={start_date || null}
+                                            readOnly={disabled}
                                             onChange={(date) => {
                                                 setIsErrorStartDate(false)
                                                 setFormData({ ...formData, start_date: date })
@@ -323,6 +429,7 @@ const CouponForm = ({ data = {}, id }) => {
                                         <DatePicker
                                             name="end_date"
                                             value={end_date || null}
+                                            readOnly={disabled}
                                             onChange={(date) => {
                                                 setIsErrorEndDate(false)
                                                 setFormData({ ...formData, end_date: date })
@@ -350,12 +457,14 @@ const CouponForm = ({ data = {}, id }) => {
                                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                                     </Button>
                                 </Box>
-                                <Box>
-                                    <Button color="primary" variant="contained" type="submit" sx={{ mr: 0, mt: 2 }}>
-                                        <Icon>send</Icon>
-                                        <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
-                                    </Button>
-                                </Box>
+                                {!disabled ?
+                                    <Box>
+                                        <Button color="primary" variant="contained" type="submit" sx={{ mr: 0, mt: 2 }}>
+                                            <Icon>send</Icon>
+                                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Save</Span>
+                                        </Button>
+                                    </Box>
+                                    : null}
                             </Stack>
                             {/* <Button color="error" variant="contained" sx={{ mr: 2, mt: 2 }}>
                                 <Icon>delete</Icon>

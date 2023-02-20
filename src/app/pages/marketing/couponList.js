@@ -150,7 +150,7 @@ const CouponList = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n?._id);
             setSelected(newSelected);
             return;
         }
@@ -277,7 +277,7 @@ const CouponList = () => {
                 columns={columns}
                 selected={selected}
                 renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row?._id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                         <TableRow
@@ -285,13 +285,13 @@ const CouponList = () => {
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
-                            key={row.name}
+                            key={row?._id}
                             selected={isItemSelected}
                         >
                             <TableCell padding="checkbox">
                                 <Checkbox
                                     color="primary"
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row?._id)}
                                     checked={isItemSelected}
                                     inputProps={{
                                         'aria-labelledby': labelId,
@@ -335,8 +335,7 @@ const CouponList = () => {
                                     TransitionComponent={Fade}
                                 >
                                     <MenuItem onClick={() => {
-                                        // setOpen(true);
-                                        // handleActionClose();
+                                        navigate(`/coupons/view/${row?._id}`)
                                     }}>View</MenuItem>
                                     <MenuItem onClick={() => {
                                         setOpen(true);
@@ -357,7 +356,7 @@ const CouponList = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <DeleteModel deleteData={deleteData?._id} getData={getData} type="coupon" open={open} handleClose={() => {
+            <DeleteModel deleteData={[deleteData?._id]} getData={getData} type="coupon" open={open} handleClose={() => {
                 setOpen(false)
                 setDeleteData(null);
             }} />

@@ -588,11 +588,11 @@ const OrderForm = ({ data = {} }) => {
                                             value={skuName}
                                             onChange={(event, newValue) => {
                                                 setSKUName(newValue);
-                                                setFormData({ ...formData, sku: newValue.id });
+                                                setFormData({ ...formData, sku: newValue?.id });
                                             }}
                                             options={skuData}
-                                            getOptionLabel={(option) => option.name}
-                                            getOptionValue={(option) => option.id}
+                                            getOptionLabel={(option) => option?.name}
+                                            getOptionValue={(option) => option?.id}
                                             filterSelectedOptions
                                             renderInput={(params) => (
                                                 <TextField
@@ -935,7 +935,7 @@ const OrderForm = ({ data = {} }) => {
                                             inputProps={{ maxLength: 10 }}
                                             onChange={handleShippingChange}
                                             value={formShippingData.phone_secondary || ""}
-                                            // validators={["minStringLength:10", "maxStringLength: 10"]}
+                                        // validators={["minStringLength:10", "maxStringLength: 10"]}
                                         // errorMessages={["this field is required", "Enter valid number", "Enter valid number"]}
                                         />
                                     </Grid>

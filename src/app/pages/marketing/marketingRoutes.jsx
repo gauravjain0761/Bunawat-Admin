@@ -12,6 +12,7 @@ const MarketingRoutes = [
     { path: '/notifications/details/:id', element: <NotificationDetail /> },
     { path: '/coupons/list', element: <CouponList /> },
     { path: '/coupons/add', element: <CouponDetail /> },
+    { path: '/coupons/view/:id', element: <CouponDetail /> },
     { path: '/coupons/details/:id', element: <CouponDetail /> },
 ];
 
