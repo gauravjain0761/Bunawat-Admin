@@ -1,21 +1,30 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { API_URL } from 'app/constant/api'
-import { ApiDelete } from 'app/service/api'
+import { ApiDelete, ApiPut } from 'app/service/api'
 import { toast } from 'material-react-toastify';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const StatusModel = ({ open, deleteData, getData, handleClose }) => {
-    const [formData, setFormData] = useState({});
-    // const handleDelete = async () => {
-    //     await ApiDelete(`${API_URL.deleteCollection}/${deleteData?._id}`)
-    //         .then((response) => {
-    //             if (getData) getData()
-    //             handleClose()
-    //         })
-    //         .catch((error) => {
-    //             console.log("Error", error);
-    //         });
-    // }
+const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
+    const [formData, setFormData] = useState({
+        order_status: selectedeData?.order_status
+    });
+
+    useEffect(() => {
+        setFormData({
+            order_status: selectedeData?.order_status
+        })
+    }, [selectedeData])
+
+    const handeSubmit = async () => {
+        await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, formData)
+            .then((response) => {
+                if (getData) getData()
+                handleClose()
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
 
 
     const handleChange = (event) => {
@@ -24,7 +33,7 @@ const StatusModel = ({ open, deleteData, getData, handleClose }) => {
 
 
     const {
-        status
+        order_status
     } = formData;
 
     return (
@@ -52,11 +61,11 @@ const StatusModel = ({ open, deleteData, getData, handleClose }) => {
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={status}
-                            name="status"
+                            value={order_status}
+                            name="order_status"
                             label="Select Status"
                             onChange={handleChange}>
-                            <MenuItem value="Pending payment">Pending payment</MenuItem>
+                            <MenuItem value="Pending">Pending payment</MenuItem>
                             <MenuItem value="Processing">Processing</MenuItem>
                             <MenuItem value="Confirmed">Confirmed</MenuItem>
                             <MenuItem value="Shipped">Shipped</MenuItem>
@@ -67,7 +76,7 @@ const StatusModel = ({ open, deleteData, getData, handleClose }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} >
+                <Button onClick={handeSubmit} >
                     Save
                 </Button>
             </DialogActions>

@@ -1,0 +1,1 @@
+export const DEFULT_STATE = "Maharashtra"

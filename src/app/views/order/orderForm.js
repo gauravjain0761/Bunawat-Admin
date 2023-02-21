@@ -43,6 +43,7 @@ import { ApiGet, ApiPost } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import DiscountType from "./discountType";
 import { sumBy } from "lodash";
+import { DEFULT_STATE } from "app/constant/constant";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -310,8 +311,10 @@ const OrderForm = ({ data = {} }) => {
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
             "total_amount": formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount), 0) ?? 0 : formData?.items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0,
             "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData : formData?.items,
-            "gst_amount": 0,
-            "discount_amount": items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0,
+            "gst_amount": formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0),
+            "cgst_amount": formData?.state == DEFULT_STATE ? (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0)) / 2 : 0,
+            "igst_amount": formData?.state == DEFULT_STATE ? (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0)) / 2 : 0,
+            "discount_amount": formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0,
             "discount_coupon": formData?.coupon_id
         }
         await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {

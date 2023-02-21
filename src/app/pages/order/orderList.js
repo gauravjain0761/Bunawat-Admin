@@ -30,6 +30,7 @@ const OrderList = () => {
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
+    const [selectedeData, setSelectedeData] = useState({});
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [actionOpen, setActionOpen] = useState(rows.map(() => { return null }));
     const [actionAllOpen, setActionAllOpen] = useState(null);
@@ -37,7 +38,7 @@ const OrderList = () => {
 
     const columns = [
         {
-            id: "OrderNo",
+            id: "order_num",
             label: "Order No",
             width: 100
         },
@@ -207,7 +208,7 @@ const OrderList = () => {
             background = '#e5e5e5'
         }
         if (status == "Processing") {
-            color = '#5b841b'
+            color = '#fff'
             background = '#5b841b'
         }
         if (status == "Confirmed") {
@@ -326,19 +327,19 @@ const OrderList = () => {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell></TableCell>
+                            <TableCell>{row?.order_num}</TableCell>
                             <TableCell>{row?.createdAt?.split("T")[0]}</TableCell>
                             <TableCell >{row.order_type}</TableCell>
                             <TableCell >{row.user_type}</TableCell>
-                            <TableCell>{row.username}</TableCell>
+                            <TableCell>{row.user?.fname} {row.user?.lname}</TableCell>
                             <TableCell align="center"><Box component='span' sx={{
                                 ...getColor(row.order_status),
                                 padding: '10px',
                                 borderRadius: '4px'
                             }}>{row.order_status}</Box></TableCell>
-                            <TableCell align="center">{row.total_amount}</TableCell>
-                            <TableCell align="center"></TableCell>
-                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">{row?.total_amount}</TableCell>
+                            <TableCell align="center">-</TableCell>
+                            <TableCell align="center">-</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"
@@ -361,6 +362,7 @@ const OrderList = () => {
                                     <MenuItem onClick={() => {
                                         setStatusPopup(true);
                                         handleActionClose();
+                                        setSelectedeData(row);
                                     }}>Update Status</MenuItem>
                                     <MenuItem onClick={() => {
                                         setTrackingPopup(true);
@@ -387,7 +389,10 @@ const OrderList = () => {
             />
 
             <DeleteModel open={open} handleClose={() => setOpen(false)} />
-            <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
+            <StatusModel open={statusPopup} handleClose={() => {
+                setStatusPopup(false)
+                setSelectedeData({})
+            }} getData={getData} selectedeData={selectedeData} />
             <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
             <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} />
         </Card >

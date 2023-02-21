@@ -108,9 +108,9 @@ const OrderDetailForm = ({ data = {} }) => {
             width: 80
         },
         {
-            id: "12% IGST",
+            id: "gst_amount",
             align: "center",
-            label: "12% IGST",
+            label: "GST",
             sortDisable: true,
             width: 80
         },
@@ -316,6 +316,9 @@ const OrderDetailForm = ({ data = {} }) => {
                                                     <TableCell align="center">{row?.price}</TableCell>
                                                     <TableCell align="center">
                                                         <TextField
+                                                            inputProps={{
+                                                                readOnly: true,
+                                                            }}
                                                             sx={{
                                                                 '&.MuiFormControl-root': {
                                                                     m: 0,
@@ -331,7 +334,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                         />
                                                     </TableCell>
                                                     <TableCell align="center">{row?.amount}</TableCell>
-                                                    <TableCell align="center"></TableCell>
+                                                    <TableCell align="center">{((Number(row?.amount) * (Number(row?.price) > 1000 ? 12 : 5)) / 100)}</TableCell>
                                                 </TableRow>
 
                                             </>
@@ -349,17 +352,17 @@ const OrderDetailForm = ({ data = {} }) => {
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.total_amount}</TableCell>
                                             </TableRow>
-                                            <TableRow>
+                                            {/* <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Fees</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">₹</TableCell>
-                                            </TableRow>
+                                            </TableRow> */}
                                             <TableRow>
-                                                <TableCell sx={{ border: 'none' }} align='right'>12% IGST:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align='right'>GST:</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.gst_amount}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.total_amount}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number(viewOrder?.gst_amount) + Number(viewOrder?.total_amount)}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
