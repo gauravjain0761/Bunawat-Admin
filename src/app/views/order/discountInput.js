@@ -1,4 +1,7 @@
 import { Box, Button, Stack, styled } from '@mui/material';
+import { API_URL } from 'app/constant/api';
+import { ApiPost, ApiPut } from 'app/service/api';
+import { toast } from 'material-react-toastify';
 import * as React from 'react';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 
@@ -7,15 +10,29 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "0px",
 }));
 
-const DiscountInput = ({ setFormData, formData, discountType, discount_coupon, setDiscountApply, discountApply }) => {
+const DiscountInput = ({ setFormData, userID, formData, discountType, discount_coupon, setDiscountApply, discountApply }) => {
 
-    const ApplyDiscountCoupon = () => {
+    const handleApplyCoupon = async () => {
+        let payload = {
+            user: userID,
+            value: "",
+            type: discountType,
+            items: formData?.items ?? []
+        }
+        if (payload?.type === "MANUAL") {
+            payload = { ...payload, value: discountApply }
+        } else {
+            payload = { ...payload, value: formData?.discount_coupon }
+        }
+        console.log("payload", payload)
+        await ApiPost(`${API_URL.couponApply}`, payload).then((response) => {
 
-        setFormData({
-            ...formData, discount_amount: discountApply
-        })
-
+        }).catch((error) => {
+            console.log("Error", error);
+            toast.error(error?.error)
+        });
     }
+
     return (
         <React.Fragment>
             {discountType === "MANUAL" ?
@@ -37,7 +54,7 @@ const DiscountInput = ({ setFormData, formData, discountType, discount_coupon, s
                             />
                         </Box>
                         <Box>
-                            <Button onClick={() => ApplyDiscountCoupon()} sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">
+                            <Button onClick={handleApplyCoupon} sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">
                                 Apply
                             </Button>
                         </Box>
@@ -58,7 +75,7 @@ const DiscountInput = ({ setFormData, formData, discountType, discount_coupon, s
                             />
                         </Box>
                         <Box>
-                            <Button sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">
+                            <Button onClick={handleApplyCoupon} sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">
                                 Apply
                             </Button>
                         </Box>

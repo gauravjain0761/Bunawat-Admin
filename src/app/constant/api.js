@@ -98,6 +98,7 @@ export const API_URL = {
     getCoupons: "coupon/getall",
     getCoupon: "coupon",
     addCoupon: "coupon/add",
-    editCoupon: "category/update",
+    editCoupon: "coupon/update",
     deleteCoupon: "coupon/remove",
+    couponApply: "coupon_apply",
 }

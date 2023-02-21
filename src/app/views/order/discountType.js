@@ -8,11 +8,11 @@ import FormLabel from '@mui/material/FormLabel';
 import DiscountInput from './discountInput';
 
 const DiscountType = (props) => {
-    const { title, radioTitle, discountType, setDiscountType, formData, setFormData, discount_coupon, setDiscountApply, discountApply } = props;
+    const { title, radioTitle, userID, discountType, setDiscountType, formData, setFormData, discount_coupon, setDiscountApply, discountApply } = props;
 
     const handleChange = (event) => {
         setDiscountType(event.target.value);
-        setFormData({ ...formData, discount_amount: "" });
+        setFormData({ ...formData, discount_amount: "", discount_coupon: "" });
         setDiscountApply("")
     };
     console.log("discountsetFormData", formData)
@@ -45,6 +45,7 @@ const DiscountType = (props) => {
                     setFormData={setFormData}
                     discountType={discountType}
                     discount_coupon={discount_coupon}
+                    userID={userID}
                 />
             </Stack>
         </React.Fragment>

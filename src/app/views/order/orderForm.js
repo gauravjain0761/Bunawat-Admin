@@ -250,6 +250,7 @@ const OrderForm = ({ data = {} }) => {
                         })
                     }
                 });
+                setSKUName(null);
                 setSKUData(SKUData)
                 // setProducts(productData)
             }
@@ -564,7 +565,7 @@ const OrderForm = ({ data = {} }) => {
                                             value={ProductName}
                                             onChange={(event, newValue) => {
                                                 setProductName(newValue);
-                                                setFormData({ ...formData, product: newValue.id });
+                                                setFormData({ ...formData, product: newValue.id, sku: "" });
                                                 getSKUData(newValue.id);
                                             }}
                                             options={products}
@@ -1001,6 +1002,7 @@ const OrderForm = ({ data = {} }) => {
                                     discount_coupon={discount_coupon}
                                     discountApply={discountApply}
                                     setDiscountApply={setDiscountApply}
+                                    userID={userID}
                                 />
 
                                 <Divider sx={{ my: 2 }} />

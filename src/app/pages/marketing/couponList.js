@@ -50,23 +50,6 @@ const CouponList = () => {
         getData();
     }, [page, rowsPerPage, searchText]);
 
-
-    const editStatusData = async (id, status) => {
-        await ApiPut(`${API_URL.editCoupon}/${id}`, {
-            isActive: status
-        })
-            .then((response) => {
-                toast.success('Edit Successfully!')
-                getData()
-                handleActionClose()
-            })
-            .catch((error) => {
-                toast.error(error?.error)
-                console.log("Error", error);
-            });
-    }
-
-
     const columns = [
         {
             id: "Coupon Code",
@@ -137,7 +120,6 @@ const CouponList = () => {
                         onClose={() => setActionAllOpen(null)}
                         TransitionComponent={Fade}
                     >
-                        <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                         <MenuItem onClick={() => {
                             setOpen(true);
                             setActionAllOpen(null)
@@ -204,6 +186,20 @@ const CouponList = () => {
         setPage(1);
     };
 
+    const editStatusData = async (id, status) => {
+        await ApiPut(`${API_URL.editCoupon}/${id}`, {
+            isActive: status
+        })
+            .then((response) => {
+                toast.success('Edit Successfully!')
+                getData()
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -334,6 +330,7 @@ const CouponList = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}
                                 >
+                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
                                     <MenuItem onClick={() => {
                                         navigate(`/coupons/view/${row?._id}`)
                                     }}>View</MenuItem>
