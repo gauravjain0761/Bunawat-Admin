@@ -15,7 +15,6 @@ const DiscountType = (props) => {
         setFormData({ ...formData, discount_amount: "", discount_coupon: "" });
         setDiscountApply("")
     };
-    console.log("discountsetFormData", formData)
     return (
         <React.Fragment>
             <Stack spacing={1} width="100%">

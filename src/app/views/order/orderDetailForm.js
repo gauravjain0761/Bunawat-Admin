@@ -181,7 +181,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack> */}
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Order No:</Typography>
-                                                <Typography></Typography>
+                                                <Typography>{viewOrder?.order_num}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Date created:</Typography>
@@ -201,7 +201,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Amount:</Typography>
-                                                <Typography>{viewOrder?.amount}</Typography>
+                                                <Typography>{viewOrder?.total_amount}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Payment Mode:</Typography>
@@ -213,7 +213,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Customer</Typography>
-                                                <Typography></Typography>
+                                                <Typography>{`${viewOrder?.user?.fname} ${viewOrder?.user?.lname}`}</Typography>
                                             </Stack>
                                         </Stack>
                                     </Grid>
@@ -222,7 +222,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             <Typography variant="h6">Billing</Typography>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Name:</Typography>
-                                                <Typography></Typography>
+                                                <Typography>{`${viewOrder?.billing_address?.fname} ${viewOrder?.billing_address?.lname}`}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Address:</Typography>
@@ -230,7 +230,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Email address:</Typography>
-                                                <Typography></Typography>
+                                                <Typography>{viewOrder?.billing_address?.email}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Phone:</Typography>
@@ -243,7 +243,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             <Typography variant="h6">Shipping</Typography>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Name:</Typography>
-                                                <Typography></Typography>
+                                                <Typography>{`${viewOrder?.shipping_address?.fname} ${viewOrder?.shipping_address?.lname}`}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Address:</Typography>
@@ -284,13 +284,13 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             }}>
                                                                 <Typography></Typography>
                                                                 <Box sx={{ display: 'flex', }}>
-                                                                    <Typography sx={{ color: '#777' }}>Size: </Typography>
+                                                                    <Typography sx={{ color: '#777' }}>{row?.product_name} </Typography>
                                                                     <Typography ></Typography>
                                                                 </Box>
-                                                                <Box sx={{ display: 'flex', }}>
+                                                                {/* <Box sx={{ display: 'flex', }}>
                                                                     <Typography sx={{ color: '#777' }}>Color: </Typography>
                                                                     <Typography ></Typography>
-                                                                </Box>
+                                                                </Box> */}
                                                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                                     <Typography sx={{ color: '#777' }}>Tracking number: </Typography>
                                                                     <Typography>
@@ -306,7 +306,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                             }}
                                                                             type="text"
                                                                             name="trackingNumber"
-                                                                            defaultValue=''
+                                                                            defaultValue={row?.sku}
                                                                         />
                                                                     </Typography>
                                                                 </Box>

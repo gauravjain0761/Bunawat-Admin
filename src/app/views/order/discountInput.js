@@ -25,20 +25,29 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discount_c
             payload = { ...payload, value: formData?.discount_coupon }
         }
         console.log("payload", payload)
-        await ApiPost(`${API_URL.couponApply}`, payload).then((response) => {
+        if (payload?.items?.length > 0) {
+            await ApiPost(`${API_URL.couponApply}`, payload).then((response) => {
+                toast.success("Coupon Applied!")
+                setFormData({ ...formData, coupenData: response?.data, coupon_id: response?.coupon_id })
+            }).catch((error) => {
+                console.log("Error", error);
+                toast.error(error?.error)
+            });
+        } else {
+            toast.error("First Select Product!")
+        }
+    }
 
-        }).catch((error) => {
-            console.log("Error", error);
-            toast.error(error?.error)
-        });
+    const handleCancleCoupon = async () => {
+        setFormData({ ...formData, coupenData: [], discount_coupon: '', coupon_id: undefined })
     }
 
     return (
         <React.Fragment>
-            {discountType === "MANUAL" ?
-                <Box>
-                    <Stack direction="row" spacing={2} width="100%">
-                        <Box sx={{ width: "100%" }}>
+            <Box>
+                <Stack direction="row" spacing={2} width="100%">
+                    <Box sx={{ width: "100%" }}>
+                        {discountType === "MANUAL" ?
                             <TextField
                                 fullWidth
                                 type="text"
@@ -52,18 +61,7 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discount_c
                                 }}
                                 value={discountApply || ""}
                             />
-                        </Box>
-                        <Box>
-                            <Button onClick={handleApplyCoupon} sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">
-                                Apply
-                            </Button>
-                        </Box>
-                    </Stack>
-                </Box>
-                :
-                <form>
-                    <Stack direction="row" spacing={2} width="100%">
-                        <Box sx={{ width: "100%" }}>
+                            :
                             <TextField
                                 fullWidth
                                 type="text"
@@ -73,15 +71,21 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discount_c
                                 }}
                                 value={formData?.discount_coupon || ""}
                             />
-                        </Box>
-                        <Box>
+                        }
+                    </Box>
+                    <Box>
+                        {(formData?.coupenData && formData?.coupenData?.length > 0) ?
+                            <Button onClick={handleCancleCoupon} sx={{ height: "100%", width: "100px" }} color="error" variant="contained">
+                                Cancle
+                            </Button>
+                            :
                             <Button onClick={handleApplyCoupon} sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">
                                 Apply
                             </Button>
-                        </Box>
-                    </Stack>
-                </form>
-            }
+                        }
+                    </Box>
+                </Stack>
+            </Box>
 
         </React.Fragment>
     )
