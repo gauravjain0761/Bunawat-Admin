@@ -12,7 +12,7 @@ const DiscountType = (props) => {
 
     const handleChange = (event) => {
         setDiscountType(event.target.value);
-        setFormData({ ...formData, discount_amount: "", discount_coupon: "" });
+        setFormData({ ...formData, discount_amount: "", coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" });
         setDiscountApply("")
     };
     return (

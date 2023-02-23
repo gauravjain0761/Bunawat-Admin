@@ -156,7 +156,8 @@ const OrderForm = ({ data = {} }) => {
         pincode,
         payment_mode,
         transactionId,
-        discount_amount,
+        coupenDataManual,
+        coupenDataManualApply,
         image,
         discount_coupon,
         user
@@ -283,7 +284,6 @@ const OrderForm = ({ data = {} }) => {
             console.log("Error", error);
         });
     }
-    console.log("formData", formData)
 
     const handleSubmit = async (event) => {
         const Address = {
@@ -309,12 +309,13 @@ const OrderForm = ({ data = {} }) => {
             "payment_mode": paymentMode.toUpperCase(),
             "total_items": formData?.items?.length,
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
-            "total_amount": formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount), 0) ?? 0 : formData?.items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0,
+            "total_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2),
             "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData : formData?.items,
-            "gst_amount": formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0),
-            "cgst_amount": formData?.state == DEFULT_STATE ? (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0)) / 2 : 0,
-            "igst_amount": formData?.state == DEFULT_STATE ? (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0)) / 2 : 0,
-            "discount_amount": formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0,
+            "gst_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2),
+            "cgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
+            "sgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
+            "igst_amount": formData?.state == DEFULT_STATE ? 0 : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2),
+            "discount_amount": (formData?.coupenDataManualApply ? (Number(formData?.coupenDataManual ?? 0)) : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2),
             "discount_coupon": formData?.coupon_id
         }
         await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
@@ -383,21 +384,45 @@ const OrderForm = ({ data = {} }) => {
             let sku_id = skuName?.id;
             let price = Number(skuName?.sale_price);
             let productname = ProductName?.name;
-            let qtys = Number(qty) || 1;
+            let qtys = Number(qty) ?? 1;
             let amount = Number(qtys) * Number(skuName?.sale_price);
-            temp = [...temp, {
-                productname: productname,
-                qty: qtys,
-                price: price,
-                inStock_qty: skuName?.inStock_qty,
-                product: product,
-                sku_id: sku_id,
-                sku: sku,
-                amount: amount
-            }]
-            setFormData({ ...formData, items: temp, product: '', qty: '' });
-            setSKUName(null)
-            setProductName(null)
+            if (temp?.some(list => list?.sku_id == sku_id)) {
+                let findIndex = temp?.findIndex(list => list?.sku_id == sku_id)
+                let findQty = temp?.find(list => list?.sku_id == sku_id)?.qty
+                console.log(Number(findQty ?? 0) + Number(qtys), "findQty", Number(skuName?.inStock_qty))
+                if ((Number(findQty ?? 0) + Number(qtys)) <= Number(skuName?.inStock_qty)) {
+                    temp[findIndex] = {
+                        ...temp[findIndex],
+                        productname: productname,
+                        qty: Number(findQty ?? 0) + Number(qtys),
+                        price: price,
+                        inStock_qty: skuName?.inStock_qty,
+                        product: product,
+                        sku_id: sku_id,
+                        sku: sku,
+                        amount: amount
+                    }
+                    setFormData({ ...formData, items: temp, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" });
+                    setSKUName(null)
+                    setProductName(null)
+                } else {
+                    toast.error("Please add valid quantity")
+                }
+            } else {
+                temp = [...temp, {
+                    productname: productname,
+                    qty: qtys,
+                    price: price,
+                    inStock_qty: skuName?.inStock_qty,
+                    product: product,
+                    sku_id: sku_id,
+                    sku: sku,
+                    amount: amount
+                }]
+                setFormData({ ...formData, items: temp, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" });
+                setSKUName(null)
+                setProductName(null)
+            }
         } else {
             toast.error("Please add valid quantity")
         }
@@ -414,9 +439,9 @@ const OrderForm = ({ data = {} }) => {
         let temp = formData?.items ?? [];
         let qtys = Number(onlyNums ?? 0);
         let amount = Number(qtys) * Number(temp[index]?.price);
-        if (Number(onlyNums) <= Number(temp[index]?.inStock_qty)) {
+        if ((Number(onlyNums) <= Number(temp[index]?.inStock_qty)) || (Number(onlyNums) < 0)) {
             temp[index] = { ...temp[index], qty: qtys, amount }
-            setFormData({ ...formData, items: temp, coupenData: [], coupon_id: undefined });
+            setFormData({ ...formData, items: temp, coupenData: [], coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" });
         } else {
             toast.error(`${temp[index]?.inStock_qty} InStock qty`)
         }
@@ -1198,7 +1223,7 @@ const OrderForm = ({ data = {} }) => {
                     </Grid>
                 </Box >
                 {items?.length > 0 && <Box sx={{
-                    width: '100%', height: '80px', background: '#fff',
+                    width: '100%', height: { xs: '130px', sm: '80px' }, background: '#fff',
                     position: 'sticky',
                     zIndex: 999,
                     bottom: 0,
@@ -1211,34 +1236,43 @@ const OrderForm = ({ data = {} }) => {
                         alignItems: 'center',
                         justifyContent: 'space-between'
                     }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { sm: 'row', xs: 'column' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                <Typography sx={{ fontWeight: 700 }}>Total Items</Typography>
-                                <Typography sx={{ fontWeight: 500 }}>:&nbsp; {(coupenData && coupenData?.length > 0) ? coupenData?.length ?? 0 : items?.length ?? 0}</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', xl: 'row' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', sm: 'row' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                    <Typography sx={{ fontWeight: 700 }}>Total Items</Typography>
+                                    <Typography sx={{ fontWeight: 500 }}>:&nbsp; {(coupenData && coupenData?.length > 0) ? coupenData?.length ?? 0 : items?.length ?? 0}</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                    <Typography sx={{ fontWeight: 700 }}>Total QTY</Typography>
+                                    <Typography sx={{ fontWeight: 500 }}>:&nbsp; {items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0 : items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0}</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                    <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Sub Amount</Typography>
+                                    <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0 : items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0)?.toFixed(2)}
+                                    </Typography>
+                                </Box>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                <Typography sx={{ fontWeight: 700 }}>Total QTY</Typography>
-                                <Typography sx={{ fontWeight: 500 }}>:&nbsp; {items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0 : items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0}</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Sub Amount</Typography>
-                                <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                    {items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0 : items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0}
-                                </Typography>
-                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', sm: 'row' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                    <Typography sx={{ fontWeight: 700, color: 'red' }}>Total GST Amount</Typography>
+                                    <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                    <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Discount Amount</Typography>
+                                    <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                        {(coupenDataManualApply ? (Number(coupenDataManual ?? 0)) : (items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2)}
+                                    </Typography>
+                                </Box>
 
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Discount Amount</Typography>
-                                <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                    {items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0}
-                                </Typography>
-                            </Box>
-
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
-                                <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                    {items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount), 0) ?? 0 : items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0}
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                    <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
+                                    <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)}
+                                    </Typography>
+                                </Box>
                             </Box>
                         </Box>
                         <Box sx={{

@@ -350,19 +350,19 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.total_amount}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{((Number(viewOrder?.total_amount) + Number(viewOrder?.discount_amount)) - Number(viewOrder?.gst_amount))?.toFixed(2)}</TableCell>
                                             </TableRow>
-                                            {/* <TableRow>
-                                                <TableCell sx={{ border: 'none' }} align='right'>Fees</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹</TableCell>
-                                            </TableRow> */}
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>GST:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.gst_amount}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">+ ₹{viewOrder?.gst_amount}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">- ₹{viewOrder?.discount_amount}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number(viewOrder?.gst_amount) + Number(viewOrder?.total_amount)}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number(viewOrder?.total_amount)}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>

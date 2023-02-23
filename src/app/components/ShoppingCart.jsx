@@ -188,7 +188,7 @@ function ShoppingCart({ container }) {
               color="primary"
               onClick={handleCheckoutClick}
             >
-              Checkout (${totalCost.toFixed(2)})
+              Checkout (${totalCost?.toFixed(2)})
             </Button>
           </MiniCart>
         </Drawer>

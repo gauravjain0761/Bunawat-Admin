@@ -10,7 +10,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "0px",
 }));
 
-const DiscountInput = ({ setFormData, userID, formData, discountType, discount_coupon, setDiscountApply, discountApply }) => {
+const DiscountInput = ({ setFormData, userID, formData, discountType, discountApply }) => {
 
     const handleApplyCoupon = async () => {
         let payload = {
@@ -21,25 +21,32 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discount_c
         }
         if (payload?.type === "MANUAL") {
             payload = { ...payload, value: discountApply }
+            if ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0) >= Number(formData?.coupenDataManual ?? 0)) {
+                toast.success("Coupon Applied!")
+                setFormData({ ...formData, coupenDataManualApply: true })
+            } else {
+                toast.error("Amount is too high!");
+            }
         } else {
             payload = { ...payload, value: formData?.discount_coupon }
+            if (payload?.items?.length > 0) {
+                await ApiPost(`${API_URL.couponApply}`, payload).then((response) => {
+                    toast.success("Coupon Applied!")
+                    setFormData({ ...formData, coupenData: response?.data, coupon_id: response?.coupon_id })
+                }).catch((error) => {
+                    console.log("Error", error);
+                    toast.error(error?.error)
+                });
+            } else {
+                toast.error("First Select Product!")
+            }
         }
         console.log("payload", payload)
-        if (payload?.items?.length > 0) {
-            await ApiPost(`${API_URL.couponApply}`, payload).then((response) => {
-                toast.success("Coupon Applied!")
-                setFormData({ ...formData, coupenData: response?.data, coupon_id: response?.coupon_id })
-            }).catch((error) => {
-                console.log("Error", error);
-                toast.error(error?.error)
-            });
-        } else {
-            toast.error("First Select Product!")
-        }
+
     }
 
     const handleCancleCoupon = async () => {
-        setFormData({ ...formData, coupenData: [], discount_coupon: '', coupon_id: undefined })
+        setFormData({ ...formData, coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" })
     }
 
     return (
@@ -54,12 +61,12 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discount_c
                                 label="Discount Amount"
                                 onChange={(event) => {
                                     if (/^\d+$/.test(event.target.value)) {
-                                        setDiscountApply(Number(event.target.value));
+                                        setFormData({ ...formData, coupenDataManual: Number(event.target.value), coupenDataManualApply: false })
                                     } else {
-                                        setDiscountApply("");
+                                        setFormData({ ...formData, coupenDataManual: "", coupenDataManualApply: false })
                                     }
                                 }}
-                                value={discountApply || ""}
+                                value={formData?.coupenDataManual ?? ""}
                             />
                             :
                             <TextField
@@ -74,9 +81,9 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discount_c
                         }
                     </Box>
                     <Box>
-                        {(formData?.coupenData && formData?.coupenData?.length > 0) ?
-                            <Button onClick={handleCancleCoupon} sx={{ height: "100%", width: "100px" }} color="error" variant="contained">
-                                Cancle
+                        {((formData?.coupenData && formData?.coupenData?.length > 0) || (formData?.coupenDataManualApply ?? false)) ?
+                            <Button onClick={handleCancleCoupon} sx={{ height: "100%", width: "130px" }} color="error" variant="contained">
+                                Remove Code
                             </Button>
                             :
                             <Button onClick={handleApplyCoupon} sx={{ height: "100%", width: "100px" }} color="primary" variant="contained">

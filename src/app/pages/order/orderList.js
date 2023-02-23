@@ -40,7 +40,7 @@ const OrderList = () => {
         {
             id: "order_num",
             label: "Order No",
-            width: 100
+            width: 150
         },
         {
             id: "OrderDate",
