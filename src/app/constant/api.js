@@ -103,4 +103,6 @@ export const API_URL = {
     editCoupon: "coupon/update",
     deleteCoupon: "coupon/remove",
     couponApply: "coupon_apply",
+
+    shareMedia: "share_media"
 }

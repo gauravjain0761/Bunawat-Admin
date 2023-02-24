@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { API_URL } from 'app/constant/api';
 import { ApiGet } from 'app/service/api';
+import ShareMediaModel from 'app/views/product/model/shareMedia';
+import { toast } from 'material-react-toastify';
 
 const ProductMedia = () => {
     const navigate = useNavigate();
@@ -18,6 +20,9 @@ const ProductMedia = () => {
     const [rows, setRows] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [searchText, setSearchText] = useState('');
+    const [mOpen, setMOpen] = useState(false);
+    const [enableDescription, seteEnableDescription] = useState(false);
+    const [selectedProductIds, setSelectedProductIds] = useState([])
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -163,68 +168,41 @@ const ProductMedia = () => {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={handleClose}>Share Image</MenuItem>
-                                <MenuItem onClick={handleClose}>Share Image With Description</MenuItem>
+                                <MenuItem onClick={() => {
+                                    let tempIds = []
+                                    selectedImage?.map((list, index) => {
+                                        if (list) {
+                                            tempIds.push(rows?.[index]?._id)
+                                        }
+                                    })
+                                    if (tempIds?.length > 0) {
+                                        setSelectedProductIds(tempIds)
+                                        setMOpen(true)
+                                        seteEnableDescription(false)
+                                        handleClose()
+                                    } else {
+                                        toast.error("Select Media First!")
+                                    }
+                                }}>Share Image</MenuItem>
+                                <MenuItem onClick={() => {
+                                    let tempIds = []
+                                    selectedImage?.map((list, index) => {
+                                        if (list) {
+                                            tempIds.push(rows?.[index]?._id)
+                                        }
+                                    })
+                                    if (tempIds?.length > 0) {
+                                        setSelectedProductIds(tempIds)
+                                        seteEnableDescription(true)
+                                        setMOpen(true)
+                                        handleClose()
+                                    } else {
+                                        toast.error("Select Media First!")
+                                    }
+                                }}>Share Image With Description</MenuItem>
                             </Menu>
                         </Box>
                     </Stack>
-                    {/* {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
-                    width: '100%',
-                    height: '20px',
-                }}><Box component='span' sx={{
-                    fontWeight: 700,
-                    fontSize: '16px',
-                    padding: '0 20px'
-                }}>
-                        <Checkbox sx={{
-                            color: '#000',
-                        }}
-                            checked={selectedImage.filter(x => x).length == selectedImage.length}
-                            indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
-                            onChange={(e) => {
-                                let tempSelect = [...selectedImage]
-                                tempSelect = tempSelect.map(x => e.target.checked)
-                                setImageSelected(tempSelect)
-                            }}
-                        />
-                        Media List
-                    </Box>
-                    <Box component='span' sx={{
-                        fontWeight: 700,
-                        fontSize: '16px',
-                        cursor: 'pointer'
-                    }}>
-                    <IconButton
-                        id="menu-appbar"
-                        color="inherit"
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        onClick={handleMenu}
-                        >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={anchorEl}
-                        anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                        }}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                    </Menu>
-                    </Box>
-                </Stack>} */}
                 </CardHeader>
                 <Container maxWidth>
                     <Grid container spacing={4}>
@@ -267,7 +245,7 @@ const ProductMedia = () => {
                                             onChange={(e) => {
                                                 let tempSelect = [...selectedImage]
                                                 tempSelect[i] = !tempSelect[i]
-                                                    (tempSelect)
+                                                setImageSelected(tempSelect)
                                             }}
                                         />
                                         <IconButton
@@ -306,8 +284,22 @@ const ProductMedia = () => {
                                                 setActionImageOpen(temp)
                                             }}
                                             TransitionComponent={Fade} >
-                                            <MenuItem onClick={() => { }}>Share Image</MenuItem>
-                                            <MenuItem onClick={() => { }}>Share Image With Description</MenuItem>
+                                            <MenuItem onClick={() => {
+                                                setSelectedProductIds([item?._id])
+                                                seteEnableDescription(false)
+                                                setMOpen(true)
+                                                let temp = [...actionImageOpen];
+                                                temp = temp.map(() => { return null })
+                                                setActionImageOpen(temp)
+                                            }}>Share Image</MenuItem>
+                                            <MenuItem onClick={() => {
+                                                setSelectedProductIds([item?._id])
+                                                seteEnableDescription(true)
+                                                setMOpen(true)
+                                                let temp = [...actionImageOpen];
+                                                temp = temp.map(() => { return null })
+                                                setActionImageOpen(temp)
+                                            }}>Share Image With Description</MenuItem>
                                         </Menu>
                                     </Box>
                                 </Grid>
@@ -316,6 +308,11 @@ const ProductMedia = () => {
 
                     </Grid>
                 </Container>
+                <ShareMediaModel open={mOpen} selectedProductIds={selectedProductIds} enableDescription={enableDescription} handleClose={() => {
+                    setSelectedProductIds([])
+                    setMOpen(false)
+                    seteEnableDescription(false)
+                }} />
             </Card>
         </>
     )

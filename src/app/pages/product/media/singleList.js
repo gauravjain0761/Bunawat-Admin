@@ -8,6 +8,8 @@ import { UIColor } from 'app/utils/constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ApiGet } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
+import ShareMediaModel from 'app/views/product/model/shareMedia';
+import { toast } from 'material-react-toastify';
 
 const ProductMediaSingleList = () => {
     const navigate = useNavigate();
@@ -20,7 +22,9 @@ const ProductMediaSingleList = () => {
     const [actionImageOpen, setActionImageOpen] = useState([]);
     const [actionVideoOpen, setActionVideoOpen] = useState([]);
     const [rows, setRows] = useState({});
-
+    const [mOpen, setMOpen] = useState(false);
+    const [enableDescription, seteEnableDescription] = useState(false);
+    const [selectedProductIds, setSelectedProductIds] = useState([])
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleMenu = (event) => {
@@ -47,7 +51,8 @@ const ProductMediaSingleList = () => {
 
     React.useEffect(() => {
         getData(id);
-    }, [])
+        setSelectedProductIds([id])
+    }, [id])
 
     const handleChange = (event, newValue) => {
         setTab(newValue);
@@ -190,8 +195,15 @@ const ProductMediaSingleList = () => {
                                     open={Boolean(anchorEl)}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleClose}>Share</MenuItem>
-                                    <MenuItem onClick={handleClose}>View</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        if (selectedImage?.some(x => x)) {
+                                            setMOpen(true)
+                                            seteEnableDescription(false)
+                                            handleClose()
+                                        } else {
+                                            toast.error("Select Media First!")
+                                        }
+                                    }}>Share</MenuItem>
                                 </Menu>
                             </Box>
                         </Stack>
@@ -290,7 +302,10 @@ const ProductMediaSingleList = () => {
                                                             setActionImageOpen(temp)
                                                         }}
                                                         TransitionComponent={Fade} >
-                                                        <MenuItem onClick={() => { }}>Share</MenuItem>
+                                                        <MenuItem onClick={() => {
+                                                            seteEnableDescription(false)
+                                                            setMOpen(true)
+                                                        }}>Share</MenuItem>
                                                         <MenuItem onClick={() => {
                                                             setDopen(true)
                                                             setDData({ ...item, type: 'image' })
@@ -405,7 +420,10 @@ const ProductMediaSingleList = () => {
                                                                 setActionVideoOpen(temp)
                                                             }}
                                                             TransitionComponent={Fade} >
-                                                            <MenuItem onClick={() => { }}>Share</MenuItem>
+                                                            <MenuItem onClick={() => {
+                                                                seteEnableDescription(false)
+                                                                setMOpen(true)
+                                                            }}>Share</MenuItem>
                                                             <MenuItem onClick={() => {
                                                                 setDopen(true)
                                                                 setDData(item)
@@ -519,6 +537,10 @@ const ProductMediaSingleList = () => {
                     </DialogContent>
                 </Dialog>
             </Box>
+            <ShareMediaModel open={mOpen} selectedProductIds={selectedProductIds} enableDescription={enableDescription} handleClose={() => {
+                setMOpen(false)
+                seteEnableDescription(false)
+            }} />
         </Card >
     )
 }
