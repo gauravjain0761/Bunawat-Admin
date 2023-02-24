@@ -28,7 +28,7 @@ const OrderList = () => {
     const [rows, setRows] = useState([]);
     const [rowLoading, setRowLoading] = useState(false);
     const [selected, setSelected] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [selectedeData, setSelectedeData] = useState({});
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -197,7 +197,7 @@ const OrderList = () => {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setPage(1);
     };
 
     const getColor = (status) => {
@@ -304,6 +304,7 @@ const OrderList = () => {
             <TableComponent
                 rows={rows}
                 columns={columns}
+                totalCount={totalCount}
                 selected={selected}
                 renderRow={(row, index) => {
                     const isItemSelected = isSelected(row.name);

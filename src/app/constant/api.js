@@ -9,6 +9,8 @@ export const defaultError = 'Error!'
 export const API_URL = {
     adminLogin: "admin_login",
 
+    dashboardDetails: "dashboard_details",
+
     getCustomers: "customer/getall",
     getCustomer: "customer",
     addCustomer: "customer/add",

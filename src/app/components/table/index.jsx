@@ -139,7 +139,7 @@ const TableComponent = (props) => {
                 <TableRow>
                   <TableCell align='center' sx={{
                     height: '400px'
-                  }} colSpan={columns?.length + 1}>
+                  }} colSpan={disableCheckBox ? columns?.length : columns?.length + 1}>
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
@@ -166,7 +166,7 @@ const TableComponent = (props) => {
         </TableContainer>
         {!disablePagination &&
           <TablePagination
-            rowsPerPageOptions={[10, 25, 50, 100]}
+            rowsPerPageOptions={[3, 10, 25, 50, 100]}
             component="div"
             count={totalCount ?? 0}
             rowsPerPage={rowsPerPage}

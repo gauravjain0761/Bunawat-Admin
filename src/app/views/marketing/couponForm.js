@@ -412,6 +412,8 @@ const CouponForm = ({ data = {}, id, disabled }) => {
                                             name="start_date"
                                             value={start_date || null}
                                             readOnly={disabled}
+                                            minDate={new Date()}
+                                            maxDate={end_date}
                                             onChange={(date) => {
                                                 setIsErrorStartDate(false)
                                                 setFormData({ ...formData, start_date: date })
@@ -429,6 +431,7 @@ const CouponForm = ({ data = {}, id, disabled }) => {
                                         <DatePicker
                                             name="end_date"
                                             value={end_date || null}
+                                            minDate={start_date || new Date()}
                                             readOnly={disabled}
                                             onChange={(date) => {
                                                 setIsErrorEndDate(false)

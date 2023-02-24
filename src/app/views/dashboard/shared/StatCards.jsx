@@ -29,15 +29,15 @@ const Heading = styled('h6')(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-const StatCards = () => {
+const StatCards = ({ dashboardList }) => {
   const navigate = useNavigate();
   const cardList = [
-    { name: 'Total Customer', amount: 3050, icon: 'group', link: "/customer" },
-    { name: 'Total Resellers', amount: 1000, icon: 'group', link: "/reseller" },
-    { name: 'Total Influncers', amount: 2340, icon: 'group', link: "/influncer" },
-    { name: 'This week Sales', amount: '80,500', icon: 'currency_rupee_Icon', link: "#" },
-    { name: 'Inventory', amount: '8.5% Stock Surplus', icon: 'store', link: "/inventory/list" },
-    { name: 'Orders', amount: '305 Orders', icon: 'shopping_cart', link: "/order/list" },
+    { name: 'Total Customer', amount: dashboardList?.total_customer ?? 0, icon: 'group', link: "/customer" },
+    { name: 'Total Resellers', amount: dashboardList?.total_reseller ?? 0, icon: 'group', link: "/reseller" },
+    { name: 'Total Influncers', amount: dashboardList?.total_influencer ?? 0, icon: 'group', link: "/influncer" },
+    { name: 'This week Sales', amount: dashboardList?.total_sales ?? 0, icon: 'currency_rupee_Icon', link: "#" },
+    { name: 'Inventory', amount: dashboardList?.total_inventory ?? 0, icon: 'store', link: "/inventory/list" },
+    { name: 'Orders', amount: dashboardList?.total_orders ?? 0, icon: 'shopping_cart', link: "/order/list" },
   ];
 
   return (

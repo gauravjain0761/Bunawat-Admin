@@ -331,7 +331,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         }
         console.log("formData90", formData)
         if (!!description && Object.values(tempError).every(x => !x)) {
-            if (formData?.image && formData?.image.length >= 3 && formData?.videos && formData?.videos.length >= 2 && formData?.sku_data && formData?.sku_data.length > 0) {
+            if (formData?.status === "ACTIVE" && (formData?.image && formData?.image.length >= 3 && formData?.videos && formData?.videos.length >= 2 && formData?.sku_data && formData?.sku_data.length > 0)) {
                 setLoading(true)
                 await ApiPut(`${API_URL.editProduct}/${id}`, {
                     ...formData,
@@ -348,7 +348,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                         toast.error(error?.error)
                         console.log("Error", error);
                     });
-            } else if (formData?.status === "INQUALITY") {
+            } else if (formData?.status !== "ACTIVE") {
                 setLoading(true)
                 await ApiPut(`${API_URL.editProduct}/${id}`, {
                     ...formData,

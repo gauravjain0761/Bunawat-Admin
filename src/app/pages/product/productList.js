@@ -37,10 +37,6 @@ const ProductList = () => {
     const [deleteData, setDeleteData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
 
-
-    console.log("collectioncollection", getSearchQuery)
-
-
     const columns = [
         {
             id: "name",
@@ -235,7 +231,7 @@ const ProductList = () => {
         }
     }
 
-    const RowData = SortableElement(({ row, mainIndex, ...other }) => {
+    const SortableItem = SortableElement(({ row, mainIndex }) => {
         const isItemSelected = isSelected(row._id);
         const labelId = `enhanced-table-checkbox-${mainIndex}`;
         return (
@@ -340,6 +336,12 @@ const ProductList = () => {
                     </Box>
                 </TableCell>
             </TableRow>
+        )
+    });
+
+    const RowData = SortableElement(({ row, mainIndex, ...other }) => {
+        return (
+            <SortableItem key={`item-${row._id}`} index={mainIndex} mainIndex={mainIndex} row={row} />
         );
     })
 
@@ -357,7 +359,7 @@ const ProductList = () => {
         fontWeight: '500',
         textTransform: 'capitalize',
     }));
-    
+
     return (
         <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
             <Box className="searchBoxSeaprate"
