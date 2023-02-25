@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, IconButton, TextField } from '@mui/material'
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormLabel, Icon, IconButton, Radio, RadioGroup, TextField } from '@mui/material'
 import { API_URL } from 'app/constant/api'
 import { ApiDelete, ApiGet, ApiPost } from 'app/service/api'
 import { UIColor } from 'app/utils/constant';
@@ -11,6 +11,7 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
     const [productIds, setProductIds] = useState(selectedProductIds ?? []);
     const [phone, setPhone] = useState('');
     const [description, setDescription] = useState('');
+    const [type, setType] = useState('ALL');
     const [users, setUsers] = useState([]);
     console.log("selectedProductIds", selectedProductIds)
     useEffect(() => {
@@ -21,6 +22,7 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
     const popupClose = () => {
         setDescription('')
         setPhone('')
+        setType('ALL')
         setUsers([])
         handleClose();
     }
@@ -55,8 +57,9 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
         if (users?.length > 0) {
             await ApiPost(API_URL.shareMedia, {
                 product_id: productIds,
-                users: users,
-                message: description
+                users,
+                message: description,
+                type
             })
                 .then((response) => {
                     popupClose()
@@ -82,6 +85,23 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
                 Share Media
             </DialogTitle>
             <DialogContent>
+                <FormControl sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                }}>
+                    {/* <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel> */}
+                    <RadioGroup
+                        row
+                        value={type ?? "ALL"}
+                        onChange={((e) => setType(e.target.value))}
+                        aria-labelledby="demo-row-radio-buttons-group-label"
+                        name="type">
+                        <FormControlLabel value="ALL" control={<Radio />} label="All" />
+                        <FormControlLabel value="IMAGES" control={<Radio />} label="Images" />
+                        <FormControlLabel value="VIDEOS" control={<Radio />} label="Videos" />
+                    </RadioGroup>
+                </FormControl>
                 {enableDescription &&
                     <TextField
                         type="text"
