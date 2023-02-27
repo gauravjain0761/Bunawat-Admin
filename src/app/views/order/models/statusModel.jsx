@@ -2,9 +2,10 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, D
 import { pdf } from '@react-pdf/renderer';
 import { API_URL } from 'app/constant/api'
 import { ApiDelete, ApiPost, ApiPut } from 'app/service/api'
-import PdfDocument from 'app/views/order/invoicePDF/Invoice';
+import InvoicesDocument from 'app/views/order/invoicePDF/Invoice';
 import { toast } from 'material-react-toastify';
 import React, { useEffect, useState } from 'react'
+import PackingSlipDocument from '../invoicePDF/packingSlip';
 
 const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
     const [formData, setFormData] = useState({
@@ -19,24 +20,38 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
 
 
     const generatePdfDocument = async (data = {}) => {
-        const blob = await pdf((
-            <PdfDocument {...data} />
+        let payload = [];
+        const blobIInvoices = await pdf((
+            <InvoicesDocument data={data} isPackingSlip={false} />
         )).toBlob()
-        let reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = async function () {
-            const base64 = reader.result;
-            await ApiPost(`${API_URL.generateInvoice}/${selectedeData?._id}`, {
-                base64,
+        let readerInvoices = new FileReader();
+        readerInvoices.readAsDataURL(blobIInvoices);
+        readerInvoices.onloadend = async function () {
+            const base64 = readerInvoices.result;
+            payload.push({
                 type: "invoice",
+                base64
             })
-                .then(async (response) => {
-                    if (getData) getData()
-                    handleClose()
+            const blobPackingSlip = await pdf((
+                <PackingSlipDocument data={data} isPackingSlip={true} />
+            )).toBlob()
+            let readerPackingSlip = new FileReader();
+            readerPackingSlip.readAsDataURL(blobPackingSlip);
+            readerPackingSlip.onloadend = async function () {
+                const base64 = readerPackingSlip.result;
+                payload.push({
+                    type: "packing_slip",
+                    base64
                 })
-                .catch((error) => {
-                    console.log("Error", error);
-                });
+                await ApiPost(`${API_URL.generateInvoice}/${selectedeData?._id}`, payload)
+                    .then(async (response) => {
+                        if (getData) getData()
+                        handleClose()
+                    })
+                    .catch((error) => {
+                        console.log("Error", error);
+                    });
+            }
         }
     };
 
@@ -44,7 +59,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
         await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, formData)
             .then(async (response) => {
                 if (formData?.order_status == "Shipped") {
-                    generatePdfDocument({})
+                    generatePdfDocument(response?.data ?? {})
                 } else {
                     if (getData) getData()
                     handleClose()

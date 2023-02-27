@@ -34,6 +34,7 @@ import { API_URL } from "app/constant/api";
 import { ApiGet } from "app/service/api";
 import { UIColor } from "app/utils/constant";
 import { isMdScreen, isMobile } from "app/utils/utils";
+import { toast } from "material-react-toastify";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
@@ -162,6 +163,23 @@ const OrderDetailForm = ({ data = {} }) => {
         status,
         create_date
     } = formData;
+
+    const openPDF = (url) => {
+        if (url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+
+            // cleanup
+            setTimeout(() => {
+                link?.parentNode?.removeChild(link);
+            }, 3000);
+        } else {
+            toast.error("Not Found!")
+        }
+    }
 
     return (
         <Box>
@@ -393,8 +411,8 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             <Button variant="outlined" onClick={() => setTrackingPopup(true)}>Tracking No</Button>
                                                             <Button variant="outlined" onClick={() => setPaymentPopup(true)}>Payment Info</Button>
                                                             <Button variant="outlined">Notes</Button>
-                                                            <Button variant="outlined">Invoice</Button>
-                                                            <Button variant="outlined">Packing Slip</Button>
+                                                            <Button variant="outlined" onClick={() => openPDF(viewOrder?.invoice ?? '')}>Invoice</Button>
+                                                            <Button variant="outlined" onClick={() => openPDF(viewOrder?.packing_slip ?? '')}>Packing Slip</Button>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                                             <Icon>info</Icon>
