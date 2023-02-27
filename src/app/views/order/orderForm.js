@@ -35,7 +35,6 @@ import { UIColor } from "app/utils/constant";
 import { toast } from 'material-react-toastify';
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import React from 'react';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";

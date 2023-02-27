@@ -20,7 +20,6 @@ import { Paragraph } from 'app/components/Typography';
 import { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
-import Avatar from 'react-avatar';
 import { UIColor } from 'app/utils/constant';
 import { mockDataProductTag } from 'fake-db/data/product/tag/tagList';
 

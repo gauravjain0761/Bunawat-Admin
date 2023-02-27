@@ -23,7 +23,6 @@ import { Span } from "app/components/Typography";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { forwardRef, useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { UIColor } from "app/utils/constant";
@@ -231,12 +230,6 @@ const UserForm = ({ data = {}, userType, id }) => {
                 <SimpleCard title={`${userType} Details`} backArrow={true}>
                     <Grid container spacing={{ md: 6, sm: 0, xs: 0 }}>
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                            {/* <Box sx={{ mb: 3.5 }} display="flex" alignItems="center">
-                                <Avatar name={fname} round={true} size="50" />
-                                <Button>
-                                    Change
-                                </Button>
-                            </Box> */}
 
                             <TextField
                                 type="text"

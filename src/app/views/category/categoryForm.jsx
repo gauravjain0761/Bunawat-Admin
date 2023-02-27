@@ -28,7 +28,6 @@ import { API_URL } from "app/constant/api";
 import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import { toast } from 'material-react-toastify';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";

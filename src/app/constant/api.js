@@ -42,6 +42,7 @@ export const API_URL = {
     deleteOrder: "order/remove",
     addOrder: "order/add",
     editOrder: "update_order",
+    generateInvoice: "generate_invoice",
 
     getParentCategorys: "parent_cateogry/getall",
     getParentCategory: "parent_cateogry",

@@ -29,7 +29,6 @@ import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import { toast } from 'material-react-toastify';
-import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";

@@ -1,6 +1,8 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import { pdf } from '@react-pdf/renderer';
 import { API_URL } from 'app/constant/api'
-import { ApiDelete, ApiPut } from 'app/service/api'
+import { ApiDelete, ApiPost, ApiPut } from 'app/service/api'
+import PdfDocument from 'app/views/order/invoicePDF/Invoice';
 import { toast } from 'material-react-toastify';
 import React, { useEffect, useState } from 'react'
 
@@ -15,11 +17,36 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
         })
     }, [selectedeData])
 
+
+    const generatePdfDocument = async (data = {}) => {
+        const blob = await pdf((
+            <PdfDocument {...data} />
+        )).toBlob()
+        let reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async function () {
+            const base64 = reader.result;
+            await ApiPost(`${API_URL.generateInvoice}/${selectedeData?._id}`, {
+                base64
+            })
+                .then(async (response) => {
+                    handleClose()
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        }
+    };
+
     const handeSubmit = async () => {
         await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, formData)
-            .then((response) => {
+            .then(async (response) => {
                 if (getData) getData()
-                handleClose()
+                if (formData?.order_status == "Shipped") {
+                    generatePdfDocument({})
+                } else {
+                    handleClose()
+                }
             })
             .catch((error) => {
                 console.log("Error", error);

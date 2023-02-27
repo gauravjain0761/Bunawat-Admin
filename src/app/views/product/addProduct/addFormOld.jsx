@@ -29,7 +29,6 @@ import { isMdScreen, isMobile } from "app/utils/utils";
 import { mockDataProductColor } from "fake-db/data/product/color/colorList";
 import { mockDataProductSize } from "fake-db/data/product/size/sizeList";
 import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";

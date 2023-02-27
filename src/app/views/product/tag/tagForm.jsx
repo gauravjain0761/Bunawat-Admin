@@ -20,7 +20,6 @@ import { SimpleCard } from "app/components";
 import { Span } from "app/components/Typography";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate } from "react-router-dom";
 

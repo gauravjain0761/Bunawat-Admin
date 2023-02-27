@@ -36,7 +36,6 @@ import { UIColor } from "app/utils/constant";
 import { isMdScreen, isMobile } from "app/utils/utils";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import Avatar from "react-avatar";
 import ReactDatePicker from "react-datepicker";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
