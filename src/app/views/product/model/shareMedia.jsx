@@ -59,7 +59,7 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
                 product_id: productIds,
                 users,
                 message: description,
-                type
+                media_type: type
             })
                 .then((response) => {
                     popupClose()

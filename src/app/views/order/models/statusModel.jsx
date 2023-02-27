@@ -27,9 +27,11 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
         reader.onloadend = async function () {
             const base64 = reader.result;
             await ApiPost(`${API_URL.generateInvoice}/${selectedeData?._id}`, {
-                base64
+                base64,
+                type: "invoice",
             })
                 .then(async (response) => {
+                    if (getData) getData()
                     handleClose()
                 })
                 .catch((error) => {
@@ -41,10 +43,10 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
     const handeSubmit = async () => {
         await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, formData)
             .then(async (response) => {
-                if (getData) getData()
                 if (formData?.order_status == "Shipped") {
                     generatePdfDocument({})
                 } else {
+                    if (getData) getData()
                     handleClose()
                 }
             })
