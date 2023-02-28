@@ -23,12 +23,11 @@ import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import { DatePicker } from '@mui/lab'
 import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import { toast } from "material-react-toastify";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -406,14 +405,31 @@ const CouponForm = ({ data = {}, id, disabled }) => {
                             />
 
                             <Grid container spacing={1}>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <Grid item lg={6} md={6} sm={12} xs={12}>
-                                        <DatePicker
+                                        {/* <DatePicker
                                             name="start_date"
                                             value={start_date || null}
                                             readOnly={disabled}
+                                            onChange={(date) => {
+                                                setIsErrorStartDate(false)
+                                                setFormData({ ...formData, start_date: date })
+                                            }}
+                                            renderInput={(props) => (
+                                                <TextField
+                                                    {...props}
+                                                    label="Start Date"
+                                                />
+                                            )}
+                                        />   */}
+                                        <DesktopDatePicker
+                                            label="Start Date"
+                                            inputFormat="MM/DD/YYYY"
+                                            name="start_date"
+                                            value={start_date || null}
                                             minDate={new Date()}
                                             maxDate={end_date}
+                                            readOnly={disabled}
                                             onChange={(date) => {
                                                 setIsErrorStartDate(false)
                                                 setFormData({ ...formData, start_date: date })
@@ -428,10 +444,12 @@ const CouponForm = ({ data = {}, id, disabled }) => {
                                         {isErrorStartDate && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </Grid>
                                     <Grid item lg={6} md={6} sm={12} xs={12}>
-                                        <DatePicker
+                                        <DesktopDatePicker
+                                            label="End Date"
+                                            inputFormat="MM/DD/YYYY"
                                             name="end_date"
-                                            value={end_date || null}
                                             minDate={start_date || new Date()}
+                                            value={end_date || null}
                                             readOnly={disabled}
                                             onChange={(date) => {
                                                 setIsErrorEndDate(false)
@@ -444,6 +462,21 @@ const CouponForm = ({ data = {}, id, disabled }) => {
                                                 />
                                             )}
                                         />
+                                        {/* <DatePicker
+                                            name="end_date"
+                                            value={end_date || null}
+                                            readOnly={disabled}
+                                            onChange={(date) => {
+                                                setIsErrorEndDate(false)
+                                                setFormData({ ...formData, end_date: date })
+                                            }}
+                                            renderInput={(props) => (
+                                                <TextField
+                                                    {...props}
+                                                    label="End Date"
+                                                />
+                                            )}
+                                        /> */}
                                         {isErrorEndDate && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </Grid>
                                 </LocalizationProvider>

@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Span } from 'app/components/Typography';
-import { format } from 'date-fns';
+import moment from 'moment';
 import { Fragment } from 'react';
 
 const ProjectName = styled(Span)(({ theme }) => ({
@@ -67,7 +67,7 @@ const RowCards = () => {
           </Grid>
 
           <Grid item md={3} xs={4}>
-            <Box color={textMuted}>{format(new Date().getTime(), 'MM/dd/yyyy hh:mma')}</Box>
+            <Box color={textMuted}>{moment(new Date().getTime()).format('MM/dd/yyyy hh:mma')}</Box>
           </Grid>
 
           <Hidden smDown>

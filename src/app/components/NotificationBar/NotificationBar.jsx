@@ -131,7 +131,7 @@ const NotificationBar = ({ container }) => {
                         <Heading>{notification.heading}</Heading>
                       </Box>
                       <Small className="messageTime">
-                        {getTimeDifference(new Date(notification.timestamp))}
+                        {/* {getTimeDifference(new Date(notification.timestamp))} */}
                         ago
                       </Small>
                     </CardLeftContent>
