@@ -309,7 +309,7 @@ const OrderForm = ({ data = {} }) => {
             "total_items": formData?.items?.length,
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
             "total_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2),
-            "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData : formData?.items,
+            "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.filter(x => x?.qty ?? 0 > 0) : formData?.items?.filter(x => x?.qty ?? 0 > 0),
             "gst_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2),
             "cgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
             "sgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
@@ -317,15 +317,19 @@ const OrderForm = ({ data = {} }) => {
             "discount_amount": (formData?.coupenDataManualApply ? (Number(formData?.coupenDataManual ?? 0)) : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2),
             "discount_coupon": formData?.coupon_id
         }
-        await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
-            if (response.status) {
-                toast.success('Add Successfully!')
-                navigate(`/order/list`)
-            }
-        }).catch((error) => {
-            console.log("Error", error);
-            toast.error(error?.error)
-        });
+        if (formDatas?.items?.length > 0) {
+            await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
+                if (response.status) {
+                    toast.success('Add Successfully!')
+                    navigate(`/order/list`)
+                }
+            }).catch((error) => {
+                console.log("Error", error);
+                toast.error(error?.error)
+            });
+        } else {
+            toast.error("Please select product with qty First!")
+        }
     };
 
     const handleChange = (event) => {
@@ -377,18 +381,17 @@ const OrderForm = ({ data = {} }) => {
     };
 
     const addProductToCart = () => {
-        if (Number(qty) <= Number(skuName?.inStock_qty)) {
+        if ((Number(qty) <= Number(skuName?.inStock_qty)) && Number(qty ?? 0) != 0) {
             let temp = formData?.items ?? [];
             let sku = skuName?.name;
             let sku_id = skuName?.id;
-            let price = Number(skuName?.sale_price);
+            let price = Number(skuName?.sale_price) ?? 1;
             let productname = ProductName?.name;
-            let qtys = Number(qty) ?? 1;
+            let qtys = Number(qty) ?? 0;
             let amount = Number(qtys) * Number(skuName?.sale_price);
             if (temp?.some(list => list?.sku_id == sku_id)) {
                 let findIndex = temp?.findIndex(list => list?.sku_id == sku_id)
                 let findQty = temp?.find(list => list?.sku_id == sku_id)?.qty
-                console.log(Number(findQty ?? 0) + Number(qtys), "findQty", Number(skuName?.inStock_qty))
                 if ((Number(findQty ?? 0) + Number(qtys)) <= Number(skuName?.inStock_qty)) {
                     temp[findIndex] = {
                         ...temp[findIndex],
@@ -399,7 +402,7 @@ const OrderForm = ({ data = {} }) => {
                         product: product,
                         sku_id: sku_id,
                         sku: sku,
-                        amount: amount
+                        amount: (Number(findQty ?? 0) + Number(qtys)) * price
                     }
                     setFormData({ ...formData, items: temp, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" });
                     setSKUName(null)
@@ -1265,7 +1268,6 @@ const OrderForm = ({ data = {} }) => {
                                         {(coupenDataManualApply ? (Number(coupenDataManual ?? 0)) : (items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2)}
                                     </Typography>
                                 </Box>
-
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
