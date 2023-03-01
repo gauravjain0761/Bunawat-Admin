@@ -26,6 +26,10 @@ const InvoicesDocument = ({ data }) => {
             margin-top: 0px;
             font-size: 12px;
         }
+        .bunawat_doc_top img{
+            width: 150px;
+            height: 70px;
+        }
         .bunawat_doc_top_data{
             display: flex; 
             flex-direction: row;
@@ -66,10 +70,7 @@ const InvoicesDocument = ({ data }) => {
     </style>
         <div class="bunawat_doc">
             <div class="bunawat_doc_top">
-                        <img src='https://bunawat-bucket.s3.ap-south-1.amazonaws.com/logo/image_1677497201200.jpg' style="
-                            width: 150px;
-                            height: 70px;
-                        " />
+                        <img src='https://bunawat-bucket.s3.ap-south-1.amazonaws.com/logo/image_1677497201200.jpg' />
                     <div>
                         <h4>AFPL STORES.COM PVT. LTD</h4>
                         <p>Shop NO: 44-48, Block No: 2,<br />
@@ -93,19 +94,21 @@ const InvoicesDocument = ({ data }) => {
                             </p>
                         </div>
                         
-                        <div className="">
+                        <div class="">
                             <p><span>Shiping:-</span> <br />
                             ${data?.shipping_address?.fname} ${data?.shipping_address?.lname} <br />
                             ${data?.shipping_address?.address_1} <br />
                             ${data?.shipping_address?.address_2}<br />
                             ${data?.shipping_address?.state}<br />
-                            ${data?.shipping_address?.city},${data?.shipping_address?.pincode}
+                            ${data?.shipping_address?.city}, ${data?.shipping_address?.pincode}
                             </p>
                         </div>
                 <div class="">
-                    <div> <p>Invoice Number : INV/2022-23/1887 </p></div>
-                    <div> <p>Order Number : ${data?.order_num}</p></div>
-                    <div> <p>Order Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p></div>
+                   <div>
+                    <p>Invoice Number : INV/2022-23/1887 <br />
+                    Order Number : ${data?.order_num} <br />
+                    Order Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p>
+                   </div>
                 </div>
             </div>
 
@@ -120,9 +123,9 @@ const InvoicesDocument = ({ data }) => {
                         </tr>
                         ${data?.items?.map(list => (
         `<tr>
-            <td>
+            <td style="padding-right: 10px;">
                 <b>Blue skirt and top set - Blue,s</b> <br />
-                <span style={{ fontSize: '14px' }}>SKU: ${list?.sku}</span>
+                <span>SKU: ${list?.sku}</span>
             </td>
             <td>INR ${list?.price}</td>
             <td>${list?.qty}</td>
