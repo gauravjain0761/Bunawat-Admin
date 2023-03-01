@@ -86,7 +86,7 @@ const PackingSlipDocument = ({ data }) => {
                 
                 <div class="bunawat_doc_top_data">
                             <div class="">
-                                <p><span>Billing</span> <br />
+                                <p><span>Billing:-</span> <br />
                                     Avinash Thakur <br />
                                     Master infotech <br />
                                     12285<br />
@@ -96,7 +96,7 @@ const PackingSlipDocument = ({ data }) => {
                             </div>
                             
                             <div className="">
-                                <p><span>Shiping</span> <br />
+                                <p><span>Shiping:-</span> <br />
                                     Avinash Thakur <br />
                                     Master infotech <br />
                                     12285<br />
