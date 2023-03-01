@@ -67,7 +67,7 @@ const PackingSlipDocument = ({ data }) => {
             <div class="bunawat_doc">
                 <div class="bunawat_doc_top">
                         <div>
-                            <img src='https://cdn.shopify.com/s/files/1/0360/1124/5703/files/logo1_350x.jpg?v=1613715326' style="
+                            <img src='https://bunawat-bucket.s3.ap-south-1.amazonaws.com/logo/image_1677497201200.jpg' style="
                                 width: 150px;
                                 height: 70px;
                             " />
