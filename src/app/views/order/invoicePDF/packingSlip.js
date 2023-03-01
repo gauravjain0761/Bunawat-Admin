@@ -26,6 +26,10 @@ const PackingSlipDocument = ({ data }) => {
                 margin-top: 0px;
                 font-size: 12px;
             }
+            .bunawat_doc_top img{
+                width: 150px;
+                height: 70px;
+            }
             .bunawat_doc_top_data{
                 display: flex; 
                 flex-direction: row;
@@ -67,10 +71,7 @@ const PackingSlipDocument = ({ data }) => {
             <div class="bunawat_doc">
                 <div class="bunawat_doc_top">
                         <div>
-                            <img src='https://bunawat-bucket.s3.ap-south-1.amazonaws.com/logo/image_1677497201200.jpg' style="
-                                width: 150px;
-                                height: 70px;
-                            " />
+                            <img src="/assets/images/bunawat-pdf-logo.png" alt="" />
                         </div>
                         <div>
                             <h4>AFPL STORES.COM PVT. LTD</h4>
@@ -106,9 +107,9 @@ const PackingSlipDocument = ({ data }) => {
                                 </p>
                             </div>
                     <div class="">
-                        <div> <p>Invoice Number : INV/2022-23/1887 </p></div>
-                        <div> <p>Order Number : 158673</p></div>
-                        <div> <p>Order Date : 10 Nav, 2022</p></div>
+                        <p>Invoice Number : INV/2022-23/1887 <br />
+                        Order Number : 158673 <br />
+                        Order Date : 10 Nav, 2022</p>
                     </div>
                 </div>
 
