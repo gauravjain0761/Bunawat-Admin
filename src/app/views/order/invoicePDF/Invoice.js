@@ -70,8 +70,8 @@ const InvoicesDocument = ({ data }) => {
     </style>
         <div class="bunawat_doc">
             <div class="bunawat_doc_top">
-                        <img src='https://bunawat-bucket.s3.ap-south-1.amazonaws.com/logo/image_1677497201200.jpg' />
-                    <div>
+                        <img src='https://bunawat-bucket.s3.ap-south-1.amazonaws.com/logo/image_1677497201200.jpg' /> 
+                        <div>
                         <h4>AFPL STORES.COM PVT. LTD</h4>
                         <p>Shop NO: 44-48, Block No: 2,<br />
                             Busyland Complex<br />
