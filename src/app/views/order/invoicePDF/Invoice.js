@@ -84,7 +84,7 @@ const InvoicesDocument = ({ data }) => {
             
             <div class="bunawat_doc_top_data">
                         <div class="">
-                            <p><span>Billing</span> <br />
+                            <p><span>Billing:- </span> <br />
                                 ${data?.billing_address?.fname} ${data?.billing_address?.lname} <br />
                                 ${data?.billing_address?.address_1} <br />
                                 ${data?.billing_address?.address_2}<br />
@@ -94,7 +94,7 @@ const InvoicesDocument = ({ data }) => {
                         </div>
                         
                         <div className="">
-                            <p><span>Shiping</span> <br />
+                            <p><span>Shiping:-</span> <br />
                             ${data?.shipping_address?.fname} ${data?.shipping_address?.lname} <br />
                             ${data?.shipping_address?.address_1} <br />
                             ${data?.shipping_address?.address_2}<br />
