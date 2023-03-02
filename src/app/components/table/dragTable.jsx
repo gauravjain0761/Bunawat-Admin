@@ -31,7 +31,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow >
-                <TableCell width={20} sx={{ backgroundColor: UIColor }}>
+                <TableCell sx={{ width: { lg: 20, xs: 40 }, backgroundColor: UIColor }}>
                     {/* <DragHandle /> */}
                 </TableCell>
                 {!disableCheckBox &&
