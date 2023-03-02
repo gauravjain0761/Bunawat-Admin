@@ -1,3 +1,4 @@
+import { LoadingButton } from '@mui/lab';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { pdf } from '@react-pdf/renderer';
 import { API_URL } from 'app/constant/api'
@@ -8,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import PackingSlipDocument from '../invoicePDF/packingSlip';
 
 const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         order_status: selectedeData?.order_status
     });
@@ -47,6 +49,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                     .then(async (response) => {
                         if (getData) getData()
                         handleClose()
+                        setLoading(false)
                     })
                     .catch((error) => {
                         console.log("Error", error);
@@ -63,6 +66,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                 } else {
                     if (getData) getData()
                     handleClose()
+                    setLoading(false)
                 }
             })
             .catch((error) => {
@@ -120,9 +124,22 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handeSubmit} >
+                <LoadingButton
+                    loading={loading}
+                    loadingPosition="center"
+                    onClick={() => {
+                        setLoading(true);
+                        handeSubmit();
+                    }}
+                    sx={{
+                        background: 'none', color: '#232a45', boxShadow: 'none',
+                        "&:hover": {
+                            background: 'none', color: '#232a45', boxShadow: 'none'
+                        }
+                    }}
+                    variant="contained">
                     Save
-                </Button>
+                </LoadingButton>
             </DialogActions>
         </Dialog>
     )

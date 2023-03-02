@@ -40,6 +40,7 @@ import React, { useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import NotesModel from "./models/notesModel";
 import PaymentModel from "./models/paymentModel";
 import StatusModel from "./models/statusModel";
 import TrackingModel from "./models/trackingModel";
@@ -56,6 +57,7 @@ const OrderDetailForm = ({ data = {} }) => {
     const [statusPopup, setStatusPopup] = useState(false);
     const [trackingPopup, setTrackingPopup] = useState(false);
     const [paymentPopup, setPaymentPopup] = useState(false);
+    const [notesPopup, setNotesPopup] = useState(false);
     let [searchParams, setSearchParams] = useSearchParams();
     const [viewOrder, setViewOrder] = React.useState({});
     const [rows, setRows] = useState([]);
@@ -410,7 +412,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             <Button variant="outlined" onClick={() => setStatusPopup(true)}>Status</Button>
                                                             <Button variant="outlined" onClick={() => setTrackingPopup(true)}>Tracking No</Button>
                                                             <Button variant="outlined" onClick={() => setPaymentPopup(true)}>Payment Info</Button>
-                                                            <Button variant="outlined">Notes</Button>
+                                                            <Button variant="outlined" onClick={() => setNotesPopup(true)}>Notes</Button>
                                                             <Button variant="outlined" onClick={() => openPDF(viewOrder?.invoice ?? '')}>Invoice</Button>
                                                             <Button variant="outlined" onClick={() => openPDF(viewOrder?.packing_slip ?? '')}>Packing Slip</Button>
                                                         </Box>
@@ -432,6 +434,7 @@ const OrderDetailForm = ({ data = {} }) => {
             <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
             <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
             <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} />
+            <NotesModel open={notesPopup} handleClose={() => setNotesPopup(false)} />
         </Box >
     );
 };
