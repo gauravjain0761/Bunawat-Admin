@@ -182,22 +182,26 @@ const ProductForm = ({ data = {}, ProductType }) => {
             tempError = { ...tempError, tax: true }
         }
         if (!!description && Object.values(tempError).every(x => !x)) {
-            setLoading(true);
-            await ApiPost(API_URL.addProduct, {
-                ...formData,
-                description,
-                status: "INACTIVE"
-            })
-                .then((response) => {
-                    setLoading(false)
-                    toast.success('Add Successfully!')
-                    navigate("/product/list")
+            if ((formData?.image && formData?.image.length >= 1)) {
+                setLoading(true);
+                await ApiPost(API_URL.addProduct, {
+                    ...formData,
+                    description,
+                    status: "INACTIVE"
                 })
-                .catch((error) => {
-                    setLoading(false)
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+                    .then((response) => {
+                        setLoading(false)
+                        toast.success('Add Successfully!')
+                        navigate("/product/list")
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            } else {
+                toast.error("Please upload 1 images.")
+            }
         }
         setFormError(tempError)
     };
