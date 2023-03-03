@@ -52,7 +52,7 @@ const CouponList = () => {
 
     const columns = [
         {
-            id: "Coupon Code",
+            id: "code",
             label: "Coupon Code",
             width: 120
         },
@@ -62,17 +62,17 @@ const CouponList = () => {
         //     width: 120
         // },
         {
-            id: "Discount Type",
+            id: "discount_type",
             label: "Discount Type",
             width: 130
         },
         {
-            id: "Value",
+            id: "discount_value",
             label: "Value",
             width: 100
         },
         {
-            id: "uses_limit",
+            id: "use_count",
             label: "Uses/Limit",
             width: 110
         },
@@ -82,7 +82,7 @@ const CouponList = () => {
             width: 110
         },
         {
-            id: "expiry_date",
+            id: "end_date",
             label: "Expiry Date",
             width: 110
         },

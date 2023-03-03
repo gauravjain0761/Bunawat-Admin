@@ -43,45 +43,46 @@ const OrderList = () => {
             width: 150
         },
         {
-            id: "OrderDate",
+            id: "createdAt",
             label: "Date",
             width: 100
         },
         {
-            id: "OrderType",
+            id: "order_type",
             label: "Type",
             width: 100
         },
         {
-            id: "OrderUserType",
+            id: "user_type",
             label: "User Type",
             width: 100
         },
         {
-            id: "UserName",
+            id: "user.fname",
             label: "UserName",
             width: 100
         },
         {
-            id: "OrderStatus",
+            id: "order_status",
             label: "Status",
             align: "center",
             width: 150
         },
         {
-            id: "OrderAmount",
+            id: "total_amount",
             label: "Amount",
             align: "center",
             width: 100
         },
         {
-            id: "Source",
-            label: "Source",
+            id: "member.name",
+            label: "Team Member",
             align: "center",
+            sortDisable: true,
             width: 100
         },
         {
-            id: "Age",
+            id: "order_age",
             label: "Age",
             align: "center",
             width: 60
@@ -190,9 +191,18 @@ const OrderList = () => {
         setActionOpen(temp)
     };
 
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage + 1);
+    };
+
+    const getAge = (age) => {
+        if (age <= 24) {
+            return `${age} Hour`
+        }
+        if (age > 24) {
+            return `${Math.floor(age / 24)} Day`
+        }
+        return "-"
     };
 
     const handleChangeRowsPerPage = (event) => {
@@ -339,8 +349,8 @@ const OrderList = () => {
                                 borderRadius: '4px'
                             }}>{row.order_status}</Box></TableCell>
                             <TableCell align="center">{row?.total_amount}</TableCell>
-                            <TableCell align="center">-</TableCell>
-                            <TableCell align="center">-</TableCell>
+                            <TableCell align="center">{row?.member?.name ?? "-"}</TableCell>
+                            <TableCell align="center">{getAge(row?.order_age)}</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>
                                 <IconButton
                                     aria-label="more"

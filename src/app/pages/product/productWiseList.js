@@ -20,7 +20,7 @@ import DeleteProductModel from 'app/views/category/model/deleteProductModel';
 import DragTableComponent, { DragHandle } from 'app/components/table/dragTable';
 import { arrayMove, SortableElement } from 'react-sortable-hoc';
 
-const ProductList = () => {
+const ProductWiseList = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const getSearchQuery = searchParams.get("collection")
@@ -517,114 +517,20 @@ const ProductList = () => {
                     </Stack>
                 </Box>
             </Box>
-            <TableComponent
+            <DragTableComponent
                 rows={rows}
                 columns={columns}
                 onSortEnd={onSortEnd}
                 isLoading={rowLoading}
                 totalCount={totalCount}
                 selected={selected}
-                renderRow={(row, mainIndex) => {
-                    const isItemSelected = isSelected(row._id);
-                    const labelId = `enhanced-table-checkbox-${mainIndex}`;
+                renderRow={(row, index) => {
                     return (
-                        <TableRow
-                            hover
-                            role="checkbox"
-                            aria-checked={isItemSelected}
-                            tabIndex={-1}
-                            key={row._id}
-                            selected={isItemSelected}>
-                            <TableCell padding="checkbox" >
-                                <Checkbox
-                                    color="primary"
-                                    onClick={(event) => handleClick(event, row._id)}
-                                    checked={isItemSelected}
-                                    inputProps={{
-                                        'aria-labelledby': labelId,
-                                    }}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
-                                    <Box sx={{ width: "60px", height: "60px" }}>
-                                        <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
-                                    </Box>
-                                    <Typography sx={{
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'initial',
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: '2',
-                                        WebkitBoxOrient: 'vertical',
-                                    }}>
-                                        {row?.name}
-                                    </Typography>
-                                </Box>
-                            </TableCell>
-                            <TableCell>{row?.design_num}</TableCell>
-                            <TableCell align="center">{row?.variant_count}</TableCell>
-                            <TableCell align="center">
-                                <Typography sx={{
-                                    flexShrink: 0, fontSize: "14px", color: (theme) =>
-                                        row?.status === "ACTIVE" ?
-                                            theme.palette.success.main
-                                            :
-                                            row?.status === "INACTIVE" ?
-                                                theme.palette.error.main
-                                                :
-                                                theme.palette.success.light
-                                    , textTransform: "capitalize"
-                                }}>
-                                    {row?.status}
-                                </Typography>
-
-                            </TableCell>
-                            <TableCell align='right' sx={{ pr: "18px" }}>
-                                <Box position='relative'>
-                                    <IconButton
-                                        aria-label="more"
-                                        id="long-button"
-                                        aria-controls={Boolean(actionAllOpen) ? 'long-menu' : undefined}
-                                        aria-expanded={Boolean(actionAllOpen) ? 'true' : undefined}
-                                        aria-haspopup="true"
-                                        onClick={(e) => handleActionClick(e, mainIndex)}>
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                    <ClickAwayListener onClickAway={handleActionClose}>
-                                        <Box sx={{ width: '100px', zIndex: 999, boxShadow: 'rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px', borderRadius: '4px', height: 'auto', background: '#fff', position: 'absolute', bottom: '-12px', right: '15px', display: Boolean(actionOpen[mainIndex]) ? 'block' : 'none', padding: '8px 0px' }}>
-                                            <MenuItem onTouchEnd={() => {
-                                                if (row?.status === "ACTIVE") {
-                                                    editInActiveStatusData(row?._id, !row?.status)
-                                                } else if (row?.status === "INQUALITY" || row?.status === "INACTIVE") {
-                                                    editActiveStatusData(row?._id, !row?.status)
-                                                }
-
-                                            }} onClick={() => {
-                                                if (row?.status === "ACTIVE") {
-                                                    editInActiveStatusData(row?._id, !row?.status)
-                                                } else if (row?.status === "INQUALITY" || row?.status === "INACTIVE") {
-                                                    editActiveStatusData(row?._id, !row?.status)
-                                                }
-
-                                            }}>{row?.status === "ACTIVE" ? "InActive" : "Active"}  </MenuItem>
-                                            <MenuItem onTouchEnd={() => {
-                                                navigate(`/product/add/${row?._id}`)
-                                            }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
-                                            <MenuItem onClick={() => {
-                                                setDeleteData(row)
-                                                setOpen(true);
-                                                handleActionClose();
-                                            }} onTouchEnd={() => {
-                                                setDeleteData(row)
-                                                setOpen(true);
-                                                handleActionClose();
-                                            }}>Delete</MenuItem>
-                                        </Box>
-                                    </ClickAwayListener>
-                                </Box>
-                            </TableCell>
-                        </TableRow>
+                        <RowData
+                            mainIndex={index}
+                            index={index}
+                            key={row?._id}
+                            row={row} />
                     )
                 }}
                 page={page}
@@ -647,4 +553,4 @@ const ProductList = () => {
     );
 }
 
-export default ProductList;
+export default ProductWiseList;

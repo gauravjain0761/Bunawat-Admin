@@ -34,7 +34,7 @@ const ProductMedia = () => {
 
     const getData = async () => {
         setRowLoading(true)
-        await ApiGet(`${API_URL.getProducts}`)
+        await ApiGet(`${API_URL.getProducts}?q=${searchText}`)
             .then((response) => {
                 setRowLoading(false)
                 setRows(response?.data ?? []);
@@ -49,7 +49,7 @@ const ProductMedia = () => {
 
     React.useEffect(() => {
         getData();
-    }, [])
+    }, [searchText])
 
     const CardHeader = styled(Box)(() => ({
         display: 'flex',

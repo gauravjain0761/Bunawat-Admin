@@ -291,42 +291,43 @@ const InventoryList = () => {
         textTransform: 'capitalize',
     }));
     return (
-        <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
-            <Box className="searchBoxSeaprate"
-                sx={{
-                    paddingLeft: "10px !important",
-                    paddingRight: "10px !important",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                }}
-            >
-                <Title>Inventory List</Title>
-                <Box display="flex" className="searchBoxSeaprate">
-                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
-                        border: "1px solid #000",
-                        borderRadius: "6px",
-                        mr: "20px",
-                    }}>
-                        <Box component="input" sx={{
-                            width: '100%',
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: '1rem',
-                            p: 0,
-                            paddingLeft: '20px',
-                            height: '36px',
-                            background: "transparent",
-                            color: "#000",
-                        }} type="text" value={searchText} onChange={(e) => {
-                            setSearchText(e.target.value)
-                        }} placeholder="Search here..." />
-                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-                            <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
-                        </IconButton>
-                    </Box>
+        <Box sx={{ position: 'relative' }}>
+            <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
+                <Box className="searchBoxSeaprate"
+                    sx={{
+                        paddingLeft: "10px !important",
+                        paddingRight: "10px !important",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center"
+                    }}
+                >
+                    <Title>Inventory List</Title>
+                    <Box display="flex" className="searchBoxSeaprate">
+                        <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                            border: "1px solid #000",
+                            borderRadius: "6px",
+                            mr: "20px",
+                        }}>
+                            <Box component="input" sx={{
+                                width: '100%',
+                                border: 'none',
+                                outline: 'none',
+                                fontSize: '1rem',
+                                p: 0,
+                                paddingLeft: '20px',
+                                height: '36px',
+                                background: "transparent",
+                                color: "#000",
+                            }} type="text" value={searchText} onChange={(e) => {
+                                setSearchText(e.target.value)
+                            }} placeholder="Search here..." />
+                            <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                                <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
+                            </IconButton>
+                        </Box>
 
-                    {/* <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/inventory/add`)} sx={{
+                        {/* <Button color="primary" variant="contained" type="submit" onClick={() => navigate(`/inventory/add`)} sx={{
                         backgroundColor: UIColor, color: "#fff",
                         "&:hover": {
                             backgroundColor: UIColor, color: "#fff"
@@ -335,180 +336,180 @@ const InventoryList = () => {
                         <Icon>add</Icon>
                         <Span sx={{ pl: 1, textTransform: "capitalize" }}>Add Inventory</Span>
                     </Button> */}
+                    </Box>
                 </Box>
-            </Box>
-            <TableComponent
-                rows={rows}
-                columns={columns}
-                isLoading={rowLoading}
-                extraPaddingOnFirstColumn={true}
-                disableCheckBox={true}
-                selected={selected}
-                totalCount={totalCount}
-                renderRow={(row, index) => {
-                    const isItemSelected = isSelected(row?._id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
-                    return (
-                        <>
-                            <TableRow
-                                hover
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={row?._id}
-                                selected={isItemSelected}
-                            >
-                                <TableCell sx={{ pl: '15px' }}>{row?.design_num}</TableCell>
-                                <TableCell>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        {row?.image && <img style={{ marginRight: '5px' }} src={row?.image} width='50px' height='50px' />
-                                        }
-                                        {row?.name}
-                                    </Box>
-                                </TableCell>
-                                <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row?.variant_count}</TableCell>
-                                <TableCell align="center">{row?.total_inStock_qty}</TableCell>
-                                <TableCell align="center">{row?.total_preOrder_qty}</TableCell>
-                                <TableCell align="center">{row?.total_product_qty}</TableCell>
-                                <TableCell align="center">{row?.total_threshold_qty}</TableCell>
-                                <TableCell align="center"></TableCell>
-                                <TableCell align='right' sx={{ pr: "18px" }}>
-                                    <IconButton
-                                        aria-label="more"
-                                        id="long-button"
-                                        aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
-                                        aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
-                                        aria-haspopup="true"
-                                        onClick={(e) => handleActionClick(e, index)}>
-                                        <MoreVertIcon />
-                                    </IconButton>
-                                    <Menu
-                                        id="fade-menu"
-                                        MenuListProps={{
-                                            'aria-labelledby': 'fade-button',
-                                        }}
-                                        anchorEl={actionOpen[index]}
-                                        // open={Boolean(actionOpen[index])}
-                                        open={false}
-                                        onClose={handleActionClose}
-                                        TransitionComponent={Fade}
-                                    >
-                                        <MenuItem onClick={() => {
-                                            // setOpen(true);
-                                            // handleActionClose();
-                                        }}>Add Variant</MenuItem>
-                                    </Menu>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell style={{ paddingBottom: 0, paddingTop: 0, padding: 0 }} colSpan={9}>
-                                    <Collapse in={collapseOpen[index]} timeout="auto" unmountOnExit>
-                                        <TableComponent
-                                            rows={row?.sku_data ?? []}
-                                            columns={columns}
-                                            disableColumns={true}
-                                            disableCheckBox={true}
-                                            extraDisable={true}
-                                            disablePagination={true}
-                                            renderRow={(sku_row, c_index) => {
-                                                return (
-                                                    <TableRow
-                                                        hover
-                                                        role="checkbox"
-                                                        tabIndex={-1}
-                                                        key={sku_row?._id}
-                                                    >
-                                                        <TableCell align="center" width={120 ?? "100%"}>↳ {sku_row?.sku}</TableCell>
-                                                        <TableCell width={100 ?? "100%"}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                {sku_row?.product_name}
-                                                            </Box>
-                                                        </TableCell>
-                                                        <TableCell width={80 ?? "100%"} align="center">Variation</TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">
-                                                            <TextField
-                                                                type="text"
-                                                                name="inStock_qty"
-                                                                label="In Stock"
-                                                                onChange={(e) => handleChange(e, index, c_index)}
-                                                                value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.inStock_qty : sku_row?.inStock_qty || "") : sku_row?.inStock_qty || ""}
-                                                                validators={["required"]}
-                                                                errorMessages={["this field is required"]}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">
-                                                            <TextField
-                                                                type="text"
-                                                                name="preOrder_qty"
-                                                                label="Preorder"
-                                                                onChange={(e) => handleChange(e, index, c_index)}
-                                                                value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.preOrder_qty : sku_row?.preOrder_qty || "") : sku_row?.preOrder_qty || ""}
-                                                                validators={["required"]}
-                                                                errorMessages={["this field is required"]}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell width={80 ?? "100%"} align="center">{sku_row?.total_qty}</TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">{sku_row?.threshold}</TableCell>
-                                                        <TableCell width={100 ?? "100%"} align="center">{sku_row?.mapVariant?.join(", ")}</TableCell>
-                                                        <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
-                                                            <IconButton
-                                                                aria-label="more"
-                                                                id="long-button"
-                                                                aria-controls={Boolean(actionCollapseOpen[index][c_index]) ? 'long-menu' : undefined}
-                                                                aria-expanded={Boolean(actionCollapseOpen[index][c_index]) ? 'true' : undefined}
-                                                                aria-haspopup="true"
-                                                                onClick={(e) => handleActionCollapseClick(e, index, c_index)}>
-                                                                <MoreVertIcon />
-                                                            </IconButton>
-                                                            <Menu
-                                                                id="fade-menu"
-                                                                MenuListProps={{
-                                                                    'aria-labelledby': 'fade-button',
-                                                                }}
-                                                                anchorEl={actionCollapseOpen[index][c_index]}
-                                                                open={Boolean(actionCollapseOpen[index][c_index])}
-                                                                onClose={handleActionCollapseClose}
-                                                                TransitionComponent={Fade}>
-                                                                <MenuItem onClick={() => {
-                                                                    setMoveQTYPopUP(true);
-                                                                    setSingleMoveQTY(sku_row)
-                                                                    setSelectedSKU(row?.sku_data ?? [])
-                                                                    handleActionCollapseClose();
-                                                                }}>Edit</MenuItem>
-                                                            </Menu>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
+                <TableComponent
+                    rows={rows}
+                    columns={columns}
+                    isLoading={rowLoading}
+                    extraPaddingOnFirstColumn={true}
+                    disableCheckBox={true}
+                    selected={selected}
+                    totalCount={totalCount}
+                    renderRow={(row, index) => {
+                        const isItemSelected = isSelected(row?._id);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+                        return (
+                            <>
+                                <TableRow
+                                    hover
+                                    role="checkbox"
+                                    aria-checked={isItemSelected}
+                                    tabIndex={-1}
+                                    key={row?._id}
+                                    selected={isItemSelected}
+                                >
+                                    <TableCell sx={{ pl: '15px' }}>{row?.design_num}</TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            {row?.image && <img style={{ marginRight: '5px' }} src={row?.image} width='50px' height='50px' />
+                                            }
+                                            {row?.name}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row?.variant_count}</TableCell>
+                                    <TableCell align="center">{row?.total_inStock_qty}</TableCell>
+                                    <TableCell align="center">{row?.total_preOrder_qty}</TableCell>
+                                    <TableCell align="center">{row?.total_product_qty}</TableCell>
+                                    <TableCell align="center">{row?.total_threshold_qty}</TableCell>
+                                    <TableCell align="center"></TableCell>
+                                    <TableCell align='right' sx={{ pr: "18px" }}>
+                                        <IconButton
+                                            aria-label="more"
+                                            id="long-button"
+                                            aria-controls={Boolean(actionOpen[index]) ? 'long-menu' : undefined}
+                                            aria-expanded={Boolean(actionOpen[index]) ? 'true' : undefined}
+                                            aria-haspopup="true"
+                                            onClick={(e) => handleActionClick(e, index)}>
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                        <Menu
+                                            id="fade-menu"
+                                            MenuListProps={{
+                                                'aria-labelledby': 'fade-button',
                                             }}
-                                            page={page}
-                                            rowsPerPage={rowsPerPage}
-                                            handleChangeRowsPerPage={handleChangeRowsPerPage}
-                                            handleChangePage={handleChangePage}
-                                            handleSelectAllClick={handleSelectAllClick}
-                                        />
-                                    </Collapse>
-                                </TableCell>
-                            </TableRow>
-                        </>
-                    );
-                }}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                handleChangeRowsPerPage={handleChangeRowsPerPage}
-                handleChangePage={handleChangePage}
-                handleSelectAllClick={handleSelectAllClick}
-            />
+                                            anchorEl={actionOpen[index]}
+                                            // open={Boolean(actionOpen[index])}
+                                            open={false}
+                                            onClose={handleActionClose}
+                                            TransitionComponent={Fade}
+                                        >
+                                            <MenuItem onClick={() => {
+                                                // setOpen(true);
+                                                // handleActionClose();
+                                            }}>Add Variant</MenuItem>
+                                        </Menu>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell style={{ paddingBottom: 0, paddingTop: 0, padding: 0 }} colSpan={9}>
+                                        <Collapse in={collapseOpen[index]} timeout="auto" unmountOnExit>
+                                            <TableComponent
+                                                rows={row?.sku_data ?? []}
+                                                columns={columns}
+                                                disableColumns={true}
+                                                disableCheckBox={true}
+                                                extraDisable={true}
+                                                disablePagination={true}
+                                                renderRow={(sku_row, c_index) => {
+                                                    return (
+                                                        <TableRow
+                                                            hover
+                                                            role="checkbox"
+                                                            tabIndex={-1}
+                                                            key={sku_row?._id}
+                                                        >
+                                                            <TableCell align="center" width={120 ?? "100%"}>↳ {sku_row?.sku}</TableCell>
+                                                            <TableCell width={100 ?? "100%"}>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                    {sku_row?.product_name}
+                                                                </Box>
+                                                            </TableCell>
+                                                            <TableCell width={80 ?? "100%"} align="center">Variation</TableCell>
+                                                            <TableCell width={100 ?? "100%"} align="center">
+                                                                <TextField
+                                                                    type="text"
+                                                                    name="inStock_qty"
+                                                                    label="In Stock"
+                                                                    onChange={(e) => handleChange(e, index, c_index)}
+                                                                    value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.inStock_qty : sku_row?.inStock_qty || "") : sku_row?.inStock_qty || ""}
+                                                                    validators={["required"]}
+                                                                    errorMessages={["this field is required"]}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell width={100 ?? "100%"} align="center">
+                                                                <TextField
+                                                                    type="text"
+                                                                    name="preOrder_qty"
+                                                                    label="Preorder"
+                                                                    onChange={(e) => handleChange(e, index, c_index)}
+                                                                    value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.preOrder_qty : sku_row?.preOrder_qty || "") : sku_row?.preOrder_qty || ""}
+                                                                    validators={["required"]}
+                                                                    errorMessages={["this field is required"]}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell width={80 ?? "100%"} align="center">{sku_row?.total_qty}</TableCell>
+                                                            <TableCell width={100 ?? "100%"} align="center">{sku_row?.threshold}</TableCell>
+                                                            <TableCell width={100 ?? "100%"} align="center">{sku_row?.mapVariant?.join(", ")}</TableCell>
+                                                            <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
+                                                                <IconButton
+                                                                    aria-label="more"
+                                                                    id="long-button"
+                                                                    aria-controls={Boolean(actionCollapseOpen[index][c_index]) ? 'long-menu' : undefined}
+                                                                    aria-expanded={Boolean(actionCollapseOpen[index][c_index]) ? 'true' : undefined}
+                                                                    aria-haspopup="true"
+                                                                    onClick={(e) => handleActionCollapseClick(e, index, c_index)}>
+                                                                    <MoreVertIcon />
+                                                                </IconButton>
+                                                                <Menu
+                                                                    id="fade-menu"
+                                                                    MenuListProps={{
+                                                                        'aria-labelledby': 'fade-button',
+                                                                    }}
+                                                                    anchorEl={actionCollapseOpen[index][c_index]}
+                                                                    open={Boolean(actionCollapseOpen[index][c_index])}
+                                                                    onClose={handleActionCollapseClose}
+                                                                    TransitionComponent={Fade}>
+                                                                    <MenuItem onClick={() => {
+                                                                        setMoveQTYPopUP(true);
+                                                                        setSingleMoveQTY(sku_row)
+                                                                        setSelectedSKU(row?.sku_data ?? [])
+                                                                        handleActionCollapseClose();
+                                                                    }}>Edit</MenuItem>
+                                                                </Menu>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                }}
+                                                page={page}
+                                                rowsPerPage={rowsPerPage}
+                                                handleChangeRowsPerPage={handleChangeRowsPerPage}
+                                                handleChangePage={handleChangePage}
+                                                handleSelectAllClick={handleSelectAllClick}
+                                            />
+                                        </Collapse>
+                                    </TableCell>
+                                </TableRow>
+                            </>
+                        );
+                    }}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    handleChangePage={handleChangePage}
+                    handleSelectAllClick={handleSelectAllClick}
+                />
 
-            <DeleteModel open={open} handleClose={() => setOpen(false)} />
-            <MoveQTYModel open={moveQTYPopUP} handleClose={() => {
-                setMoveQTYPopUP(false)
-                setSingleMoveQTY({})
-            }} data={singleMoveQTY} selectedSKU={selectedSKU} getData={getData} />
-
+                <DeleteModel open={open} handleClose={() => setOpen(false)} />
+                <MoveQTYModel open={moveQTYPopUP} handleClose={() => {
+                    setMoveQTYPopUP(false)
+                    setSingleMoveQTY({})
+                }} data={singleMoveQTY} selectedSKU={selectedSKU} getData={getData} />
+            </Card>
             {saveChanges &&
                 <Box sx={{
                     width: '100%', height: '60px', background: '#fff',
-                    position: 'absolute',
+                    position: 'sticky',
                     bottom: 0,
                     boxShadow: '0 -8px 16px 0 rgb(85 93 102 / 30%)'
                 }}>
@@ -545,7 +546,7 @@ const InventoryList = () => {
                     </Box>
                 </Box>
             }
-        </Card>
+        </Box>
     );
 }
 

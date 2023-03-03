@@ -573,7 +573,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
 
     const SortableList = SortableContainer(({ items }) => {
         return (
-            <Box className="list-group"  sx={{ width: "100%" }}>
+            <Box className="list-group" sx={{ width: "100%" }}>
                 <Grid container spacing={2}>
                     {items?.map((item, index) => {
                         return (
@@ -705,6 +705,23 @@ const ProductForm = ({ data = {}, ProductType }) => {
                                     </Select>
                                     {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                 </FormControl>
+
+                                {/* <Autocomplete
+                                                            sx={{ width: "400px" }}
+                                                            multiple={data?.type == 'single' ? false : true}
+                                                            id="tags-outlined"
+                                                            value={data?.value}
+                                                            onChange={(event, newValue) => setFormData({ ...formData, [event.target.name]: event.target.value });}
+                                                            options={collectionList}
+                                                            getOptionLabel={(option) => option?.label}
+                                                            filterSelectedOptions
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
+                                                                />
+                                                            )}
+                                                        /> */}
 
                                 <TextField
                                     type="text"

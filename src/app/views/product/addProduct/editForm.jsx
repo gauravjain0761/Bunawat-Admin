@@ -91,9 +91,9 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             .then((response) => {
                 setAttributes(response?.data?.map((item) => {
                     return {
-                        type: 'single',
+                        type: item?.slug == "size" ? 'multi' : 'single',
                         name: item?.slug,
-                        value: null,
+                        value: item?.slug == "size" ? [] : null,
                         options: item?.variants?.map(x => ({ id: x?._id, name: x?.name }))
                     }
                 }) ?? []);
@@ -329,7 +329,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         if (!tax) {
             tempError = { ...tempError, tax: true }
         }
-        console.log("formData90", formData)
         if (!!description && Object.values(tempError).every(x => !x)) {
             if (formData?.status === "ACTIVE" && (formData?.image && formData?.image.length >= 3 && formData?.videos && formData?.videos.length >= 2 && formData?.sku_data && formData?.sku_data.length > 0)) {
                 setLoading(true)
@@ -376,7 +375,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         const MAX_FILE_SIZE = 30720 // 30MB
         const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024;
 
-        console.log("eventevent", event?.target?.files)
         const filesData = new FormData();
         Object.values(event?.target?.files).forEach((value) => {
             filesData.append(`file`, value);
@@ -400,7 +398,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             .then((response) => {
                 if (response?.data) {
                     let ImagesData = [];
-                    console.log("response?.data", response?.data)
                     response?.data && response?.data?.forEach((element) => {
                         ImagesData.push({
                             url: element?.Location,
@@ -444,7 +441,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const handleImageVideo = async (event) => {
         const MAX_FILE_SIZE = 51200 // 50MB
 
-        console.log("eventevent", event?.target?.files)
         const filesData = new FormData();
         Object.values(event?.target?.files).forEach((value) => {
             filesData.append(`video`, value);
@@ -457,7 +453,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         };
 
         // const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
-        console.log("eventevent", event?.target?.files)
         // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
         //     setFormError({ ...formError, videos: true })
         // } else {
@@ -470,7 +465,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             .then((response) => {
                 if (response?.data) {
                     let VideosData = [];
-                    console.log("response?.data", response?.data)
                     response?.data && response?.data?.forEach((element) => {
                         VideosData.push({
                             url: element?.Location,
@@ -551,11 +545,21 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
 
     const handleAddAttribute = async () => {
         let attributesData = [...attributes] ?? []
+        let finalData = []
         if (attributesData?.filter(x => !!x?.value)?.length > 0) {
-            const selectedAttributes = attributesData?.filter(x => !!x?.value)?.map(data => data?.value?.id);
+            if (attributesData?.find(x => x?.name == "size")?.value?.length > 0) {
+                attributesData?.find(x => x?.name == "size")?.value?.map(list => {
+                    let selectedAttributes = attributesData?.filter(x => x?.name != "size")?.filter(x => !!x?.value)?.map(data => data?.value?.id);
+                    selectedAttributes = [...selectedAttributes, list?.id]
+                    finalData.push(selectedAttributes)
+                })
+            } else {
+                const selectedAttributes = attributesData?.filter(x => x?.name != "size")?.filter(x => !!x?.value)?.map(data => data?.value?.id);
+                finalData.push(selectedAttributes)
+            }
             await ApiPost(API_URL.addSKU, {
                 product_id: id,
-                attr: selectedAttributes ?? []
+                attr: finalData ?? []
             })
                 .then((response) => {
                     if (response?.data?.length > 0) {
@@ -605,7 +609,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
 
     const handleSwitchImage = async (index, item, max = 5) => {
         let images = formData?.image ?? [];
-        console.log("images[index]?.isActive", images[index]?.isActive)
         if (images?.filter((img) => img?.isActive).length < max && !images[index]?.isActive) {
             images[index] = { ...images[index], isActive: !images[index]?.isActive }
             setFormData({ ...formData, image: images });
@@ -641,7 +644,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
 
     const handleSwitchVideo = async (index, item, max = 4) => {
         let videos = formData?.videos ?? [];
-        console.log("videos[index]?.isActive", videos[index]?.isActive)
         if (videos?.filter((video) => video?.isActive).length < max && !videos[index]?.isActive) {
             videos[index] = { ...videos[index], isActive: !videos[index]?.isActive }
             setFormData({ ...formData, videos: videos });
@@ -892,8 +894,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         );
     });
 
-
-    console.log("productformData", formData)
     return (
         <Box sx={{ position: 'relative' }}>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>
@@ -1073,7 +1073,28 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                     <Grid container spacing={12}>
                                         <Grid item lg={12} md={12} sm={12} xs={12} sx={{ mt: 2 }}>
                                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: "10px", mt: 2 }}>
-                                                {attributes?.map((data, index) => {
+                                                {attributes?.filter(x => x?.type == "multi")?.map((data, index) => {
+                                                    return (
+                                                        <Autocomplete
+                                                            key={index}
+                                                            sx={{ width: "400px" }}
+                                                            multiple={data?.type == 'single' ? false : true}
+                                                            id="tags-outlined"
+                                                            value={data?.value}
+                                                            onChange={(event, newValue) => handleAddValueAttribute(data?.name, newValue)}
+                                                            options={data?.options}
+                                                            getOptionLabel={(option) => option?.name}
+                                                            filterSelectedOptions
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
+                                                                />
+                                                            )}
+                                                        />
+                                                    )
+                                                })}
+                                                {attributes?.filter(x => x?.type == "single")?.map((data, index) => {
                                                     return (
                                                         <Autocomplete
                                                             key={index}

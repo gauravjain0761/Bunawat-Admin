@@ -206,6 +206,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     ...payload,
                     description,
                     link_with: link_with ?? '',
+                    web_visibilty: formData?.web_visibilty ?? false,
                     image: image ?? "",
                     mediaType: tempMediaType,
                     "colleciton_list": link_with == 'COLLECTION' ? [linkValue] : [],
@@ -231,6 +232,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
                     ...payload,
                     description,
                     link_with: link_with ?? '',
+                    web_visibilty: formData?.web_visibilty ?? false,
                     image: image ?? "",
                     mediaType: tempMediaType,
                     "colleciton_list": linkValue ? (link_with == 'COLLECTION' ? [linkValue] : []) : [],
@@ -345,6 +347,8 @@ const CategoryForm = ({ data = {}, id, type }) => {
         if (event.target.name == "home_visibilty") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
             setFormError({ ...formError, image: false })
+        } else if (event.target.name == "web_visibilty") {
+            setFormData({ ...formData, [event.target.name]: event.target.checked });
         } else if (event.target.name == "parent_cateogry_id") {
             setFormData({ ...formData, [event.target.name]: event.target.value, sub_category_id: "" });
             setFormError({ ...formError, parent_cateogry_id: false })
@@ -382,6 +386,7 @@ const CategoryForm = ({ data = {}, id, type }) => {
         productId,
         mediaType,
         image,
+        web_visibilty,
         video,
         link_with,
         linkValue,
@@ -519,7 +524,19 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                 }} />
                                 {isErrorDescription && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                             </Box>
-
+                            <Box>
+                                <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
+                                    {/* <FormLabel component="legend">Visibility</FormLabel> */}
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox checked={web_visibilty ?? false} onChange={handleChange} name="web_visibilty" />
+                                            }
+                                            label="Web Visibility"
+                                        />
+                                    </FormGroup>
+                                </FormControl>
+                            </Box>
                             <FormControl sx={{ flexDirection: 'row', alignItems: 'center' }} component="div" variant="standard">
                                 {/* <FormLabel component="legend">Visibility</FormLabel> */}
                                 <FormGroup>
