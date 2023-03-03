@@ -169,7 +169,7 @@ const OrderForm = ({ data = {} }) => {
                 const { data } = response;
                 let productData = [];
                 data && data.forEach((element) => {
-                    if (element.status === "ACTIVE") {
+                    if (element.status === "ACTIVE" || element.status === "INQUALITY") {
                         productData.push({
                             id: element?._id,
                             name: element?.name
@@ -518,7 +518,7 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 fullWidth
                                                 type="text"
-                                                label="Customer Phone"
+                                                label={`${user_type === 'CUSTOMER' ? "Customer" : "Reseller"} Phone`}
                                                 onChange={(event) => {
                                                     if (/^\d+$/.test(event.target.value)) {
                                                         setCustomerNumber(event.target.value);

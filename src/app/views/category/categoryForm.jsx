@@ -393,9 +393,6 @@ const CategoryForm = ({ data = {}, id, type }) => {
         code
     } = formData;
 
-
-
-
     const getTitle = () => {
         if (type == "parent") {
             return "Parent Category"
@@ -429,7 +426,6 @@ const CategoryForm = ({ data = {}, id, type }) => {
         setFormError(tempError)
     }
 
-    console.log("idid", id)
     return (
         <div>
             <ValidatorForm onSubmit={handleSubmit} onError={handleError}>

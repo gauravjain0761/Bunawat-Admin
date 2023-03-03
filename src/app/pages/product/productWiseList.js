@@ -19,11 +19,11 @@ import DeleteAllModel from 'app/views/models/deleteModel';
 import DeleteProductModel from 'app/views/category/model/deleteProductModel';
 import DragTableComponent, { DragHandle } from 'app/components/table/dragTable';
 import { arrayMove, SortableElement } from 'react-sortable-hoc';
+import PositionModel from 'app/views/product/model/positionModel';
 
 const ProductWiseList = () => {
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const getSearchQuery = searchParams.get("collection")
+    const { id } = useParams()
     const [open, setOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [selected, setSelected] = useState([]);
@@ -36,6 +36,7 @@ const ProductWiseList = () => {
     const [searchText, setSearchText] = useState('');
     const [deleteData, setDeleteData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
+    const [positionModel, setPositionModel] = useState(false);
 
     const columns = [
         {
@@ -101,7 +102,7 @@ const ProductWiseList = () => {
 
     const getData = async () => {
         setRowLoading(true)
-        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}&id=${getSearchQuery ? getSearchQuery : ""}`)
+        await ApiGet(`${API_URL.getProducts}?page=${page}&limit=${rowsPerPage}&q=${searchText}&id=${id}`)
             .then((response) => {
                 setRowLoading(false)
                 setRows(response?.data ?? []);
@@ -144,8 +145,8 @@ const ProductWiseList = () => {
     }
 
     React.useEffect(() => {
-        getData();
-    }, [page, rowsPerPage, searchText, getSearchQuery])
+        if (id) getData();
+    }, [page, rowsPerPage, searchText, id])
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -430,6 +431,9 @@ const ProductWiseList = () => {
                                 <MenuItem onTouchEnd={() => {
                                     navigate(`/product/add/${row?._id}`)
                                 }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
+                                <MenuItem onTouchEnd={() => {
+                                    navigate(`/product/add/${row?._id}`)
+                                }} onClick={() => setPositionModel(true)}>Set Position</MenuItem>
                                 <MenuItem onClick={() => {
                                     setDeleteData(row)
                                     setOpen(true);
@@ -540,6 +544,7 @@ const ProductWiseList = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
+            <PositionModel open={positionModel} handleClose={() => setPositionModel(false)} />
             <DeleteProductModel deleteData={deleteData} open={open} getData={getData} handleClose={() => setOpen(false)} />
 
             <DeleteAllModel open={deleteAllOpen} handleClose={() => {

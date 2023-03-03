@@ -287,10 +287,7 @@ const CollectionList = () => {
               {/* <TableCell>-</TableCell> */}
               <TableCell onClick={() => {
                 if (row?.product_count > 0) {
-                  navigate({
-                    pathname: '/product/list',
-                    search: `?collection=${row?._id}`,
-                  })
+                  navigate(`/product/wise/list/${row?._id}`)
                 }
               }} align="center" sx={{ cursor: "pointer" }}>{row?.product_count}</TableCell>
               <TableCell align="center">
