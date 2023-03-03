@@ -923,7 +923,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                         {formError?.category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                     </FormControl>
 
-                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                    {/* <FormControl fullWidth sx={{ mb: 2 }}>
                                         <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
@@ -940,7 +940,26 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             ))}
                                         </Select>
                                         {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                                    </FormControl>
+                                    </FormControl> */}
+
+                                    <Autocomplete
+                                        fullWidth
+                                        multiple={true}
+                                        id="tags-outlined"
+                                        value={collection_id?.map(list => collectionList.find(x => x?.value == list)) ?? []}
+                                        onChange={(event, newValue) => {
+                                            setFormData({ ...formData, collection_id: newValue?.map(x => x?.value) })
+                                        }}
+                                        options={collectionList}
+                                        getOptionLabel={(option) => option?.label}
+                                        filterSelectedOptions
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Collection"
+                                            />
+                                        )}
+                                    />
 
                                     <TextField
                                         type="text"

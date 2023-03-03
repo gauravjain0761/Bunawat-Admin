@@ -1,4 +1,5 @@
 import {
+    Autocomplete,
     Box,
     Button,
     CircularProgress,
@@ -48,6 +49,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
     const [formError, setFormError] = useState({});
     const [formData, setFormData] = useState({
         ...data,
+        collection_id: [],
         image: [],
         pCategory: "None",
 
@@ -70,7 +72,8 @@ const ProductForm = ({ data = {}, ProductType }) => {
     const navigate = useNavigate();
     useEffect(() => {
         setFormData({
-            ...data, pCategory: "None", color: '#000', attributeData: [{
+            ...data, pCategory: "None",
+            collection_id: [], color: '#000', attributeData: [{
                 type: 'single',
                 name: 'color',
                 value: null
@@ -180,7 +183,6 @@ const ProductForm = ({ data = {}, ProductType }) => {
         }
         if (!!description && Object.values(tempError).every(x => !x)) {
             setLoading(true);
-            console.log("formDataformData", formData)
             await ApiPost(API_URL.addProduct, {
                 ...formData,
                 description,
@@ -687,7 +689,7 @@ const ProductForm = ({ data = {}, ProductType }) => {
                                     {formError?.category_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
                                 </FormControl>
 
-                                <FormControl fullWidth sx={{ mb: 2 }}>
+                                {/* <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel id="demo-simple-select-label">Collection</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
@@ -704,24 +706,26 @@ const ProductForm = ({ data = {}, ProductType }) => {
                                         ))}
                                     </Select>
                                     {formError?.collection_id && <Typography sx={{ color: '#FF3D57', fontWeight: 400, fontSize: '0.75rem', m: '3px 14px 0px 14px' }}>this field is required</Typography>}
-                                </FormControl>
+                                </FormControl> */}
 
-                                {/* <Autocomplete
-                                                            sx={{ width: "400px" }}
-                                                            multiple={data?.type == 'single' ? false : true}
-                                                            id="tags-outlined"
-                                                            value={data?.value}
-                                                            onChange={(event, newValue) => setFormData({ ...formData, [event.target.name]: event.target.value });}
-                                                            options={collectionList}
-                                                            getOptionLabel={(option) => option?.label}
-                                                            filterSelectedOptions
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params}
-                                                                    label={data?.name ? data?.name.charAt(0).toUpperCase() + data?.name.slice(1) : ""}
-                                                                />
-                                                            )}
-                                                        /> */}
+                                <Autocomplete
+                                    fullWidth
+                                    multiple={true}
+                                    id="tags-outlined"
+                                    value={collection_id?.map(list => collectionList.find(x => x?.value == list)) ?? []}
+                                    onChange={(event, newValue) => {
+                                        setFormData({ ...formData, collection_id: newValue?.map(x => x?.value) })
+                                    }}
+                                    options={collectionList}
+                                    getOptionLabel={(option) => option?.label}
+                                    filterSelectedOptions
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Collection"
+                                        />
+                                    )}
+                                />
 
                                 <TextField
                                     type="text"

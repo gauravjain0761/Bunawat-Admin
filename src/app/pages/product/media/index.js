@@ -224,15 +224,40 @@ const ProductMedia = () => {
                                         <Box sx={{
                                             position: 'absolute',
                                             width: '100%',
-                                            height: '40px',
+                                            height: { xs: '80px', xl: '50px' },
                                             bottom: 0,
                                             background: '#00000075',
                                             color: '#fff',
                                             display: 'flex',
                                             alignItems: 'center',
+                                            flexDirection: 'column',
                                             justifyContent: 'center'
                                         }}>
-                                            {item?.design_num}
+                                            <Box>{item?.design_num}</Box>
+                                            {((!item?.total_inStock_qty || !item?.total_preOrder_qty) || ((item?.total_inStock_qty == 0) && (item?.total_preOrder_qty == 0)))
+                                                ?
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    color: '#ff6f6f',
+                                                    justifyContent: 'center',
+                                                }}>
+                                                    <Box>Out Of Stock</Box>
+                                                </Box>
+                                                :
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    flexDirection: { xs: 'column', xl: 'row' },
+                                                    justifyContent: 'space-between',
+                                                    fontSize: { xs: '12px', xl: '14px' },
+                                                    px: 2,
+                                                    width: '100%'
+                                                }}>
+                                                    <Box>InStock Qty : {item?.total_inStock_qty}</Box>
+                                                    <Box>PreOrder Qty : {item?.total_preOrder_qty}</Box>
+                                                </Box>
+                                            }
                                         </Box>
                                         <Checkbox sx={{
                                             position: 'absolute',
