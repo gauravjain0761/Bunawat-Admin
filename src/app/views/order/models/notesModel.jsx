@@ -43,510 +43,100 @@ const NotesModel = ({ open, deleteData, getData, handleClose }) => {
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    <Box className="scroll-chnage" sx={{ width: '100%', height: "60vh", background: '#00000010', overflow: 'hidden', overflowY: 'auto' }}>
+                    <Box className="scroll-chnage" sx={{ width: '100%', height: "60vh", background: '#fff', overflow: 'hidden', overflowY: 'auto', border: '1px solid', borderRadius: '5px' }}>
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
+                            justifyContent: 'flex-start',
+                            flexDirection: 'column',
+                            padding: '16px',
                         }}>
                             <Box component='p' sx={{
                                 width: '70%',
-                                padding: '0px 10px',
                                 textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
+                                color: "#000",
+                                margin: '0px',
+                                background: UIColor,
+                                borderRadius: '6px',
+                                color: '#fff',
+                                position: 'relative',
+                                padding: '20px',
+
+                                "&::after": {
+                                    content: '""',
+                                    position: 'absolute',
+                                    display: 'block',
+                                    top: '30%',
+                                    right: '100%',
+                                    marginTop: '-10px',
+                                    width: 0,
+                                    height: 0,
+                                    width: 0,
+                                    height: 0,
+                                    borderTop: '8px solid transparent',
+                                    borderBottom: '8px solid transparent',
+                                    borderRight: `8px solid ${UIColor}`,
+                                }
+                            }}>
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                            </Box>
+                            <Box component='p' sx={{
+                                width: '70%',
+                                textAlign: 'left',
+                                margin: '0px',
+                                color: UIColor,
+                                fontWeight: 600,
+                                mt: '6px'
+                            }}>
+                                9:02 PM
+                            </Box>
                         </Box>
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
+                            justifyContent: 'flex-end',
+                            flexDirection: 'column',
+                            padding: '16px',
                         }}>
                             <Box component='p' sx={{
                                 width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
                                 textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
+                                color: "#000",
+                                margin: '0px',
+                                background: UIColor,
+                                borderRadius: '6px',
+                                color: '#fff',
+                                position: 'relative',
+                                padding: '20px',
+
+                                "&::after": {
+                                    content: '""',
+                                    position: 'absolute',
+                                    display: 'block',
+                                    top: '30%',
+                                    left: '100%',
+                                    marginTop: '-10px',
+                                    width: 0,
+                                    height: 0,
+                                    width: 0,
+                                    height: 0,
+                                    borderTop: '8px solid transparent',
+                                    borderBottom: '8px solid transparent',
+                                    borderLeft: `8px solid ${UIColor}`,
+                                }
+                            }}>
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                            </Box>
                             <Box component='p' sx={{
                                 width: '70%',
-                                padding: '0px 10px',
                                 textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'left',
-                                color: "#000"
-                            }}>Massage 1</Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end'
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                padding: '0px 10px',
-                                textAlign: 'right',
-                                color: "#000"
-                            }}>Massage 2</Box>
+                                margin: '0px',
+                                color: UIColor,
+                                fontWeight: 600,
+                                mt: '6px'
+                            }}>
+                                9:02 PM
+                            </Box>
                         </Box>
                     </Box>
                     <Box sx={{ color: '#000', mt: 2 }}>
