@@ -38,18 +38,18 @@ const ReviewList = () => {
         {
             id: "review",
             label: "Review",
-            width: 200,
+            width: 400,
         },
         {
             id: "rating",
             label: "Rating",
-            width: 300,
+            width: 200,
         },
         {
-            id: "isActive",
-            label: "Status",
+            id: "home_visibility",
+            label: "Home Visibility",
             align: "center",
-            width: 80
+            width: 200
         },
         {
             id: "action",
@@ -106,6 +106,21 @@ const ReviewList = () => {
     const editStatusData = async (editId, status) => {
         await ApiPut(`${API_URL.editReviewProduct}/${editId}`, {
             isActive: status
+        })
+            .then((response) => {
+                toast.success('Edit Successfully!')
+                getData(id)
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
+    }
+
+    const editHomeVisibilityData = async (editId, status) => {
+        await ApiPut(`${API_URL.editReviewProduct}/${editId}`, {
+            home_visibility: status
         })
             .then((response) => {
                 toast.success('Edit Successfully!')
@@ -276,7 +291,7 @@ const ReviewList = () => {
                             <TableCell > {row?.review} </TableCell>
                             <TableCell > {row?.rating} </TableCell>
                             <TableCell align="center">
-                                {row?.isActive ?
+                                {row?.home_visibility ?
                                     <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
                                         Active
                                     </Typography>
@@ -306,7 +321,8 @@ const ReviewList = () => {
                                     onClose={handleActionClose}
                                     TransitionComponent={Fade}
                                 >
-                                    <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
+                                    <MenuItem onClick={() => editHomeVisibilityData(row?._id, !row?.home_visibility)}>{!row?.home_visibility ? "Active" : "InActive"}  </MenuItem>
+                                    {/* <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem> */}
                                     <MenuItem onClick={() => navigate(`/collection/details/collection/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
