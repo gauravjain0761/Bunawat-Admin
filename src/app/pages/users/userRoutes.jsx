@@ -22,6 +22,7 @@ const userRoute = [
     // { path: '/user/list', element: <UserList /> },
     { path: '/user/details', element: <UserDetail /> },
     { path: '/user/details/:type/:id', element: <UserDetail /> },
+    { path: '/user/details/view/:type/:id', element: <UserDetail disable={true} /> },
     { path: '/user/payment', element: <UserPayment /> },
     { path: '/user/payment/history', element: <UserPaymentHistory /> },
     { path: '/user/cart/details', element: <UserCartDetail /> },

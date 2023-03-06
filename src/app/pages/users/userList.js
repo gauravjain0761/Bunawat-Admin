@@ -241,7 +241,6 @@ const UserList = ({ type }) => {
     textTransform: 'capitalize',
   }));
 
-  console.log("selected", selected)
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <Box className="searchBoxSeaprate"
@@ -353,6 +352,7 @@ const UserList = ({ type }) => {
                   TransitionComponent={Fade}
                 >
                   <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem>
+                  <MenuItem onClick={() => navigate(`/user/details/view/${type}/${row?._id}`)}>View</MenuItem>
                   <MenuItem onClick={() => navigate(`/user/details/${type}/${row?._id}`)}>Edit</MenuItem>
                   <MenuItem onClick={() => {
                     setDeleteData(row)

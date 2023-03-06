@@ -16,7 +16,7 @@ const Container = styled("div")(({ theme }) => ({
     },
 }));
 
-const UserDetail = () => {
+const UserDetail = ({ disable = false }) => {
     const { id, type } = useParams();
     const [data, setData] = useState({});
 
@@ -51,7 +51,7 @@ const UserDetail = () => {
     return (
         <Container>
             <Stack spacing={3}>
-                <UserForm data={data} id={id} userType={type} />
+                <UserForm data={data} id={id} userType={type} disable={disable} />
             </Stack>
         </Container>
     );

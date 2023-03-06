@@ -23,7 +23,7 @@ function EnhancedTableHead(props) {
         {!disableCheckBox &&
           <TableCell padding="checkbox" sx={{ backgroundColor: UIColor }}>
             <Checkbox
-              sx={{ color: "#fff" }}
+              sx={{ color: "#fff !important" }}
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}

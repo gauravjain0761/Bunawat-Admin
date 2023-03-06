@@ -604,7 +604,7 @@ const ProductList = () => {
                                     </IconButton>
                                     <ClickAwayListener onClickAway={handleActionClose}>
                                         <Box sx={{ width: '100px', zIndex: 999, boxShadow: 'rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px', borderRadius: '4px', height: 'auto', background: '#fff', position: 'absolute', bottom: '-12px', right: '15px', display: Boolean(actionOpen[mainIndex]) ? 'block' : 'none', padding: '8px 0px' }}>
-                                            <MenuItem onTouchEnd={() => {
+                                            {/* <MenuItem onTouchEnd={() => {
                                                 if (row?.status === "ACTIVE") {
                                                     editInActiveStatusData(row?._id, !row?.status)
                                                 } else if (row?.status === "INQUALITY" || row?.status === "INACTIVE") {
@@ -618,7 +618,7 @@ const ProductList = () => {
                                                     editActiveStatusData(row?._id, !row?.status)
                                                 }
 
-                                            }}>{row?.status === "ACTIVE" ? "InActive" : "Active"}  </MenuItem>
+                                            }}>{row?.status === "ACTIVE" ? "InActive" : "Active"}  </MenuItem> */}
                                             <MenuItem onTouchEnd={() => {
                                                 navigate(`/product/add/${row?._id}`)
                                             }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>

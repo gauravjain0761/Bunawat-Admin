@@ -39,7 +39,7 @@ const TextField = styled(TextValidator)(() => ({
     marginBottom: "16px",
 }));
 
-const UserForm = ({ data = {}, userType, id }) => {
+const UserForm = ({ data = {}, userType, id, disable }) => {
     const [formData, setFormData] = useState(data);
     const [open, setOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -237,6 +237,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 onChange={(e) => handleChange(e)}
                                 value={fname || ""}
                                 validators={["required"]}
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 errorMessages={["this field is required"]}
                             />
 
@@ -246,6 +249,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 label="Last Name"
                                 onChange={(e) => handleChange(e)}
                                 value={lname || ""}
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
                             />
@@ -254,6 +260,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 type="email"
                                 name="email"
                                 label="Email"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 value={email || ""}
                                 onChange={(e) => handleChange(e)}
                                 validators={["required", "isEmail"]}
@@ -263,6 +272,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                             <TextField
                                 type="text"
                                 name="phone"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 label="Phone Nubmer"
                                 onChange={(e) => handleChange(e)}
                                 value={phone || ""}
@@ -337,6 +349,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     value={isActive ?? true}
+                                    readOnly={disable}
                                     name="isActive"
                                     label="Status"
                                     onChange={(e) => handleChange(e)}>
@@ -353,6 +366,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="state"
                                 value={state || ""}
                                 label="State"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 onChange={(e) => handleChange(e)}
                                 validators={["required"]}
                                 errorMessages={["this field is required"]}
@@ -361,6 +377,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="district"
                                 type="text"
                                 label="District"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 value={district || ""}
                                 onChange={(e) => handleChange(e)}
                                 validators={["required"]}
@@ -370,6 +389,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="city"
                                 type="text"
                                 label="City"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 value={city || ""}
                                 onChange={(e) => handleChange(e)}
                                 validators={["required"]}
@@ -379,6 +401,9 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="address_1"
                                 type="text"
                                 label="Address - 1"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 value={address_1 || ""}
                                 onChange={(e) => handleChange(e)}
                                 validators={["required"]}
@@ -388,16 +413,20 @@ const UserForm = ({ data = {}, userType, id }) => {
                                 name="address_2"
                                 type="text"
                                 label="Address - 2"
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 value={address_2 || ""}
                                 onChange={(e) => handleChange(e)}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
                             />
                             <TextField
                                 name="pincode"
                                 type="text"
                                 label="Post Code"
                                 value={pincode || ""}
+                                InputProps={{
+                                    readOnly: disable,
+                                }}
                                 onChange={(e) => handleChange(e)}
                                 validators={["required", "postCode"]}
                                 errorMessages={["this field is required", "Enter valid code"]}
@@ -854,7 +883,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                             <Icon>arrow_back</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Back</Span>
                         </Button>
-                        <LoadingButton
+                        {!disable && <LoadingButton
                             loading={loading}
                             loadingPosition="start"
                             type="submit"
@@ -863,6 +892,7 @@ const UserForm = ({ data = {}, userType, id }) => {
                             variant="contained">
                             Save
                         </LoadingButton>
+                        }
                         <Button color="error" variant="contained" onClick={() => setOpen(true)} sx={{ mr: 2, mt: 2 }}>
                             <Icon>delete</Icon>
                             <Span sx={{ pl: 1, textTransform: "capitalize" }}>Delete</Span>

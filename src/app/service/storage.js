@@ -34,6 +34,7 @@ class Storage {
 
     static deauthenticateUser() {
         localStorage.removeItem(STORAGE_KEY.token);
+        localStorage.removeItem(STORAGE_KEY.user);
     }
 
 }
