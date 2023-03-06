@@ -81,6 +81,9 @@ export const API_URL = {
     addProduct: "product/add",
     editProduct: "product/update",
     deleteProduct: "product/remove",
+    deleteProduct: "product/remove",
+    getReviewProduct: "product_review_by_product_id",
+    editReviewProduct: "product_review",
 
     getSKUS: "sku/getall",
     addSKU: "sku/add",

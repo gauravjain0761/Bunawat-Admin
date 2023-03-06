@@ -14,10 +14,12 @@ const TagList = Loadable(lazy(() => import('./tag/tagList')));
 const ColorDetail = Loadable(lazy(() => import('./color/colorDetails')));
 const SizeDetail = Loadable(lazy(() => import('./size/sizeDetails')));
 const TagDetail = Loadable(lazy(() => import('./tag/tagDetails')));
+const ReviewList = Loadable(lazy(() => import('./review/index')));
 
 const ProductRoutes = [
     { path: '/product/attributes', element: <AttributeList /> },
     { path: '/product/list', element: <ProductList /> },
+    { path: '/product/review/:id', element: <ReviewList /> },
     { path: '/product/wise/list/:id', element: <ProductWiseList /> },
     { path: '/product/add', element: <AddProduct ProductType="Product" /> },
     { path: '/product/media', element: <ProductMedia /> },

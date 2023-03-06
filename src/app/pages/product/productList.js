@@ -55,6 +55,12 @@ const ProductList = () => {
             width: 120
         },
         {
+            id: "review_count",
+            label: "Review Count",
+            align: "center",
+            width: 120
+        },
+        {
             id: "isActive",
             label: "Status",
             align: "center",
@@ -564,6 +570,11 @@ const ProductList = () => {
                             </TableCell>
                             <TableCell>{row?.design_num}</TableCell>
                             <TableCell align="center">{row?.variant_count}</TableCell>
+                            <TableCell align="center" sx={{ cursor: "pointer" }} onClick={() => {
+                                if (row?.review_count > 0) {
+                                    navigate(`/product/review/${row?._id}`)
+                                }
+                            }}>{row?.review_count ?? 0}</TableCell>
                             <TableCell align="center">
                                 <Typography sx={{
                                     flexShrink: 0, fontSize: "14px", color: (theme) =>
