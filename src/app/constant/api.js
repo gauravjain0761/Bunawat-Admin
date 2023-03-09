@@ -43,6 +43,7 @@ export const API_URL = {
     addOrder: "order/add",
     editOrder: "update_order",
     generateInvoice: "generate_invoice",
+    generatePackingSlip: "generate_packing_slip",
 
     getParentCategorys: "parent_cateogry/getall",
     getParentCategory: "parent_cateogry",
@@ -89,6 +90,7 @@ export const API_URL = {
     addSKU: "sku/add",
     editSKU: "sku/update",
     SKUGetProductID: "sku_get_by_product",
+    SKUMediaCreate: "sku_media_create",
 
     fileUpload: "fileUpload/profile",
     videoFileUpload: "uploadVideo",
@@ -98,6 +100,7 @@ export const API_URL = {
     fileUploadCollection: "fileUpload/collection",
     fileRemove: "fileRmove",
     fileStatus: "fileStatus/update",
+    SKUFileStatus: "skufileStatus/update",
 
     getTeams: "team_member/getAll",
 

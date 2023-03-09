@@ -127,6 +127,7 @@ const OrderForm = ({ data = {} }) => {
     const [ResellerData, setResellerData] = React.useState(null);
     const [ResellerName, setResellerName] = React.useState(null);
     const [paymentMode, setPaymentMode] = React.useState("cod");
+    const [onlineData, setOnlineData] = React.useState({});
     const [user_type, setUserType] = React.useState("CUSTOMER");
     const [userID, setUserID] = React.useState("")
     const [discountType, setDiscountType] = React.useState("COUPON");
@@ -332,6 +333,49 @@ const OrderForm = ({ data = {} }) => {
         }
     };
 
+
+    const handleImageUpload = async (event) => {
+        const MAX_FILE_SIZE = 30720 // 30MB
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024;
+
+        const filesData = new FormData();
+        Object.values(event?.target?.files).forEach((value) => {
+            filesData.append(`file`, value);
+        });
+
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
+
+        // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+        //     setFormError({ ...formError, image: true })
+        // } else {
+        // setFormError({ ...formError, image: false })
+        // setImageLoading(true);
+        // let imageData = new FormData();
+        const images = formData?.image ?? []
+        // imageData.append('file', event.target.files[0]);
+        await ApiPost(API_URL.fileUploadProduct, filesData, config)
+            .then((response) => {
+                if (response?.data) {
+                    let ImagesData = [];
+                    let TImagesData = onlineData?.t_image ?? [];
+                    response?.data && response?.data?.forEach((element) => {
+                        ImagesData.push(element?.Location)
+                    })
+                    setOnlineData({ ...onlineData, t_image: [...TImagesData, ImagesData] })
+                }
+                // setImageLoading(false)
+            })
+            .catch((error) => {
+                // setImageLoading(false)
+                console.log("Error", error);
+            });
+        // }
+    }
+
     const handleChange = (event) => {
         if (event.target.name == "isSame") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
@@ -348,6 +392,8 @@ const OrderForm = ({ data = {} }) => {
             }
         } else if (event.target.name == "image") {
             setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
+        } else if (event.target.name == "t_image") {
+            handleImageUpload(event)
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -1156,69 +1202,56 @@ const OrderForm = ({ data = {} }) => {
                                                         <FormControlLabel value="online" control={<Radio />} label="Online" />
                                                     </Stack>
                                                 </Grid>
-                                                <Grid item lg={12}>
+                                                {/* <Grid item lg={12}>
                                                     <FormControlLabel value="credits" control={<Radio />} label="Credits" />
                                                     <FormControlLabel value="partialCredits" control={<Radio />} label="Partial Credits" />
-                                                </Grid>
+                                                </Grid> */}
+                                                {paymentMode == "online" ?
+                                                    <Grid item lg={12} mt={2}>
+                                                        <TextField
+                                                            name="trancestion_Id"
+                                                            type="text"
+                                                            label="Transaction id"
+                                                            value={onlineData?.trancestion_Id || ""}
+                                                            onChange={(e) => {
+                                                                setOnlineData({ ...onlineData, [e.target.name]: e.target.value })
+                                                            }}
+                                                            validators={["required"]}
+                                                            errorMessages={["this field is required"]}
+                                                        />
+                                                        <Button
+                                                            variant="contained"
+                                                            component="label"
+                                                            sx={{
+                                                                width: "160px",
+                                                                height: "160px",
+                                                                background: "transparent",
+                                                                color: "#000",
+                                                                border: "2px dashed",
+                                                                margin: "10px 10px 0 0",
+
+                                                                "&:hover": {
+                                                                    background: "transparent",
+                                                                }
+                                                            }} >
+                                                            <Icon>add</Icon>
+                                                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Image</Span>
+                                                            <input
+                                                                type="file"
+                                                                name="t_image"
+                                                                multiple
+                                                                accept="image/png, image/gif, image/jpeg"
+                                                                hidden
+                                                                onClick={(event) => { event.target.value = '' }}
+                                                                onChange={handleChange}
+                                                            />
+                                                        </Button>
+                                                    </Grid>
+                                                    : null}
                                             </Grid>
                                         </RadioGroup>
                                     </FormControl>
-                                    {payment_mode == 'online' &&
-                                        <>
-                                            <TextField
-                                                type="text"
-                                                name="transactionId"
-                                                label="Transaction Id"
-                                                onChange={handleChange}
-                                                value={transactionId || ""}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
-                                            />
-                                            {image ?
-                                                <Box
-                                                    sx={{
-                                                        width: "150px",
-                                                        height: "170px",
-                                                        margin: "10px 10px 0 0",
-                                                        position: "relative"
-                                                    }}>
-                                                    <img src={image} width="100%" height="90%" />
-                                                    <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
-                                                        <Icon onClick={() => handleDeleteImage()} sx={{
-                                                            color: "red",
-                                                            cursor: "pointer",
-                                                        }}>delete</Icon> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
-                                                    </Box>
-                                                </Box>
-                                                :
-                                                <Button
-                                                    variant="contained"
-                                                    component="label"
-                                                    sx={{
-                                                        width: "150px",
-                                                        height: "150px",
-                                                        background: "transparent",
-                                                        color: "#000",
-                                                        border: "2px dashed",
-                                                        margin: "10px 10px 0 0",
 
-                                                        "&:hover": {
-                                                            background: "transparent",
-                                                        }
-                                                    }} >
-                                                    <Icon>add</Icon>
-                                                    <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
-                                                    <input
-                                                        type="file"
-                                                        name="image"
-                                                        accept="image/png, image/gif, image/jpeg"
-                                                        hidden
-                                                        onClick={(event) => { event.target.value = '' }}
-                                                        onChange={handleChange} />
-                                                </Button>
-                                            }
-                                        </>
-                                    }
                                 </SimpleCard>
                             </Grid>
                         }

@@ -43,6 +43,7 @@ import { LoadingButton } from "@mui/lab";
 import MappedVariantModel from "../model/mappedVariant";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+import ColorSKUModel from "../model/colorSKUModel";
 
 
 const TextField = styled(TextValidator)(() => ({
@@ -54,6 +55,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const { open, close, isSupported } = useEyeDropper()
     const [mOpen, setMOpen] = useState(false);
     const [dOpen, setDopen] = useState(false)
+    const [skuOpen, setSKUopen] = useState(false)
     const [categoryList, setCategoryList] = useState([])
     const [collectionList, setCollectionList] = useState([])
     const [loading, setLoading] = useState(false);
@@ -121,7 +123,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
 
     React.useEffect(() => {
         getData();
-        getSKUData();
+        // getSKUData();
     }, [])
 
     const columns = [
@@ -158,6 +160,13 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             id: "threshold",
             label: "InStock \nThreshold",
             align: "center",
+            width: 100
+        },
+        {
+            id: "colorV",
+            label: "ColorSKU",
+            align: "center",
+            sortDisable: true,
             width: 100
         },
         {
@@ -608,6 +617,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     }
 
     const handleSwitchImage = async (index, item, max = 5) => {
+        console.log("itemitem", item)
         let images = formData?.image ?? [];
         if (images?.filter((img) => img?.isActive).length < max && !images[index]?.isActive) {
             images[index] = { ...images[index], isActive: !images[index]?.isActive }
@@ -1230,6 +1240,14 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                         }}
                                                                     />
                                                                 </TableCell>
+                                                                <TableCell align="center" onClick={() => {
+                                                                    setSelectedSKU(row)
+                                                                    setSKUopen(true)
+                                                                }}>
+                                                                    <Typography sx={{ flexShrink: 0, cursor: 'pointer', fontSize: "14px", textTransform: "capitalize" }}>
+                                                                        Add SKU Media
+                                                                    </Typography>
+                                                                </TableCell>
                                                                 <TableCell align="center">
                                                                     <Box sx={{
                                                                         width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center        '
@@ -1345,6 +1363,11 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                             setSelectedSKUIndex(-1);
                             setMOpen(false)
                         }} formData={formData} SKUData={sku_data} selectedSKU={selectedSKU} selectedSKUIndex={selectedSKUIndex} setFormData={setFormData} />
+
+                        <ColorSKUModel open={skuOpen} id={id} getData={getIDData} selectedSKU={selectedSKU} handleClose={() => {
+                            setSKUopen(false)
+                            setSelectedSKU({});
+                        }} />
                     </SimpleCard>
                 </Box>
 

@@ -71,7 +71,7 @@ const PackingSlipDocument = ({ data }) => {
             <div class="bunawat_doc">
                 <div class="bunawat_doc_top">
                         <div>
-                            <img src="/assets/images/bunawat-pdf-logo.png" alt="" />
+                            <img src=${data?.barcode ?? ""} alt="barcode" />
                         </div>
                         <div>
                             <h4>AFPL STORES.COM PVT. LTD</h4>
@@ -88,7 +88,7 @@ const PackingSlipDocument = ({ data }) => {
                 <div class="bunawat_doc_top_data">
                             <div class="">
                                 <p><span>Billing:-</span> <br />
-                                    Avinash Thakur <br />
+                                    ${data?.name} <br />
                                     Master infotech <br />
                                     12285<br />
                                     mohali<br />
@@ -98,7 +98,7 @@ const PackingSlipDocument = ({ data }) => {
                             
                             <div className="">
                                 <p><span>Shiping:-</span> <br />
-                                    Avinash Thakur <br />
+                                    ${data?.name} <br />
                                     Master infotech <br />
                                     12285<br />
                                     mohali<br />

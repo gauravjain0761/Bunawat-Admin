@@ -2,7 +2,7 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { pdf } from '@react-pdf/renderer';
 import { API_URL } from 'app/constant/api'
-import { ApiDelete, ApiPost, ApiPut } from 'app/service/api'
+import { ApiDelete, ApiGet, ApiPost, ApiPut } from 'app/service/api'
 import InvoicesDocument from 'app/views/order/invoicePDF/Invoice';
 import { toast } from 'material-react-toastify';
 import React, { useEffect, useState } from 'react'
@@ -21,10 +21,10 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
     }, [selectedeData])
 
 
-    const generatePdfDocument = async (data = {}) => {
+    const generatePdfDocument = async (data = {}, slipData = {}) => {
         let payload = [];
         const blobIInvoices = await pdf((
-            <InvoicesDocument data={data} isPackingSlip={false} />
+            <InvoicesDocument data={data} />
         )).toBlob()
         let readerInvoices = new FileReader();
         readerInvoices.readAsDataURL(blobIInvoices);
@@ -35,7 +35,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                 base64
             })
             const blobPackingSlip = await pdf((
-                <PackingSlipDocument data={data} isPackingSlip={true} />
+                <PackingSlipDocument data={slipData} />
             )).toBlob()
             let readerPackingSlip = new FileReader();
             readerPackingSlip.readAsDataURL(blobPackingSlip);
@@ -62,7 +62,13 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
         await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, formData)
             .then(async (response) => {
                 if (formData?.order_status == "Shipped") {
-                    generatePdfDocument(response?.data ?? {})
+                    await ApiPost(`${API_URL.generatePackingSlip}/${selectedeData?._id}`, {})
+                        .then(async (response2) => {
+                            generatePdfDocument(response?.data ?? {}, response2?.data ?? {})
+                        })
+                        .catch((error) => {
+                            console.log("Error", error);
+                        });
                 } else {
                     if (getData) getData()
                     handleClose()

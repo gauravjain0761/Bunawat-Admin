@@ -2,7 +2,7 @@ import { Card, Grid, styled, useTheme } from '@mui/material';
 import { API_URL } from 'app/constant/api';
 import { ApiGet } from 'app/service/api';
 import { Fragment, useEffect, useState } from 'react';
-import Campaigns from './shared/Campaigns';
+import ColorSKUModel from '../product/model/colorSKUModel';
 import DoughnutChart from './shared/Doughnut';
 import RowCards from './shared/RowCards';
 import StatCards from './shared/StatCards';
