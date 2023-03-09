@@ -35,7 +35,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                 base64
             })
             const blobPackingSlip = await pdf((
-                <PackingSlipDocument data={slipData} />
+                <PackingSlipDocument data={data} slipData={slipData} />
             )).toBlob()
             let readerPackingSlip = new FileReader();
             readerPackingSlip.readAsDataURL(blobPackingSlip);

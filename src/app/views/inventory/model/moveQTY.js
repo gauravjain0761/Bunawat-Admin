@@ -13,8 +13,12 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
     useEffect(() => {
         setFormData(data ?? {})
     }, [data])
+
     useEffect(() => {
-        setSKUData(selectedSKU?.map(x => x?.sku) ?? {})
+        setSKUData(selectedSKU?.map(x => ({
+            sku: x?.sku,
+            _id: x?._id
+        })) ?? {})
     }, [selectedSKU])
 
     const handleSubmit = async () => {
@@ -31,6 +35,7 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
             .then((response) => {
                 setLoading(false)
                 getData()
+                handleClose();
                 toast.success('Edit Successfully!')
             })
             .catch((error) => {
@@ -124,8 +129,8 @@ const MoveQTYModel = ({ open, handleClose, data, selectedSKU, getData }) => {
                     onChange={(e, newValue) => {
                         setFormData({ ...formData, mapVariant: newValue });
                     }}
-                    options={SKUData?.filter(x => x != data?.sku) ?? []}
-                    getOptionLabel={(option) => option}
+                    options={SKUData?.filter(x => x?.sku != data?.sku) ?? []}
+                    getOptionLabel={(option) => option?.sku}
                     filterSelectedOptions
                     renderInput={(params) => (
                         <TextField

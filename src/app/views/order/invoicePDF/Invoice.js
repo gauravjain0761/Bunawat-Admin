@@ -124,7 +124,7 @@ const InvoicesDocument = ({ data }) => {
                         ${data?.items?.map(list => (
         `<tr>
             <td style="padding-right: 10px;">
-                <b>Blue skirt and top set - Blue,s</b> <br />
+                <b>${list?.product_name}</b> <br />
                 <span>SKU: ${list?.sku}</span>
             </td>
             <td>INR ${list?.price}</td>

@@ -450,7 +450,7 @@ const InventoryList = () => {
                                                             </TableCell>
                                                             <TableCell width={80 ?? "100%"} align="center">{sku_row?.total_qty}</TableCell>
                                                             <TableCell width={100 ?? "100%"} align="center">{sku_row?.threshold}</TableCell>
-                                                            <TableCell width={100 ?? "100%"} align="center">{sku_row?.mapVariant?.join(", ")}</TableCell>
+                                                            <TableCell width={100 ?? "100%"} align="center">{sku_row?.mapVariant?.map(x => x?.sku)?.join(", ")}</TableCell>
                                                             <TableCell width={80 ?? "100%"} align='right' sx={{ pr: "18px" }}>
                                                                 <IconButton
                                                                     aria-label="more"

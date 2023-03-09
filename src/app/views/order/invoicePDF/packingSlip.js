@@ -3,7 +3,7 @@ import { Page, Document } from "@react-pdf/renderer";
 import Html from 'react-pdf-html';
 import moment from "moment";
 
-const PackingSlipDocument = ({ data }) => {
+const PackingSlipDocument = ({ data, slipData }) => {
     const packingSlip = `
     <html lang="en">
         <body>
@@ -71,16 +71,12 @@ const PackingSlipDocument = ({ data }) => {
             <div class="bunawat_doc">
                 <div class="bunawat_doc_top">
                         <div>
-                            <img src=${data?.barcode ?? ""} alt="barcode" />
+                            <img src=${slipData?.barcode ?? ""} alt="barcode" />
                         </div>
                         <div>
-                            <h4>AFPL STORES.COM PVT. LTD</h4>
-                            <p>Shop NO: 44-48, Block No: 2,<br />
-                                Busyland Complex<br />
-                                Nandgaon Peth Amravati,<br />
-                                Maharashtra, 444901 <br />
-                                Contact - +9198608000805<br />
-                                GSTIN - 27AAVCA3244L1Z6<br />
+                            <h4>${slipData?.cl}</h4>
+                            <p>${slipData?.origin_city}<br />
+                                ${slipData?.origin_state},${slipData?.rpin}<br />
                             </p>
                         </div>
                 </div>
@@ -88,28 +84,27 @@ const PackingSlipDocument = ({ data }) => {
                 <div class="bunawat_doc_top_data">
                             <div class="">
                                 <p><span>Billing:-</span> <br />
-                                    ${data?.name} <br />
-                                    Master infotech <br />
-                                    12285<br />
-                                    mohali<br />
-                                    mohali, 160082
+                                ${data?.billing_address?.fname} ${data?.billing_address?.lname} <br />
+                                ${data?.billing_address?.address_1} <br />
+                                ${data?.billing_address?.address_2}<br />
+                                ${data?.billing_address?.state}<br />
+                                ${data?.billing_address?.city},${data?.billing_address?.pincode}
                                 </p>
                             </div>
                             
                             <div className="">
                                 <p><span>Shiping:-</span> <br />
-                                    ${data?.name} <br />
-                                    Master infotech <br />
-                                    12285<br />
-                                    mohali<br />
-                                    mohali, <br />
-                                    PB 160082
+                                ${data?.shipping_address?.fname} ${data?.shipping_address?.lname} <br />
+                                ${data?.shipping_address?.address_1} <br />
+                                ${data?.shipping_address?.address_2}<br />
+                                ${data?.shipping_address?.state}<br />
+                                ${data?.shipping_address?.city}, ${data?.shipping_address?.pincode}
                                 </p>
                             </div>
                     <div class="">
-                        <p>Invoice Number : INV/2022-23/1887 <br />
-                        Order Number : 158673 <br />
-                        Order Date : 10 Nav, 2022</p>
+                    <p>Invoice Number : INV/2022-23/1887 <br />
+                    Order Number : ${data?.order_num} <br />
+                    Order Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p>
                     </div>
                 </div>
 
@@ -121,45 +116,24 @@ const PackingSlipDocument = ({ data }) => {
                       <th>Weight</th>
                       <th>Quantity</th>
                     </tr>
-                    <tr>
-                      <td>
-                        <b>Blue skirt and top set - Blue,s</b> <br />
-                        <span style="font-size: 14px;">sku: LSTS3028-Ylw-BL-1</span>
-                      </td>
-                      <td>N/A</td>
-                      <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>
-                          <b>Blue skirt and top set - Blue,s</b> <br />
-                          <span style="font-size: 14px;">sku: LSTS3028-Ylw-BL-1</span>
-                        </td>
-                        <td>N/A</td>
-                        <td>2</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <b>Blue skirt and top set - Blue,s</b> <br />
-                          <span style="font-size: 14px;">sku: LSTS3028-Ylw-BL-1</span>
-                        </td>
-                        <td>N/A</td>
-                        <td>3</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <b>Blue skirt and top set - Blue,s</b> <br />
-                          <span style="font-size: 14px;">sku: LSTS3028-Ylw-BL-1</span>
-                        </td>
-                        <td>N/A</td>
-                        <td>4</td>
-                      </tr>
+                    ${data?.items?.map(list => (
+        `<tr>
+                            <td style="padding-right: 10px;">
+                                <b>${list?.product_name}</b> <br />
+                                <span>SKU: ${list?.sku}</span>
+                            </td>
+                            <td>N/A</td>
+                            <td>${list?.qty}</td>
+                        </tr>`
+    ))}
                   </table>
 
                         <div class="bottom-data">
                             <div class=""></div>
                             <div class="">
                                 <div class="">
-                                    <p><b>Total Quantity: </b>13</p>
+                                    <p><b>Total Quantity: </b> ${data?.items?.reduce((t, x) => t + Number(x?.qty), 0)}</p>
+                                    <p><b>Total Amount: </b> ${slipData?.cod}</p>
                                 </div>
                             </div>
                         </div>
