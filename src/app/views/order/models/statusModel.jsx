@@ -20,7 +20,6 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
         })
     }, [selectedeData])
 
-
     const generatePdfDocument = async (data = {}, slipData = {}) => {
         let payload = [];
         const blobIInvoices = await pdf((
@@ -119,9 +118,9 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                             name="order_status"
                             label="Select Status"
                             onChange={handleChange}>
-                            <MenuItem value="Pending">Pending payment</MenuItem>
-                            <MenuItem value="Processing">Processing</MenuItem>
-                            <MenuItem value="Confirmed">Confirmed</MenuItem>
+                            {selectedeData?.payment_mode == "COD" ? null : <MenuItem disabled={selectedeData?.order_status == "Shipped"} value="Pending">Pending payment</MenuItem>}
+                            {selectedeData?.payment_mode == "COD" ? <MenuItem disabled={selectedeData?.order_status == "Shipped"} value="Processing">Processing</MenuItem> : null}
+                            <MenuItem disabled={selectedeData?.order_status == "Shipped"} value="Confirmed">Confirmed</MenuItem>
                             <MenuItem value="Shipped">Shipped</MenuItem>
                             <MenuItem value="Return">Return</MenuItem>
                             <MenuItem value="Cancelled">Cancelled</MenuItem>

@@ -375,14 +375,14 @@ const OrderList = () => {
                                         handleActionClose();
                                         setSelectedeData(row);
                                     }}>Update Status</MenuItem>
-                                    <MenuItem onClick={() => {
+                                    {/* <MenuItem onClick={() => {
                                         setTrackingPopup(true);
                                         handleActionClose();
                                     }}>Update Tracking No</MenuItem>
                                     <MenuItem onClick={() => {
                                         setPaymentPopup(true);
                                         handleActionClose();
-                                    }}>Update Payment Info</MenuItem>
+                                    }}>Update Payment Info</MenuItem> */}
                                     <MenuItem onClick={() => {
                                         navigate(`/order/detail/${row?._id}`);
                                         handleActionClose();

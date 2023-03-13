@@ -98,6 +98,7 @@ export const API_URL = {
     fileUploadProduct: "fileUpload/product",
     fileUploadCategory: "fileUpload/category",
     fileUploadCollection: "fileUpload/collection",
+    fileUploadOrderDocs: "fileUpload/order_docs",
     fileRemove: "fileRmove",
     fileStatus: "fileStatus/update",
     SKUFileStatus: "skufileStatus/update",

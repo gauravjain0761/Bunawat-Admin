@@ -408,13 +408,13 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             justifyContent: 'flex-start',
                                                             flexWrap: 'wrap'
                                                         }}>
-                                                            <Button variant="outlined">Refund</Button>
+                                                            {/* <Button variant="outlined">Refund</Button> */}
                                                             <Button variant="outlined" onClick={() => setStatusPopup(true)}>Status</Button>
-                                                            <Button variant="outlined" onClick={() => setTrackingPopup(true)}>Tracking No</Button>
-                                                            <Button variant="outlined" onClick={() => setPaymentPopup(true)}>Payment Info</Button>
+                                                            {/* <Button variant="outlined" onClick={() => setTrackingPopup(true)}>Tracking No</Button> */}
+                                                            {/* <Button variant="outlined" onClick={() => setPaymentPopup(true)}>Payment Info</Button> */}
                                                             <Button variant="outlined" onClick={() => setNotesPopup(true)}>Notes</Button>
-                                                            <Button variant="outlined" onClick={() => openPDF(viewOrder?.invoice ?? '')}>Invoice</Button>
-                                                            <Button variant="outlined" onClick={() => openPDF(viewOrder?.packing_slip ?? '')}>Packing Slip</Button>
+                                                            {viewOrder?.invoice ? <Button variant="outlined" onClick={() => openPDF(viewOrder?.invoice ?? '')}>Invoice</Button> : null}
+                                                            {viewOrder?.packing_slip ? <Button variant="outlined" onClick={() => openPDF(viewOrder?.packing_slip ?? '')}>Packing Slip</Button> : null}
                                                         </Box>
                                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                                             <Icon>info</Icon>
@@ -431,7 +431,7 @@ const OrderDetailForm = ({ data = {} }) => {
                     </Grid>
                 </ValidatorForm>
             </Box >
-            <StatusModel open={statusPopup} handleClose={() => setStatusPopup(false)} />
+            <StatusModel selectedeData={viewOrder} open={statusPopup} handleClose={() => setStatusPopup(false)} />
             <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
             <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} />
             <NotesModel open={notesPopup} handleClose={() => setNotesPopup(false)} />

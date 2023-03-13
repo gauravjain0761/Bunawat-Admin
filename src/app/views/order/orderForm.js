@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    CircularProgress,
     Divider,
     FormControl,
     FormControlLabel,
@@ -11,6 +12,7 @@ import {
     FormLabel,
     Grid,
     Icon,
+    IconButton,
     InputLabel,
     MenuItem,
     Paper,
@@ -128,6 +130,7 @@ const OrderForm = ({ data = {} }) => {
     const [ResellerName, setResellerName] = React.useState(null);
     const [paymentMode, setPaymentMode] = React.useState("cod");
     const [onlineData, setOnlineData] = React.useState({});
+    const [mediaLoading, setMediaLoading] = useState(false);
     const [user_type, setUserType] = React.useState("CUSTOMER");
     const [userID, setUserID] = React.useState("")
     const [discountType, setDiscountType] = React.useState("COUPON");
@@ -160,7 +163,7 @@ const OrderForm = ({ data = {} }) => {
         coupenDataManualApply,
         image,
         discount_coupon,
-        user
+        transaction_doc
     } = formData;
 
 
@@ -303,6 +306,8 @@ const OrderForm = ({ data = {} }) => {
             "member": formData?.teamMember,
             "user_type": user_type,
             "user": userID,
+            "transaction_id": paymentMode == "cod" ? "" : onlineData?.transaction_id,
+            "transaction_doc": paymentMode == "cod" ? null : onlineData?.transaction_doc,
             "billing_address": Address,
             "shipping_address": formShippingData,
             "isSame": formData?.isSame || false,
@@ -336,44 +341,25 @@ const OrderForm = ({ data = {} }) => {
 
     const handleImageUpload = async (event) => {
         const MAX_FILE_SIZE = 30720 // 30MB
-        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024;
-
-        const filesData = new FormData();
-        Object.values(event?.target?.files).forEach((value) => {
-            filesData.append(`file`, value);
-        });
-
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        };
-
-        // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-        //     setFormError({ ...formError, image: true })
-        // } else {
-        // setFormError({ ...formError, image: false })
-        // setImageLoading(true);
-        // let imageData = new FormData();
-        const images = formData?.image ?? []
-        // imageData.append('file', event.target.files[0]);
-        await ApiPost(API_URL.fileUploadProduct, filesData, config)
-            .then((response) => {
-                if (response?.data) {
-                    let ImagesData = [];
-                    let TImagesData = onlineData?.t_image ?? [];
-                    response?.data && response?.data?.forEach((element) => {
-                        ImagesData.push(element?.Location)
-                    })
-                    setOnlineData({ ...onlineData, t_image: [...TImagesData, ImagesData] })
-                }
-                // setImageLoading(false)
-            })
-            .catch((error) => {
-                // setImageLoading(false)
-                console.log("Error", error);
-            });
-        // }
+        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
+        if (fileSizeKiloBytes > MAX_FILE_SIZE) {
+            // setFormError({ ...formError, image: true })
+        } else {
+            setMediaLoading(true)
+            let imageData = new FormData();
+            imageData.append('file', event.target.files[0]);
+            await ApiPost(API_URL.fileUploadOrderDocs, imageData)
+                .then((response) => {
+                    if (response?.data) {
+                        setOnlineData({ ...onlineData, [event.target.name]: response?.data && response?.data[0]?.Location })
+                        setMediaLoading(false)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                    setMediaLoading(false)
+                });
+        }
     }
 
     const handleChange = (event) => {
@@ -390,10 +376,10 @@ const OrderForm = ({ data = {} }) => {
                 );
                 setFormData({ ...formData, [event.target.name]: onlyNums });
             }
+        } else if (event.target.name == "transaction_doc") {
+            handleImageUpload(event)
         } else if (event.target.name == "image") {
             setFormData({ ...formData, [event.target.name]: URL.createObjectURL(event.target.files[0]) });
-        } else if (event.target.name == "t_image") {
-            handleImageUpload(event)
         } else {
             setFormData({ ...formData, [event.target.name]: event.target.value });
         }
@@ -422,8 +408,22 @@ const OrderForm = ({ data = {} }) => {
 
 
 
-    const handleDeleteImage = () => {
-        setFormData({ ...formData, image: null });
+    const handleDeleteImage = async () => {
+        setMediaLoading(true)
+        await ApiPost(API_URL.fileRemove, {
+            url: onlineData?.transaction_doc,
+            type: "order_docs"
+        })
+            .then((response) => {
+                if (response?.data) {
+                    setOnlineData({ ...onlineData, transaction_doc: null })
+                    setMediaLoading(false)
+                }
+            })
+            .catch((error) => {
+                setMediaLoading(false)
+                console.log("Error", error);
+            });
     };
 
     const addProductToCart = () => {
@@ -1209,43 +1209,86 @@ const OrderForm = ({ data = {} }) => {
                                                 {paymentMode == "online" ?
                                                     <Grid item lg={12} mt={2}>
                                                         <TextField
-                                                            name="trancestion_Id"
+                                                            name="transaction_id"
                                                             type="text"
                                                             label="Transaction id"
-                                                            value={onlineData?.trancestion_Id || ""}
+                                                            value={onlineData?.transaction_id || ""}
                                                             onChange={(e) => {
                                                                 setOnlineData({ ...onlineData, [e.target.name]: e.target.value })
                                                             }}
                                                             validators={["required"]}
                                                             errorMessages={["this field is required"]}
                                                         />
-                                                        <Button
-                                                            variant="contained"
-                                                            component="label"
-                                                            sx={{
-                                                                width: "160px",
-                                                                height: "160px",
-                                                                background: "transparent",
-                                                                color: "#000",
-                                                                border: "2px dashed",
-                                                                margin: "10px 10px 0 0",
+                                                        {mediaLoading ? <>
+                                                            <Box>
+                                                                <Button
+                                                                    variant="contained"
+                                                                    component="label"
+                                                                    sx={{
+                                                                        width: "150px",
+                                                                        height: "150px",
+                                                                        background: "transparent",
+                                                                        color: "#000",
+                                                                        border: "2px dashed",
+                                                                        margin: "10px 10px 0 0",
 
-                                                                "&:hover": {
-                                                                    background: "transparent",
-                                                                }
-                                                            }} >
-                                                            <Icon>add</Icon>
-                                                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload Image</Span>
-                                                            <input
-                                                                type="file"
-                                                                name="t_image"
-                                                                multiple
-                                                                accept="image/png, image/gif, image/jpeg"
-                                                                hidden
-                                                                onClick={(event) => { event.target.value = '' }}
-                                                                onChange={handleChange}
-                                                            />
-                                                        </Button>
+                                                                        "&:hover": {
+                                                                            background: "transparent",
+                                                                        }
+                                                                    }} >
+                                                                    <CircularProgress />
+                                                                </Button>
+                                                            </Box>
+                                                        </> :
+                                                            <>
+                                                                {onlineData?.transaction_doc ?
+                                                                    <Box
+                                                                        sx={{
+                                                                            width: "150px",
+                                                                            height: "170px",
+                                                                            margin: "10px 10px 0 0",
+                                                                            position: "relative"
+                                                                        }}>
+                                                                        <img src={onlineData?.transaction_doc} width="100%" height="90%" />
+                                                                        <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
+                                                                            <IconButton size="small">
+                                                                                <Icon fontSize="small" onClick={() => handleDeleteImage()} sx={{
+                                                                                    color: "red",
+                                                                                    cursor: "pointer",
+                                                                                }}>delete</Icon></IconButton> <Span onClick={() => handleDeleteImage()} sx={{ fontWeight: 600, fontSize: "14px", cursor: "pointer" }}>Delete</Span>
+                                                                        </Box>
+                                                                    </Box>
+                                                                    :
+                                                                    <Box>
+                                                                        <Button
+                                                                            variant="contained"
+                                                                            component="label"
+                                                                            sx={{
+                                                                                width: "150px",
+                                                                                height: "150px",
+                                                                                background: "transparent",
+                                                                                color: "#000",
+                                                                                border: "2px dashed",
+                                                                                margin: "10px 10px 0 0",
+
+                                                                                "&:hover": {
+                                                                                    background: "transparent",
+                                                                                }
+                                                                            }} >
+                                                                            <Icon>add</Icon>
+                                                                            <Span sx={{ pl: 1, textTransform: "capitalize" }}>Upload File</Span>
+                                                                            <input
+                                                                                type="file"
+                                                                                name="transaction_doc"
+                                                                                accept="image/png, image/gif, image/jpeg"
+                                                                                hidden
+                                                                                onClick={(event) => { event.target.value = '' }}
+                                                                                onChange={handleChange} />
+                                                                        </Button>
+                                                                        <Typography sx={{ color: 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px' }}>Upload image size is max 30MB only.</Typography>
+                                                                    </Box>}
+                                                            </>
+                                                        }
                                                     </Grid>
                                                     : null}
                                             </Grid>
