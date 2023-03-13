@@ -339,43 +339,59 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             tempError = { ...tempError, tax: true }
         }
         if (!!description && Object.values(tempError).every(x => !x)) {
-            if (formData?.status === "ACTIVE" && (formData?.image && formData?.image.length >= 3 && formData?.videos && formData?.videos.length >= 2 && formData?.sku_data && formData?.sku_data.length > 0)) {
-                setLoading(true)
-                await ApiPut(`${API_URL.editProduct}/${id}`, {
-                    ...formData,
-                    description,
-                    sku_data: formData?.sku_data ?? []
+            // if (formData?.status === "ACTIVE" && (formData?.image && formData?.image.length >= 3 && formData?.videos && formData?.videos.length >= 2 && formData?.sku_data && formData?.sku_data.length > 0)) {
+            //     setLoading(true)
+            //     await ApiPut(`${API_URL.editProduct}/${id}`, {
+            //         ...formData,
+            //         description,
+            //         sku_data: formData?.sku_data ?? []
+            //     })
+            //         .then((response) => {
+            //             setLoading(false)
+            //             toast.success('Edit Successfully!')
+            //             navigate("/product/list")
+            //         })
+            //         .catch((error) => {
+            //             setLoading(false)
+            //             toast.error(error?.error)
+            //             console.log("Error", error);
+            //         });
+            // } else if (formData?.status !== "ACTIVE") {
+            //     setLoading(true)
+            //     await ApiPut(`${API_URL.editProduct}/${id}`, {
+            //         ...formData,
+            //         description,
+            //         sku_data: formData?.sku_data ?? []
+            //     })
+            //         .then((response) => {
+            //             setLoading(false)
+            //             toast.success('Edit Successfully!')
+            //             navigate("/product/list")
+            //         })
+            //         .catch((error) => {
+            //             setLoading(false)
+            //             toast.error(error?.error)
+            //             console.log("Error", error);
+            //         });
+            // } else {
+            //     toast.error("Please upload 4 images, 3 videos and atleast one sku data")
+            // }
+            setLoading(true)
+            await ApiPut(`${API_URL.editProduct}/${id}`, {
+                ...formData,
+                description,
+                sku_data: formData?.sku_data ?? []
+            })
+                .then((response) => {
+                    setLoading(false)
+                    toast.success('Edit Successfully!')
+                    navigate(-1)
                 })
-                    .then((response) => {
-                        setLoading(false)
-                        toast.success('Edit Successfully!')
-                        navigate("/product/list")
-                    })
-                    .catch((error) => {
-                        setLoading(false)
-                        toast.error(error?.error)
-                        console.log("Error", error);
-                    });
-            } else if (formData?.status !== "ACTIVE") {
-                setLoading(true)
-                await ApiPut(`${API_URL.editProduct}/${id}`, {
-                    ...formData,
-                    description,
-                    sku_data: formData?.sku_data ?? []
-                })
-                    .then((response) => {
-                        setLoading(false)
-                        toast.success('Edit Successfully!')
-                        navigate("/product/list")
-                    })
-                    .catch((error) => {
-                        setLoading(false)
-                        toast.error(error?.error)
-                        console.log("Error", error);
-                    });
-            } else {
-                toast.error("Please upload 4 images, 3 videos and atleast one sku data")
-            }
+                .catch((error) => {
+                    setLoading(false)
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
         }
         setFormError(tempError)
     };
