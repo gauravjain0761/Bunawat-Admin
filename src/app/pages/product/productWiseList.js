@@ -35,6 +35,7 @@ const ProductWiseList = () => {
     const [actionAllOpen, setActionAllOpen] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [deleteData, setDeleteData] = useState(null);
+    const [selectedData, setSelectedData] = useState(null);
     const [deleteAllOpen, setDeleteAllOpen] = useState(false);
     const [positionModel, setPositionModel] = useState(false);
 
@@ -218,7 +219,8 @@ const ProductWiseList = () => {
     const onSortEnd = async ({ oldIndex, newIndex }) => {
         if (oldIndex != newIndex) {
             await ApiPut(`${API_URL.editProductOrdering}`, {
-                item_id: rows[oldIndex]?._id,
+                type_id: id,
+                product_id: rows[oldIndex]?._id,
                 order: getIndex(newIndex)
             })
                 .then((response) => {
@@ -433,7 +435,10 @@ const ProductWiseList = () => {
                                 }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
                                 <MenuItem onTouchEnd={() => {
                                     navigate(`/product/add/${row?._id}`)
-                                }} onClick={() => setPositionModel(true)}>Set Position</MenuItem>
+                                }} onClick={() => {
+                                    setSelectedData(row)
+                                    setPositionModel(true)
+                                }}>Set Position</MenuItem>
                                 <MenuItem onClick={() => {
                                     setDeleteData(row)
                                     setOpen(true);
@@ -544,7 +549,10 @@ const ProductWiseList = () => {
                 handleSelectAllClick={handleSelectAllClick}
             />
 
-            <PositionModel open={positionModel} handleClose={() => setPositionModel(false)} />
+            <PositionModel open={positionModel} selectedData={selectedData} getData={getData} id={id} handleClose={() => {
+                setSelectedData({})
+                setPositionModel(false)
+            }} />
             <DeleteProductModel deleteData={deleteData} open={open} getData={getData} handleClose={() => setOpen(false)} />
 
             <DeleteAllModel open={deleteAllOpen} handleClose={() => {

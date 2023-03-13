@@ -39,6 +39,8 @@ export const API_URL = {
     getOrders: "order/getall",
     getUserNumber: "getuserbyphone",
     getOrder: "order",
+    getOrderNotes: "order_notes",
+    addOrderNotes: "create_order_notes",
     deleteOrder: "order/remove",
     addOrder: "order/add",
     editOrder: "update_order",

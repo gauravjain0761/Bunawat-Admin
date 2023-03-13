@@ -60,31 +60,7 @@ const ReviewList = () => {
             sortDisable: true,
             renderCell: (
                 <>
-                    <IconButton
-                        aria-label="more"
-                        id="long-button"
-                        sx={{ color: "#fff" }}
-                        aria-controls={Boolean(actionAllOpen) ? 'long-menu' : undefined}
-                        aria-expanded={Boolean(actionAllOpen) ? 'true' : undefined}
-                        aria-haspopup="true"
-                        onClick={(e) => setActionAllOpen(e.currentTarget)}>
-                        <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                        id="fade-menu"
-                        MenuListProps={{
-                            'aria-labelledby': 'fade-button',
-                        }}
-                        anchorEl={actionAllOpen}
-                        open={Boolean(actionAllOpen)}
-                        onClose={() => setActionAllOpen(null)}
-                        TransitionComponent={Fade}
-                    >
-                        <MenuItem onClick={() => {
-                            setDeleteAllOpen(true);
-                            setActionAllOpen(null)
-                        }}>Delete</MenuItem>
-                    </Menu>
+                    Action
                 </>
             )
         }
@@ -323,12 +299,12 @@ const ReviewList = () => {
                                 >
                                     <MenuItem onClick={() => editHomeVisibilityData(row?._id, !row?.home_visibility)}>{!row?.home_visibility ? "Active" : "InActive"}  </MenuItem>
                                     {/* <MenuItem onClick={() => editStatusData(row?._id, !row?.isActive)}>{!row?.isActive ? "Active" : "InActive"}  </MenuItem> */}
-                                    <MenuItem onClick={() => navigate(`/collection/details/collection/${row?._id}`)}>Edit</MenuItem>
+                                    {/* <MenuItem onClick={() => navigate(`/collection/details/collection/${row?._id}`)}>Edit</MenuItem>
                                     <MenuItem onClick={() => {
                                         setDeleteData(row)
                                         setOpen(true);
                                         handleActionClose();
-                                    }}>Delete</MenuItem>
+                                    }}>Delete</MenuItem> */}
                                 </Menu>
                             </TableCell>
                         </TableRow>

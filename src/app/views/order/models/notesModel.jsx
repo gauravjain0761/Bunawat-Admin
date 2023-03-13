@@ -1,26 +1,26 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormLabel, Icon, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material'
 import { Span } from 'app/components/Typography'
 import { API_URL } from 'app/constant/api'
-import { ApiDelete } from 'app/service/api'
+import { ApiDelete, ApiPost } from 'app/service/api'
 import { UIColor } from 'app/utils/constant'
 import { toast } from 'material-react-toastify';
+import moment from 'moment'
 import React, { useState } from 'react'
 
-const NotesModel = ({ open, deleteData, getData, handleClose }) => {
+const NotesModel = ({ open, orderNotes, getOrderNotesData, id, handleClose }) => {
     const [note, setNote] = useState('');
-    const [notesList, setNotesList] = useState([])
 
-    const handleNotes = async () => {
-        setNotesList([...notesList, note]);
-        setNote('');
-        // await ApiDelete(`${API_URL.deleteCollection}/${deleteData?._id}`)
-        //     .then((response) => {
-        //         if (getData) getData()
-        //         handleClose()
-        //     })
-        //     .catch((error) => {
-        //         console.log("Error", error);
-        //     });
+    const handleAddNotes = async () => {
+        await ApiPost(`${API_URL.addOrderNotes}/${id}`, {
+            text: note
+        })
+            .then((response) => {
+                setNote('');
+                getOrderNotesData()
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
     }
 
     return (
@@ -44,7 +44,7 @@ const NotesModel = ({ open, deleteData, getData, handleClose }) => {
             <DialogContent>
                 <DialogContentText>
                     <Box className="scroll-chnage" sx={{ width: '100%', height: "60vh", background: '#fff', overflow: 'hidden', overflowY: 'auto', border: '1px solid', borderRadius: '5px' }}>
-                        <Box sx={{
+                        {/* <Box sx={{
                             display: 'flex',
                             alignItems: 'flex-start',
                             justifyContent: 'flex-start',
@@ -88,52 +88,54 @@ const NotesModel = ({ open, deleteData, getData, handleClose }) => {
                             }}>
                                 9:02 PM
                             </Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'flex-end',
-                            flexDirection: 'column',
-                            padding: '16px',
-                        }}>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                textAlign: 'left',
-                                color: "#000",
-                                margin: '0px',
-                                background: UIColor,
-                                borderRadius: '6px',
-                                color: '#fff',
-                                position: 'relative',
-                                padding: '20px',
+                        </Box> */}
+                        {orderNotes?.map(list => (
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'flex-end',
+                                justifyContent: 'flex-end',
+                                flexDirection: 'column',
+                                padding: '16px',
+                            }}>
+                                <Box component='p' sx={{
+                                    width: '70%',
+                                    textAlign: 'left',
+                                    color: "#000",
+                                    margin: '0px',
+                                    background: UIColor,
+                                    borderRadius: '6px',
+                                    color: '#fff',
+                                    position: 'relative',
+                                    padding: '20px',
 
-                                "&::after": {
-                                    content: '""',
-                                    position: 'absolute',
-                                    display: 'block',
-                                    top: '30%',
-                                    left: '100%',
-                                    marginTop: '-10px',
-                                    width: 0,
-                                    height: 0,
-                                    borderTop: '8px solid transparent',
-                                    borderBottom: '8px solid transparent',
-                                    borderLeft: `8px solid ${UIColor}`,
-                                }
-                            }}>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    "&::after": {
+                                        content: '""',
+                                        position: 'absolute',
+                                        display: 'block',
+                                        top: '30%',
+                                        left: '100%',
+                                        marginTop: '-10px',
+                                        width: 0,
+                                        height: 0,
+                                        borderTop: '8px solid transparent',
+                                        borderBottom: '8px solid transparent',
+                                        borderLeft: `8px solid ${UIColor}`,
+                                    }
+                                }}>
+                                    {list?.text}
+                                </Box>
+                                <Box component='p' sx={{
+                                    width: '70%',
+                                    textAlign: 'right',
+                                    margin: '0px',
+                                    color: UIColor,
+                                    fontWeight: 600,
+                                    mt: '6px'
+                                }}>
+                                    {moment(list?.created_at).format("LT")}
+                                </Box>
                             </Box>
-                            <Box component='p' sx={{
-                                width: '70%',
-                                textAlign: 'right',
-                                margin: '0px',
-                                color: UIColor,
-                                fontWeight: 600,
-                                mt: '6px'
-                            }}>
-                                9:02 PM
-                            </Box>
-                        </Box>
+                        ))}
                     </Box>
                     <Box sx={{ color: '#000', mt: 2 }}>
                         <Stack flexDirection='row'>
@@ -145,7 +147,7 @@ const NotesModel = ({ open, deleteData, getData, handleClose }) => {
                                 onChange={(e) => setNote(e.target.value)}
                                 value={note || ""}
                             />
-                            <Button sx={{ padding: '6px 50px', ml: 2 }} variant='contained'>Add</Button>
+                            <Button onClick={handleAddNotes} sx={{ padding: '6px 50px', ml: 2 }} variant='contained'>Add</Button>
                         </Stack>
                     </Box>
                 </DialogContentText>

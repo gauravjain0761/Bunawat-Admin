@@ -60,8 +60,8 @@ const OrderDetailForm = ({ data = {} }) => {
     const [notesPopup, setNotesPopup] = useState(false);
     let [searchParams, setSearchParams] = useSearchParams();
     const [viewOrder, setViewOrder] = React.useState({});
+    const [orderNotes, setOrderNotes] = React.useState([]);
     const [rows, setRows] = useState([]);
-
 
     const getViewOrderData = async (customerPhone) => {
         await ApiGet(`${API_URL.getOrder}/${id}`).then((response) => {
@@ -75,9 +75,19 @@ const OrderDetailForm = ({ data = {} }) => {
         });
     }
 
+    const getOrderNotesData = async () => {
+        await ApiGet(`${API_URL.getOrderNotes}/${id}`).then((response) => {
+            const { data } = response;
+            setOrderNotes(data);
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
     React.useEffect(() => {
         if (id) {
             getViewOrderData();
+            getOrderNotesData();
         }
     }, [id]);
 
@@ -434,7 +444,7 @@ const OrderDetailForm = ({ data = {} }) => {
             <StatusModel selectedeData={viewOrder} open={statusPopup} handleClose={() => setStatusPopup(false)} />
             <TrackingModel open={trackingPopup} handleClose={() => setTrackingPopup(false)} />
             <PaymentModel open={paymentPopup} handleClose={() => setPaymentPopup(false)} />
-            <NotesModel open={notesPopup} handleClose={() => setNotesPopup(false)} />
+            <NotesModel open={notesPopup} handleClose={() => setNotesPopup(false)} id={id} orderNotes={orderNotes} getOrderNotesData={getOrderNotesData} />
         </Box >
     );
 };

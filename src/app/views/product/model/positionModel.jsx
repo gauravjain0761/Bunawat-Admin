@@ -1,31 +1,36 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormLabel, Icon, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material'
 import { Span } from 'app/components/Typography'
 import { API_URL } from 'app/constant/api'
-import { ApiDelete } from 'app/service/api'
+import { ApiDelete, ApiPut } from 'app/service/api'
 import { UIColor } from 'app/utils/constant'
 import { toast } from 'material-react-toastify';
 import React, { useState } from 'react'
 
-const PositionModel = ({ open, deleteData, getData, handleClose }) => {
+const PositionModel = ({ open, id, selectedData, getData, handleClose }) => {
     const [formData, setFormData] = useState({});
-    // const handleDelete = async () => {
-    //     await ApiDelete(`${API_URL.deleteCollection}/${deleteData?._id}`)
-    //         .then((response) => {
-    //             if (getData) getData()
-    //             handleClose()
-    //         })
-    //         .catch((error) => {
-    //             console.log("Error", error);
-    //         });
-    // }
 
     const handleChange = (event) => {
         const onlyNums = event.target.value.replace(/[^0-9]/g, '');
-        setFormData({ ...formData, [event.target.name]: onlyNums });
+        if (Number(onlyNums) >= 0) {
+            setFormData({ ...formData, [event.target.name]: onlyNums });
+        }
     };
 
-    const handleSubmit = () => {
-        handleClose();
+    const handleSubmit = async () => {
+        await ApiPut(`${API_URL.editProductOrdering}`, {
+            type_id: id,
+            product_id: selectedData?._id,
+            order: Number(formData?.position)
+        })
+            .then((response) => {
+                getData();
+                handleClose();
+                toast.success('Drag Successfully!')
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+            });
     };
 
     const {
