@@ -7,18 +7,19 @@ import { toast } from 'material-react-toastify';
 import React, { useEffect, useState } from 'react'
 import { arrayMove, SortableContainer, SortableElement } from 'react-sortable-hoc'
 
-const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductType = "Product" }) => {
-    console.log(selectedSKU)
+const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductType = "Product", formColorData, setFormColorData }) => {
     const [formData, setFormData] = useState({});
     const [formError, setFormError] = useState({});
     const [imageLoading, setImageLoading] = useState(false);
     const [videoLoading, setVideoLoading] = useState(false);
 
     useEffect(() => {
+        let tempData = [...formColorData]
+        let findIndex = tempData?.findIndex(x => x?._id == selectedSKU?._id)
         setFormData({
-            ...formData, image: selectedSKU?.images ?? [], videos: selectedSKU?.videos ?? []
+            ...formData, image: tempData[findIndex]?.images ?? [], videos: tempData[findIndex]?.videos ?? []
         });
-    }, [selectedSKU])
+    }, [formColorData, selectedSKU])
 
     const handleChange = (event) => {
         const onlyNums = event.target.value.replace(/[^0-9]/g, '');
@@ -31,24 +32,26 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
         }
     };
 
+    const {
+        image,
+        videos,
+    } = formData;
+
     const handleSubmit = async () => {
         await ApiPost(`${API_URL.SKUMediaCreate}/${selectedSKU?._id}`, {
             images: image ?? [],
             videos: videos ?? []
         }).then((response) => {
-            if (getData) getData(id)
+            let tempData = [...formColorData]
+            let findIndex = tempData?.findIndex(x => x?._id == selectedSKU?._id)
+            tempData[findIndex] = { ...tempData[findIndex], images: image, videos }
+            setFormColorData(tempData)
             handleClose()
         })
             .catch((error) => {
                 console.log("Error", error);
             });
     };
-
-    const {
-        image,
-        videos,
-    } = formData;
-
 
     const handleImageUpload = async (event) => {
         const MAX_FILE_SIZE = 30720 // 30MB

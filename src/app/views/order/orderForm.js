@@ -388,7 +388,7 @@ const OrderForm = ({ data = {} }) => {
     const handleShippingChange = (event) => {
         if (event.target.name == "isSame") {
             setFormShippingData({ ...formShippingData, [event.target.name]: event.target.checked });
-        } else if (event.target.name == "phone" || event.target.name == "qty") {
+        } else if (event.target.name == "phone" || event.target.name == "phone_secondary" || event.target.name == "qty") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormShippingData({ ...formShippingData, [event.target.name]: onlyNums });
@@ -1031,8 +1031,6 @@ const OrderForm = ({ data = {} }) => {
                                                 label="Address - 2"
                                                 value={address_2 || ""}
                                                 onChange={handleChange}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
                                             />
                                         </Grid>
                                     </Grid>
@@ -1093,8 +1091,8 @@ const OrderForm = ({ data = {} }) => {
                                             />
 
                                             <TextField
-                                                name="text"
-                                                type="pincode"
+                                                name="pincode"
+                                                type="text"
                                                 label="Post Code"
                                                 value={formShippingData.pincode || ""}
                                                 onChange={handleShippingChange}
@@ -1157,8 +1155,6 @@ const OrderForm = ({ data = {} }) => {
                                                 label="Address - 2"
                                                 value={formShippingData.address_2 || ""}
                                                 onChange={handleShippingChange}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
                                             />
                                         </Grid>
                                     </Grid>}

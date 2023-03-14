@@ -114,5 +114,6 @@ export const API_URL = {
     deleteCoupon: "coupon/remove",
     couponApply: "coupon_apply",
 
-    shareMedia: "share_media"
+    shareMedia: "share_media",
+    shareMediaFile: "share_media_file"
 }

@@ -26,6 +26,7 @@ const ProductMediaSingleList = () => {
     const [enableDescription, seteEnableDescription] = useState(false);
     const [selectedProductIds, setSelectedProductIds] = useState([])
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [selectedFiles, setSelectedFiles] = React.useState([]);
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -56,6 +57,13 @@ const ProductMediaSingleList = () => {
 
     const handleChange = (event, newValue) => {
         setTab(newValue);
+    };
+
+    const handleStateDefualt = () => {
+        setImageSelected(selectedImage?.map(() => { return false }) ?? []);
+        setActionImageOpen(selectedImage?.map(() => { return null }) ?? []);
+        setVideoSelected(selectedVideo?.map(() => { return false }) ?? []);
+        setActionVideoOpen(selectedVideo?.map(() => { return null }) ?? []);
     };
 
     const CardHeader = styled(Box)(() => ({
@@ -199,6 +207,18 @@ const ProductMediaSingleList = () => {
                                         if (selectedImage?.some(x => x)) {
                                             setMOpen(true)
                                             seteEnableDescription(false)
+                                            let finalData = []
+                                            rows?.image?.map((list, index) => {
+                                                if (selectedImage[index]) {
+                                                    finalData.push(list?._id)
+                                                }
+                                            })
+                                            rows?.videos?.map((list, index) => {
+                                                if (selectedVideo[index]) {
+                                                    finalData.push(list?._id)
+                                                }
+                                            })
+                                            setSelectedFiles(finalData)
                                             handleClose()
                                         } else {
                                             toast.error("Select Media First!")
@@ -211,31 +231,6 @@ const ProductMediaSingleList = () => {
                 </Box>
                 {tab == 0 &&
                     <>
-                        {/* {selectedImage.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
-                            width: '100%',
-                        }}><Box component='span' sx={{
-                            fontWeight: 700,
-                            fontSize: '16px'
-                        }}>Select All
-                                <Checkbox sx={{
-                                    color: '#000',
-                                }}
-                                    checked={selectedImage.filter(x => x).length == selectedImage.length}
-                                    indeterminate={selectedImage.filter(x => x).length != selectedImage.length}
-                                    onChange={(e) => {
-                                        let tempSelect = [...selectedImage]
-                                        tempSelect = tempSelect.map(x => e.target.checked)
-                                        setImageSelected(tempSelect)
-                                    }}
-                                />
-                            </Box>
-                            <Box component='span' sx={{
-                                fontWeight: 700,
-                                fontSize: '16px',
-                                cursor: 'pointer'
-                            }}>Share
-                            </Box>
-                        </Stack>} */}
                         <Box sx={{ width: "100%" }}>
                             <Container maxWidth>
                                 <Grid container spacing={4}>
@@ -326,31 +321,6 @@ const ProductMediaSingleList = () => {
                 <Box sx={{ width: "100%" }}>
                     {tab == 1 &&
                         <>
-                            {/* {selectedVideo.filter(x => x).length > 0 && <Stack alignItems='center' flexDirection='row' justifyContent='space-between' sx={{
-                            width: '100%',
-                        }}><Box component='span' sx={{
-                            fontWeight: 700,
-                            fontSize: '16px'
-                        }}>Select All
-                                <Checkbox sx={{
-                                    color: '#000',
-                                }}
-                                    checked={selectedVideo.filter(x => x).length == selectedVideo.length}
-                                    indeterminate={selectedVideo.filter(x => x).length != selectedVideo.length}
-                                    onChange={(e) => {
-                                        let tempSelect = [...selectedVideo]
-                                        tempSelect = tempSelect.map(x => e.target.checked)
-                                        setVideoSelected(tempSelect)
-                                    }}
-                                />
-                            </Box>
-                            <Box component='span' sx={{
-                                fontWeight: 700,
-                                fontSize: '16px',
-                                cursor: 'pointer'
-                            }}>Share
-                            </Box>
-                        </Stack>} */}
                             <Box sx={{ width: "100%" }}>
                                 <Container maxWidth>
                                     <Grid container spacing={4}>
@@ -537,9 +507,11 @@ const ProductMediaSingleList = () => {
                     </DialogContent>
                 </Dialog>
             </Box>
-            <ShareMediaModel open={mOpen} selectedProductIds={selectedProductIds} enableDescription={enableDescription} handleClose={() => {
+            <ShareMediaModel open={mOpen} selectedProductIds={selectedProductIds} selectedFiles={selectedFiles} enableDescription={enableDescription} handleClose={() => {
                 setMOpen(false)
                 seteEnableDescription(false)
+                handleStateDefualt();
+                setSelectedFiles([])
             }} />
         </Card >
     )

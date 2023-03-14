@@ -7,13 +7,13 @@ import { toast } from 'material-react-toastify';
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 
-const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescription = false }) => {
+const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescription = false, enableRadio = false, selectedFiles }) => {
     const [productIds, setProductIds] = useState(selectedProductIds ?? []);
     const [phone, setPhone] = useState('');
     const [description, setDescription] = useState('');
     const [type, setType] = useState('ALL');
     const [users, setUsers] = useState([]);
-    console.log("selectedProductIds", selectedProductIds)
+
     useEffect(() => {
         setProductIds(selectedProductIds ?? [])
         setUsers([])
@@ -55,20 +55,41 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
 
     const handleShare = async () => {
         if (users?.length > 0) {
-            await ApiPost(API_URL.shareMedia, {
-                product_id: productIds,
-                users,
-                message: description,
-                media_type: type
-            })
-                .then((response) => {
-                    popupClose()
-                    toast.success('Share Successfully!')
+            if (enableRadio) {
+                await ApiPost(API_URL.shareMedia, {
+                    product_id: productIds,
+                    users,
+                    message: description,
+                    media_type: type
                 })
-                .catch((error) => {
-                    toast.error(error?.error)
-                    console.log("Error", error);
-                });
+                    .then((response) => {
+                        popupClose()
+                        toast.success('Share Successfully!')
+                    })
+                    .catch((error) => {
+                        toast.error(error?.error)
+                        console.log("Error", error);
+                    });
+            } else {
+                if (selectedFiles?.length > 0) {
+                    await ApiPost(API_URL.shareMediaFile, {
+                        product_id: productIds,
+                        users,
+                        message: description ?? "",
+                        files: selectedFiles
+                    })
+                        .then((response) => {
+                            popupClose()
+                            toast.success('Share Successfully!')
+                        })
+                        .catch((error) => {
+                            toast.error(error?.error)
+                            console.log("Error", error);
+                        });
+                } else {
+                    toast.error("Select Media First!")
+                }
+            }
         } else {
             toast.error("Select Users First!")
         }
@@ -85,23 +106,25 @@ const ShareMediaModel = ({ open, handleClose, selectedProductIds, enableDescript
                 Share Media
             </DialogTitle>
             <DialogContent>
-                <FormControl sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center'
-                }}>
-                    {/* <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel> */}
-                    <RadioGroup
-                        row
-                        value={type ?? "ALL"}
-                        onChange={((e) => setType(e.target.value))}
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        name="type">
-                        <FormControlLabel value="ALL" control={<Radio />} label="All" />
-                        <FormControlLabel value="IMAGES" control={<Radio />} label="Images" />
-                        <FormControlLabel value="VIDEOS" control={<Radio />} label="Videos" />
-                    </RadioGroup>
-                </FormControl>
+                {enableRadio &&
+                    <FormControl sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                    }}>
+                        {/* <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1 }}>Link with </FormLabel> */}
+                        <RadioGroup
+                            row
+                            value={type ?? "ALL"}
+                            onChange={((e) => setType(e.target.value))}
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="type">
+                            <FormControlLabel value="ALL" control={<Radio />} label="All" />
+                            <FormControlLabel value="IMAGES" control={<Radio />} label="Images" />
+                            <FormControlLabel value="VIDEOS" control={<Radio />} label="Videos" />
+                        </RadioGroup>
+                    </FormControl>
+                }
                 {enableDescription &&
                     <TextField
                         type="text"

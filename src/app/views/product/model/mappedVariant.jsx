@@ -8,7 +8,6 @@ import { useState } from 'react';
 
 const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU, selectedSKUIndex, setFormData }) => {
     const [data, setData] = useState(SKUData);
-    console.log(SKUData, selectedSKU)
     useEffect(() => {
         setData(SKUData?.filter(x => x?.sku != selectedSKU?.sku))
     }, [selectedSKU])

@@ -333,7 +333,7 @@ const ProductMedia = () => {
 
                     </Grid>
                 </Container>
-                <ShareMediaModel open={mOpen} selectedProductIds={selectedProductIds} enableDescription={enableDescription} handleClose={() => {
+                <ShareMediaModel open={mOpen} enableRadio={true} selectedProductIds={selectedProductIds} enableDescription={enableDescription} handleClose={() => {
                     setSelectedProductIds([])
                     setMOpen(false)
                     seteEnableDescription(false)

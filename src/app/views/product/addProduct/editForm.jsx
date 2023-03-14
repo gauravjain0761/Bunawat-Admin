@@ -72,6 +72,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const [attributes, setAttributes] = useState([]);
     const [SKUData, setSKUData] = useState([]);
     const [formError, setFormError] = useState({});
+    const [formColorSKU, setFormColorSKU] = useState([]);
 
     const settings = {
         dots: true,
@@ -86,6 +87,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     useEffect(() => {
         setDescription(data?.description ?? '')
         setFormData(data ?? {})
+        setFormColorSKU(data?.sku_data)
     }, [data])
 
     const getData = async () => {
@@ -1258,6 +1260,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                 </TableCell>
                                                                 <TableCell align="center" onClick={() => {
                                                                     setSelectedSKU(row)
+                                                                    setFormData({ ...formData, colorSKU: { images: (formData?.colorSKU?.images ? [...formData?.colorSKU?.images, row?.images] : []), videos: (formData?.colorSKU?.videos ? [...formData?.colorSKU?.videos, row?.videos] : []) } })
                                                                     setSKUopen(true)
                                                                 }}>
                                                                     <Typography sx={{ flexShrink: 0, cursor: 'pointer', fontSize: "14px", textTransform: "capitalize" }}>
@@ -1383,7 +1386,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                         <ColorSKUModel open={skuOpen} id={id} getData={getIDData} selectedSKU={selectedSKU} handleClose={() => {
                             setSKUopen(false)
                             setSelectedSKU({});
-                        }} />
+                        }} formColorData={formColorSKU ?? []} setFormColorData={setFormColorSKU} />
                     </SimpleCard>
                 </Box>
 
