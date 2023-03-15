@@ -65,6 +65,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const [formData, setFormData] = useState(data ?? {})
     const [selectedSKU, setSelectedSKU] = useState({})
     const [selectedSKUIndex, setSelectedSKUIndex] = useState(-1)
+    const [selectedSwatchImage, setSelectedSwatchImage] = useState([])
     const navigate = useNavigate();
     const [description, setDescription] = useState("");
     const [actionOpen, setActionOpen] = useState(formData?.attributeList?.map(() => { return null }) ?? []);
@@ -1271,7 +1272,12 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                     <Box sx={{
                                                                         width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center        '
                                                                     }} onClick={() => {
+                                                                        let finalImages = [...image]
+                                                                        if (formColorSKU[index]?.images?.length > 0) {
+                                                                            finalImages = [...finalImages, ...formColorSKU[index]?.images]
+                                                                        }
                                                                         setSelectedSKUIndex(index)
+                                                                        setSelectedSwatchImage(finalImages)
                                                                         setDopen(true)
                                                                     }}>
                                                                         <Box sx={{
@@ -1337,7 +1343,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                         </DialogTitle>
                                         <DialogContent>
                                             <Carousel showThumbs={false}>
-                                                {image?.length > 0 ? image?.map(list => (
+                                                {selectedSwatchImage?.length > 0 ? selectedSwatchImage?.map(list => (
                                                     <div>
                                                         <img src={list?.url} width="100%" height="360px" />
                                                     </div>
@@ -1345,11 +1351,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                     :
                                                     <>Please Select Image First.</>
                                                 }
-
                                             </Carousel>
-
-
-
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={() => setDopen(false)} type='button'>

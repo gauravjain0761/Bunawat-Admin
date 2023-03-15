@@ -432,7 +432,7 @@ const InventoryList = () => {
                                                                     name="inStock_qty"
                                                                     label="In Stock"
                                                                     onChange={(e) => handleChange(e, index, c_index)}
-                                                                    value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.inStock_qty : sku_row?.inStock_qty || "") : sku_row?.inStock_qty || ""}
+                                                                    value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.inStock_qty : sku_row?.inStock_qty ?? "") : sku_row?.inStock_qty ?? ""}
                                                                     validators={["required"]}
                                                                     errorMessages={["this field is required"]}
                                                                 />
@@ -443,7 +443,7 @@ const InventoryList = () => {
                                                                     name="preOrder_qty"
                                                                     label="Preorder"
                                                                     onChange={(e) => handleChange(e, index, c_index)}
-                                                                    value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.preOrder_qty : sku_row?.preOrder_qty || "") : sku_row?.preOrder_qty || ""}
+                                                                    value={changeData?.length > 0 ? (changeData?.filter(x => x?._id == sku_row?._id)?.length > 0 ? changeData?.find(x => x?._id == sku_row?._id)?.preOrder_qty : sku_row?.preOrder_qty ?? "") : sku_row?.preOrder_qty ?? ""}
                                                                     validators={["required"]}
                                                                     errorMessages={["this field is required"]}
                                                                 />
