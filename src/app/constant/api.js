@@ -78,6 +78,7 @@ export const API_URL = {
 
     getProducts: "product/getall",
     editProductOrdering: "product_ordering",
+    editProductFileOrdering: "product_files_ordering",
     getCategoryList: "cateogry_list",
     getCollectionList: "collection_list",
     getProduct: "product",

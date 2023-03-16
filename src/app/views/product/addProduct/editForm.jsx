@@ -737,89 +737,121 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         setFormError(tempError)
     }
 
-    const onSortEnd = ({ oldIndex, newIndex }) => {
-        setFormData({ ...formData, image: arrayMove(image, oldIndex, newIndex) });
+    const onSortEnd = async ({ oldIndex, newIndex }) => {
+        if (oldIndex != newIndex) {
+            await ApiPut(`${API_URL.editProductFileOrdering}`, {
+                product_id: id,
+                file_id: formData?.image?.[oldIndex]?._id,
+                order: newIndex
+            })
+                .then((response) => {
+                    getIDData(id);
+                    toast.success('Drag Successfully!')
+                })
+                .catch((error) => {
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
+        }
     }
 
-    const onSortVideoEnd = ({ oldIndex, newIndex }) => {
-        setFormData({ ...formData, videos: arrayMove(videos, oldIndex, newIndex) });
+    const onSortVideoEnd = async ({ oldIndex, newIndex }) => {
+        if (oldIndex != newIndex) {
+            await ApiPut(`${API_URL.editProductFileOrdering}`, {
+                product_id: id,
+                file_id: formData?.videos?.[oldIndex]?._id,
+                order: newIndex
+            })
+                .then((response) => {
+                    getIDData(id);
+                    toast.success('Drag Successfully!')
+                })
+                .catch((error) => {
+                    toast.error(error?.error)
+                    console.log("Error", error);
+                });
+        }
     }
 
 
-    const SortableImageItem = SortableElement(({ item, i }) => {
+    const SortableImageItem = SortableElement(({ items, i }) => {
         return (
-            <Box sx={{ width: "100%" }}>
-                <img src={item.url} width="100%" height="200px" />
-                <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
-                    <div>
+            <Grid item lg={3} md={3} sm={6} xs={6}>
+                <Box sx={{ width: "100%" }}>
+                    <img src={items.url} width="100%" height="200px" />
+                    <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
+                        <div>
+                            <Stack direction="row" alignItems="center">
+                                <Switch
+                                    size="small"
+                                    sx={{
+                                        color: "red",
+                                        cursor: "pointer",
+                                        fontSize: "10px !impoprtant",
+                                        // '& .MuiSwitch-input': {
+                                        //     width: "100% !important"
+                                        // }
+                                    }}
+                                    checked={items?.isActive}
+                                    onChange={(e) => handleSwitchImage(i, items)}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{items?.isActive ? "Active" : "InActive"}</Span>
+                            </Stack>
+                        </div>
+                        <div>
+                            <Stack direction="row" alignItems="center">
+                                <IconButton size="small">
+                                    <Icon fontSize="small" onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                                        color: "red",
+                                        cursor: "pointer",
+                                    }}>delete</Icon>
+                                </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
+                            </Stack>
+                        </div>
+                    </Box>
+                </Box>
+            </Grid>
+        )
+    });
+
+    const SortableVideoItem = SortableElement(({ items, i }) => {
+        return (
+            <Grid item lg={3} md={3} sm={6} xs={6}>
+                <Box sx={{ width: "100%" }}>
+                    <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
+                        style={{ objectFit: "fill", borderRadius: "10px" }}>
+                        <source src={items.url} type="video/mp4" />
+                    </video>
+                    <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="space-between">
                         <Stack direction="row" alignItems="center">
                             <Switch
                                 size="small"
                                 sx={{
                                     color: "red",
                                     cursor: "pointer",
+                                    zIndex: "999",
                                     fontSize: "10px !impoprtant",
                                     // '& .MuiSwitch-input': {
                                     //     width: "100% !important"
                                     // }
                                 }}
-                                checked={item?.isActive}
-                                onChange={(e) => handleSwitchImage(i, item)}
+                                checked={items?.isActive}
+                                onChange={() => handleSwitchVideo(i, items, 4)}
                                 inputProps={{ 'aria-label': 'controlled' }}
-                            /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                            /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{items?.isActive ? "Active" : "InActive"}</Span>
                         </Stack>
-                    </div>
-                    <div>
                         <Stack direction="row" alignItems="center">
                             <IconButton size="small">
-                                <Icon fontSize="small" onMouseDown={(e) => handleDeleteImage(i)} sx={{
+                                <Icon fontSize="small" onMouseDown={() => handleDeleteVideo(i)} sx={{
                                     color: "red",
                                     cursor: "pointer",
+                                    zIndex: "999"
                                 }}>delete</Icon>
-                            </IconButton> <Span onMouseDown={() => handleDeleteImage(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
+                            </IconButton> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
                         </Stack>
-                    </div>
+                    </Box>
                 </Box>
-            </Box>
-        )
-    });
-
-    const SortableVideoItem = SortableElement(({ item, i }) => {
-        return (
-            <Box sx={{ width: "100%" }}>
-                <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
-                    style={{ objectFit: "fill", borderRadius: "10px" }}>
-                    <source src={item.url} type="video/mp4" />
-                </video>
-                <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="space-between">
-                    <Stack direction="row" alignItems="center">
-                        <Switch
-                            size="small"
-                            sx={{
-                                color: "red",
-                                cursor: "pointer",
-                                zIndex: "999",
-                                fontSize: "10px !impoprtant",
-                                // '& .MuiSwitch-input': {
-                                //     width: "100% !important"
-                                // }
-                            }}
-                            checked={item?.isActive}
-                            onChange={() => handleSwitchVideo(i, item, 4)}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                    </Stack>
-                    <Stack direction="row" alignItems="center">
-                        <IconButton size="small">
-                            <Icon fontSize="small" onMouseDown={() => handleDeleteVideo(i)} sx={{
-                                color: "red",
-                                cursor: "pointer",
-                                zIndex: "999"
-                            }}>delete</Icon>
-                        </IconButton> <Span onMouseDown={() => handleDeleteVideo(i)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span>
-                    </Stack>
-                </Box>
-            </Box>
+            </Grid>
         )
     });
 
@@ -829,9 +861,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                 <Grid container spacing={2}>
                     {items?.map((item, index) => {
                         return (
-                            <Grid key={`List-Image${index}`} item lg={3} md={3} sm={6} xs={6}>
-                                <SortableImageItem axis="xy" key={index} index={index} i={index} item={item} />
-                            </Grid>
+                            <SortableImageItem axis="xy" key={`${item?.url}-${index}`} index={index} i={index} items={item} />
                         );
                     })}
                 </Grid>
@@ -871,9 +901,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                 <Grid container spacing={2}>
                     {items?.map((item, index) => {
                         return (
-                            <Grid key={`List-Video-${index}`} item lg={3} md={3} sm={6} xs={6}>
-                                <SortableVideoItem axis="xy" key={index} index={index} i={index} item={item} />
-                            </Grid>
+                            <SortableVideoItem axis="xy" key={`${item?.url}-${index}`} index={index} i={index} items={item} />
                         );
                     })}
                 </Grid>
