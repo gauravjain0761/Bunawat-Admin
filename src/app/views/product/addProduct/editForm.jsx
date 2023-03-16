@@ -167,7 +167,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         },
         {
             id: "colorV",
-            label: "ColorSKU",
+            label: "SKU Media",
             align: "center",
             sortDisable: true,
             width: 100
@@ -1259,14 +1259,12 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell align="center" onClick={() => {
-                                                                    setSelectedSKU(row)
-                                                                    setFormData({ ...formData, colorSKU: { images: (formData?.colorSKU?.images ? [...formData?.colorSKU?.images, row?.images] : []), videos: (formData?.colorSKU?.videos ? [...formData?.colorSKU?.videos, row?.videos] : []) } })
-                                                                    setSKUopen(true)
-                                                                }}>
-                                                                    <Typography sx={{ flexShrink: 0, cursor: 'pointer', fontSize: "14px", textTransform: "capitalize" }}>
-                                                                        Add SKU Media
-                                                                    </Typography>
+                                                                <TableCell align="center">
+                                                                    <Icon style={{ cursor: 'pointer' }} onClick={() => {
+                                                                        setSelectedSKU(row)
+                                                                        setFormData({ ...formData, colorSKU: { images: (formData?.colorSKU?.images ? [...formData?.colorSKU?.images, row?.images] : []), videos: (formData?.colorSKU?.videos ? [...formData?.colorSKU?.videos, row?.videos] : []) } })
+                                                                        setSKUopen(true)
+                                                                    }}>add</Icon>
                                                                 </TableCell>
                                                                 <TableCell align="center">
                                                                     <Box sx={{
