@@ -38,19 +38,24 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
     } = formData;
 
     const handleSubmit = async () => {
-        await ApiPost(`${API_URL.SKUMediaCreate}/${selectedSKU?._id}`, {
-            images: image ?? [],
-            videos: videos ?? []
-        }).then((response) => {
-            let tempData = [...formColorData]
-            let findIndex = tempData?.findIndex(x => x?._id == selectedSKU?._id)
-            tempData[findIndex] = { ...tempData[findIndex], images: image, videos }
-            setFormColorData(tempData)
-            handleClose()
-        })
-            .catch((error) => {
-                console.log("Error", error);
-            });
+        if ((formData?.image.length >= 3 && formData?.videos.length >= 2)) {
+            await ApiPost(`${API_URL.SKUMediaCreate}/${selectedSKU?._id}`, {
+                images: image ?? [],
+                videos: videos ?? []
+            }).then((response) => {
+                let tempData = [...formColorData]
+                let findIndex = tempData?.findIndex(x => x?._id == selectedSKU?._id)
+                tempData[findIndex] = { ...tempData[findIndex], images: image, videos }
+                setFormColorData(tempData)
+                handleClose()
+            })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        } else {
+            toast.error("Please upload 4 images, 3 videos")
+        }
+
     };
 
     const handleImageUpload = async (event) => {
