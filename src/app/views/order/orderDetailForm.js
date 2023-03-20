@@ -389,6 +389,12 @@ const OrderDetailForm = ({ data = {} }) => {
                                                 <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">- ₹{viewOrder?.discount_amount}</TableCell>
                                             </TableRow>
+                                            {viewOrder?.payment_mode == "COD" &&
+                                                <TableRow>
+                                                    <TableCell sx={{ border: 'none' }} align='right'>COD:</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹100</TableCell>
+                                                </TableRow>
+                                            }
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">₹{Number(viewOrder?.total_amount)}</TableCell>
