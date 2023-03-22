@@ -234,7 +234,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Payment Mode:</Typography>
-                                                <Typography >{viewOrder?.total_amount}</Typography>
+                                                <Typography >{viewOrder?.payment_mode}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Source:</Typography>
@@ -255,7 +255,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Address:</Typography>
-                                                <Typography>{viewOrder?.billing_address?.address_1}</Typography>
+                                                <Typography>{viewOrder?.billing_address?.address_1}, {viewOrder?.billing_address?.address_2}, {viewOrder?.billing_address?.state} {viewOrder?.billing_address?.city}-{viewOrder?.billing_address?.pincode}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Email address:</Typography>
@@ -276,7 +276,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Address:</Typography>
-                                                <Typography>{viewOrder?.shipping_address?.address_1}</Typography>
+                                                <Typography>{viewOrder?.shipping_address?.address_1}, {viewOrder?.shipping_address?.address_2}, {viewOrder?.shipping_address?.state} {viewOrder?.shipping_address?.city}-{viewOrder?.shipping_address?.pincode}</Typography>
                                             </Stack>
                                             {/* <Typography>Rourkela 769004</Typography>
                                             <Typography>Odisha</Typography> */}
@@ -321,7 +321,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                     <Typography ></Typography>
                                                                 </Box> */}
                                                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                    <Typography sx={{ color: '#777' }}>Tracking number: </Typography>
+                                                                    <Typography sx={{ color: '#777' }}>SKU number: </Typography>
                                                                     <Typography>
                                                                         <TextField
                                                                             sx={{
@@ -379,11 +379,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{((Number(viewOrder?.total_amount) + Number(viewOrder?.discount_amount)) - Number(viewOrder?.gst_amount))?.toFixed(2)}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell sx={{ border: 'none' }} align='right'>GST:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">+ ₹{viewOrder?.gst_amount}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number((Number(viewOrder?.total_amount) + Number(viewOrder?.discount_amount)) - ((Number(viewOrder?.gst_amount)) + Number(viewOrder?.payment_mode == "COD" ? (((((viewOrder?.total_amount) * 2) / 100) <= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150) : 0)))?.toFixed(2)}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
@@ -392,9 +388,13 @@ const OrderDetailForm = ({ data = {} }) => {
                                             {viewOrder?.payment_mode == "COD" &&
                                                 <TableRow>
                                                     <TableCell sx={{ border: 'none' }} align='right'>COD:</TableCell>
-                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹100</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹{(((((viewOrder?.total_amount) * 2) / 100) <= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150)?.toFixed(2)}</TableCell>
                                                 </TableRow>
                                             }
+                                            <TableRow>
+                                                <TableCell sx={{ border: 'none' }} align='right'>GST:</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">+ ₹{viewOrder?.gst_amount}</TableCell>
+                                            </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">₹{Number(viewOrder?.total_amount)}</TableCell>
