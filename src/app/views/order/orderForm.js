@@ -157,7 +157,8 @@ const OrderForm = ({ data = {} }) => {
         address_1,
         address_2,
         pincode,
-        payment_mode,
+        gst_mode,
+        gst_number,
         transactionId,
         coupenDataManual,
         coupenDataManualApply,
@@ -1032,6 +1033,45 @@ const OrderForm = ({ data = {} }) => {
                                                 value={address_2 || ""}
                                                 onChange={handleChange}
                                             />
+
+                                            <FormControl sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                marginTop: '-8px',
+                                                gap: 2,
+                                                height: '69px'
+                                            }}>
+                                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ width: "100px" }}>GST Available</FormLabel>
+                                                <RadioGroup
+                                                    row
+                                                    value={gst_mode ?? "no"}
+                                                    onChange={(e) => setFormData({ ...formData, gst_mode: e.target.value })}
+                                                    aria-labelledby="demo-row-radio-buttons-group-label">
+                                                    <Grid container>
+                                                        <Grid item lg={12}>
+                                                            <Stack direction="row" spacing={1}>
+                                                                <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                                                <FormControlLabel value="no" control={<Radio />} label="No" />
+                                                            </Stack>
+                                                        </Grid>
+                                                    </Grid>
+                                                </RadioGroup>
+                                            </FormControl>
+
+                                            {gst_mode == "yes" ?
+                                                <Grid item lg={12}>
+                                                    <TextField
+                                                        name="gst_number"
+                                                        type="text"
+                                                        label="GST Number"
+                                                        onChange={handleChange}
+                                                        value={gst_number || ""}
+                                                        validators={["required"]}
+                                                        errorMessages={["this field is required"]}
+                                                    />
+                                                </Grid>
+                                                : null}
                                         </Grid>
                                     </Grid>
 
