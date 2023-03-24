@@ -1,7 +1,6 @@
 export const API_ROUTES = {
     // BASE_URL: 'http://3.110.107.244:5000',
-    // BASE_URL: 'https://dev.bunawat.com:3000',
-    BASE_URL: 'https://a863-2405-201-5c0a-a121-3501-4500-2510-f378.in.ngrok.io',
+    BASE_URL: 'https://dev.bunawat.com:3000',
     API_VERSION: '/api'
 }
 
