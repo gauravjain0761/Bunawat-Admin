@@ -204,7 +204,7 @@ const ProductMediaSingleList = () => {
                                     onClose={handleClose}
                                 >
                                     <MenuItem onClick={() => {
-                                        if (selectedImage?.some(x => x)) {
+                                        if ((selectedImage?.some(x => x)) || (selectedVideo?.some(x => x))) {
                                             setMOpen(true)
                                             seteEnableDescription(false)
                                             let finalData = []
@@ -299,6 +299,7 @@ const ProductMediaSingleList = () => {
                                                         TransitionComponent={Fade} >
                                                         <MenuItem onClick={() => {
                                                             seteEnableDescription(false)
+                                                            setSelectedFiles([item?._id])
                                                             setMOpen(true)
                                                         }}>Share</MenuItem>
                                                         <MenuItem onClick={() => {
@@ -393,6 +394,7 @@ const ProductMediaSingleList = () => {
                                                             <MenuItem onClick={() => {
                                                                 seteEnableDescription(false)
                                                                 setMOpen(true)
+                                                                setSelectedFiles([item?._id])
                                                             }}>Share</MenuItem>
                                                             <MenuItem onClick={() => {
                                                                 setDopen(true)

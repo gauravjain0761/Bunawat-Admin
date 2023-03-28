@@ -1,4 +1,4 @@
-import { Box, Button, Card, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, Tab, Tabs } from '@mui/material'
+import { Autocomplete, Box, Button, Card, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fade, Grid, Icon, IconButton, Menu, MenuItem, Stack, Tab, Tabs, TextField } from '@mui/material'
 import { mockDataProductMedia } from 'fake-db/data/product/media/data'
 import styled from '@emotion/styled';
 import React, { useState } from 'react'
@@ -14,15 +14,17 @@ const ProductMedia = () => {
     const navigate = useNavigate();
     const [selectedImage, setImageSelected] = useState([]);
     const [actionImageOpen, setActionImageOpen] = useState([]);
-    const [dOpen, setDopen] = useState(false)
-    const [dData, setDData] = useState(null)
     const [rowLoading, setRowLoading] = useState(false);
+    const [categoryList, setCategoryList] = useState([])
+    const [collectionList, setCollectionList] = useState([])
     const [rows, setRows] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [searchText, setSearchText] = useState('');
     const [mOpen, setMOpen] = useState(false);
     const [enableDescription, seteEnableDescription] = useState(false);
     const [selectedProductIds, setSelectedProductIds] = useState([])
+    const [selectedCollectionId, setSelectedCollectionId] = useState(null)
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null)
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -32,9 +34,9 @@ const ProductMedia = () => {
         setAnchorEl(null);
     };
 
-    const getData = async () => {
+    const getData = async (searchText, selectedId) => {
         setRowLoading(true)
-        await ApiGet(`${API_URL.getProducts}?q=${searchText}`)
+        await ApiGet(`${API_URL.getProducts}?q=${searchText}&id=${selectedId}`)
             .then((response) => {
                 setRowLoading(false)
                 setRows(response?.data ?? []);
@@ -47,9 +49,65 @@ const ProductMedia = () => {
             });
     }
 
+
+    const getCategoryList = async () => {
+        await ApiGet(`${API_URL.getCategoryList}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    let temp = [...response?.data]
+                    let categoryList = [];
+                    temp = temp?.map(level1 => {
+                        if (level1?.sub_categories?.length == 0) {
+                            categoryList.push({
+                                label: level1?.name,
+                                value: level1?._id,
+                            })
+                        } else {
+                            level1?.sub_categories?.map(level2 => {
+                                if (level2?.categories?.length == 0) {
+                                    categoryList.push({
+                                        label: level2?.name,
+                                        value: level2?._id,
+                                    })
+                                } else {
+                                    level2?.categories?.map(level3 => {
+                                        categoryList.push({
+                                            label: level3?.name,
+                                            value: level3?._id,
+                                        })
+                                    })
+                                }
+                            })
+                        }
+                    }) ?? [];
+                    setCategoryList(categoryList);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
+    const getCollectionList = async () => {
+        await ApiGet(`${API_URL.getCollectionList}`)
+            .then((response) => {
+                if (response?.data?.length > 0) {
+                    setCollectionList(response?.data?.map(item => ({
+                        label: item?.name,
+                        value: item?._id
+                    })) ?? []);
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
+
     React.useEffect(() => {
-        getData();
-    }, [searchText])
+        getData(searchText, selectedCollectionId?.value ? selectedCollectionId?.value ?? "" : selectedCategoryId?.value ?? "");
+        getCollectionList();
+        getCategoryList();
+    }, [searchText, selectedCollectionId, selectedCategoryId])
 
     const CardHeader = styled(Box)(() => ({
         display: 'flex',
@@ -79,30 +137,63 @@ const ProductMedia = () => {
             >
                 <Box display="flex" justifyContent='space-between' width="100%">
                     <Box></Box>
-                    <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
-                        border: "1px solid #000",
-                        borderRadius: "6px",
-                        mr: "0px",
-                        width: '300px',
-                        marginTop: '20px',
-                        // marginLeft: '26rem',
-                    }}>
-                        <Box component="input" sx={{
-                            width: '100%',
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: '1rem',
-                            p: 0,
-                            paddingLeft: '20px',
-                            height: '36px',
-                            background: "transparent",
-                            color: "#000",
-                        }} type="text" value={searchText} onChange={(e) => {
-                            setSearchText(e.target.value)
-                        }} placeholder="Search here..." />
-                        <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
-                            <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
-                        </IconButton>
+                    <Box display="flex" alignItems="center" justifyContent="center" gap="10px" sx={{ flexDirection: { lg: "row", xs: "column" } }} >
+                        <Box sx={{
+                            marginTop: '20px',
+                        }}>
+                            <Autocomplete
+                                value={selectedCategoryId}
+                                onChange={(event, newValue) => {
+                                    setSelectedCollectionId(null)
+                                    setSelectedCategoryId(newValue);
+                                }}
+                                options={categoryList}
+                                getOptionLabel={(option) => option?.label}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Category" />}
+                            />
+                        </Box>
+                        <Box sx={{
+                            marginTop: '20px',
+                        }}>
+                            <Autocomplete
+                                value={selectedCollectionId}
+                                onChange={(event, newValue) => {
+                                    setSelectedCategoryId(null);
+                                    setSelectedCollectionId(newValue);
+                                }}
+                                options={collectionList}
+                                getOptionLabel={(option) => option?.label}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Collection" />}
+                            />
+                        </Box>
+                        <Box display="flex" alignItems="center" className="searchBoxWidth" sx={{
+                            border: "1px solid #000",
+                            borderRadius: "6px",
+                            mr: "0px",
+                            width: '300px',
+                            height: '53px',
+                            marginTop: '20px',
+                            // marginLeft: '26rem',
+                        }}>
+                            <Box component="input" sx={{
+                                width: '100%',
+                                border: 'none',
+                                outline: 'none',
+                                fontSize: '1rem',
+                                p: 0,
+                                paddingLeft: '20px',
+                                height: '36px',
+                                background: "transparent",
+                                color: "#000",
+                            }} type="text" value={searchText} onChange={(e) => {
+                                setSearchText(e.target.value)
+                            }} placeholder="Search here..." />
+                            <IconButton onClick={() => setSearchText('')} sx={{ verticalAlign: 'middle' }}>
+                                <Icon sx={{ color: "#000" }}>{!searchText ? 'search' : 'close'}</Icon>
+                            </IconButton>
+                        </Box>
                     </Box>
                 </Box>
             </Box>

@@ -18,6 +18,7 @@ import PaymentModel from 'app/views/order/models/paymentModel';
 import TrackingModel from 'app/views/order/models/trackingModel';
 import { ApiGet } from 'app/service/api';
 import { API_URL } from 'app/constant/api';
+import moment from 'moment';
 
 const OrderList = () => {
     const navigate = useNavigate();
@@ -71,6 +72,12 @@ const OrderList = () => {
         {
             id: "total_amount",
             label: "Amount",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "shipping_date",
+            label: "Shipping Date",
             align: "center",
             width: 100
         },
@@ -349,6 +356,7 @@ const OrderList = () => {
                                 borderRadius: '4px'
                             }}>{row.order_status}</Box></TableCell>
                             <TableCell align="center">{row?.total_amount}</TableCell>
+                            <TableCell align="center">{row?.shipping_date ? moment(row?.shipping_date).format("DD/MM/YYYY") : '-'}</TableCell>
                             <TableCell align="center">{row?.member?.name ?? "-"}</TableCell>
                             <TableCell align="center">{getAge(row?.order_age)}</TableCell>
                             <TableCell align='right' sx={{ pr: "18px" }}>

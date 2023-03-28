@@ -384,12 +384,14 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     };
 
     const handleImageUpload = async (event) => {
-        const MAX_FILE_SIZE = 30720 // 30MB
-        const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024;
+        const MAX_FILE_SIZE = 5120 // 30MB
 
         const filesData = new FormData();
         Object.values(event?.target?.files).forEach((value) => {
-            filesData.append(`file`, value);
+            const fileSizeKiloBytes = value?.size / 1024;
+            if (!(fileSizeKiloBytes > MAX_FILE_SIZE)) {
+                filesData.append(`file`, value);
+            }
         });
 
         const config = {
@@ -398,14 +400,9 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             }
         };
 
-        // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-        //     setFormError({ ...formError, image: true })
-        // } else {
         setFormError({ ...formError, image: false })
         setImageLoading(true);
-        // let imageData = new FormData();
         const images = formData?.image ?? []
-        // imageData.append('file', event.target.files[0]);
         await ApiPost(API_URL.fileUploadProduct, filesData, config)
             .then((response) => {
                 if (response?.data) {
@@ -427,7 +424,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                 setImageLoading(false)
                 console.log("Error", error);
             });
-        // }
     }
 
     const handleDeleteImage = async (index) => {
@@ -451,11 +447,14 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     }
 
     const handleImageVideo = async (event) => {
-        const MAX_FILE_SIZE = 51200 // 50MB
+        const MAX_FILE_SIZE = 5120 // 50MB
 
         const filesData = new FormData();
         Object.values(event?.target?.files).forEach((value) => {
-            filesData.append(`video`, value);
+            const fileSizeKiloBytes = value?.size / 1024;
+            if (!(fileSizeKiloBytes > MAX_FILE_SIZE)) {
+                filesData.append(`video`, value);
+            }
         });
 
         const config = {
@@ -464,15 +463,9 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             }
         };
 
-        // const fileSizeKiloBytes = event?.target?.files?.[0]?.size / 1024
-        // if (fileSizeKiloBytes > MAX_FILE_SIZE) {
-        //     setFormError({ ...formError, videos: true })
-        // } else {
         setFormError({ ...formError, videos: false })
         setVideoLoading(true)
         const videosList = formData?.videos ?? []
-        // let videoData = new FormData();
-        // videoData.append('video', event.target.files[0]);
         await ApiPost(API_URL.videoFileUpload, filesData, config)
             .then((response) => {
                 if (response?.data) {
@@ -494,7 +487,6 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                 setVideoLoading(false)
                 console.log("Error", error);
             });
-        // }
     }
 
     const handleDeleteVideo = async (index) => {
@@ -778,7 +770,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         return (
             <Grid item lg={3} md={3} sm={6} xs={6}>
                 <Box sx={{ width: "100%" }}>
-                    <img src={items.url} width="100%" height="200px" />
+                    <img src={items.url} width="100%" height="350px" />
                     <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                         <div>
                             <Stack direction="row" alignItems="center">
@@ -818,7 +810,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         return (
             <Grid item lg={3} md={3} sm={6} xs={6}>
                 <Box sx={{ width: "100%" }}>
-                    <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
+                    <video width="100%" height="350px" autoPlay={true} muted={true} loop={true} playsInline={true}
                         style={{ objectFit: "fill", borderRadius: "10px" }}>
                         <source src={items.url} type="video/mp4" />
                     </video>
@@ -1113,7 +1105,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             mt: 1
                                         }}>
                                             {imageLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
-                                            <Typography sx={{ color: formError?.image ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 30MB only.</Typography>
+                                            <Typography sx={{ color: formError?.image ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload image size is max 5MB only.</Typography>
                                         </Box>
 
                                         <Box className="list-group">
@@ -1125,7 +1117,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             mt: 1
                                         }}>
                                             {videoLoading && <CircularProgress sx={{ color: 'rgba(52, 49, 76, 0.54)', width: '20px !important', height: '20px  !important' }} />}
-                                            <Typography sx={{ color: formError?.videos ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 50MB only.</Typography>
+                                            <Typography sx={{ color: formError?.videos ? '#FF3D57' : 'rgba(52, 49, 76, 0.54)', fontWeight: 400, fontSize: '0.75rem', m: '3px 0px', ml: 1 }}>Upload video size is max 5MB only.</Typography>
                                         </Box>
                                     </Box>
                                 </Box>

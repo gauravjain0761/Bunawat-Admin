@@ -19,6 +19,7 @@
     "axios": "^0.24.0",
     "babel-polyfill": "^6.26.0",
     "clsx": "^1.1.1",
+    "country-state-city": "^3.1.2",
     "cross-fetch": "^3.1.4",
     "date-fns": "^2.26.0",
     "dayjs": "^1.11.7",

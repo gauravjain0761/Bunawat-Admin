@@ -379,7 +379,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number((Number(viewOrder?.total_amount) + Number(viewOrder?.discount_amount)) - ((Number(viewOrder?.gst_amount)) + Number(viewOrder?.payment_mode == "COD" ? (((((viewOrder?.total_amount) * 2) / 100) <= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150) : 0)))?.toFixed(2)}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number((Number(viewOrder?.total_amount) + Number(viewOrder?.discount_amount)) - ((Number(viewOrder?.gst_amount)) + Number(viewOrder?.payment_mode == "COD" ? (((((viewOrder?.total_amount) * 2) / 100) >= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150) : 0)))?.toFixed(2)}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
@@ -388,13 +388,31 @@ const OrderDetailForm = ({ data = {} }) => {
                                             {viewOrder?.payment_mode == "COD" &&
                                                 <TableRow>
                                                     <TableCell sx={{ border: 'none' }} align='right'>COD:</TableCell>
-                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹{(((((viewOrder?.total_amount) * 2) / 100) <= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150)?.toFixed(2)}</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹{(((((viewOrder?.total_amount) * 2) / 100) >= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150)?.toFixed(2)}</TableCell>
                                                 </TableRow>
                                             }
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>GST:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">+ ₹{viewOrder?.gst_amount}</TableCell>
                                             </TableRow>
+                                            {(!!viewOrder?.igst_amount && (viewOrder?.igst_amount > 0)) &&
+                                                <TableRow>
+                                                    <TableCell sx={{ border: 'none' }} align='right'>IGST:</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.igst_amount}</TableCell>
+                                                </TableRow>
+                                            }
+                                            {(!!viewOrder?.cgst_amount && (viewOrder?.cgst_amount > 0)) &&
+                                                <TableRow>
+                                                    <TableCell sx={{ border: 'none' }} align='right'>CGST:</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.cgst_amount}</TableCell>
+                                                </TableRow>
+                                            }
+                                            {(!!viewOrder?.sgst_amount && (viewOrder?.sgst_amount > 0)) &&
+                                                <TableRow>
+                                                    <TableCell sx={{ border: 'none' }} align='right'>SGST:</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.sgst_amount}</TableCell>
+                                                </TableRow>
+                                            }
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Order Total:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">₹{Number(viewOrder?.total_amount)}</TableCell>

@@ -45,6 +45,7 @@ import { API_URL } from "app/constant/api";
 import DiscountType from "./discountType";
 import { sumBy } from "lodash";
 import { DEFULT_STATE } from "app/constant/constant";
+import { State } from "country-state-city";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -63,7 +64,7 @@ const OrderForm = ({ data = {} }) => {
         city: "",
         district: "",
         pincode: "",
-        state: ""
+        state: null
     });
     const [formData, setFormData] = useState({
         ...data,
@@ -79,7 +80,7 @@ const OrderForm = ({ data = {} }) => {
             city: "",
             district: "",
             pincode: "",
-            state: ""
+            state: null
         },
         shipping_address: {
             fname: "",
@@ -92,7 +93,7 @@ const OrderForm = ({ data = {} }) => {
             city: "",
             district: "",
             pincode: "",
-            state: ""
+            state: null
         },
         teamMember: "",
         reseller: "",
@@ -105,7 +106,7 @@ const OrderForm = ({ data = {} }) => {
         phone: "",
         phone_secondary: "",
         email: "",
-        state: "",
+        state: null,
         district: "",
         city: "",
         address_1: "",
@@ -120,7 +121,6 @@ const OrderForm = ({ data = {} }) => {
     const navigate = useNavigate();
     const [customerNumber, setCustomerNumber] = React.useState([]);
     const [products, setProducts] = React.useState([]);
-    let [searchParams, setSearchParams] = useSearchParams();
     const [ProductName, setProductName] = React.useState(null);
     const [skuData, setSKUData] = React.useState(null);
     const [skuName, setSKUName] = React.useState(null);
@@ -136,14 +136,10 @@ const OrderForm = ({ data = {} }) => {
     const [discountType, setDiscountType] = React.useState("COUPON");
     const [discountApply, setDiscountApply] = React.useState("");
     const {
-        // user_type,
-        teamMember,
-        reseller,
         product,
         qty,
         items,
         coupenData,
-        shipping_address,
         isSame,
         fname,
         lname,
@@ -151,7 +147,6 @@ const OrderForm = ({ data = {} }) => {
         phone_secondary,
         email,
         state,
-        sku,
         district,
         city,
         address_1,
@@ -159,16 +154,13 @@ const OrderForm = ({ data = {} }) => {
         pincode,
         gst_mode,
         gst_number,
-        transactionId,
         coupenDataManual,
         coupenDataManualApply,
-        image,
         discount_coupon,
-        transaction_doc
     } = formData;
 
 
-    const getProductData = async (customerPhone) => {
+    const getProductData = async () => {
         await ApiGet(`${API_URL.getProducts}`).then((response) => {
             if (response.status) {
                 const { data } = response;
@@ -279,6 +271,8 @@ const OrderForm = ({ data = {} }) => {
                 for (const [key] of Object.entries(formShippingData)) {
                     if (key === "pincode") {
                         setFormShippingData({ ...data, pincode: data?.pincode })
+                    } else if (key === "state") {
+                        setFormShippingData({ ...data, state: data?.state ?? null })
                     } else {
                         setFormShippingData({ ...data, [key]: data[key] })
                     }
@@ -500,7 +494,77 @@ const OrderForm = ({ data = {} }) => {
         if (customerNumber && customerNumber.length === 10) {
             getCustomerNumber(customerNumber)
         }
-    }, [customerNumber, user_type]);
+    }, [customerNumber]);
+
+    React.useEffect(() => {
+        setCustomerNumber("");
+        setUserID("")
+        setFormShippingData({
+            fname: "",
+            lname: "",
+            email: "",
+            phone: "",
+            phone_secondary: "",
+            address_1: "",
+            address_2: "",
+            city: "",
+            district: "",
+            pincode: "",
+            state: ""
+        })
+        setFormData({
+            ...data,
+            // user_type: 'CUSTOMER',
+            billing_address: {
+                fname: "",
+                lname: "",
+                email: "",
+                phone: "",
+                phone_secondary: "",
+                address_1: "",
+                address_2: "",
+                city: "",
+                district: "",
+                pincode: "",
+                state: ""
+            },
+            shipping_address: {
+                fname: "",
+                lname: "",
+                email: "",
+                phone: "",
+                phone_secondary: "",
+                address_1: "",
+                address_2: "",
+                city: "",
+                district: "",
+                pincode: "",
+                state: ""
+            },
+            teamMember: "",
+            reseller: "",
+            product: null,
+            qty: "",
+            items: [],
+            isSame: false,
+            fname: "",
+            lname: "",
+            phone: "",
+            phone_secondary: "",
+            email: "",
+            state: "",
+            district: "",
+            city: "",
+            address_1: "",
+            address_2: "",
+            pincode: "",
+            payment_mode: "cod",
+            transactionId: "",
+            image: "",
+            user: "",
+            discount_coupon: "",
+        })
+    }, [user_type]);
 
 
     // React.useEffect(() => {
@@ -990,15 +1054,24 @@ const OrderForm = ({ data = {} }) => {
                                         </Grid>
 
                                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 0 }}>
-                                            <TextField
-                                                type="text"
+                                            <Autocomplete
+                                                fullWidth
+                                                multiple={false}
+                                                value={state ?? null}
                                                 name="state"
-                                                value={state || ""}
-                                                label="State"
-                                                onChange={handleChange}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
+                                                onChange={(event, newValue) => {
+                                                    setFormData({ ...formData, state: newValue });
+                                                }}
+                                                options={State?.getStatesOfCountry("IN")?.map(x => x?.name)}
+                                                filterSelectedOptions
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="State"
+                                                    />
+                                                )}
                                             />
+
                                             <TextField
                                                 name="district"
                                                 type="text"
@@ -1153,14 +1226,22 @@ const OrderForm = ({ data = {} }) => {
                                         </Grid>
 
                                         <Grid item lg={6} md={6} sm={12} xs={12}>
-                                            <TextField
-                                                type="text"
+                                            <Autocomplete
+                                                fullWidth
+                                                multiple={false}
+                                                value={formShippingData.state ?? null}
                                                 name="state"
-                                                value={formShippingData.state || ""}
-                                                label="State"
-                                                onChange={handleShippingChange}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
+                                                onChange={(event, newValue) => {
+                                                    setFormShippingData({ ...formShippingData, state: newValue });
+                                                }}
+                                                options={State?.getStatesOfCountry("IN")?.map(x => x?.name)}
+                                                filterSelectedOptions
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="State"
+                                                    />
+                                                )}
                                             />
                                             <TextField
                                                 name="district"
