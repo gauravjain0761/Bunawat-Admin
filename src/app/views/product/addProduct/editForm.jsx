@@ -448,12 +448,15 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
 
     const handleImageVideo = async (event) => {
         const MAX_FILE_SIZE = 5120 // 50MB
-
+        const apiCall = [];
         const filesData = new FormData();
         Object.values(event?.target?.files).forEach((value) => {
             const fileSizeKiloBytes = value?.size / 1024;
             if (!(fileSizeKiloBytes > MAX_FILE_SIZE)) {
                 filesData.append(`video`, value);
+                apiCall?.push(true)
+            } else {
+                apiCall?.push(false)
             }
         });
 
@@ -463,30 +466,32 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
             }
         };
 
-        setFormError({ ...formError, videos: false })
-        setVideoLoading(true)
-        const videosList = formData?.videos ?? []
-        await ApiPost(API_URL.videoFileUpload, filesData, config)
-            .then((response) => {
-                if (response?.data) {
-                    let VideosData = [];
-                    response?.data && response?.data?.forEach((element) => {
-                        VideosData.push({
-                            url: element?.Location,
-                            isActive: false,
-                            type: 'VIDEO'
+        if (apiCall?.every(x => x)) {
+            setFormError({ ...formError, videos: false })
+            setVideoLoading(true)
+            const videosList = formData?.videos ?? []
+            await ApiPost(API_URL.videoFileUpload, filesData, config)
+                .then((response) => {
+                    if (response?.data) {
+                        let VideosData = [];
+                        response?.data && response?.data?.forEach((element) => {
+                            VideosData.push({
+                                url: element?.Location,
+                                isActive: false,
+                                type: 'VIDEO'
+                            })
                         })
-                    })
-                    setFormData({
-                        ...formData, videos: [...videosList, ...VideosData]
-                    });
-                }
-                setVideoLoading(false)
-            })
-            .catch((error) => {
-                setVideoLoading(false)
-                console.log("Error", error);
-            });
+                        setFormData({
+                            ...formData, videos: [...videosList, ...VideosData]
+                        });
+                    }
+                    setVideoLoading(false)
+                })
+                .catch((error) => {
+                    setVideoLoading(false)
+                    console.log("Error", error);
+                });
+        }
     }
 
     const handleDeleteVideo = async (index) => {

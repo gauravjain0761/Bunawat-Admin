@@ -105,6 +105,7 @@ export const API_URL = {
     fileRemove: "fileRmove",
     fileStatus: "fileStatus/update",
     SKUFileStatus: "skufileStatus/update",
+    getSkuFiles: "get_sku_files",
 
     getTeams: "team_member/getAll",
 

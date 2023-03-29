@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormLabel, Grid, Icon, IconButton, Radio, RadioGroup, Stack, Switch, TextField, Typography } from '@mui/material'
 import { Span } from 'app/components/Typography'
 import { API_URL } from 'app/constant/api'
-import { ApiDelete, ApiPost, ApiPut } from 'app/service/api'
+import { ApiDelete, ApiGet, ApiPost, ApiPut } from 'app/service/api'
 import { UIColor } from 'app/utils/constant'
 import { toast } from 'material-react-toastify';
 import React, { useEffect, useState } from 'react'
@@ -37,25 +37,33 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
         videos,
     } = formData;
 
-    const handleSubmit = async () => {
-        if ((formData?.image.length >= 3 && formData?.videos.length >= 2)) {
-            await ApiPost(`${API_URL.SKUMediaCreate}/${selectedSKU?._id}`, {
-                images: image ?? [],
-                videos: videos ?? []
-            }).then((response) => {
-                let tempData = [...formColorData]
-                let findIndex = tempData?.findIndex(x => x?._id == selectedSKU?._id)
-                tempData[findIndex] = { ...tempData[findIndex], images: image, videos }
-                setFormColorData(tempData)
-                handleClose()
-            })
-                .catch((error) => {
-                    console.log("Error", error);
-                });
-        } else {
-            toast.error("Please upload 4 images, 3 videos")
-        }
+    const getSKUData = async () => {
+        await ApiGet(`${API_URL.getSkuFiles}/${selectedSKU?._id}`).then((response) => {
+            let tempData = [...formColorData]
+            let findIndex = tempData?.findIndex(x => x?._id == selectedSKU?._id)
+            tempData[findIndex] = { ...tempData[findIndex], images: response?.data?.images, videos: response?.data?.videos }
+            setFormColorData(tempData)
+            handleClose()
+        })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+    }
 
+    const handleSubmit = async () => {
+        // if ((formData?.image.length >= 3 && formData?.videos.length >= 2)) {
+        await ApiPost(`${API_URL.SKUMediaCreate}/${selectedSKU?._id}`, {
+            images: image ?? [],
+            videos: videos ?? []
+        }).then((response) => {
+            getSKUData();
+        })
+            .catch((error) => {
+                console.log("Error", error);
+            });
+        // } else {
+        //     toast.error("Please upload 4 images, 3 videos")
+        // }
     };
 
     const handleImageUpload = async (event) => {
@@ -288,19 +296,21 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
                                                     <img src={item.url} width="100%" height="200px" />
                                                     <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                                                         <div>
-                                                            <Stack direction="row" alignItems="center">
-                                                                <Switch
-                                                                    size="small"
-                                                                    sx={{
-                                                                        color: "red",
-                                                                        cursor: "pointer",
-                                                                        fontSize: "10px !impoprtant",
-                                                                    }}
-                                                                    checked={item?.isActive}
-                                                                    onChange={(e) => handleSwitchImage(index, item)}
-                                                                    inputProps={{ 'aria-label': 'controlled' }}
-                                                                /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                                                            </Stack>
+                                                            {!!item?._id ?
+                                                                <Stack direction="row" alignItems="center">
+                                                                    <Switch
+                                                                        size="small"
+                                                                        sx={{
+                                                                            color: "red",
+                                                                            cursor: "pointer",
+                                                                            fontSize: "10px !impoprtant",
+                                                                        }}
+                                                                        checked={item?.isActive}
+                                                                        onChange={(e) => handleSwitchImage(index, item)}
+                                                                        inputProps={{ 'aria-label': 'controlled' }}
+                                                                    /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                                                                </Stack>
+                                                                : null}
                                                         </div>
                                                         <div>
                                                             <Stack direction="row" alignItems="center">
