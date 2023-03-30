@@ -239,14 +239,14 @@ const ProductMediaSingleList = () => {
                                             <Grid key={item?._id} item lg={3} md={3} sm={6} xs={6}>
                                                 <Box sx={{
                                                     width: "100%",
-                                                    height: "200px",
+                                                    height: "280px",
                                                     position: "relative",
                                                     cursor: 'pointer'
                                                 }} onClick={(e) => {
                                                     // setDopen(true)
                                                     // setDData(item)
                                                 }}>
-                                                    <img src={item?.url} width="100%" height="200px" />
+                                                    <img src={item?.url} width="100%" height="280px" style={{objectFit: "fill", borderRadius: "6px"}} />
                                                     <Checkbox sx={{
                                                         position: 'absolute',
                                                         top: '2px',
@@ -330,15 +330,15 @@ const ProductMediaSingleList = () => {
                                                 <Grid key={item?._id} item lg={3} md={3} sm={6} xs={6}>
                                                     <Box sx={{
                                                         width: "100%",
-                                                        height: "200px",
+                                                        height: "280px",
                                                         position: "relative",
                                                         cursor: 'pointer'
                                                     }} onClick={() => {
                                                         // setDopen(true)
                                                         // setDData(item)
                                                     }}>
-                                                        <video width="100%" height="200px" autoPlay={true} muted={true} loop={true} playsInline={true}
-                                                            style={{ objectFit: "fill" }}>
+                                                        <video width="100%" height="280px" autoPlay={true} muted={true} loop={true} playsInline={true}
+                                                            style={{ objectFit: "fill", borderRadius: "6px" }}>
                                                             <source src={item?.url} type="video/mp4" />
                                                         </video>
                                                         <Checkbox sx={{

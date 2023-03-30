@@ -362,9 +362,9 @@ const InventoryList = () => {
                                     <TableCell sx={{ pl: '15px' }}>{row?.design_num}</TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            {row?.image && <img style={{ marginRight: '5px' }} src={row?.image} width='50px' height='50px' />
-                                            }
-                                            {row?.name}
+                                            <Box sx={{ marginRight: '5px' }}>{row?.image && <img src={row?.image} width='44px' height='56px' style={{objectFit: "fill", borderRadius: "6px"}} />
+                                            }</Box> 
+                                            <Box>{row?.name}</Box> 
                                         </Box>
                                     </TableCell>
                                     <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row?.variant_count}</TableCell>

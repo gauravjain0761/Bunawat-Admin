@@ -265,7 +265,7 @@ const ProductList = () => {
                 <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
                         <Box sx={{ width: "60px", height: "60px" }}>
-                            <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
+                            <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='64px' style={{objectFit: "fill"}} />
                         </Box>
                         <Typography sx={{
                             overflow: 'hidden',
@@ -373,7 +373,7 @@ const ProductList = () => {
                 <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
                         <Box sx={{ width: "60px", height: "60px" }}>
-                            <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
+                            <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='60px' style={{objectFit: "fill"}} />
                         </Box>
                         <Typography sx={{
                             overflow: 'hidden',
@@ -554,7 +554,7 @@ const ProductList = () => {
                             <TableCell>
                                 <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, gap: 2 }}>
                                     <Box sx={{ width: "60px", height: "60px" }}>
-                                        <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='50px' />
+                                        <img src={row?.image ? row?.image : "/assets/images/bunawat_avatar.svg"} width='50px' height='64px' style={{objectFit: "fill", borderRadius: "6px"}} />
                                     </Box>
                                     <Typography sx={{
                                         overflow: 'hidden',
