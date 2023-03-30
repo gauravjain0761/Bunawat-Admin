@@ -39,20 +39,21 @@ import { isMdScreen, isMobile } from "app/utils/utils";
 import { useEffect, useState } from "react";
 import React from 'react';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { ApiGet, ApiPost } from "app/service/api";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { ApiGet, ApiPost, ApiPut } from "app/service/api";
 import { API_URL } from "app/constant/api";
 import DiscountType from "./discountType";
 import { sumBy } from "lodash";
 import { DEFULT_STATE } from "app/constant/constant";
-import { Country, State } from "country-state-city";
+import { Country, State, City } from "country-state-city";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
     marginBottom: "16px",
 }));
 
-const OrderForm = ({ data = {} }) => {
+const OrderDetailEdit = ({ data = {} }) => {
+    const { id } = useParams();
     const [formShippingData, setFormShippingData] = React.useState({
         fname: "",
         lname: "",
@@ -127,7 +128,7 @@ const OrderForm = ({ data = {} }) => {
         discount_coupon: "",
     });
     const navigate = useNavigate();
-    const [customerNumber, setCustomerNumber] = React.useState([]);
+    const [customerNumber, setCustomerNumber] = React.useState("");
     const [products, setProducts] = React.useState([]);
     const [ProductName, setProductName] = React.useState(null);
     const [skuData, setSKUData] = React.useState(null);
@@ -169,6 +170,38 @@ const OrderForm = ({ data = {} }) => {
         country_code
     } = formData;
 
+    const getCustomerNumber = async (itemData) => {
+        await ApiPost(`${API_URL.getUserNumber}`, {
+            phone: itemData?.user?.phone,
+            user_type: itemData?.user?.user_type
+        }).then((response) => {
+            let finalData = { ...formData }
+            if (response.status) {
+                const { data } = response;
+                setUserID(data?._id)
+                setFormShippingData(itemData?.shipping_address)
+                setUserType(itemData?.user?.user_type)
+                setCustomerNumber(itemData?.user?.phone)
+                setTeamName(itemData?.member)
+                finalData = { ...finalData, ...itemData?.billing_address, teamMember: itemData?.member, items: itemData?.items, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" }
+                setFormData(finalData);
+            }
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    const getOrederData = async (id) => {
+        await ApiGet(`${API_URL.getOrder}/${id}`).then((response) => {
+            getCustomerNumber(response?.data)
+        }).catch((error) => {
+            console.log("Error", error);
+        });
+    }
+
+    React.useEffect(() => {
+        if (id) getOrederData(id);
+    }, [id]);
 
     const getProductData = async () => {
         await ApiGet(`${API_URL.getProducts}`).then((response) => {
@@ -238,8 +271,6 @@ const OrderForm = ({ data = {} }) => {
         getResellerData();
     }, []);
 
-    // React.useEffect(())
-
     const getSKUData = async (id) => {
         await ApiGet(`${API_URL.SKUGetProductID}/${id}`).then((response) => {
             if (response.status) {
@@ -257,36 +288,6 @@ const OrderForm = ({ data = {} }) => {
                 setSKUName(null);
                 setSKUData(SKUData)
                 // setProducts(productData)
-            }
-        }).catch((error) => {
-            console.log("Error", error);
-        });
-    }
-
-    const getCustomerNumber = async () => {
-        await ApiPost(`${API_URL.getUserNumber}`, {
-            phone: customerNumber,
-            user_type: user_type
-        }).then((response) => {
-            if (response.status) {
-                const { data } = response;
-                setUserID(data?._id)
-                for (const [key] of Object.entries(formData)) {
-                    if (key === "pincode") {
-                        setFormData({ ...data, pincode: data?.pincode })
-                    } else {
-                        setFormData({ ...data, [key]: data[key] })
-                    }
-                }
-                for (const [key] of Object.entries(formShippingData)) {
-                    if (key === "pincode") {
-                        setFormShippingData({ ...data, pincode: data?.pincode })
-                    } else if (key === "state") {
-                        setFormShippingData({ ...data, state: data?.state ?? null })
-                    } else {
-                        setFormShippingData({ ...data, [key]: data[key] })
-                    }
-                }
             }
         }).catch((error) => {
             console.log("Error", error);
@@ -329,7 +330,7 @@ const OrderForm = ({ data = {} }) => {
             "discount_coupon": formData?.coupon_id
         }
         if (formDatas?.items?.length > 0) {
-            await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
+            await ApiPut(`${API_URL.editOrder}/${id}`, formDatas).then((response) => {
                 if (response.status) {
                     toast.success('Add Successfully!')
                     navigate(`/order/list`)
@@ -410,8 +411,6 @@ const OrderForm = ({ data = {} }) => {
             setFormShippingData({ ...formShippingData, [event.target.name]: event.target.value });
         }
     };
-
-
 
     const handleDeleteImage = async () => {
         setMediaLoading(true)
@@ -500,115 +499,6 @@ const OrderForm = ({ data = {} }) => {
         }
     }
 
-    React.useEffect(() => {
-        if (customerNumber && customerNumber.length === 10) {
-            getCustomerNumber(customerNumber)
-        }
-    }, [customerNumber]);
-
-    React.useEffect(() => {
-        setCustomerNumber("");
-        setUserID("")
-        setFormShippingData({
-            fname: "",
-            lname: "",
-            email: "",
-            phone: "",
-            phone_secondary: "",
-            address_1: "",
-            address_2: "",
-            city: "",
-            district: "",
-            pincode: "",
-            state: ""
-        })
-        setFormData({
-            ...data,
-            // user_type: 'CUSTOMER',
-            billing_address: {
-                fname: "",
-                lname: "",
-                email: "",
-                phone: "",
-                phone_secondary: "",
-                address_1: "",
-                address_2: "",
-                city: "",
-                district: "",
-                pincode: "",
-                state: ""
-            },
-            shipping_address: {
-                fname: "",
-                lname: "",
-                email: "",
-                phone: "",
-                phone_secondary: "",
-                address_1: "",
-                address_2: "",
-                city: "",
-                district: "",
-                pincode: "",
-                state: ""
-            },
-            teamMember: "",
-            reseller: "",
-            product: null,
-            qty: "",
-            items: [],
-            isSame: false,
-            fname: "",
-            lname: "",
-            phone: "",
-            phone_secondary: "",
-            email: "",
-            state: "",
-            district: "",
-            city: "",
-            address_1: "",
-            address_2: "",
-            pincode: "",
-            payment_mode: "cod",
-            transactionId: "",
-            image: "",
-            user: "",
-            discount_coupon: "",
-        })
-    }, [user_type]);
-
-
-    // React.useEffect(() => {
-    //     if (formData?.isSame) {
-    //         setFormShippingData({
-    //             fname: fname,
-    //             lname: lname,
-    //             email: email,
-    //             phone: phone,
-    //             phone_secondary: phone_secondary,
-    //             address_1: address_1,
-    //             address_2: address_2,
-    //             city: city,
-    //             district: district,
-    //             pincode: pincode,
-    //             state: state
-    //         })
-    //     } else {
-    //         setFormShippingData({
-    //             fname: "",
-    //             lname: "",
-    //             email: "",
-    //             phone: "",
-    //             phone_secondary: "",
-    //             address_1: "",
-    //             address_2: "",
-    //             city: "",
-    //             district: "",
-    //             pincode: "",
-    //             state: ""
-    //         })
-    //     }
-    // }, [formData?.isSame]);
-
     return (
         <Box>
             <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
@@ -627,7 +517,9 @@ const OrderForm = ({ data = {} }) => {
                                             <RadioGroup
                                                 row
                                                 value={user_type ?? "CUSTOMER"}
-                                                onChange={(e) => setUserType(e.target.value)}
+                                                onChange={(e) => {
+                                                    if (!id) setUserType(e.target.value)
+                                                }}
                                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                                 name="user_type">
                                                 <FormControlLabel value="CUSTOMER" control={<Radio />} label="Customer" />
@@ -638,6 +530,9 @@ const OrderForm = ({ data = {} }) => {
                                         <Box sx={{ mt: 1 }}>
                                             <TextField
                                                 fullWidth
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 type="text"
                                                 label={`${user_type === 'CUSTOMER' ? "Customer" : "Reseller"} Phone`}
                                                 onChange={(event) => {
@@ -659,18 +554,14 @@ const OrderForm = ({ data = {} }) => {
                                                     <Autocomplete
                                                         fullWidth
                                                         sx={{ mt: 2 }}
-                                                        multiple={false}
-                                                        id="tags-outlined"
-                                                        value={TeamName}
+                                                        value={TeamData?.find(x => x?.id == TeamName) ?? null}
                                                         name="teamMember"
                                                         onChange={(event, newValue) => {
-                                                            setTeamName(newValue);
-                                                            setFormData({ ...formData, teamMember: newValue.id });
+                                                            setTeamName(newValue?.id);
+                                                            setFormData({ ...formData, teamMember: newValue?.id });
                                                         }}
-                                                        options={TeamData}
+                                                        options={TeamData ?? []}
                                                         getOptionLabel={(option) => option.name}
-                                                        getOptionValue={(option) => option.id}
-                                                        filterSelectedOptions
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
@@ -810,7 +701,7 @@ const OrderForm = ({ data = {} }) => {
                                                         return (
                                                             <Box>
                                                                 <Box sx={{ mt: 1, background: UIColor, color: '#fff', p: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                                    <Typography sx={{ fontWeight: 700 }}>{data?.productname}</Typography>
+                                                                    <Typography sx={{ fontWeight: 700 }}>{data?.productname ?? data?.product_name}</Typography>
                                                                     <Icon onClick={() => handleDeleteProduct(index)} sx={{
                                                                         color: "#fff",
                                                                         cursor: "pointer",
@@ -829,7 +720,7 @@ const OrderForm = ({ data = {} }) => {
                                                                                 <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
                                                                                     <Typography sx={{ fontWeight: 700 }}>QTY</Typography>
                                                                                     <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>
-                                                                                        <TextField
+                                                                                        {/* <TextField
                                                                                             className="numberRemove"
                                                                                             sx={{
                                                                                                 border: 'none',
@@ -850,7 +741,8 @@ const OrderForm = ({ data = {} }) => {
                                                                                             value={data?.qty}
                                                                                             onChange={(e) => handleQTYChange(e, index)}
                                                                                             name="qty"
-                                                                                        />
+                                                                                        /> */}
+                                                                                        {data?.qty}
                                                                                     </Typography>
                                                                                 </Box>
                                                                             </TableCell>
@@ -902,7 +794,7 @@ const OrderForm = ({ data = {} }) => {
                                                         return (
                                                             <Box>
                                                                 <Box sx={{ mt: 1, background: UIColor, color: '#fff', p: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                                    <Typography sx={{ fontWeight: 700 }}>{data?.productname}</Typography>
+                                                                    <Typography sx={{ fontWeight: 700 }}>{data?.productname ?? data?.product_name}</Typography>
                                                                     <Icon onClick={() => handleDeleteProduct(index)} sx={{
                                                                         color: "#fff",
                                                                         cursor: "pointer",
@@ -921,7 +813,7 @@ const OrderForm = ({ data = {} }) => {
                                                                                 <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: { sm: 'column', xs: 'column' } }}>
                                                                                     <Typography sx={{ fontWeight: 700 }}>QTY</Typography>
                                                                                     <Typography sx={{ width: '100%', borderTop: '1px solid', px: '5px', textAlign: 'center' }}>
-                                                                                        <TextField
+                                                                                        {/* <TextField
                                                                                             className="numberRemove"
                                                                                             sx={{
                                                                                                 border: 'none',
@@ -938,11 +830,13 @@ const OrderForm = ({ data = {} }) => {
                                                                                                     border: 'none',
                                                                                                 },
                                                                                             }}
+
                                                                                             type="text"
                                                                                             value={data?.qty}
                                                                                             onChange={(e) => handleQTYChange(e, index)}
                                                                                             name="qty"
-                                                                                        />
+                                                                                        /> */}
+                                                                                        {data?.qty}
                                                                                     </Typography>
                                                                                 </Box>
                                                                             </TableCell>
@@ -1008,6 +902,9 @@ const OrderForm = ({ data = {} }) => {
                                                 label="First Name"
                                                 onChange={handleChange}
                                                 value={fname || ""}
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 validators={["required"]}
                                                 errorMessages={["this field is required"]}
                                             />
@@ -1015,6 +912,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 type="text"
                                                 name="lname"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Last Name"
                                                 onChange={handleChange}
                                                 value={lname || ""}
@@ -1025,6 +925,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 type="email"
                                                 name="email"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Email"
                                                 value={email || ""}
                                                 onChange={handleChange}
@@ -1034,6 +937,9 @@ const OrderForm = ({ data = {} }) => {
 
                                             <TextField
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 name="phone"
                                                 label="Phone Nubmer"
                                                 onChange={handleChange}
@@ -1044,6 +950,9 @@ const OrderForm = ({ data = {} }) => {
 
                                             <TextField
                                                 name="pincode"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 type="pincode"
                                                 label="Post Code"
                                                 value={pincode || ""}
@@ -1053,6 +962,9 @@ const OrderForm = ({ data = {} }) => {
                                             />
                                             <TextField
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 name="phone_secondary"
                                                 label="Alternate Phone Nubmer"
                                                 onChange={handleChange}
@@ -1064,10 +976,10 @@ const OrderForm = ({ data = {} }) => {
                                         </Grid>
 
                                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 0 }}>
-
                                             <Autocomplete
                                                 fullWidth
                                                 multiple={false}
+                                                readOnly={!!id}
                                                 value={Country.getAllCountries()?.find(x => x?.name == country) ?? null}
                                                 name="country"
                                                 onChange={(event, newValue) => {
@@ -1083,10 +995,10 @@ const OrderForm = ({ data = {} }) => {
                                                     />
                                                 )}
                                             />
-
                                             <Autocomplete
                                                 fullWidth
                                                 multiple={false}
+                                                readOnly={!!id}
                                                 value={state ?? null}
                                                 name="state"
                                                 onChange={(event, newValue) => {
@@ -1105,16 +1017,20 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 name="district"
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="District"
                                                 value={district || ""}
                                                 onChange={handleChange}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
                                             />
                                             <TextField
                                                 name="city"
                                                 type="text"
                                                 label="City"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 value={city || ""}
                                                 onChange={handleChange}
                                                 validators={["required"]}
@@ -1123,6 +1039,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 name="address_1"
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Address - 1"
                                                 value={address_1 || ""}
                                                 onChange={handleChange}
@@ -1132,6 +1051,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 name="address_2"
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Address - 2"
                                                 value={address_2 || ""}
                                                 onChange={handleChange}
@@ -1167,6 +1089,9 @@ const OrderForm = ({ data = {} }) => {
                                                     <TextField
                                                         name="gst_number"
                                                         type="text"
+                                                        InputProps={{
+                                                            readOnly: !!id,
+                                                        }}
                                                         label="GST Number"
                                                         onChange={handleChange}
                                                         value={gst_number || ""}
@@ -1178,24 +1103,14 @@ const OrderForm = ({ data = {} }) => {
                                         </Grid>
                                     </Grid>
 
-                                    <Box display='flex' alignItems='center'>
-                                        <Typography variant="h6">Shipping Address </Typography>
-                                        <FormControl sx={{ flexDirection: 'row', alignItems: 'center', ml: 2 }} component="div" variant="standard">
-                                            <FormGroup>
-                                                <FormControlLabel
-                                                    control={
-                                                        <Checkbox checked={isSame} onChange={handleChange} name="isSame" />
-                                                    }
-                                                    label="Same as Above"
-                                                />
-                                            </FormGroup>
-                                        </FormControl>
-                                    </Box>
                                     {!formData?.isSame && <Grid container spacing={{ md: 1, sm: 0, xs: 0 }} sx={{ mt: 2 }}>
                                         <Grid item lg={6} md={6} sm={12} xs={12}>
                                             <TextField
                                                 type="text"
                                                 name="fname"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="First Name"
                                                 onChange={handleShippingChange}
                                                 value={formShippingData.fname || ""}
@@ -1206,6 +1121,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 type="text"
                                                 name="lname"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Last Name"
                                                 onChange={handleShippingChange}
                                                 value={formShippingData.lname || ""}
@@ -1215,6 +1133,9 @@ const OrderForm = ({ data = {} }) => {
 
                                             <TextField
                                                 type="email"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 name="email"
                                                 label="Email"
                                                 value={formShippingData.email || ""}
@@ -1225,6 +1146,9 @@ const OrderForm = ({ data = {} }) => {
 
                                             <TextField
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 name="phone"
                                                 label="Phone Nubmer"
                                                 onChange={handleShippingChange}
@@ -1236,6 +1160,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 name="pincode"
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Post Code"
                                                 value={formShippingData.pincode || ""}
                                                 onChange={handleShippingChange}
@@ -1246,6 +1173,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 type="text"
                                                 name="phone_secondary"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Alternate Phone Nubmer"
                                                 inputProps={{ maxLength: 10 }}
                                                 onChange={handleShippingChange}
@@ -1256,9 +1186,11 @@ const OrderForm = ({ data = {} }) => {
                                         </Grid>
 
                                         <Grid item lg={6} md={6} sm={12} xs={12}>
+
                                             <Autocomplete
                                                 fullWidth
                                                 multiple={false}
+                                                readOnly={!!id}
                                                 value={Country.getAllCountries()?.find(x => x?.name == formShippingData?.country) ?? null}
                                                 name="country"
                                                 onChange={(event, newValue) => {
@@ -1274,9 +1206,11 @@ const OrderForm = ({ data = {} }) => {
                                                     />
                                                 )}
                                             />
+
                                             <Autocomplete
                                                 fullWidth
                                                 multiple={false}
+                                                readOnly={!!id}
                                                 value={formShippingData.state ?? null}
                                                 name="state"
                                                 onChange={(event, newValue) => {
@@ -1294,14 +1228,18 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 name="district"
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="District"
                                                 value={formShippingData.district || ""}
                                                 onChange={handleShippingChange}
-                                                validators={["required"]}
-                                                errorMessages={["this field is required"]}
                                             />
                                             <TextField
                                                 name="city"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 type="text"
                                                 label="City"
                                                 value={formShippingData.city || ""}
@@ -1311,6 +1249,9 @@ const OrderForm = ({ data = {} }) => {
                                             />
                                             <TextField
                                                 name="address_1"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 type="text"
                                                 label="Address - 1"
                                                 value={formShippingData.address_1 || ""}
@@ -1321,6 +1262,9 @@ const OrderForm = ({ data = {} }) => {
                                             <TextField
                                                 name="address_2"
                                                 type="text"
+                                                InputProps={{
+                                                    readOnly: !!id,
+                                                }}
                                                 label="Address - 2"
                                                 value={formShippingData.address_2 || ""}
                                                 onChange={handleShippingChange}
@@ -1512,7 +1456,7 @@ const OrderForm = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - ((((coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)) + (((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) >= 150) ? ((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) : 150))))}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -1540,4 +1484,4 @@ const OrderForm = ({ data = {} }) => {
     );
 };
 
-export default OrderForm;
+export default OrderDetailEdit;
