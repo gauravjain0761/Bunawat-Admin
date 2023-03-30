@@ -99,6 +99,7 @@ export const API_URL = {
     videoFileUpload: "uploadVideo",
     fileUploadProfile: "fileUpload/profile",
     fileUploadProduct: "fileUpload/product",
+    fileUploadSKU: "fileUpload/sku",
     fileUploadCategory: "fileUpload/category",
     fileUploadCollection: "fileUpload/collection",
     fileUploadOrderDocs: "fileUpload/order_docs",

@@ -7,7 +7,7 @@ import { toast } from 'material-react-toastify';
 import React, { useEffect, useState } from 'react'
 import { arrayMove, SortableContainer, SortableElement } from 'react-sortable-hoc'
 
-const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductType = "Product", formColorData, setFormColorData }) => {
+const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductType = "sku", formColorData, setFormColorData }) => {
     const [formData, setFormData] = useState({});
     const [formError, setFormError] = useState({});
     const [imageLoading, setImageLoading] = useState(false);
@@ -89,7 +89,7 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
         // let imageData = new FormData();
         const images = formData?.image ?? []
         // imageData.append('file', event.target.files[0]);
-        await ApiPost(API_URL.fileUploadProduct, filesData, config)
+        await ApiPost(API_URL.fileUploadSKU, filesData, config)
             .then((response) => {
                 if (response?.data) {
                     let ImagesData = [];
@@ -293,7 +293,7 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
                                         return (
                                             <Grid key={`List-Image${index}`} item lg={3} md={3} sm={6} xs={6}>
                                                 <Box sx={{ width: "100%" }}>
-                                                    <img src={item.url} width="100%" height="200px" style={{borderRadius: "6px"}} />
+                                                    <img src={item.url} width="100%" height="200px" style={{ borderRadius: "6px" }} />
                                                     <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                                                         <div>
                                                             {!!item?._id ?
