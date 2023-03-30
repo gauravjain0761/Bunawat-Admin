@@ -11,7 +11,6 @@ import { UIColor } from 'app/utils/constant';
 import { useState } from 'react';
 import DeleteModel from 'app/views/models/deleteModel';
 import styled from '@emotion/styled';
-import { mockDataOrderManagement } from 'fake-db/data/order/orderData';
 import { Span } from 'app/components/Typography';
 import StatusModel from 'app/views/order/models/statusModel';
 import PaymentModel from 'app/views/order/models/paymentModel';
@@ -395,6 +394,10 @@ const OrderList = () => {
                                         navigate(`/order/detail/${row?._id}`);
                                         handleActionClose();
                                     }}>View Order</MenuItem>
+                                    <MenuItem onClick={() => {
+                                        navigate(`/order/edit/${row?._id}`);
+                                        handleActionClose();
+                                    }}>Edit Order</MenuItem>
                                 </Menu>
                             </TableCell>
                         </TableRow>

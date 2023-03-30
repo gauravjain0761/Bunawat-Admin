@@ -2,6 +2,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Autocomplete,
     Box,
     Button,
     Checkbox,
@@ -33,6 +34,7 @@ import { API_URL } from "app/constant/api";
 import { toast } from 'material-react-toastify';
 import moment from "moment";
 import { LoadingButton } from "@mui/lab";
+import { Country, State, City } from "country-state-city";
 
 const TextField = styled(TextValidator)(() => ({
     width: "100%",
@@ -180,7 +182,9 @@ const UserForm = ({ data = {}, userType, id, disable }) => {
         agency_name,
         notes,
         shipping,
-        commission
+        commission,
+        country,
+        country_code
     } = formData;
 
     const DateCustomInput = ({ value, label, onClick, className }) => (
@@ -364,17 +368,42 @@ const UserForm = ({ data = {}, userType, id, disable }) => {
                         </Grid>
 
                         <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                            <TextField
-                                type="text"
-                                name="state"
-                                value={state || ""}
-                                label="State"
-                                InputProps={{
-                                    readOnly: disable,
+                            <Autocomplete
+                                fullWidth
+                                multiple={false}
+                                readOnly={disable}
+                                value={Country.getAllCountries()?.find(x => x?.name == country) ?? null}
+                                name="country"
+                                onChange={(event, newValue) => {
+                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode });
                                 }}
-                                onChange={(e) => handleChange(e)}
-                                validators={["required"]}
-                                errorMessages={["this field is required"]}
+                                options={Country.getAllCountries()}
+                                getOptionLabel={(option) => option?.name}
+                                filterSelectedOptions
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Country"
+                                    />
+                                )}
+                            />
+                            <Autocomplete
+                                fullWidth
+                                multiple={false}
+                                readOnly={disable}
+                                value={state ?? null}
+                                name="state"
+                                onChange={(event, newValue) => {
+                                    setFormData({ ...formData, state: newValue });
+                                }}
+                                options={State?.getStatesOfCountry(country_code)?.map(x => x?.name)}
+                                filterSelectedOptions
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="State"
+                                    />
+                                )}
                             />
                             <TextField
                                 name="district"
@@ -649,14 +678,40 @@ const UserForm = ({ data = {}, userType, id, disable }) => {
                             </Grid>
 
                             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                                <TextField
-                                    type="text"
+                                <Autocomplete
+                                    fullWidth
+                                    multiple={false}
+                                    value={Country.getAllCountries()?.find(x => x?.name == shipping?.country) ?? null}
+                                    name="country"
+                                    onChange={(event, newValue) => {
+                                        setFormData({ ...formData, shipping: { ...formData?.shipping, country: newValue?.name, country_code: newValue?.isoCode } });
+                                    }}
+                                    options={Country.getAllCountries() ?? []}
+                                    getOptionLabel={(option) => option?.name}
+                                    filterSelectedOptions
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Country"
+                                        />
+                                    )}
+                                />
+                                <Autocomplete
+                                    fullWidth
+                                    multiple={false}
+                                    value={shipping?.state ?? null}
                                     name="state"
-                                    value={shipping?.state || ""}
-                                    label="State"
-                                    onChange={(e) => handleChange(e, 'shipping')}
-                                    validators={["required"]}
-                                    errorMessages={["this field is required"]}
+                                    onChange={(event, newValue) => {
+                                        setFormData({ ...formData, shipping: { ...formData?.shipping, state: newValue } });
+                                    }}
+                                    options={State?.getStatesOfCountry(shipping?.country_code)?.map(x => x?.name) ?? []}
+                                    filterSelectedOptions
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="State"
+                                        />
+                                    )}
                                 />
                                 <TextField
                                     type="text"
