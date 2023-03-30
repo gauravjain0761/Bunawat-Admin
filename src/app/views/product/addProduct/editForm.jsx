@@ -775,7 +775,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         return (
             <Grid item lg={3} md={3} sm={6} xs={6}>
                 <Box sx={{ width: "100%" }}>
-                    <img src={items.url} width="100%" height="350px" />
+                    <img src={items.url} width="100%" height="350px" style={{ borderRadius: "6px" }} />
                     <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                         <div>
                             <Stack direction="row" alignItems="center">
@@ -1352,7 +1352,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             <Carousel showThumbs={false}>
                                                 {selectedSwatchImage?.length > 0 ? selectedSwatchImage?.map(list => (
                                                     <div>
-                                                        <img src={list?.url} width="100%" height="360px" />
+                                                        <img src={list?.url} width="100%" height="360px" style={{borderRadius: "6px"}} />
                                                     </div>
                                                 ))
                                                     :

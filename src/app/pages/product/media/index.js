@@ -302,12 +302,12 @@ const ProductMedia = () => {
                                 <Grid item lg={3} md={3} sm={6} xs={6} key={item._id}>
                                     <Box sx={{
                                         width: "100%",
-                                        height: "200px",
+                                        height: "280px",
                                         margin: "10px 10px 0 0",
                                         position: "relative",
                                         cursor: 'pointer'
                                     }}>
-                                        <img src={item?.image} width="100%" height="200px" onClick={(e) => {
+                                        <img src={item?.image} width="100%" height="280px" style={{ objectFit: "fill", borderRadius: "6px"}} onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
                                             navigate(`/product/media/${item._id}`)
@@ -319,6 +319,7 @@ const ProductMedia = () => {
                                             bottom: 0,
                                             background: '#00000075',
                                             color: '#fff',
+                                            borderRadius: "0 0 6px 6px",
                                             display: 'flex',
                                             alignItems: 'center',
                                             flexDirection: 'column',

@@ -293,7 +293,7 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
                                         return (
                                             <Grid key={`List-Image${index}`} item lg={3} md={3} sm={6} xs={6}>
                                                 <Box sx={{ width: "100%" }}>
-                                                    <img src={item.url} width="100%" height="200px" />
+                                                    <img src={item.url} width="100%" height="200px" style={{borderRadius: "6px"}} />
                                                     <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                                                         <div>
                                                             {!!item?._id ?
