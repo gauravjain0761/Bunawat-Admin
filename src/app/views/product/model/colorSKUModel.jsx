@@ -163,7 +163,8 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
         setImageLoading(true)
         await ApiPost(API_URL.fileRemove, {
             url: formData?.image?.[index]?.url,
-            type: ProductType
+            type: ProductType,
+            id: formData?.image?.[index]?._id
         })
             .then((response) => {
                 setImageLoading(false)
@@ -294,9 +295,9 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
                                             <Grid key={`List-Image${index}`} item lg={3} md={3} sm={6} xs={6}>
                                                 <Box sx={{ width: "100%" }}>
                                                     <img src={item.url} width="100%" height="200px" style={{ borderRadius: "6px" }} />
-                                                    <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
-                                                        <div>
-                                                            {!!item?._id ?
+                                                    {!!item?._id ?
+                                                        <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
+                                                            <div>
                                                                 <Stack direction="row" alignItems="center">
                                                                     <Switch
                                                                         size="small"
@@ -310,20 +311,20 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
                                                                         inputProps={{ 'aria-label': 'controlled' }}
                                                                     /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
                                                                 </Stack>
-                                                                : null}
-                                                        </div>
-                                                        <div>
-                                                            <Stack direction="row" alignItems="center">
-                                                                <IconButton size="small">
-                                                                    <Icon fontSize="small" onMouseDown={(e) => handleDeleteImage(index)} sx={{
-                                                                        color: "red",
-                                                                        cursor: "pointer",
-                                                                    }}>delete</Icon>
-                                                                </IconButton>
-                                                                {/* <Span onMouseDown={() => handleDeleteImage(index)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span> */}
-                                                            </Stack>
-                                                        </div>
-                                                    </Box>
+                                                            </div>
+                                                            <div>
+                                                                <Stack direction="row" alignItems="center">
+                                                                    <IconButton size="small">
+                                                                        <Icon fontSize="small" onMouseDown={(e) => handleDeleteImage(index)} sx={{
+                                                                            color: "red",
+                                                                            cursor: "pointer",
+                                                                        }}>delete</Icon>
+                                                                    </IconButton>
+                                                                    {/* <Span onMouseDown={() => handleDeleteImage(index)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span> */}
+                                                                </Stack>
+                                                            </div>
+                                                        </Box>
+                                                        : null}
                                                 </Box>
                                             </Grid>
                                         );
