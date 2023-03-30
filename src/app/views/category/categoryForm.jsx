@@ -706,11 +706,11 @@ const CategoryForm = ({ data = {}, id, type }) => {
                                                         <Box
                                                             sx={{
                                                                 width: "150px",
-                                                                height: "170px",
+                                                                height: "200px",
                                                                 margin: "10px 10px 0 0",
                                                                 position: "relative"
                                                             }}>
-                                                            <img src={image} width="100%" height="90%" style={{objectFit: "fill"}} />
+                                                            <img src={image} width="100%" height="90%" style={{objectFit: "fill", borderRadius: "6px"}} />
                                                             <Box sx={{ height: "10%" }} display="flex" alignItems="center" justifyContent="end">
                                                                 <IconButton size="small">
                                                                     <Icon fontSize="small" onClick={() => handleDeleteImage()} sx={{
