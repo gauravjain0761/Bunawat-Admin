@@ -167,7 +167,9 @@ const OrderDetailEdit = ({ data = {} }) => {
         coupenDataManualApply,
         discount_coupon,
         country,
-        country_code
+        country_code,
+        gst_available,
+        gst_num
     } = formData;
 
     const getCustomerNumber = async (itemData) => {
@@ -182,8 +184,9 @@ const OrderDetailEdit = ({ data = {} }) => {
                 setFormShippingData(itemData?.shipping_address)
                 setUserType(itemData?.user?.user_type)
                 setCustomerNumber(itemData?.user?.phone)
+                setPaymentMode(itemData?.payment_mode?.toLowerCase())
                 setTeamName(itemData?.member)
-                finalData = { ...finalData, ...itemData?.billing_address, teamMember: itemData?.member, items: itemData?.items, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "" }
+                finalData = { ...finalData, ...itemData?.billing_address, teamMember: itemData?.member, items: itemData?.items, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "", gst_available: itemData?.gst_available ? "yes" : 'no', gst_num: itemData?.gst_num }
                 setFormData(finalData);
             }
         }).catch((error) => {
@@ -983,7 +986,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                 value={Country.getAllCountries()?.find(x => x?.name == country) ?? null}
                                                 name="country"
                                                 onChange={(event, newValue) => {
-                                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode });
+                                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode, state: null });
                                                 }}
                                                 options={Country.getAllCountries() ?? []}
                                                 getOptionLabel={(option) => option?.name}
@@ -1070,8 +1073,10 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                 <FormLabel id="demo-row-radio-buttons-group-label" sx={{ width: "100px" }}>GST Available</FormLabel>
                                                 <RadioGroup
                                                     row
-                                                    value={gst_mode ?? "no"}
-                                                    onChange={(e) => setFormData({ ...formData, gst_mode: e.target.value })}
+                                                    value={gst_available == "yes" ? "yes" : "no"}
+                                                    onChange={(e) => {
+                                                        if (!id) setFormData({ ...formData, gst_mode: e.target.value })
+                                                    }}
                                                     aria-labelledby="demo-row-radio-buttons-group-label">
                                                     <Grid container>
                                                         <Grid item lg={12}>
@@ -1084,17 +1089,17 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                 </RadioGroup>
                                             </FormControl>
 
-                                            {gst_mode == "yes" ?
+                                            {gst_available == "yes" ?
                                                 <Grid item lg={12}>
                                                     <TextField
-                                                        name="gst_number"
+                                                        name="gst_num"
                                                         type="text"
                                                         InputProps={{
                                                             readOnly: !!id,
                                                         }}
                                                         label="GST Number"
                                                         onChange={handleChange}
-                                                        value={gst_number || ""}
+                                                        value={gst_num || ""}
                                                         validators={["required"]}
                                                         errorMessages={["this field is required"]}
                                                     />
@@ -1194,7 +1199,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                 value={Country.getAllCountries()?.find(x => x?.name == formShippingData?.country) ?? null}
                                                 name="country"
                                                 onChange={(event, newValue) => {
-                                                    setFormShippingData({ ...formShippingData, country: newValue?.name, country_code: newValue?.isoCode });
+                                                    setFormShippingData({ ...formShippingData, country: newValue?.name, country_code: newValue?.isoCode, state: null });
                                                 }}
                                                 options={Country.getAllCountries() ?? []}
                                                 getOptionLabel={(option) => option?.name}
@@ -1300,7 +1305,9 @@ const OrderDetailEdit = ({ data = {} }) => {
                                         <RadioGroup
                                             row
                                             value={paymentMode ?? "cod"}
-                                            onChange={(e) => setPaymentMode(e.target.value)}
+                                            onChange={(e) => {
+                                                if (!id) setPaymentMode(e.target.value)
+                                            }}
                                             aria-labelledby="demo-row-radio-buttons-group-label"
                                         // name="paymentMode"
                                         >
@@ -1320,6 +1327,9 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                         <TextField
                                                             name="transaction_id"
                                                             type="text"
+                                                            InputProps={{
+                                                                readOnly: !!id,
+                                                            }}
                                                             label="Transaction id"
                                                             value={onlineData?.transaction_id || ""}
                                                             onChange={(e) => {
@@ -1456,7 +1466,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - ((((coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)) + (((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) >= 150) ? ((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) : 150))))}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - ((((coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)) + (paymentMode != 'online' ? ((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) >= 150) ? ((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) : 150) : 0)))}
                                     </Typography>
                                 </Box>
                             </Box>

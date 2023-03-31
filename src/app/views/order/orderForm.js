@@ -127,6 +127,7 @@ const OrderForm = ({ data = {} }) => {
         discount_coupon: "",
     });
     const navigate = useNavigate();
+    const [isSubmit, setIsSubmit] = useState(false)
     const [customerNumber, setCustomerNumber] = React.useState([]);
     const [products, setProducts] = React.useState([]);
     const [ProductName, setProductName] = React.useState(null);
@@ -160,8 +161,8 @@ const OrderForm = ({ data = {} }) => {
         address_1,
         address_2,
         pincode,
-        gst_mode,
-        gst_number,
+        gst_available,
+        gst_num,
         coupenDataManual,
         coupenDataManualApply,
         discount_coupon,
@@ -318,8 +319,10 @@ const OrderForm = ({ data = {} }) => {
             "isSame": formData?.isSame || false,
             "payment_mode": paymentMode.toUpperCase(),
             "total_items": formData?.items?.length,
+            "gst_num": formData?.gst_num ?? '',
+            "gst_available": formData?.gst_available == "yes",
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
-            "total_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2),
+            "total_amount": (Number(formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0) + Number((paymentMode != 'online' ? Number(((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0)) * 2) / 100) >= 150) ? (((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0)) * 2) / 100) : 150) : 0)))?.toFixed(2),
             "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.filter(x => x?.qty ?? 0 > 0) : formData?.items?.filter(x => x?.qty ?? 0 > 0),
             "gst_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2),
             "cgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
@@ -328,18 +331,20 @@ const OrderForm = ({ data = {} }) => {
             "discount_amount": (formData?.coupenDataManualApply ? (Number(formData?.coupenDataManual ?? 0)) : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2),
             "discount_coupon": formData?.coupon_id
         }
-        if (formDatas?.items?.length > 0) {
-            await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
-                if (response.status) {
-                    toast.success('Add Successfully!')
-                    navigate(`/order/list`)
-                }
-            }).catch((error) => {
-                console.log("Error", error);
-                toast.error(error?.error)
-            });
-        } else {
-            toast.error("Please select product with qty First!")
+        if (isSubmit) {
+            if (formDatas?.items?.length > 0) {
+                await ApiPost(`${API_URL.addOrder}`, formDatas).then((response) => {
+                    if (response.status) {
+                        toast.success('Add Successfully!')
+                        navigate(`/order/list`)
+                    }
+                }).catch((error) => {
+                    console.log("Error", error);
+                    toast.error(error?.error)
+                });
+            } else {
+                toast.error("Please select product with qty First!")
+            }
         }
     };
 
@@ -1071,7 +1076,7 @@ const OrderForm = ({ data = {} }) => {
                                                 value={Country.getAllCountries()?.find(x => x?.name == country) ?? null}
                                                 name="country"
                                                 onChange={(event, newValue) => {
-                                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode });
+                                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode, state: null });
                                                 }}
                                                 options={Country.getAllCountries() ?? []}
                                                 getOptionLabel={(option) => option?.name}
@@ -1148,8 +1153,8 @@ const OrderForm = ({ data = {} }) => {
                                                 <FormLabel id="demo-row-radio-buttons-group-label" sx={{ width: "100px" }}>GST Available</FormLabel>
                                                 <RadioGroup
                                                     row
-                                                    value={gst_mode ?? "no"}
-                                                    onChange={(e) => setFormData({ ...formData, gst_mode: e.target.value })}
+                                                    value={gst_available == "yes" ? "yes" : "no"}
+                                                    onChange={(e) => setFormData({ ...formData, gst_available: e.target.value, gst_num: '' })}
                                                     aria-labelledby="demo-row-radio-buttons-group-label">
                                                     <Grid container>
                                                         <Grid item lg={12}>
@@ -1162,14 +1167,14 @@ const OrderForm = ({ data = {} }) => {
                                                 </RadioGroup>
                                             </FormControl>
 
-                                            {gst_mode == "yes" ?
+                                            {gst_available == "yes" ?
                                                 <Grid item lg={12}>
                                                     <TextField
-                                                        name="gst_number"
+                                                        name="gst_num"
                                                         type="text"
                                                         label="GST Number"
                                                         onChange={handleChange}
-                                                        value={gst_number || ""}
+                                                        value={gst_num || ""}
                                                         validators={["required"]}
                                                         errorMessages={["this field is required"]}
                                                     />
@@ -1262,7 +1267,7 @@ const OrderForm = ({ data = {} }) => {
                                                 value={Country.getAllCountries()?.find(x => x?.name == formShippingData?.country) ?? null}
                                                 name="country"
                                                 onChange={(event, newValue) => {
-                                                    setFormShippingData({ ...formShippingData, country: newValue?.name, country_code: newValue?.isoCode });
+                                                    setFormShippingData({ ...formShippingData, country: newValue?.name, country_code: newValue?.isoCode, state: null });
                                                 }}
                                                 options={Country.getAllCountries() ?? []}
                                                 getOptionLabel={(option) => option?.name}
@@ -1509,10 +1514,18 @@ const OrderForm = ({ data = {} }) => {
                                         {(coupenDataManualApply ? (Number(coupenDataManual ?? 0)) : (items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2)}
                                     </Typography>
                                 </Box>
+                                {paymentMode != 'online' &&
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                        <Typography sx={{ fontWeight: 700, color: 'red' }}>COD Amount</Typography>
+                                        <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                            {(((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0)) * 2) / 100) >= 150) ? (((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0)) * 2) / 100) : 150)}
+                                        </Typography>
+                                    </Box>
+                                }
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)}
+                                        {Number((items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)) + (paymentMode != 'online' ? Number(((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0)) * 2) / 100) >= 150) ? (((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0)) * 2) / 100) : 150) : 0)}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -1523,7 +1536,9 @@ const OrderForm = ({ data = {} }) => {
                             <Button onClick={() => navigate(-1)} sx={{ border: '1px solid #232a45', color: '#232a45', display: { sm: 'initial', xs: 'none' } }}>
                                 Back
                             </Button>
-                            <Button type="submit" sx={{
+                            <Button type="submit" onClick={() => {
+                                setIsSubmit(true)
+                            }} sx={{
                                 background: '#232a45', ml: 2, color: '#fff',
                                 "&:hover": {
                                     background: '#232a45', color: '#fff'
