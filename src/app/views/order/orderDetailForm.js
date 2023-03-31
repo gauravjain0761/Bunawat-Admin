@@ -379,7 +379,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{Number((Number(viewOrder?.total_amount) + Number(viewOrder?.discount_amount)) - ((Number(viewOrder?.gst_amount)) + Number(viewOrder?.payment_mode == "COD" ? (((((viewOrder?.total_amount) * 2) / 100) >= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150) : 0)))?.toFixed(2)}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{rows?.reduce((t, row) => t + (Number(row?.price) * Number(row?.qty)), 0)}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
