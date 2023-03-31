@@ -217,7 +217,8 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
         setVideoLoading(true)
         await ApiPost(API_URL.fileRemove, {
             url: formData?.videos?.[index]?.url,
-            type: ProductType
+            type: ProductType,
+            id: formData?.image?.[index]?._id
         })
             .then((response) => {
                 setVideoLoading(false)
