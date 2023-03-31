@@ -69,6 +69,9 @@ const InvoicesDocument = ({ data }) => {
         }
     </style>
         <div class="bunawat_doc">
+            <div>
+              <h2 style="text-align: center;">Tax Invoice</h2>
+            </div>
             <div class="bunawat_doc_top">
                         <img src="/assets/images/bunawat-pdf-logo.png" alt="" />
                         <div>
@@ -107,8 +110,9 @@ const InvoicesDocument = ({ data }) => {
                    <div>
                     <p>Invoice Number : INV/2022-23/1887 <br />
                     Order Number : ${data?.order_num} <br />
-                    Order Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p>
-                   </div>
+                    Order Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p> <br />
+                    Shiping Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p>
+                   </div>p
                 </div>
             </div>
 
