@@ -20,12 +20,16 @@ const DiscountInput = ({ setFormData, userID, formData, discountType, discountAp
             items: formData?.items ?? []
         }
         if (payload?.type === "MANUAL") {
-            payload = { ...payload, value: discountApply }
-            if ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0) >= Number(formData?.coupenDataManual ?? 0)) {
-                toast.success("Coupon Applied!")
-                setFormData({ ...formData, coupenDataManualApply: true })
+            if (Number(formData?.coupenDataManual) > 0) {
+                payload = { ...payload, value: discountApply }
+                if ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0) >= Number(formData?.coupenDataManual ?? 0)) {
+                    toast.success("Coupon Applied!")
+                    setFormData({ ...formData, coupenDataManualApply: true })
+                } else {
+                    toast.error("Amount is too high!");
+                }
             } else {
-                toast.error("Amount is too high!");
+                toast.error("Enter Amount!");
             }
         } else {
             payload = { ...payload, value: formData?.discount_coupon }

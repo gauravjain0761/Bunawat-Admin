@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Icon, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormLabel, Icon, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material'
 import { pdf } from '@react-pdf/renderer';
 import { API_URL } from 'app/constant/api'
 import { ApiDelete, ApiGet, ApiPost, ApiPut } from 'app/service/api'
@@ -58,7 +58,11 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
     };
 
     const handeSubmit = async () => {
-        await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, formData)
+        let payload = { order_status: formData?.order_status };
+        if (payload?.order_status == "Shipped") {
+            payload = formData
+        }
+        await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, payload)
             .then(async (response) => {
                 if (formData?.order_status == "Shipped") {
                     await ApiPost(`${API_URL.generatePackingSlip}/${selectedeData?._id}`, {})
@@ -86,7 +90,10 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
 
 
     const {
-        order_status
+        order_status,
+        delivery_partner,
+        delivery_id,
+        delivery_name
     } = formData;
 
     return (
@@ -126,6 +133,61 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                             <MenuItem value="Cancelled">Cancelled</MenuItem>
                         </Select>
                     </FormControl>
+                    {order_status == "Shipped" &&
+                        <>
+                            <FormControl sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                mt: 2
+                            }}>
+                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Delivery Partner </FormLabel>
+                                <RadioGroup
+                                    row
+                                    value={delivery_partner ?? "DELHIVERY"}
+                                    onChange={(e) => setFormData({ ...formData, delivery_partner: e.target.value, delivery_id: '', delivery_name: '' })}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="delivery_partner">
+                                    <FormControlLabel value="DELHIVERY" control={<Radio />} label="Delivery" />
+                                    <FormControlLabel value="OTHERS" control={<Radio />} label="Other" />
+                                </RadioGroup>
+                            </FormControl>
+                            {delivery_partner == "OTHERS" &&
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center'
+                                }}>
+                                    <TextField
+                                        type="text"
+                                        sx={{
+                                            mt: 2
+                                        }}
+                                        fullWidth
+                                        name="delivery_id"
+                                        label="Delivery Id"
+                                        onChange={handleChange}
+                                        value={delivery_id || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+                                    <TextField
+                                        type="text"
+                                        fullWidth
+                                        sx={{
+                                            mt: 2
+                                        }}
+                                        name="delivery_name"
+                                        label="Delivery Name"
+                                        onChange={handleChange}
+                                        value={delivery_name || ""}
+                                        validators={["required"]}
+                                        errorMessages={["this field is required"]}
+                                    />
+                                </Box>
+                            }
+                        </>
+                    }
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -146,7 +208,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                     Save
                 </LoadingButton>
             </DialogActions>
-        </Dialog>
+        </Dialog >
     )
 }
 

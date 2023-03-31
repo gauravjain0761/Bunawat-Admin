@@ -332,8 +332,7 @@ const OrderList = () => {
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={row?._id}
-                            selected={isItemSelected}
-                        >
+                            selected={isItemSelected}>
                             <TableCell padding="checkbox">
                                 <Checkbox
                                     color="primary"

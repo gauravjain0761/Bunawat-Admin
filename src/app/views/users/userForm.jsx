@@ -375,7 +375,7 @@ const UserForm = ({ data = {}, userType, id, disable }) => {
                                 value={Country.getAllCountries()?.find(x => x?.name == country) ?? null}
                                 name="country"
                                 onChange={(event, newValue) => {
-                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode });
+                                    setFormData({ ...formData, country: newValue?.name, country_code: newValue?.isoCode, state: null });
                                 }}
                                 options={Country.getAllCountries()}
                                 getOptionLabel={(option) => option?.name}
