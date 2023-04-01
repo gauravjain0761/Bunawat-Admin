@@ -109,9 +109,9 @@ const InvoicesDocument = ({ data }) => {
                 <div class="">
                    <div>
                     <p>Invoice Number : INV/2022-23/1887 <br />
+                    Invoice Date : ${moment(data?.createdAt).format("DD MMM, YYYY")} <br />
                     Order Number : ${data?.order_num} <br />
                     Order Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p> <br />
-                    Shiping Date : ${moment(data?.createdAt).format("DD MMM, YYYY")}</p>
                    </div>p
                 </div>
             </div>
