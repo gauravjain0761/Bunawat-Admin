@@ -29,7 +29,7 @@ const App = () => {
   useEffect(() => {
     const tokenStorage = Storage.getToken();
     const decodedJwt = parseJwt(tokenStorage ?? '');
-    if (!tokenStorage || (decodedJwt.exp * 1000 < Date.now())) {
+    if (!tokenStorage || (decodedJwt?.exp * 1000 < Date.now())) {
       Storage.deauthenticateUser();
       navigate('/session/login', { replace: true });
     }

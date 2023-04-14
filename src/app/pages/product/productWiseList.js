@@ -434,7 +434,8 @@ const ProductWiseList = () => {
                                     navigate(`/product/add/${row?._id}`)
                                 }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
                                 <MenuItem onTouchEnd={() => {
-                                    navigate(`/product/add/${row?._id}`)
+                                    setSelectedData(row)
+                                    setPositionModel(true)
                                 }} onClick={() => {
                                     setSelectedData(row)
                                     setPositionModel(true)
