@@ -352,7 +352,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                     .then((response) => {
                         setLoading(false)
                         toast.success('Edit Successfully!')
-                        navigate("/product/list")
+                        navigate(-1)
                     })
                     .catch((error) => {
                         setLoading(false)
@@ -369,7 +369,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                     .then((response) => {
                         setLoading(false)
                         toast.success('Edit Successfully!')
-                        navigate("/product/list")
+                        navigate(-1)
                     })
                     .catch((error) => {
                         setLoading(false)
@@ -1352,7 +1352,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             <Carousel showThumbs={false}>
                                                 {selectedSwatchImage?.length > 0 ? selectedSwatchImage?.map(list => (
                                                     <div>
-                                                        <img src={list?.url} width="100%" height="360px" style={{borderRadius: "6px"}} />
+                                                        <img src={list?.url} width="100%" height="360px" style={{ borderRadius: "6px" }} />
                                                     </div>
                                                 ))
                                                     :
