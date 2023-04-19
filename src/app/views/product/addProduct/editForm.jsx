@@ -1364,9 +1364,15 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             <Button onClick={() => setDopen(false)} type='button'>
                                                 Cancel
                                             </Button>
-                                            <Button onClick={() => pickColor()} type='button'>
-                                                Pick Color
-                                            </Button>
+                                            {isSupported() ?
+                                                <Button onClick={() => pickColor()} type='button'>
+                                                    Pick Color
+                                                </Button>
+                                                :
+                                                <Button onClick={() => setDopen(false)} type='button'>
+                                                    Not Support
+                                                </Button>
+                                            }
                                         </DialogActions>
                                     </Dialog>
                                 </SimpleCard>
