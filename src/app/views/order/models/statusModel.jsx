@@ -130,6 +130,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                             <MenuItem disabled={selectedeData?.order_status == "Shipped"} value="Confirmed">Confirmed</MenuItem>
                             <MenuItem value="Shipped">Shipped</MenuItem>
                             <MenuItem value="Delivered">Delivered</MenuItem>
+                            <MenuItem disabled value="Return Scheduled">Return Scheduled</MenuItem>
                             <MenuItem value="Return">Return</MenuItem>
                             <MenuItem value="Cancelled">Cancelled</MenuItem>
                         </Select>
