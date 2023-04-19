@@ -306,7 +306,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             display: 'flex',
                                                         }}>
                                                             <Box>
-                                                                <img src="https://img.freepik.com/premium-photo/clothes-rail-with-t-shirts_23-2147669592.jpg?w=2000" width='40px' height='40px' />
+                                                                <img src={row?.image} width='40px' height='40px' />
                                                             </Box>
                                                             <Stack sx={{
                                                                 ml: 2
