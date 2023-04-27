@@ -335,10 +335,55 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                             }}
                                                                             type="text"
                                                                             name="trackingNumber"
+                                                                            InputProps={{
+                                                                                readOnly: true,
+                                                                            }}
                                                                             defaultValue={row?.sku}
                                                                         />
                                                                     </Typography>
                                                                 </Box>
+                                                                {index == 0 ?
+                                                                    <>
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, gap: '10px' }}>
+                                                                            <Typography sx={{ color: '#777' }}>Track: </Typography>
+                                                                            <Typography>
+                                                                                {viewOrder?.delivery_partner == "OTHERS" ? viewOrder?.delivery_id : viewOrder?.wayBill}
+                                                                            </Typography>
+                                                                            <Button color="primary" variant="contained"
+                                                                                onClick={() => {
+                                                                                    navigator?.clipboard?.writeText("test");
+                                                                                }}
+                                                                                sx={{
+                                                                                    backgroundColor: UIColor, color: "#fff",
+                                                                                    "&:hover": {
+                                                                                        backgroundColor: UIColor, color: "#fff"
+                                                                                    }
+                                                                                }}>
+                                                                                <Span sx={{ textTransform: "capitalize", width: { md: "auto", sm: "150px", xs: "150px" } }}>Copy</Span>
+                                                                            </Button>
+                                                                        </Box>
+                                                                        {viewOrder?.return_details?.delivery_id ?
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, gap: '10px' }}>
+                                                                                <Typography sx={{ color: '#777' }}>Return Track: </Typography>
+                                                                                <Typography>
+                                                                                    {viewOrder?.return_details?.delivery_id}
+                                                                                </Typography>
+                                                                                <Button color="primary" variant="contained"
+                                                                                    onClick={() => {
+                                                                                        navigator?.clipboard?.writeText("test");
+                                                                                    }}
+                                                                                    sx={{
+                                                                                        backgroundColor: UIColor, color: "#fff",
+                                                                                        "&:hover": {
+                                                                                            backgroundColor: UIColor, color: "#fff"
+                                                                                        }
+                                                                                    }}>
+                                                                                    <Span sx={{ textTransform: "capitalize", width: { md: "auto", sm: "150px", xs: "150px" } }}>Copy</Span>
+                                                                                </Button>
+                                                                            </Box>
+                                                                            : null}
+                                                                    </>
+                                                                    : null}
                                                             </Stack>
                                                         </Box>
                                                     </TableCell>

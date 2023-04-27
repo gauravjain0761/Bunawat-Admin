@@ -60,27 +60,49 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
     const handeSubmit = async () => {
         let payload = { order_status: formData?.order_status };
         if (payload?.order_status == "Shipped") {
-            payload = formData
+            payload = {
+                order_status: formData?.order_status,
+                delivery_name: formData?.delivery_name,
+                delivery_id: formData?.delivery_id,
+            }
         }
-        await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, payload)
-            .then(async (response) => {
-                if (formData?.order_status == "Shipped") {
-                    await ApiPost(`${API_URL.generatePackingSlip}/${selectedeData?._id}`, {})
-                        .then(async (response2) => {
-                            generatePdfDocument(response?.data ?? {}, response2?.data ?? {})
-                        })
-                        .catch((error) => {
-                            console.log("Error", error);
-                        });
-                } else {
+        if (payload?.order_status == "Return") {
+            payload = {
+                order_status: formData?.order_status,
+                delivery_name: formData?.delivery_name,
+                delivery_id: formData?.delivery_id,
+                return_type: formData?.return_type ?? "CREDIT"
+            }
+            await ApiPut(`${API_URL.returnOrderUpdate}/${selectedeData?._id}`, payload)
+                .then(async (response) => {
                     if (getData) getData()
                     handleClose()
                     setLoading(false)
-                }
-            })
-            .catch((error) => {
-                console.log("Error", error);
-            });
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        } else {
+            await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, payload)
+                .then(async (response) => {
+                    if (formData?.order_status == "Shipped") {
+                        await ApiPost(`${API_URL.generatePackingSlip}/${selectedeData?._id}`, {})
+                            .then(async (response2) => {
+                                generatePdfDocument(response?.data ?? {}, response2?.data ?? {})
+                            })
+                            .catch((error) => {
+                                console.log("Error", error);
+                            });
+                    } else {
+                        if (getData) getData()
+                        handleClose()
+                        setLoading(false)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error", error);
+                });
+        }
     }
 
 
@@ -93,7 +115,8 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
         order_status,
         delivery_partner,
         delivery_id,
-        delivery_name
+        delivery_name,
+        return_type
     } = formData;
 
     return (
@@ -132,6 +155,8 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                             <MenuItem value="Delivered">Delivered</MenuItem>
                             <MenuItem disabled value="Return Scheduled">Return Scheduled</MenuItem>
                             <MenuItem value="Return">Return</MenuItem>
+                            <MenuItem value="Quality Pass">Return Quality Pass</MenuItem>
+                            <MenuItem value="Quality Fail">Return Quality Fail</MenuItem>
                             <MenuItem value="Cancelled">Cancelled</MenuItem>
                         </Select>
                     </FormControl>
@@ -188,6 +213,59 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                                     />
                                 </Box>
                             }
+                        </>
+                    }
+                    {order_status == "Return" &&
+                        <>
+                            <FormControl sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                mt: 2
+                            }}>
+                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Delivery Partner </FormLabel>
+                                <RadioGroup
+                                    row
+                                    value={return_type ?? "CREDIT"}
+                                    onChange={(e) => setFormData({ ...formData, return_type: e.target.value })}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="return_type">
+                                    <FormControlLabel value="REFUND" control={<Radio />} label="Refund" />
+                                    <FormControlLabel value="CREDIT" control={<Radio />} label="Credit" />
+                                </RadioGroup>
+                            </FormControl>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center'
+                            }}>
+                                <TextField
+                                    type="text"
+                                    sx={{
+                                        mt: 2
+                                    }}
+                                    fullWidth
+                                    name="delivery_id"
+                                    label="Delivery Id"
+                                    onChange={handleChange}
+                                    value={delivery_id || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+                                <TextField
+                                    type="text"
+                                    fullWidth
+                                    sx={{
+                                        mt: 2
+                                    }}
+                                    name="delivery_name"
+                                    label="Delivery Name"
+                                    onChange={handleChange}
+                                    value={delivery_name || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                />
+                            </Box>
                         </>
                     }
                 </DialogContentText>

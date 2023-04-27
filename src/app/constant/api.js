@@ -46,6 +46,7 @@ export const API_URL = {
     editOrder: "update_order",
     generateInvoice: "generate_invoice",
     generatePackingSlip: "generate_packing_slip",
+    returnOrderUpdate: "return_order_update",
 
     getParentCategorys: "parent_cateogry/getall",
     getParentCategory: "parent_cateogry",
