@@ -432,7 +432,7 @@ const ProductWiseList = () => {
                                 }}>{row?.status === "ACTIVE" ? "InActive" : "Active"}  </MenuItem>
                                 <MenuItem onTouchEnd={() => {
                                     navigate(`/product/add/${row?._id}`)
-                                }} onClick={() => navigate(`/product/add/${row?._id}`)}>Edit</MenuItem>
+                                }} onClick={() => navigate(`/product/add/${row?._id}?collection=true`)}>Edit</MenuItem>
                                 <MenuItem onTouchEnd={() => {
                                     setSelectedData(row)
                                     setPositionModel(true)

@@ -32,7 +32,7 @@ import { Span } from "app/components/Typography";
 import React, { useEffect, useState } from "react";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
 import TableComponent from "app/components/table";
 import TextEditor from "app/components/textEditor";
@@ -74,6 +74,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const [SKUData, setSKUData] = useState([]);
     const [formError, setFormError] = useState({});
     const [formColorSKU, setFormColorSKU] = useState([]);
+    const [searchParams] = useSearchParams();
 
     const settings = {
         dots: true,
@@ -352,7 +353,11 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                     .then((response) => {
                         setLoading(false)
                         toast.success('Edit Successfully!')
-                        navigate(-1)
+                        if (!!searchParams.get('collection')) {
+                            navigate("/collection/list")
+                        } else {
+                            navigate("/product/list")
+                        }
                     })
                     .catch((error) => {
                         setLoading(false)
@@ -369,7 +374,11 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                     .then((response) => {
                         setLoading(false)
                         toast.success('Edit Successfully!')
-                        navigate(-1)
+                        if (!!searchParams.get('collection')) {
+                            navigate("/collection/list")
+                        } else {
+                            navigate("/product/list")
+                        }
                     })
                     .catch((error) => {
                         setLoading(false)

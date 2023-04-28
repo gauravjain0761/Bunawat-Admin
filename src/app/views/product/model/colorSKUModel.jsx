@@ -379,35 +379,37 @@ const ColorSKUModel = ({ open, selectedSKU, id, getData, handleClose, ProductTyp
                                                         style={{ objectFit: "fill", borderRadius: "10px" }}>
                                                         <source src={item.url} type="video/mp4" />
                                                     </video>
-                                                    <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="space-between">
-                                                        <Stack direction="row" alignItems="center">
-                                                            <Switch
-                                                                size="small"
-                                                                sx={{
-                                                                    color: "red",
-                                                                    cursor: "pointer",
-                                                                    zIndex: "999",
-                                                                    fontSize: "10px !impoprtant",
-                                                                    // '& .MuiSwitch-input': {
-                                                                    //     width: "100% !important"
-                                                                    // }
-                                                                }}
-                                                                checked={item?.isActive}
-                                                                onChange={() => handleSwitchVideo(index, item, 4)}
-                                                                inputProps={{ 'aria-label': 'controlled' }}
-                                                            /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
-                                                        </Stack>
-                                                        <Stack direction="row" alignItems="center">
-                                                            <IconButton size="small">
-                                                                <Icon fontSize="small" onMouseDown={() => handleDeleteVideo(index)} sx={{
-                                                                    color: "red",
-                                                                    cursor: "pointer",
-                                                                    zIndex: "999"
-                                                                }}>delete</Icon>
-                                                            </IconButton>
-                                                            {/* <Span onMouseDown={() => handleDeleteVideo(index)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span> */}
-                                                        </Stack>
-                                                    </Box>
+                                                    {!!item?._id ?
+                                                        <Box sx={{ height: "40px" }} display="flex" alignItems="center" justifyContent="space-between">
+                                                            <Stack direction="row" alignItems="center">
+                                                                <Switch
+                                                                    size="small"
+                                                                    sx={{
+                                                                        color: "red",
+                                                                        cursor: "pointer",
+                                                                        zIndex: "999",
+                                                                        fontSize: "10px !impoprtant",
+                                                                        // '& .MuiSwitch-input': {
+                                                                        //     width: "100% !important"
+                                                                        // }
+                                                                    }}
+                                                                    checked={item?.isActive}
+                                                                    onChange={() => handleSwitchVideo(index, item, 4)}
+                                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                                /> <Span sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>{item?.isActive ? "Active" : "InActive"}</Span>
+                                                            </Stack>
+                                                            <Stack direction="row" alignItems="center">
+                                                                <IconButton size="small">
+                                                                    <Icon fontSize="small" onMouseDown={() => handleDeleteVideo(index)} sx={{
+                                                                        color: "red",
+                                                                        cursor: "pointer",
+                                                                        zIndex: "999"
+                                                                    }}>delete</Icon>
+                                                                </IconButton>
+                                                                {/* <Span onMouseDown={() => handleDeleteVideo(index)} sx={{ fontWeight: 600, fontSize: { md: "14px", sm: "12px", xs: "12px" }, cursor: "pointer" }}>Delete</Span> */}
+                                                            </Stack>
+                                                        </Box>
+                                                        : null}
                                                 </Box>
                                             </Grid>
                                         );
