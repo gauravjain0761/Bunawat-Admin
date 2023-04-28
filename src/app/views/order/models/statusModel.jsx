@@ -75,9 +75,15 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
             }
             await ApiPut(`${API_URL.returnOrderUpdate}/${selectedeData?._id}`, payload)
                 .then(async (response) => {
-                    if (getData) getData()
-                    handleClose()
-                    setLoading(false)
+                    await ApiPut(`${API_URL.editOrder}/${selectedeData?._id}`, { order_status: formData?.order_status })
+                        .then(async (response) => {
+                            if (getData) getData()
+                            handleClose()
+                            setLoading(false)
+                        })
+                        .catch((error) => {
+                            console.log("Error", error);
+                        });
                 })
                 .catch((error) => {
                     console.log("Error", error);
