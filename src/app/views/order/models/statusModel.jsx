@@ -164,6 +164,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                             <MenuItem value="Quality Pass">Return Quality Pass</MenuItem>
                             <MenuItem value="Quality Fail">Return Quality Fail</MenuItem>
                             <MenuItem value="Cancelled">Cancelled</MenuItem>
+                            <MenuItem value="Closed">Closed</MenuItem>
                         </Select>
                     </FormControl>
                     {order_status == "Shipped" &&
