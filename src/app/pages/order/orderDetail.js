@@ -10,7 +10,7 @@ const OrderDetail = () => {
 
     useEffect(() => {
         if (id) {
-            setData([])
+            setData({})
         }
     }, [id])
 

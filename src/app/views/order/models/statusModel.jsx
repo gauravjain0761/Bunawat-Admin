@@ -230,7 +230,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                                 alignItems: 'center',
                                 mt: 2
                             }}>
-                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Delivery Partner </FormLabel>
+                                <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Payment Type</FormLabel>
                                 <RadioGroup
                                     row
                                     value={return_type ?? "CREDIT"}

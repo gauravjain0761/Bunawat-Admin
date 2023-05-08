@@ -62,6 +62,7 @@ const OrderDetailForm = ({ data = {} }) => {
     const [viewOrder, setViewOrder] = React.useState({});
     const [orderNotes, setOrderNotes] = React.useState([]);
     const [rows, setRows] = useState([]);
+    const [returnData, setReturnData] = useState({});
 
     const getViewOrderData = async (customerPhone) => {
         await ApiGet(`${API_URL.getOrder}/${id}`).then((response) => {
@@ -280,6 +281,113 @@ const OrderDetailForm = ({ data = {} }) => {
                                             </Stack>
                                             {/* <Typography>Rourkela 769004</Typography>
                                             <Typography>Odisha</Typography> */}
+                                        </Stack>
+                                    </Grid>
+                                </Grid>
+                            </SimpleCard>
+                        </Grid>
+                        <Grid item lg={12} md={12} sm={12} xs={12} >
+                            <SimpleCard title="Return Details" backArrow={false}>
+                                <Grid container spacing={2}>
+                                    <Grid item lg={6} md={12} sm={12} xs={12}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            width: '100%',
+
+                                            "& div": {
+                                                width: '100%',
+                                            }
+                                        }}>
+                                            <TextField
+                                                type="text"
+                                                sx={{
+                                                    mt: 2,
+                                                }}
+                                                fullWidth
+                                                name="delivery_id"
+                                                label="Delivery Id"
+                                                value={viewOrder?.return_details?.[0]?.delivery_id || ""}
+                                            />
+                                            <TextField
+                                                type="text"
+                                                fullWidth
+                                                sx={{
+                                                    mt: 2
+                                                }}
+                                                name="delivery_name"
+                                                label="Delivery Name"
+                                                value={viewOrder?.return_details?.[0]?.delivery_name || ""}
+                                            />
+                                        </Box>
+                                        <Stack spacing={1}>
+                                            <Typography variant="h6">Order Status</Typography>
+                                            <FormControl fullWidth sx={{ mt: 1 }}>
+                                                <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={returnData?.order_status}
+                                                    name="order_status"
+                                                    label="Select Status"
+                                                    onChange={(e) => {
+                                                        setReturnData({ ...returnData, order_status: e.target.value });
+                                                    }}>
+                                                    <MenuItem value="Quality Pass">Return Quality Pass</MenuItem>
+                                                    <MenuItem value="Quality Fail">Return Quality Fail</MenuItem>
+                                                    <MenuItem value="Closed">Closed</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                            {returnData?.order_status == "Quality Pass" ?
+                                                <>
+                                                    <FormControl sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        mt: 2
+                                                    }}>
+                                                        <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Payment Type </FormLabel>
+                                                        <RadioGroup
+                                                            row
+                                                            value={returnData?.return_type ?? "CREDIT"}
+                                                            onChange={(e) => setReturnData({ ...returnData, return_type: e.target.value })}
+                                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                                            name="return_type">
+                                                            <FormControlLabel value="REFUND" control={<Radio />} label="Refund" />
+                                                            <FormControlLabel value="CREDIT" control={<Radio />} label="Credit" />
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                    {returnData?.return_type == "REFUND" ?
+                                                        <TextField
+                                                            type="text"
+                                                            sx={{
+                                                                mt: 2
+                                                            }}
+                                                            fullWidth
+                                                            label="UPI Transaction"
+                                                            onChange={(e) => setReturnData({ ...returnData, upi: e.target.value })}
+                                                            value={returnData?.upi || ""}
+                                                            validators={["required"]}
+                                                            errorMessages={["this field is required"]}
+                                                        />
+                                                        :
+                                                        <TextField
+                                                            type="text"
+                                                            sx={{
+                                                                mt: 2
+                                                            }}
+                                                            fullWidth
+                                                            label="Nector Link"
+                                                            onChange={(e) => setReturnData({ ...returnData, nector: e.target.value })}
+                                                            value={returnData?.nector || ""}
+                                                            validators={["required"]}
+                                                            errorMessages={["this field is required"]}
+                                                        />
+                                                    }
+                                                </>
+                                                : null}
+                                            <Button sx={{ padding: '6px 50px', ml: 2, width: '150px' }} variant='contained'>Save</Button>
                                         </Stack>
                                     </Grid>
                                 </Grid>
