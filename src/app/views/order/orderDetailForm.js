@@ -205,14 +205,17 @@ const OrderDetailForm = ({ data = {} }) => {
         }
         await ApiPut(`${API_URL.returnOrderUpdate}/${id}`, payload)
             .then(async (response) => {
+                toast.success('Successfully!')
                 await ApiPut(`${API_URL.editOrder}/${id}`, { order_status: returnData?.order_status })
                     .then(async (response) => {
                     })
                     .catch((error) => {
+                        toast.error("Not Found!")
                         console.log("Error", error);
                     });
             })
             .catch((error) => {
+                toast.error("Not Found!")
                 console.log("Error", error);
             });
     }
@@ -499,7 +502,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                         />
                                                                     </Typography>
                                                                 </Box>
-                                                                {index == 0 ?
+                                                                {(index == 0 && (!!viewOrder?.delivery_id || !!viewOrder?.wayBill)) ?
                                                                     <>
                                                                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, gap: '10px' }}>
                                                                             <Typography sx={{ color: '#777' }}>Track: </Typography>
