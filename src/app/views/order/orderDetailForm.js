@@ -522,11 +522,11 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                                 <Span sx={{ textTransform: "capitalize", width: { md: "auto", sm: "150px", xs: "150px" } }}>Copy</Span>
                                                                             </Button>
                                                                         </Box>
-                                                                        {viewOrder?.return_details?.delivery_id ?
+                                                                        {viewOrder?.return_details?.[0]?.delivery_id ?
                                                                             <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, gap: '10px' }}>
                                                                                 <Typography sx={{ color: '#777' }}>Return Track: </Typography>
                                                                                 <Typography>
-                                                                                    {viewOrder?.return_details?.delivery_id}
+                                                                                    {viewOrder?.return_details?.[0]?.delivery_id}
                                                                                 </Typography>
                                                                                 <Button color="primary" variant="contained"
                                                                                     onClick={() => {

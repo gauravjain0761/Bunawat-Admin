@@ -64,6 +64,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                 order_status: formData?.order_status,
                 delivery_name: formData?.delivery_name,
                 delivery_id: formData?.delivery_id,
+                delivery_partner: formData?.delivery_partner,
             }
         }
         if (payload?.order_status == "Return") {
