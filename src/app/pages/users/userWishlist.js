@@ -29,34 +29,34 @@ const UserWishlist = () => {
     {
       id: "Title",
       label: "Title",
-      width: 80
+      width: 120
     },
     {
       id: "Author",
       label: "Author",
-      width: 80
+      width: 120
     },
     {
       id: "Privacy",
       label: "Privacy",
-      width: 80
+      width: 120
     },
     {
       id: "Items In Wishlists",
-      label: "Items In Wishlists",
+      label: "Items In\nWishlists",
       align: "center",
-      width: 80
+      width: 120
     },
     {
       id: "Followers",
       label: "Followers",
       align: "center",
-      width: 80
+      width: 120
     },
     {
       id: "Date Of Creation",
-      label: "Date Of Creation",
-      width: 80
+      label: "Date Of\nCreation",
+      width: 120
     },
   ];
 

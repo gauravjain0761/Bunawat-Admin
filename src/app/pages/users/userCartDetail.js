@@ -29,23 +29,23 @@ const UserCartDetail = () => {
         {
             id: "UserName",
             label: "UserName",
-            width: 80
+            width: 140
         },
         {
             id: "Product Name",
             label: "Product Name",
-            width: 80
+            width: 140
         },
         {
             id: "Email",
             label: "Email",
-            width: 80
+            width: 200
         },
         {
             id: "Price",
             label: "Price",
             align: "center",
-            width: 80
+            width: 140
         }
     ];
 

@@ -29,7 +29,7 @@ const UserPaymentHistory = () => {
     {
       id: "Name",
       label: "Name",
-      width: 80
+      width: 150
     },
     {
       id: "Type",
@@ -40,22 +40,22 @@ const UserPaymentHistory = () => {
       id: "Amount",
       label: "Amount",
       align: "center",
-      width: 80
+      width: 100
     },
     {
       id: "Details",
       label: "Details",
-      width: 80
+      width: 200
     },
     {
       id: "Created By",
       label: "Created By",
-      width: 80
+      width: 150
     },
     {
       id: "Date",
       label: "Date",
-      width: 80
+      width: 100
     },
   ];
 

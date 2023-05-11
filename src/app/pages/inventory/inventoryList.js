@@ -42,12 +42,12 @@ const InventoryList = () => {
         {
             id: "design_num",
             label: `Design \nNo/SKU`,
-            width: 120
+            width: 150
         },
         {
             id: "name",
             label: "Product \nName",
-            width: 100
+            width: 200
         },
         {
             id: "variant_count",
@@ -362,9 +362,9 @@ const InventoryList = () => {
                                     <TableCell sx={{ pl: '15px' }}>{row?.design_num}</TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ marginRight: '5px' }}>{row?.image && <img src={row?.image} width='44px' height='56px' style={{objectFit: "fill", borderRadius: "6px"}} />
-                                            }</Box> 
-                                            <Box>{row?.name}</Box> 
+                                            <Box sx={{ marginRight: '5px' }}>{row?.image && <img src={row?.image} width='44px' height='56px' style={{ objectFit: "fill", borderRadius: "6px" }} />
+                                            }</Box>
+                                            <Box>{row?.name}</Box>
                                         </Box>
                                     </TableCell>
                                     <TableCell align="center" sx={{ cursor: 'pointer', color: '#2271b1' }} onClick={() => handleCollapseClick(index)}>{row?.variant_count}</TableCell>
@@ -419,8 +419,8 @@ const InventoryList = () => {
                                                             tabIndex={-1}
                                                             key={sku_row?._id}
                                                         >
-                                                            <TableCell align="center" width={120 ?? "100%"}>↳ {sku_row?.sku}</TableCell>
-                                                            <TableCell width={100 ?? "100%"}>
+                                                            <TableCell align="center" width={150 ?? "100%"}>↳ {sku_row?.sku}</TableCell>
+                                                            <TableCell width={200 ?? "100%"}>
                                                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                                     {sku_row?.product_name}
                                                                 </Box>

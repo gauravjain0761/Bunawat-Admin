@@ -1420,7 +1420,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                     </Grid>
                 </Box >
                 {items?.length > 0 && <Box sx={{
-                    width: '100%', height: { xs: '130px', sm: '80px' }, background: '#fff',
+                    width: '100%', height: { xs: '130px', md: '80px' }, background: '#fff',
                     position: 'sticky',
                     zIndex: 999,
                     bottom: 0,
@@ -1433,8 +1433,8 @@ const OrderDetailEdit = ({ data = {} }) => {
                         alignItems: 'center',
                         justifyContent: 'space-between'
                     }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', xl: 'row' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', sm: 'row' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', xl: 'row' }, ml: 3, gap: { md: '10px', xs: '0px' } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', md: 'row' }, ml: 3, gap: { md: '10px', xs: '0px' } }} >
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700 }}>Total Items</Typography>
                                     <Typography sx={{ fontWeight: 500 }}>:&nbsp; {(coupenData && coupenData?.length > 0) ? coupenData?.length ?? 0 : items?.length ?? 0}</Typography>
@@ -1450,7 +1450,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                                     </Typography>
                                 </Box>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', sm: 'row' }, ml: 3, gap: { sm: '10px', xs: '0px' } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: { xs: 'column', md: 'row' }, ml: 3, gap: { md: '10px', xs: '0px' } }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total GST Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
