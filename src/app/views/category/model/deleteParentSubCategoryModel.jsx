@@ -1,15 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { API_URL } from 'app/constant/api'
-import { ApiDelete } from 'app/service/api'
+import { ApiPut } from 'app/service/api'
 import { toast } from 'material-react-toastify';
 import React from 'react'
 
 const DeleteParentSubCategoryModel = ({ open, deleteData, getData, handleClose }) => {
 
     const handleDelete = async () => {
-        await ApiDelete(`${API_URL.deleteParentCategory}`, {
-            ids: [deleteData?._id]
-        })
+        await ApiPut(`${API_URL.deleteParentSubCatagory}/${deleteData?._id}`, {})
             .then((response) => {
                 toast.success('Delete Successfully!')
                 if (getData) getData()

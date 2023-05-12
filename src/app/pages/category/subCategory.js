@@ -86,7 +86,7 @@ const SubCategoryAdd = () => {
                         onClick={(e) => setActionAllOpen(e.currentTarget)}>
                         <MoreVertIcon />
                     </IconButton>
-                    <Menu
+                    {/* <Menu
                         id="fade-menu"
                         MenuListProps={{
                             'aria-labelledby': 'fade-button',
@@ -100,7 +100,7 @@ const SubCategoryAdd = () => {
                             setDeleteAllOpen(true);
                             setActionAllOpen(null)
                         }}>Delete</MenuItem>
-                    </Menu>
+                    </Menu> */}
                 </>
             )
         }

@@ -36,6 +36,8 @@ export const API_URL = {
     deleteCollection: "collection/remove",
     addCollection: "collection/add",
     editCollection: "collection/update",
+    deleteCollection: "collection/remove",
+    deleteCollaction: "collection/delete",
 
     getOrders: "order/getall",
     getUserNumber: "getuserbyphone",
@@ -54,18 +56,21 @@ export const API_URL = {
     addParentCategory: "parent_cateogry/add",
     editParentCategory: "parent_cateogry/update",
     deleteParentCategory: "parent_cateogry/remove",
+    deleteParentCatagory: "parent_cateogry/delete",
 
     getParentSubCategorys: "sub_category/getall",
     getParentSubCategory: "sub_category",
     addParentSubCategory: "sub_category/add",
     editParentSubCategory: "sub_category/update",
     deleteParentSubCategory: "sub_category/remove",
+    deleteParentSubCatagory: "sub_category/delete",
 
     getCategorys: "category/getall",
     getCategory: "category",
     addCategory: "category/add",
     editCategory: "category/update",
     deleteCategory: "category/remove",
+    deleteCatagory: "category/delete",
 
     getAttributes: "attribute/getall",
     getAttribute: "attribute",
