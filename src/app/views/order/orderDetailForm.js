@@ -220,6 +220,52 @@ const OrderDetailForm = ({ data = {} }) => {
             });
     }
 
+    const coutinLogicWithoutCoupon = (arr) => {
+        const totalAmount = (arr?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0
+        const gstAmount = arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ?
+            (Number(x?.amount) - ((Number(x?.amount) * 100) / 112))
+            :
+            (Number(x?.amount) - ((Number(x?.amount) * 100) / 105))), 0)
+        if (viewOrder?.payment_mode == "COD") {
+            const codData = ((arr?.reduce((t, x) => t + Number(x?.amount), 0) * 2) / 100) ?? 0
+            const finalTotal = (totalAmount + ((codData >= 150) ? codData : 150))
+            const finalCOD = ((codData >= 150) ? codData : 150)
+            const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
+            const codGST = (finalCOD - ((finalCOD * 100) / (checkCodPR ? 112 : 105)))
+            const finalGSTCod = (finalCOD - codGST)
+            const finalGST = (gstAmount + codGST)
+            return {
+                total: finalTotal?.toFixed(2),
+                subTotal: ((finalTotal - finalGST) - finalGSTCod)?.toFixed(2),
+                codData: finalGSTCod?.toFixed(2),
+                gst_amount: finalGST?.toFixed(2)
+            }
+        } else {
+            return {
+                total: totalAmount?.toFixed(2),
+                subTotal: (totalAmount - gstAmount)?.toFixed(2),
+                codData: 0,
+                gst_amount: gstAmount?.toFixed(2)
+            }
+        }
+    }
+
+    const coutinLogicWithoutCouponItemWise = (rowData) => {
+        const totalAmount = rowData?.amount ?? 0
+        const gstAmount = ((Number(rowData?.price) > 1000) ?
+            (Number(rowData?.amount) - ((Number(rowData?.amount) * 100) / 112))
+            :
+            (Number(rowData?.amount) - ((Number(rowData?.amount) * 100) / 105)))
+
+        const finalTotal = (totalAmount - gstAmount)
+
+        return {
+            subTotal: finalTotal?.toFixed(2),
+            gst_amount: gstAmount?.toFixed(2)
+        }
+
+    }
+
     return (
         <Box>
             <Box sx={{ m: '30px', mt: 0 }}>
@@ -567,8 +613,8 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             defaultValue={row?.qty}
                                                         />
                                                     </TableCell>
-                                                    <TableCell align="center">{row?.amount}</TableCell>
-                                                    <TableCell align="center">{((Number(row?.amount) * (Number(row?.price) > 1000 ? 12 : 5)) / 100)}</TableCell>
+                                                    <TableCell align="center">{coutinLogicWithoutCouponItemWise(row)?.subTotal}</TableCell>
+                                                    <TableCell align="center">{coutinLogicWithoutCouponItemWise(row)?.gst_amount}</TableCell>
                                                 </TableRow>
 
                                             </>
@@ -584,16 +630,16 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{rows?.reduce((t, row) => t + (Number(row?.price) * Number(row?.qty)), 0)}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{coutinLogicWithoutCoupon(rows)?.subTotal ?? 0}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">- ₹{viewOrder?.discount_amount}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right"> ₹{viewOrder?.discount_amount}</TableCell>
                                             </TableRow>
                                             {viewOrder?.payment_mode == "COD" &&
                                                 <TableRow>
                                                     <TableCell sx={{ border: 'none' }} align='right'>COD:</TableCell>
-                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹{(((((viewOrder?.total_amount) * 2) / 100) >= 150) ? (((viewOrder?.total_amount) * 2) / 100) : 150)?.toFixed(2)}</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">+ ₹{coutinLogicWithoutCoupon(rows)?.codData ?? 0}</TableCell>
                                                 </TableRow>
                                             }
                                             <TableRow>

@@ -297,6 +297,67 @@ const OrderDetailEdit = ({ data = {} }) => {
         });
     }
 
+
+    const coutinLogicWithCoupon = (arr) => {
+        const totalAmount = (arr?.reduce((t, x) => t + Number(x?.final_amount), 0)) ?? 0
+        const gstAmount = arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ?
+            (Number(x?.final_amount) - ((Number(x?.final_amount) * 100) / 112))
+            :
+            (Number(x?.final_amount) - ((Number(x?.final_amount) * 100) / 105))), 0)
+        if (paymentMode == "cod") {
+            const codData = ((arr?.reduce((t, x) => t + Number(x?.final_amount), 0) * 2) / 100) ?? 0
+            const finalTotal = (totalAmount + ((codData >= 150) ? codData : 150))
+            const finalCOD = ((codData >= 150) ? codData : 150)
+            const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
+            const codGST = (finalCOD - ((finalCOD * 100) / (checkCodPR ? 112 : 105)))
+            const finalGSTCod = (finalCOD - codGST)
+            const finalGST = (gstAmount + codGST)
+            return {
+                total: finalTotal?.toFixed(2),
+                subTotal: ((finalTotal - finalGST) - finalGSTCod)?.toFixed(2),
+                codData: finalGSTCod?.toFixed(2),
+                gst_amount: finalGST?.toFixed(2)
+            }
+        } else {
+            return {
+                total: totalAmount?.toFixed(2),
+                subTotal: (totalAmount - gstAmount)?.toFixed(2),
+                codData: 0,
+                gst_amount: gstAmount?.toFixed(2)
+            }
+        }
+    }
+
+    const coutinLogicWithoutCoupon = (arr) => {
+        const totalAmount = (arr?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0
+        const gstAmount = arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ?
+            (Number(x?.amount) - ((Number(x?.amount) * 100) / 112))
+            :
+            (Number(x?.amount) - ((Number(x?.amount) * 100) / 105))), 0)
+        if (paymentMode == "cod") {
+            const codData = ((arr?.reduce((t, x) => t + Number(x?.amount), 0) * 2) / 100) ?? 0
+            const finalTotal = (totalAmount + ((codData >= 150) ? codData : 150))
+            const finalCOD = ((codData >= 150) ? codData : 150)
+            const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
+            const codGST = (finalCOD - ((finalCOD * 100) / (checkCodPR ? 112 : 105)))
+            const finalGSTCod = (finalCOD - codGST)
+            const finalGST = (gstAmount + codGST)
+            return {
+                total: finalTotal?.toFixed(2),
+                subTotal: ((finalTotal - finalGST) - finalGSTCod)?.toFixed(2),
+                codData: finalGSTCod?.toFixed(2),
+                gst_amount: finalGST?.toFixed(2)
+            }
+        } else {
+            return {
+                total: totalAmount?.toFixed(2),
+                subTotal: (totalAmount - gstAmount)?.toFixed(2),
+                codData: 0,
+                gst_amount: gstAmount?.toFixed(2)
+            }
+        }
+    }
+
     const handleSubmit = async (event) => {
         const Address = {
             "fname": formData?.fname,
@@ -323,12 +384,12 @@ const OrderDetailEdit = ({ data = {} }) => {
             "payment_mode": paymentMode.toUpperCase(),
             "total_items": formData?.items?.length,
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
-            "total_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (formData?.items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - (coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2),
+            "total_amount": (Number(formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.total : coutinLogicWithoutCoupon(items)?.total)),
             "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.filter(x => x?.qty ?? 0 > 0) : formData?.items?.filter(x => x?.qty ?? 0 > 0),
-            "gst_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2),
-            "cgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
-            "sgst_amount": formData?.state == DEFULT_STATE ? ((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)) / 2 : 0,
-            "igst_amount": formData?.state == DEFULT_STATE ? 0 : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : formData?.items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2),
+            "gst_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount),
+            "cgst_amount": formData?.state == DEFULT_STATE ? (((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount)) / 2) : 0,
+            "sgst_amount": formData?.state == DEFULT_STATE ? (((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount)) / 2) : 0,
+            "igst_amount": formData?.state == DEFULT_STATE ? 0 : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount),
             "discount_amount": (formData?.coupenDataManualApply ? (Number(formData?.coupenDataManual ?? 0)) : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2),
             "discount_coupon": formData?.coupon_id
         }
@@ -1446,7 +1507,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Sub Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0 : items?.reduce((t, x) => t + Number(x?.amount), 0) ?? 0)?.toFixed(2)}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithoutCoupon(coupenData)?.subTotal ?? 0 : coutinLogicWithoutCoupon(items)?.subTotal)}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -1454,7 +1515,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total GST Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) : items?.reduce((t, x) => t + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0))?.toFixed(2)}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount)}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
@@ -1463,10 +1524,18 @@ const OrderDetailEdit = ({ data = {} }) => {
                                         {(coupenDataManualApply ? (Number(coupenDataManual ?? 0)) : (items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2)}
                                     </Typography>
                                 </Box>
+                                {paymentMode != 'online' &&
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                        <Typography sx={{ fontWeight: 700, color: 'red' }}>COD Amount</Typography>
+                                        <Typography sx={{ fontWeight: 500, color: 'red' }}>:
+                                            {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.codData : coutinLogicWithoutCoupon(items)?.codData)}
+                                        </Typography>
+                                    </Box>
+                                }
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coupenData?.reduce((t, x) => t + Number(x?.final_amount) + ((Number(x?.final_amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100), 0) ?? 0 : (items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) - ((((coupenDataManualApply ? Number(coupenDataManual ?? 0) : 0)) ?? 0)?.toFixed(2)) + (paymentMode != 'online' ? ((((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) >= 150) ? ((items?.reduce((t, x) => t + Number(x?.amount + ((Number(x?.amount) * (Number(x?.price) > 1000 ? 12 : 5)) / 100)), 0) * 2) / 100) : 150) : 0)))}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.total : coutinLogicWithoutCoupon(items)?.total)}
                                     </Typography>
                                 </Box>
                             </Box>
