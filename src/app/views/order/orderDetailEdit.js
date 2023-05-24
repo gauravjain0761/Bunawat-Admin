@@ -85,7 +85,8 @@ const OrderDetailEdit = ({ data = {} }) => {
             pincode: "",
             state: null,
             country: null,
-            country_code: null
+            country_code: null,
+            gstNo: ""
         },
         shipping_address: {
             fname: "",
@@ -169,7 +170,8 @@ const OrderDetailEdit = ({ data = {} }) => {
         country,
         country_code,
         gst_available,
-        gst_num
+        gst_num,
+        gstNo
     } = formData;
 
     const getCustomerNumber = async (itemData) => {
@@ -186,7 +188,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                 setCustomerNumber(itemData?.user?.phone)
                 setPaymentMode(itemData?.payment_mode?.toLowerCase())
                 setTeamName(itemData?.member)
-                finalData = { ...finalData, ...itemData?.billing_address, teamMember: itemData?.member, items: itemData?.items, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "", gst_available: itemData?.gst_available ? "yes" : 'no', gst_num: itemData?.gst_num }
+                finalData = { ...finalData, ...itemData?.billing_address, teamMember: itemData?.member, items: itemData?.items, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "", gst_available: !!itemData?.billing_address?.gstNo ? "yes" : "no", gst_num: itemData?.gst_num }
                 setFormData(finalData);
             }
         }).catch((error) => {
@@ -370,7 +372,8 @@ const OrderDetailEdit = ({ data = {} }) => {
             "city": formData?.city,
             "district": formData?.district,
             "pincode": formData?.pincode,
-            "state": formData?.state
+            "state": formData?.state,
+            "gstNo": formData?.gstNo
         }
         const formDatas = {
             "member": formData?.teamMember,
@@ -1134,9 +1137,9 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                 <FormLabel id="demo-row-radio-buttons-group-label" sx={{ width: "100px" }}>GST Available</FormLabel>
                                                 <RadioGroup
                                                     row
-                                                    value={gst_available == "yes" ? "yes" : "no"}
+                                                    value={gst_available ?? "no"}
                                                     onChange={(e) => {
-                                                        if (!id) setFormData({ ...formData, gst_mode: e.target.value })
+                                                        if (!id) setFormData({ ...formData, gst_available: e.target.value })
                                                     }}
                                                     aria-labelledby="demo-row-radio-buttons-group-label">
                                                     <Grid container>
@@ -1153,14 +1156,14 @@ const OrderDetailEdit = ({ data = {} }) => {
                                             {gst_available == "yes" ?
                                                 <Grid item lg={12}>
                                                     <TextField
-                                                        name="gst_num"
+                                                        name="gstNo"
                                                         type="text"
                                                         InputProps={{
                                                             readOnly: !!id,
                                                         }}
                                                         label="GST Number"
                                                         onChange={handleChange}
-                                                        value={gst_num || ""}
+                                                        value={gstNo || ""}
                                                         validators={["required"]}
                                                         errorMessages={["this field is required"]}
                                                     />

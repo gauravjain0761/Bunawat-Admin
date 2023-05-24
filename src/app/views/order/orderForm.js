@@ -84,7 +84,8 @@ const OrderForm = ({ data = {} }) => {
             pincode: "",
             state: null,
             country: null,
-            country_code: null
+            country_code: null,
+            gstNo: ""
         },
         shipping_address: {
             fname: "",
@@ -167,7 +168,8 @@ const OrderForm = ({ data = {} }) => {
         coupenDataManualApply,
         discount_coupon,
         country,
-        country_code
+        country_code,
+        gstNo
     } = formData;
 
 
@@ -366,7 +368,8 @@ const OrderForm = ({ data = {} }) => {
             "city": formData?.city,
             "district": formData?.district,
             "pincode": formData?.pincode,
-            "state": formData?.state
+            "state": formData?.state,
+            "gstNo": formData?.gstNo
         }
         const formDatas = {
             "member": formData?.teamMember,
@@ -1195,11 +1198,11 @@ const OrderForm = ({ data = {} }) => {
                                             {gst_available == "yes" ?
                                                 <Grid item lg={12}>
                                                     <TextField
-                                                        name="gst_num"
+                                                        name="gstNo"
                                                         type="text"
                                                         label="GST Number"
                                                         onChange={handleChange}
-                                                        value={gst_num || ""}
+                                                        value={gstNo || ""}
                                                         validators={["required"]}
                                                         errorMessages={["this field is required"]}
                                                     />

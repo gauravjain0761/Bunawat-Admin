@@ -70,14 +70,14 @@ const OrderDetailForm = ({ data = {} }) => {
             if (response.status) {
                 const { data } = response;
                 setViewOrder(data);
-                setReturnData({ ...returnData, return_type: data?.return_details?.[0]?.return_type, upi: data?.return_details?.[0]?.upi_transaction_id, order_status: data?.order_status })
+                setReturnData({ ...returnData, return_type: data?.return_details?.[0]?.return_type, upi: data?.return_details?.[0]?.upi_transaction_id, order_status: data?.order_status, comment: data?.return_details?.[0]?.comment })
                 setRows(data?.items)
             }
         }).catch((error) => {
             console.log("Error", error);
         });
     }
-    console.log("returnDatareturnData", returnData)
+
     const getOrderNotesData = async () => {
         await ApiGet(`${API_URL.getOrderNotes}/${id}`).then((response) => {
             const { data } = response;
@@ -201,7 +201,8 @@ const OrderDetailForm = ({ data = {} }) => {
             delivery_name: viewOrder?.return_details?.[0]?.delivery_name,
             delivery_id: viewOrder?.return_details?.[0]?.delivery_id,
             return_type: returnData?.return_type ?? "CREDIT",
-            upi_transaction_id: returnData?.upi
+            upi_transaction_id: returnData?.upi ?? "",
+            comment: returnData?.comment ?? ""
         }
         await ApiPut(`${API_URL.returnOrderUpdate}/${id}`, payload)
             .then(async (response) => {
@@ -481,6 +482,20 @@ const OrderDetailForm = ({ data = {} }) => {
                                                             </Box>
                                                         }
                                                     </>
+                                                    : null}
+                                                {(returnData?.order_status == "Quality Fail" || returnData?.order_status == "Closed") ?
+                                                    <TextField
+                                                        type="text"
+                                                        sx={{
+                                                            mt: 2
+                                                        }}
+                                                        fullWidth
+                                                        label="Comment"
+                                                        onChange={(e) => setReturnData({ ...returnData, comment: e.target.value })}
+                                                        value={returnData?.comment || ""}
+                                                        validators={["required"]}
+                                                        errorMessages={["this field is required"]}
+                                                    />
                                                     : null}
                                                 <Button onClick={() => {
                                                     handeSubmit();
