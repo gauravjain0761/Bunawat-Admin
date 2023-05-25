@@ -109,6 +109,13 @@ const OrderDetailForm = ({ data = {} }) => {
             width: 80
         },
         {
+            id: "discounted_amount",
+            label: "Discount",
+            align: "center",
+            sortDisable: true,
+            width: 80
+        },
+        {
             id: "qty",
             label: "QTY",
             align: "center",
@@ -221,32 +228,40 @@ const OrderDetailForm = ({ data = {} }) => {
             });
     }
 
-    const coutinLogicWithoutCoupon = (arr) => {
-        const totalAmount = (arr?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0
+    const coutinLogicWithoutCoupon = (arr, ship = 0, other = 0) => {
+        const totalAmount = (arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ? ((Number(x?.amount) * 100) / 112) : ((Number(x?.amount) * 100) / 105)), 0)) ?? 0
+        const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
+        const shippingGSTCharge = ((ship * 100) / (checkCodPR ? 112 : 105))
+        const otherGSTCharge = ((other * 100) / (checkCodPR ? 112 : 105))
+
+        const shippingGSTExtraCharge = (ship - ((ship * 100) / (checkCodPR ? 112 : 105)))
+        const otherGSTExtraCharge = (other - ((other * 100) / (checkCodPR ? 112 : 105)))
+
         const gstAmount = arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ?
             (Number(x?.amount) - ((Number(x?.amount) * 100) / 112))
             :
             (Number(x?.amount) - ((Number(x?.amount) * 100) / 105))), 0)
         if (viewOrder?.payment_mode == "COD") {
             const codData = ((arr?.reduce((t, x) => t + Number(x?.amount), 0) * 2) / 100) ?? 0
-            const finalTotal = (totalAmount + ((codData >= 150) ? codData : 150))
             const finalCOD = ((codData >= 150) ? codData : 150)
-            const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
             const codGST = (finalCOD - ((finalCOD * 100) / (checkCodPR ? 112 : 105)))
             const finalGSTCod = (finalCOD - codGST)
-            const finalGST = (gstAmount + codGST)
+            const finalTotal = ((totalAmount + finalGSTCod) + (shippingGSTCharge + otherGSTCharge))
+            const finalGST = ((gstAmount + codGST) + (shippingGSTExtraCharge + otherGSTExtraCharge))
             return {
-                total: finalTotal?.toFixed(2),
-                subTotal: ((finalTotal - finalGST) - finalGSTCod)?.toFixed(2),
+                total: (finalTotal + finalGST)?.toFixed(2),
+                subTotal: finalTotal?.toFixed(2),
                 codData: finalGSTCod?.toFixed(2),
                 gst_amount: finalGST?.toFixed(2)
             }
         } else {
+            const finalGST = (gstAmount + shippingGSTExtraCharge + otherGSTExtraCharge)
+            const finalTotal = (totalAmount + shippingGSTCharge + otherGSTCharge)
             return {
-                total: totalAmount?.toFixed(2),
-                subTotal: (totalAmount - gstAmount)?.toFixed(2),
+                total: (finalTotal + finalGST)?.toFixed(2),
+                subTotal: finalTotal?.toFixed(2),
                 codData: 0,
-                gst_amount: gstAmount?.toFixed(2)
+                gst_amount: finalGST?.toFixed(2)
             }
         }
     }
@@ -609,6 +624,7 @@ const OrderDetailForm = ({ data = {} }) => {
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell align="center">{row?.price}</TableCell>
+                                                    <TableCell align="center">{row?.discounted_amount}</TableCell>
                                                     <TableCell align="center">
                                                         <TextField
                                                             inputProps={{
@@ -645,12 +661,12 @@ const OrderDetailForm = ({ data = {} }) => {
                                         <TableBody>
                                             <TableRow sx={{ border: 'none' }}>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Items Subtotal:</TableCell>
-                                                <TableCell sx={{ border: 'none' }} align="right">₹{coutinLogicWithoutCoupon(rows)?.subTotal ?? 0}</TableCell>
+                                                <TableCell sx={{ border: 'none' }} align="right">₹{coutinLogicWithoutCoupon(rows, viewOrder?.shipping_charge, viewOrder?.other_charge)?.subTotal ?? 0}</TableCell>
                                             </TableRow>
-                                            <TableRow>
+                                            {/* <TableRow>
                                                 <TableCell sx={{ border: 'none' }} align='right'>Discount Amount:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right"> ₹{viewOrder?.discount_amount}</TableCell>
-                                            </TableRow>
+                                            </TableRow> */}
                                             {viewOrder?.payment_mode == "COD" &&
                                                 <TableRow>
                                                     <TableCell sx={{ border: 'none' }} align='right'>COD:</TableCell>
@@ -661,6 +677,18 @@ const OrderDetailForm = ({ data = {} }) => {
                                                 <TableCell sx={{ border: 'none' }} align='right'>GST:</TableCell>
                                                 <TableCell sx={{ border: 'none' }} align="right">+ ₹{viewOrder?.gst_amount}</TableCell>
                                             </TableRow>
+                                            {(!!viewOrder?.shipping_charge && (viewOrder?.shipping_charge > 0)) &&
+                                                <TableRow>
+                                                    <TableCell sx={{ border: 'none' }} align='right'>Shipping Charge:</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.shipping_charge}</TableCell>
+                                                </TableRow>
+                                            }
+                                            {(!!viewOrder?.other_charge && (viewOrder?.other_charge > 0)) &&
+                                                <TableRow>
+                                                    <TableCell sx={{ border: 'none' }} align='right'>Other Charge:</TableCell>
+                                                    <TableCell sx={{ border: 'none' }} align="right">₹{viewOrder?.other_charge}</TableCell>
+                                                </TableRow>
+                                            }
                                             {(!!viewOrder?.igst_amount && (viewOrder?.igst_amount > 0)) &&
                                                 <TableRow>
                                                     <TableCell sx={{ border: 'none' }} align='right'>IGST:</TableCell>

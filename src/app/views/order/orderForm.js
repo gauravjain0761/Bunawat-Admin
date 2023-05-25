@@ -169,7 +169,9 @@ const OrderForm = ({ data = {} }) => {
         discount_coupon,
         country,
         country_code,
-        gstNo
+        gstNo,
+        shipping_charge,
+        other_charge
     } = formData;
 
 
@@ -296,62 +298,79 @@ const OrderForm = ({ data = {} }) => {
         });
     }
 
-    const coutinLogicWithCoupon = (arr) => {
-        const totalAmount = (arr?.reduce((t, x) => t + Number(x?.final_amount), 0)) ?? 0
+    const coutinLogicWithCoupon = (arr, ship = 0, other = 0) => {
+        const totalAmount = (arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ? ((Number(x?.final_amount) * 100) / 112) : ((Number(x?.final_amount) * 100) / 105)), 0)) ?? 0
         const gstAmount = arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ?
             (Number(x?.final_amount) - ((Number(x?.final_amount) * 100) / 112))
             :
             (Number(x?.final_amount) - ((Number(x?.final_amount) * 100) / 105))), 0)
+
+        const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
+        const shippingGSTCharge = ((ship * 100) / (checkCodPR ? 112 : 105))
+        const otherGSTCharge = ((other * 100) / (checkCodPR ? 112 : 105))
+
+        const shippingGSTExtraCharge = (ship - ((ship * 100) / (checkCodPR ? 112 : 105)))
+        const otherGSTExtraCharge = (other - ((other * 100) / (checkCodPR ? 112 : 105)))
+
         if (paymentMode == "cod") {
             const codData = ((arr?.reduce((t, x) => t + Number(x?.final_amount), 0) * 2) / 100) ?? 0
-            const finalTotal = (totalAmount + ((codData >= 150) ? codData : 150))
             const finalCOD = ((codData >= 150) ? codData : 150)
-            const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
             const codGST = (finalCOD - ((finalCOD * 100) / (checkCodPR ? 112 : 105)))
             const finalGSTCod = (finalCOD - codGST)
-            const finalGST = (gstAmount + codGST)
+            const finalTotal = ((totalAmount + finalGSTCod) + (shippingGSTCharge + otherGSTCharge))
+            const finalGST = ((gstAmount + codGST) + (shippingGSTExtraCharge + otherGSTExtraCharge))
             return {
-                total: finalTotal?.toFixed(2),
-                subTotal: ((finalTotal - finalGST) - finalGSTCod)?.toFixed(2),
+                total: (finalTotal + finalGST)?.toFixed(2),
+                subTotal: finalTotal?.toFixed(2),
                 codData: finalGSTCod?.toFixed(2),
                 gst_amount: finalGST?.toFixed(2)
             }
         } else {
+            const finalGST = (gstAmount + shippingGSTExtraCharge + otherGSTExtraCharge)
+            const finalTotal = (totalAmount + shippingGSTCharge + otherGSTCharge)
             return {
-                total: totalAmount?.toFixed(2),
-                subTotal: (totalAmount - gstAmount)?.toFixed(2),
+                total: (finalTotal + finalGST)?.toFixed(2),
+                subTotal: finalTotal?.toFixed(2),
                 codData: 0,
-                gst_amount: gstAmount?.toFixed(2)
+                gst_amount: finalGST?.toFixed(2)
             }
         }
     }
 
-    const coutinLogicWithoutCoupon = (arr) => {
-        const totalAmount = (arr?.reduce((t, x) => t + Number(x?.amount), 0)) ?? 0
+    const coutinLogicWithoutCoupon = (arr, ship = 0, other = 0) => {
+        const totalAmount = (arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ? ((Number(x?.amount) * 100) / 112) : ((Number(x?.amount) * 100) / 105)), 0)) ?? 0
+        const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
+        const shippingGSTCharge = ((ship * 100) / (checkCodPR ? 112 : 105))
+        const otherGSTCharge = ((other * 100) / (checkCodPR ? 112 : 105))
+
+        const shippingGSTExtraCharge = (ship - ((ship * 100) / (checkCodPR ? 112 : 105)))
+        const otherGSTExtraCharge = (other - ((other * 100) / (checkCodPR ? 112 : 105)))
+
         const gstAmount = arr?.reduce((t, x) => t + ((Number(x?.price) > 1000) ?
             (Number(x?.amount) - ((Number(x?.amount) * 100) / 112))
             :
             (Number(x?.amount) - ((Number(x?.amount) * 100) / 105))), 0)
         if (paymentMode == "cod") {
             const codData = ((arr?.reduce((t, x) => t + Number(x?.amount), 0) * 2) / 100) ?? 0
-            const finalTotal = (totalAmount + ((codData >= 150) ? codData : 150))
             const finalCOD = ((codData >= 150) ? codData : 150)
-            const checkCodPR = arr?.some((x) => (Number(x?.price) > 1000))
             const codGST = (finalCOD - ((finalCOD * 100) / (checkCodPR ? 112 : 105)))
             const finalGSTCod = (finalCOD - codGST)
-            const finalGST = (gstAmount + codGST)
+            const finalTotal = ((totalAmount + finalGSTCod) + (shippingGSTCharge + otherGSTCharge))
+            const finalGST = ((gstAmount + codGST) + (shippingGSTExtraCharge + otherGSTExtraCharge))
             return {
-                total: finalTotal?.toFixed(2),
-                subTotal: ((finalTotal - finalGST) - finalGSTCod)?.toFixed(2),
+                total: (finalTotal + finalGST)?.toFixed(2),
+                subTotal: finalTotal?.toFixed(2),
                 codData: finalGSTCod?.toFixed(2),
                 gst_amount: finalGST?.toFixed(2)
             }
         } else {
+            const finalGST = (gstAmount + shippingGSTExtraCharge + otherGSTExtraCharge)
+            const finalTotal = (totalAmount + shippingGSTCharge + otherGSTCharge)
             return {
-                total: totalAmount?.toFixed(2),
-                subTotal: (totalAmount - gstAmount)?.toFixed(2),
+                total: (finalTotal + finalGST)?.toFixed(2),
+                subTotal: finalTotal?.toFixed(2),
                 codData: 0,
-                gst_amount: gstAmount?.toFixed(2)
+                gst_amount: finalGST?.toFixed(2)
             }
         }
     }
@@ -392,7 +411,9 @@ const OrderForm = ({ data = {} }) => {
             "sgst_amount": formData?.state == DEFULT_STATE ? (((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount)) / 2) : 0,
             "igst_amount": formData?.state == DEFULT_STATE ? 0 : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount),
             "discount_amount": (formData?.coupenDataManualApply ? (Number(formData?.coupenDataManual ?? 0)) : (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.reduce((t, x) => t + Number(x?.discounted_amount ?? 0), 0) ?? 0 : 0))?.toFixed(2),
-            "discount_coupon": formData?.coupon_id
+            "discount_coupon": formData?.coupon_id,
+            shipping_charge: formData?.shipping_charge ?? 0,
+            other_charge: formData?.other_charge ?? 0
         }
         if (isSubmit) {
             if (formDatas?.items?.length > 0) {
@@ -438,7 +459,7 @@ const OrderForm = ({ data = {} }) => {
     const handleChange = (event) => {
         if (event.target.name == "isSame") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
-        } else if (event.target.name == "phone" || event.target.name == "qty") {
+        } else if (event.target.name == "phone" || event.target.name == "qty" || event.target.name == "shipping_charge" || event.target.name == "other_charge") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
@@ -1362,6 +1383,33 @@ const OrderForm = ({ data = {} }) => {
                                     </Grid>}
 
                                     <Divider sx={{ my: 2 }} />
+                                    <Typography variant="h6">Shipping Charge</Typography>
+                                    <Box sx={{
+                                        mt: 2
+                                    }}>
+                                        <TextField
+                                            name="shipping_charge"
+                                            type="text"
+                                            label="Enter Shipping Charge"
+                                            value={formData?.shipping_charge || ""}
+                                            onChange={handleChange}
+                                        />
+                                    </Box>
+
+                                    <Typography variant="h6">Other Charge</Typography>
+                                    <Box sx={{
+                                        mt: 2
+                                    }}>
+                                        <TextField
+                                            name="other_charge"
+                                            type="text"
+                                            label="Enter Other Charge"
+                                            value={formData?.other_charge || ""}
+                                            onChange={handleChange}
+                                        />
+                                    </Box>
+
+                                    <Divider sx={{ my: 2 }} />
 
                                     <DiscountType
                                         title="Discount Info"
@@ -1525,7 +1573,7 @@ const OrderForm = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Sub Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithoutCoupon(coupenData)?.subTotal ?? 0 : coutinLogicWithoutCoupon(items)?.subTotal)}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData, shipping_charge, other_charge)?.subTotal ?? 0 : coutinLogicWithoutCoupon(items, shipping_charge, other_charge)?.subTotal)}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -1533,7 +1581,7 @@ const OrderForm = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total GST Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount)}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData, shipping_charge, other_charge)?.gst_amount : coutinLogicWithoutCoupon(items, shipping_charge, other_charge)?.gst_amount)}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
@@ -1553,7 +1601,7 @@ const OrderForm = ({ data = {} }) => {
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                     <Typography sx={{ fontWeight: 700, color: 'red' }}>Total Amount</Typography>
                                     <Typography sx={{ fontWeight: 500, color: 'red' }}>:
-                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.total : coutinLogicWithoutCoupon(items)?.total)}
+                                        {(items?.length > 0 && (coupenData && coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData, shipping_charge, other_charge)?.total : coutinLogicWithoutCoupon(items, shipping_charge, other_charge)?.total)}
                                     </Typography>
                                 </Box>
                             </Box>
