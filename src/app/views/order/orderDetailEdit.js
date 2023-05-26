@@ -417,19 +417,20 @@ const OrderDetailEdit = ({ data = {} }) => {
             shipping_charge: formData?.shipping_charge ?? 0,
             other_charge: formData?.other_charge ?? 0
         }
-        if (formDatas?.items?.length > 0) {
-            await ApiPut(`${API_URL.editOrder}/${id}`, formDatas).then((response) => {
-                if (response.status) {
-                    toast.success('Add Successfully!')
-                    navigate(`/order/list`)
-                }
-            }).catch((error) => {
-                console.log("Error", error);
-                toast.error(error?.error)
-            });
-        } else {
-            toast.error("Please select product with qty First!")
-        }
+        console.log("formDatasformDatas", formDatas)
+        // if (formDatas?.items?.length > 0) {
+        //     await ApiPut(`${API_URL.editOrder}/${id}`, formDatas).then((response) => {
+        //         if (response.status) {
+        //             toast.success('Add Successfully!')
+        //             navigate(`/order/list`)
+        //         }
+        //     }).catch((error) => {
+        //         console.log("Error", error);
+        //         toast.error(error?.error)
+        //     });
+        // } else {
+        //     toast.error("Please select product with qty First!")
+        // }
     };
 
 
