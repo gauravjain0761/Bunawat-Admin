@@ -397,6 +397,7 @@ const OrderDetailEdit = ({ data = {} }) => {
             "member": formData?.teamMember,
             "user_type": user_type,
             "user": userID,
+            "remark": formData?.remark,
             "transaction_id": paymentMode == "cod" ? "" : onlineData?.transaction_id,
             "transaction_doc": paymentMode == "cod" ? null : onlineData?.transaction_doc,
             "billing_address": Address,
@@ -1384,6 +1385,19 @@ const OrderDetailEdit = ({ data = {} }) => {
                                             type="text"
                                             label="Enter Other Charge"
                                             value={formData?.other_charge || ""}
+                                            onChange={handleChange}
+                                        />
+                                    </Box>
+
+                                    <Typography variant="h6">Remark</Typography>
+                                    <Box sx={{
+                                        mt: 2
+                                    }}>
+                                        <TextField
+                                            name="remark"
+                                            type="text"
+                                            label="Enter Remark"
+                                            value={formData?.remark || ""}
                                             onChange={handleChange}
                                         />
                                     </Box>
