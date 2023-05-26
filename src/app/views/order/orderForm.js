@@ -460,7 +460,7 @@ const OrderForm = ({ data = {} }) => {
     const handleChange = (event) => {
         if (event.target.name == "isSame") {
             setFormData({ ...formData, [event.target.name]: event.target.checked });
-        } else if (event.target.name == "phone" || event.target.name == "qty" || event.target.name == "shipping_charge" || event.target.name == "other_charge") {
+        } else if (event.target.name == "phone" || event.target.name == "qty") {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 10) {
                 setFormData({ ...formData, [event.target.name]: onlyNums });
