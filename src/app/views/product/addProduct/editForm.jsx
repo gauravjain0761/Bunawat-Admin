@@ -250,6 +250,24 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     };
 
 
+    const handleStatusChange = async (skuId, status) => {
+        const body = {
+            skuId,
+            status: status
+        }
+        await ApiPut(`${API_URL.SKUStatusUpdate}`, body)
+            .then((response) => {
+                toast.success(response?.data?.message)
+                getIDData(id);
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+                handleActionClose()
+            });
+    }
+
     const getCategoryList = async () => {
         await ApiGet(`${API_URL.getCategoryList}`)
             .then((response) => {
@@ -1301,7 +1319,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                         }}></Box>
                                                                     </Box>
                                                                 </TableCell>
-                                                                <TableCell align="center">{row?.mapVariant?.map(x => x?.name)?.join(", ")}</TableCell>
+                                                                <TableCell align="center">{row?.mapVariant?.map(x => x?.sku)?.join(", ")}</TableCell>
                                                                 <TableCell align="center">
                                                                     {row?.isActive ?? true ?
                                                                         <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
@@ -1339,6 +1357,15 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                             setMOpen(true)
                                                                             handleActionClose();
                                                                         }}>Add Mapped Variant</MenuItem>
+                                                                        {row?.isActive ?? true ?
+                                                                            <MenuItem onClick={() => {
+                                                                                handleStatusChange(row?._id, false)
+                                                                            }}>InActive</MenuItem>
+                                                                            :
+                                                                            <MenuItem onClick={() => {
+                                                                                handleStatusChange(row?._id, true)
+                                                                            }}>Active</MenuItem>
+                                                                        }
                                                                     </Menu>
                                                                 </TableCell>
                                                             </TableRow>
