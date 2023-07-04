@@ -102,7 +102,6 @@ export const API_URL = {
     editSKU: "sku/update",
     SKUGetProductID: "sku_get_by_product",
     SKUMediaCreate: "sku_media_create",
-    SKUStatusUpdate: "sku_status_update",
 
     fileUpload: "fileUpload/profile",
     videoFileUpload: "uploadVideo",
