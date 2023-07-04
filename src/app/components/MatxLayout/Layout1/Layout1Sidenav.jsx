@@ -61,6 +61,8 @@ const Layout1Sidenav = () => {
         return sideNavWidth;
     }
   };
+
+  console.log('Layout1Sidenav ~ leftSidebar', theme);
   const primaryRGB = convertHexToRGB(theme.palette.primary.main);
 
   const updateSidebarMode = (sidebarSettings) => {
