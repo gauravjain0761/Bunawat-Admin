@@ -76,6 +76,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
     const [formColorSKU, setFormColorSKU] = useState([]);
     const [searchParams] = useSearchParams();
 
+
     const settings = {
         dots: true,
         infinite: true,
@@ -248,6 +249,25 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
         temp = temp.map(() => { return null })
         setActionOpen(temp)
     };
+
+    const handleStatusChange = async (skuId, status) => {
+        const body = {
+            skuId,
+            status : status
+        }
+        await ApiPut(`${API_URL.SKUStatusUpdate}`, body)
+            .then((response) => {
+                toast.success(response?.data?.message)
+                getIDData(id);
+                handleActionClose()
+            })
+            .catch((error) => {
+                toast.error(error?.error)
+                console.log("Error", error);
+                handleActionClose()
+            });
+    }
+
 
 
     const getCategoryList = async () => {
@@ -1301,7 +1321,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                         }}></Box>
                                                                     </Box>
                                                                 </TableCell>
-                                                                <TableCell align="center">{row?.mapVariant?.map(x => x?.name)?.join(", ")}</TableCell>
+                                                                <TableCell align="center">{row?.mapVariant?.map(x => x?.sku)?.join(", ")}</TableCell>
                                                                 <TableCell align="center">
                                                                     {row?.isActive ?? true ?
                                                                         <Typography sx={{ flexShrink: 0, fontSize: "14px", color: "green", textTransform: "capitalize" }}>
@@ -1339,6 +1359,16 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                             setMOpen(true)
                                                                             handleActionClose();
                                                                         }}>Add Mapped Variant</MenuItem>
+
+                                                                        {row?.isActive ?? true ?
+                                                                            <MenuItem onClick={() => {
+                                                                                handleStatusChange(row?._id, false)
+                                                                            }}>InActive</MenuItem>
+                                                                            :
+                                                                            <MenuItem onClick={() => {
+                                                                                handleStatusChange(row?._id, true)
+                                                                            }}>Active</MenuItem>
+                                                                        }
                                                                     </Menu>
                                                                 </TableCell>
                                                             </TableRow>
