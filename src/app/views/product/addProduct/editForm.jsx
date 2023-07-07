@@ -1311,9 +1311,10 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                                                             finalImages = [...finalImages, ...formColorSKU[index]?.images]
                                                                         }
                                                                         setSelectedSKUIndex(index)
-                                                                        setSelectedSwatchImage(finalImages)
+                                                                        setSelectedSwatchImage(formColorSKU[index]?.images?.length > 0 ? formColorSKU[index]?.images : [])
                                                                         setDopen(true)
                                                                     }}>
+                                                                       
                                                                         <Box sx={{
                                                                             width: '30px', height: '30px', background: row?.swatch ? row?.swatch : '#000', borderRadius: '50%'
                                                                         }}></Box>
@@ -1376,7 +1377,7 @@ const ProductEditForm = ({ getIDData, data = {}, id, ProductType }) => {
                                             }
                                         </Grid>
                                     </Grid>
-
+                                    
                                     <Dialog
                                         open={dOpen}
                                         aria-labelledby="responsive-dialog-title"
