@@ -492,7 +492,10 @@ const ProductForm = ({ data = {}, ProductType }) => {
     const SortableImageItem = SortableElement(({ item, i }) => {
         return (
             <Box key={i} sx={{ width: "100%" }}>
-                <img src={item.url} width="100%" height="350px" />
+                <img src={item.url} width="100%" 
+                    height="100%" 
+                    // height="350px" 
+                />
                 <Box sx={{ height: "40px", width: "100%" }} display="flex" alignItems="center" justifyContent="space-between">
                     <div>
                         <Stack direction="row" alignItems="center">
