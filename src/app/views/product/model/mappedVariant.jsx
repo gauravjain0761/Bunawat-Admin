@@ -9,8 +9,8 @@ import { useState } from 'react';
 const MappedVariantModel = ({ open, handleClose, formData, SKUData, selectedSKU, selectedSKUIndex, setFormData }) => {
     const [data, setData] = useState(SKUData);
     useEffect(() => {
-        // setData(SKUData?.filter(x => ((x?.sku != selectedSKU?.sku) && (x?.varients?.color == selectedSKU?.varients?.color))))
-        setData(SKUData?.filter(x => x?.sku != selectedSKU?.sku))
+        setData(SKUData?.filter(x => ((x?.sku != selectedSKU?.sku) && (x?.varients?.color == selectedSKU?.varients?.color))))
+        // setData(SKUData?.filter(x => x?.sku != selectedSKU?.sku))
     }, [selectedSKU])
 
     return (
