@@ -95,6 +95,8 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                         });
                 })
                 .catch((error) => {
+                    toast.error(error?.error ?? "Something went wrong")
+                    setLoading(false)
                     console.log("Error", error);
                 });
         } else {
