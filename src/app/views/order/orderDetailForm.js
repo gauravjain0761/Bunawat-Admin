@@ -318,9 +318,30 @@ const OrderDetailForm = ({ data = {} }) => {
                                                 <Typography>{viewOrder?.order_status}</Typography>
                                             </Stack>
                                             <Stack direction="row" spacing={2}>
-                                                <Typography sx={{ color: '#777' }}>Amount:</Typography>
+                                                <Typography sx={{ color: '#777' }}>Total Amount:</Typography>
                                                 <Typography>{viewOrder?.total_amount}</Typography>
                                             </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Amount:</Typography>
+                                                <Typography>{viewOrder?.amount}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Usable Wallet Amount:</Typography>
+                                                <Typography>{viewOrder?.usable_wallet_amount}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={2}>
+                                                <Typography sx={{ color: '#777' }}>Discount Amount:</Typography>
+                                                <Typography>{viewOrder?.discount_amount}</Typography>
+                                            </Stack>
+
+                                            {
+                                                viewOrder?.transaction?.amount &&
+                                                    (<Stack direction="row" spacing={2}>
+                                                        <Typography sx={{ color: '#777' }}>Refund Amount:</Typography>
+                                                        <Typography>{viewOrder?.transaction?.amount}</Typography>
+                                                    </Stack>)
+                                            }
+
                                             <Stack direction="row" spacing={2}>
                                                 <Typography sx={{ color: '#777' }}>Payment Mode:</Typography>
                                                 <Typography >{viewOrder?.payment_mode}</Typography>

@@ -11,8 +11,12 @@ import PackingSlipDocument from '../invoicePDF/packingSlip';
 const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        order_status: selectedeData?.order_status
+        order_status: selectedeData?.order_status,
     });
+
+    const [errors, setErrors] = useState({
+        credit_amount: false
+    })
 
     useEffect(() => {
         setFormData({
@@ -76,11 +80,20 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
             }
         }
         if (payload?.order_status == "Return") {
+
+            if (formData?.return_type == "CREDIT") {
+                if (!formData?.credit_amount) {
+                    setErrors({ ...errors, credit_amount: true })
+                    setLoading(false)
+                    return
+                }
+            }
             payload = {
                 order_status: formData?.order_status,
                 delivery_name: formData?.delivery_name,
                 delivery_id: formData?.delivery_id,
-                return_type: formData?.return_type ?? "CREDIT"
+                return_type: formData?.return_type ?? "CREDIT",
+                credit_amount: formData?.credit_amount
             }
             await ApiPut(`${API_URL.returnOrderUpdate}/${selectedeData?._id}`, payload)
                 .then(async (response) => {
@@ -125,6 +138,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
 
     const handleChange = (event) => {
         setFormData({ ...formData, [event.target.name]: event.target.value });
+        setErrors({ ...errors, [event.target.name]: false })
     };
 
 
@@ -244,7 +258,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                                 <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Payment Type</FormLabel>
                                 <RadioGroup
                                     row
-                                    value={return_type ?? "CREDIT"}
+                                    value={return_type ?? "REFUND"}
                                     onChange={(e) => setFormData({ ...formData, return_type: e.target.value })}
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="return_type">
@@ -283,6 +297,27 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                                     validators={["required"]}
                                     errorMessages={["this field is required"]}
                                 />
+
+                                {
+                                    (return_type == "CREDIT") && (
+                                        <TextField
+                                            type="text"
+                                            fullWidth
+                                            sx={{
+                                                mt: 2
+                                            }}
+                                            name="credit_amount"
+                                            label="Credit Amount"
+                                            onChange={handleChange}
+                                            value={formData?.credit_amount || ""}
+                                            validators={["required"]}
+                                            errorMessages={["this field is required"]}
+                                            error={errors?.credit_amount}
+                                        />
+                                    )
+                                }
+
+
                             </Box>
                         </>
                     }
