@@ -608,7 +608,8 @@ const OrderDetailForm = ({ data = {} }) => {
                                                                             </Typography>
                                                                             <Button color="primary" variant="contained"
                                                                                 onClick={() => {
-                                                                                    navigator?.clipboard?.writeText("test");
+                                                                                    const copyText = viewOrder?.delivery_partner == "OTHERS" ? viewOrder?.delivery_id : viewOrder?.wayBill;
+                                                                                    navigator?.clipboard?.writeText(copyText);
                                                                                 }}
                                                                                 sx={{
                                                                                     backgroundColor: UIColor, color: "#fff",

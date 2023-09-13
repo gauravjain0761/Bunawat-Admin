@@ -406,6 +406,7 @@ const OrderForm = ({ data = {} }) => {
             "gst_available": formData?.gst_available == "yes",
             "total_qty": formData?.items?.reduce((t, x) => t + Number(x?.qty), 0) ?? 0,
             "total_amount": (Number(formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.total : coutinLogicWithoutCoupon(items)?.total)),
+            "amount": (Number(formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.total : coutinLogicWithoutCoupon(items)?.total)),
             "items": (formData?.coupenData && formData?.coupenData?.length > 0) ? formData?.coupenData?.filter(x => x?.qty ?? 0 > 0) : formData?.items?.filter(x => x?.qty ?? 0 > 0),
             "gst_amount": (formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount),
             "cgst_amount": formData?.state == DEFULT_STATE ? (((formData?.items?.length > 0 && (formData?.coupenData && formData?.coupenData?.length > 0) ? coutinLogicWithCoupon(coupenData)?.gst_amount : coutinLogicWithoutCoupon(items)?.gst_amount)) / 2) : 0,

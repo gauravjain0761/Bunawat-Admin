@@ -75,6 +75,18 @@ const OrderList = () => {
             width: 100
         },
         {
+            id: "transaction.amount",
+            label: "Credit Amount",
+            align: "center",
+            width: 100
+        },
+        {
+            id: "return.refund_amount",
+            label: "Refund Amount",
+            align: "center",
+            width: 100
+        },
+        {
             id: "shipping_date",
             label: "Shipping Date",
             align: "center",
@@ -354,6 +366,8 @@ const OrderList = () => {
                                 borderRadius: '4px'
                             }}>{row.order_status}</Box></TableCell>
                             <TableCell align="center">{row?.total_amount}</TableCell>
+                            <TableCell align="center">{row?.transaction?.amount ?? "-"}</TableCell>
+                            <TableCell align="center">{row?.return?.refund_amount ?? "-"}</TableCell>
                             <TableCell align="center">{row?.shipping_date ? moment(row?.shipping_date).format("DD/MM/YYYY") : '-'}</TableCell>
                             <TableCell align="center">{row?.member?.name ?? "-"}</TableCell>
                             <TableCell align="center">{getAge(row?.order_age)}</TableCell>

@@ -258,7 +258,7 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                                 <FormLabel id="demo-row-radio-buttons-group-label" sx={{ mr: 1, color: '#000' }}>Payment Type</FormLabel>
                                 <RadioGroup
                                     row
-                                    value={return_type ?? "REFUND"}
+                                    value={return_type}
                                     onChange={(e) => setFormData({ ...formData, return_type: e.target.value })}
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="return_type">
@@ -298,25 +298,20 @@ const StatusModel = ({ open, selectedeData, getData, handleClose }) => {
                                     errorMessages={["this field is required"]}
                                 />
 
-                                {
-                                    (return_type == "CREDIT") && (
-                                        <TextField
-                                            type="text"
-                                            fullWidth
-                                            sx={{
-                                                mt: 2
-                                            }}
-                                            name="credit_amount"
-                                            label="Credit Amount"
-                                            onChange={handleChange}
-                                            value={formData?.credit_amount || ""}
-                                            validators={["required"]}
-                                            errorMessages={["this field is required"]}
-                                            error={errors?.credit_amount}
-                                        />
-                                    )
-                                }
-
+                                <TextField
+                                    type="text"
+                                    fullWidth
+                                    sx={{
+                                        mt: 2
+                                    }}
+                                    name="credit_amount"
+                                    label={return_type == "REFUND" ? "Refund Amount" : "Credit Amount"}
+                                    onChange={handleChange}
+                                    value={formData?.credit_amount || ""}
+                                    validators={["required"]}
+                                    errorMessages={["this field is required"]}
+                                    error={errors?.credit_amount}
+                                />
 
                             </Box>
                         </>

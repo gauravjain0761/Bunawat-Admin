@@ -53,6 +53,7 @@ const TextField = styled(TextValidator)(() => ({
 }));
 
 const OrderDetailEdit = ({ data = {} }) => {
+
     const { id } = useParams();
     const [formShippingData, setFormShippingData] = React.useState({
         fname: "",
@@ -192,6 +193,7 @@ const OrderDetailEdit = ({ data = {} }) => {
                 setTeamName(itemData?.member)
                 finalData = { ...finalData, ...itemData?.billing_address, teamMember: itemData?.member, items: itemData?.items, product: '', qty: '', coupenData: [], discount_coupon: '', coupon_id: undefined, coupenDataManualApply: false, coupenDataManual: "", gst_available: !!itemData?.billing_address?.gstNo ? "yes" : "no", gst_num: itemData?.gst_num, shipping_charge: itemData?.shipping_charge, other_charge: itemData?.other_charge }
                 setFormData(finalData);
+                setOnlineData({ transaction_id: itemData?.transaction_id, transaction_doc: itemData?.transaction_doc })
             }
         }).catch((error) => {
             console.log("Error", error);
@@ -1448,6 +1450,9 @@ const OrderDetailEdit = ({ data = {} }) => {
                                                     <FormControlLabel value="credits" control={<Radio />} label="Credits" />
                                                     <FormControlLabel value="partialCredits" control={<Radio />} label="Partial Credits" />
                                                 </Grid> */}
+                                                {
+                                                    console.log(!id,"paymentMode", onlineData)
+                                                }
                                                 {paymentMode == "online" ?
                                                     <Grid item lg={12} mt={2}>
                                                         <TextField
